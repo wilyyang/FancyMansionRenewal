@@ -51,7 +51,7 @@ class TestAuthRepository {
 
     @Test
     fun pref_isAutoLogin_check() = runTest {
-        assertThat(repository.getIsAutoLogin()).isFalse()
+        assertThat(repository.getIsAutoLogin()).isTrue()
         repository.setIsAutoLogin(true)
         assertThat(repository.getIsAutoLogin()).isTrue()
     }

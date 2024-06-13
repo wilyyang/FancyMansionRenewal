@@ -7,7 +7,7 @@ import com.fancymansion.core.common.log.Logger
 import java.util.Locale
 import kotlin.math.sqrt
 
-fun getApiUserAgent(context: Context) : Pair<String, String>  {
+fun getApiUserInfo(context: Context) : Pair<String, String>  {
     val app_name = "FANCY_MANSION_APP_AOS"
     val device_type = if(isTablet(context)) "tablet" else "phone"
     val app_version =

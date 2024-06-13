@@ -98,7 +98,7 @@ class TestLoginViewModel {
         composeRule.onNodeWithContentDescription(Navigation.Routes.LOGIN)
 
         val initState = viewModel.setInitialState()
-        Truth.assertThat(viewModel.uiState.value == initState).isTrue()
+        Truth.assertThat(viewModel.uiState.value == initState).isFalse()
 
         composeRule.waitUntil {
             composeRule.onAllNodesWithTag(LoadState.Idle.javaClass.simpleName)

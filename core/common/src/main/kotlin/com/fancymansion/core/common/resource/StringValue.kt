@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 sealed class StringValue {
 
-    object Empty : StringValue()
+    data object Empty : StringValue()
     data class DynamicString(val value: String) : StringValue()
     class StringResource(
         @StringRes val resId: Int,

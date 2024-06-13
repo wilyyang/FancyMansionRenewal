@@ -95,7 +95,7 @@ class WebViewState {
 }
 
 sealed class WebLoadingState {
-    object Initializing : WebLoadingState()
-    object Loading : WebLoadingState()
-    object Finished : WebLoadingState()
+    data object Initializing : WebLoadingState()
+    data object Loading : WebLoadingState()
+    data object Finished : WebLoadingState()
 }

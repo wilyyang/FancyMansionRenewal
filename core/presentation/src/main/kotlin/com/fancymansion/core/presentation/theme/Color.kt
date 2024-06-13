@@ -115,30 +115,5 @@ object ColorSet {
     val holder_login_color = sky_acdef8
     val holder_highlight_color = blue_3370de
 
-    val work1_bar_color = blue_1a9dde
-    val work2_bar_color = blue_2985ef
-    val work3_bar_color = blue_507cf3
-    val work4_bar_color = violet_7b80ff
-
-    val work1_list_bg_color = sky_e5f7ff
-    val work2_list_bg_color = sky_e5f1ff
-    val work3_list_bg_color = sky_e3eeff
-    val work4_list_bg_color = violet_ecf0ff
-
-    val work1_study_bg_color = sky_f0fbff
-    val work2_study_bg_color = sky_ecf7ff
-    val work3_study_bg_color = sky_eff6ff
-    val work4_study_bg_color = violet_f6f6ff
-
-    val work1_holder_color = sky_c5ebff
-    val work2_holder_color = sky_c8e1ff
-    val work3_holder_color = sky_d5e0ff
-    val work4_holder_color = violet_dfe2fc
-
-    val work1_border_color = sky_a2e0ff
-    val work2_border_color = sky_aed3ff
-    val work3_border_color = sky_bbcdff
-    val work4_border_color = violet_c9cdff
-
     val default_surface = white_ffffff
 }

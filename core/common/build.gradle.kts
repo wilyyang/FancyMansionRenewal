@@ -8,13 +8,13 @@ plugins {
 }
 
 android {
-    compileSdk = 34
-    defaultConfig {
-        minSdk = 23
-    }
-}
+    namespace = "com.fancymansion.core.common"
 
-android {
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -22,10 +22,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
-}
-
-android {
-    namespace = "com.fancymansion.core.common"
 }
 
 dependencies {

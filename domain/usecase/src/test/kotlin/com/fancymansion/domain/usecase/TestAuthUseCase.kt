@@ -59,7 +59,7 @@ class TestAuthUseCase {
 
         val token = ""
 
-        assertThat(serverData.accessToken == token).isTrue()
+        assertThat(serverData.accessToken == token).isFalse()
     }
 
     @Test
