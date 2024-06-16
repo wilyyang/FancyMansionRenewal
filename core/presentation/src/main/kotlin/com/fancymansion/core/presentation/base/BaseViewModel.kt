@@ -389,30 +389,6 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         }
     }
 
-    fun launchWithExceptionNotTimeOut(
-        context : CoroutineContext = Dispatchers.IO,
-        start : CoroutineStart = CoroutineStart.DEFAULT,
-        block : suspend CoroutineScope.() -> Unit
-    ) : Job {
-        return scope.launch(context, start) {
-            withContext(Dispatchers.Main) {
-                withContext(context = context) {
-                    block.invoke(this)
-                }
-            }
-        }.apply {
-            invokeOnCompletion { cause : Throwable? ->
-                cause?.also { cancelException ->
-                    if(cancelException.cause != null){
-                        sendError(cancelException.cause!!)
-                    }else{
-                        sendError(cancelException)
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * 에러 처리
      */
