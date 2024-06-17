@@ -38,7 +38,6 @@
     <string name="work_detail_double_vowel">이중 모음</string>
     <string name="work_detail_sight_word">사이트 워드</string>
 
-    <string name="login_title">로그인</string>
     <string name="login_find_id">아이디 찾기</string>
     <string name="login_find_password">비밀번호 찾기</string>
     <string name="login_join_membership">회원가입</string>

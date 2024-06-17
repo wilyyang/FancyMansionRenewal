@@ -1,29 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="login_hint_id">아이디(이메일)</string>
-    <string name="login_hint_password">비밀번호</string>
-    <string name="login_text_auto_login">로그인 상태 유지</string>
-
-    <string name="login_guide_description">
-        <![CDATA[
-            <font color=#3370DE>회원</font>이라면,
-            <br><font color=#3370DE>아이디로 로그인</font>하세요!
-        ]]>
-    </string>
-
-    <string name="login_guide_description_tablet">
-        <![CDATA[
-            <font color=#3370DE>회원</font>이라면,
-            <font color=#3370DE>아이디로 로그인</font>하세요!
-        ]]>
-    </string>
-
-    <string name="login_fail_request_input_id">아이디(이메일)을 입력해 주세요.</string>
-    <string name="login_fail_request_valid_id">올바른 형식의 이메일 주소를 입력해 주세요.</string>
-    <string name="login_fail_request_input_password">비밀번호를 입력해 주세요.</string>
-    <string name="login_fail_request_valid_password">비밀번호는 4-10자의 숫자 혹은 영문으로 입력해주세요.</string>
-    <string name="login_fail_data_empty">일치하는 회원 정보가 없습니다. 아이디 또는 비밀번호를 확인해 주세요.</string>
-
-    <string name="login_fail_request_check_id">로그인에 실패했습니다. ID와 비밀번호를 확인해주세요.</string>
-    <string name="login_fail_user_limited_service">고객님의 요청으로 이용 제한된 서비스입니다. 이용을 원하실 경우, 고객센터로 문의해 주세요.</string>
 </resources>

@@ -13,12 +13,10 @@ import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.di.injectRepository.HiltRepository
-import com.fancymansion.domain.usecase.auth.UseCaseSetIsAutoLogin
-import com.fancymansion.presentation.viewer.content.LoginContract
-import com.fancymansion.presentation.viewer.content.LoginValue
-import com.fancymansion.presentation.viewer.content.LoginViewModel
+import com.fancymansion.presentation.viewer.content.ViewerContentContract
+import com.fancymansion.presentation.viewer.content.ViewerContentViewModel
 import com.fancymansion.presentation.viewer.content.Navigation
-import com.fancymansion.presentation.viewer.content.composables.LoginScreenFrame
+import com.fancymansion.presentation.viewer.content.composables.ViewerContentScreenFrame
 import com.fancymansion.test.fake.FakeActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -32,7 +30,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import javax.inject.Inject
 
 
 @HiltAndroidTest
@@ -40,19 +37,16 @@ import javax.inject.Inject
 @Config(application = HiltTestApplication::class, sdk = [33])
 @UninstallModules(HiltCommon::class, HiltRepository::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-class TestLoginViewModel {
+class TestViewerContentViewModel {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<FakeActivity>()
 
-    @Inject
-    lateinit var useCaseSetIsAutoLogin : UseCaseSetIsAutoLogin
+    lateinit var viewModel: ViewerContentViewModel
 
-    lateinit var viewModel: LoginViewModel
-
-    var getEffect: LoginContract.Effect? = null
+    var getEffect: ViewerContentContract.Effect? = null
 
     @ExperimentalAnimationApi
     @Before
@@ -64,7 +58,7 @@ class TestLoginViewModel {
             viewModel = hiltViewModel()
 
             val onEventSent =  remember {
-                { event : LoginContract.Event ->
+                { event : ViewerContentContract.Event ->
                     viewModel.setEvent(event)
                 }
             }
@@ -76,12 +70,12 @@ class TestLoginViewModel {
             }
 
             val onNavigationRequested =  remember {
-                { effect : LoginContract.Effect.Navigation ->
+                { effect : ViewerContentContract.Effect.Navigation ->
                     getEffect = effect
                 }
             }
 
-            LoginScreenFrame(
+            ViewerContentScreenFrame(
                 uiState = viewModel.uiState.value,
                 loadState = viewModel.loadState.value,
                 effectFlow = viewModel.effect,
@@ -95,7 +89,7 @@ class TestLoginViewModel {
 
     @Test
     fun test_loginScreen_1_init() {
-        composeRule.onNodeWithContentDescription(Navigation.Routes.LOGIN)
+        composeRule.onNodeWithContentDescription(Navigation.Routes.VIEWER_CONTENT)
 
         val initState = viewModel.setInitialState()
         Truth.assertThat(viewModel.uiState.value == initState).isFalse()
@@ -105,16 +99,5 @@ class TestLoginViewModel {
                 .fetchSemanticsNodes().size == 1
         }
         Truth.assertThat(viewModel.loadState.value == LoadState.Idle).isTrue()
-    }
-
-    @Test
-    fun test_loginScreen_2_login_fail() {
-        viewModel.setEvent(LoginContract.Event.LoginValueUpdate(newLoginValue = LoginValue("", "valid")))
-        viewModel.setEvent(LoginContract.Event.LoginButtonClicked)
-
-        composeRule.waitUntil {
-            viewModel.loadState.value is LoadState.AlarmDialog
-        }
-        Truth.assertThat(viewModel.loadState.value is LoadState.AlarmDialog).isTrue()
     }
 }
