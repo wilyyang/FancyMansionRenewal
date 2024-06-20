@@ -1,8 +1,0 @@
-{
-  "id": 4592324324,
-  "targetId" : -30000,
-  "compareId": -30000,
-  "count": 443,
-  "relationOp": "LESS_THAN",
-  "logicalOp" : "OR"
-}

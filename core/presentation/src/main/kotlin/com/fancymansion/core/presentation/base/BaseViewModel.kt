@@ -182,7 +182,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
             }
 
             is CommonEvent.PermissionRequestDenied -> {
-                val denied = event.deniedPermissions.reduce { acc, s -> "-$acc\n-$s" }
+                val denied = listOf(event.deniedPermissions.reduce { acc, s -> "-$acc\n-$s" })
                 setLoadState(LoadState.AlarmDialog(
                     title = StringValue.StringResource(R.string.permission_required_title),
                     message = StringValue.StringResource(
