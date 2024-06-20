@@ -54,11 +54,11 @@ sealed class LoadState {
             onConfirm: () -> Unit = {},
             onDismiss: () -> Unit = {}
         ) : this(
-            title = title?.let { StringValue.DynamicString(title) },
-            message = message?.let { StringValue.DynamicString(message) },
-            errorMessage = errorMessage?.let { StringValue.DynamicString(errorMessage) },
-            confirmText = StringValue.DynamicString(confirmText),
-            dismissText = dismissText?.let { StringValue.DynamicString(dismissText) },
+            title = title?.let { StringValue.StringWrapper(title) },
+            message = message?.let { StringValue.StringWrapper(message) },
+            errorMessage = errorMessage?.let { StringValue.StringWrapper(errorMessage) },
+            confirmText = StringValue.StringWrapper(confirmText),
+            dismissText = dismissText?.let { StringValue.StringWrapper(dismissText) },
             onConfirm = onConfirm,
             onDismiss = onDismiss
         )
@@ -79,10 +79,10 @@ sealed class LoadState {
             onConfirm: () -> Unit = {},
             onDismiss: () -> Unit = {}
         ) : this(
-            title = title?.let { StringValue.DynamicString(title) },
-            message = message?.let { StringValue.DynamicString(message) },
-            confirmText = confirmText?.let{ StringValue.DynamicString(confirmText)},
-            dismissText = dismissText?.let { StringValue.DynamicString(dismissText) },
+            title = title?.let { StringValue.StringWrapper(title) },
+            message = message?.let { StringValue.StringWrapper(message) },
+            confirmText = confirmText?.let{ StringValue.StringWrapper(confirmText)},
+            dismissText = dismissText?.let { StringValue.StringWrapper(dismissText) },
             onConfirm = onConfirm,
             onDismiss = onDismiss
         )
@@ -411,7 +411,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         _loadState.value = when(throwable){
             is WebViewException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(
+                errorMessage = StringValue.StringWrapper(
                     throwable.result.message ?: "WebViewException"
                 ),
                 dismissText = null,
@@ -420,28 +420,28 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
 
             is ScreenDataInitFailException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(throwable.message),
+                errorMessage = StringValue.StringWrapper(throwable.message),
                 dismissText = null,
                 onConfirm = defaultConfirm
             )
 
             is ApiNetworkException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(throwable.message),
+                errorMessage = StringValue.StringWrapper(throwable.message),
                 dismissText = null,
                 onConfirm = defaultConfirm
             )
 
             is ApiUnknownException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(throwable.message),
+                errorMessage = StringValue.StringWrapper(throwable.message),
                 dismissText = null,
                 onConfirm = defaultConfirm
             )
 
             is ApiResultStatusException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(throwable.message),
+                errorMessage = StringValue.StringWrapper(throwable.message),
                 dismissText = null,
                 onConfirm = defaultConfirm
             )
@@ -454,7 +454,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
 
             is CancellationException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(
+                errorMessage = StringValue.StringWrapper(
                     throwable.message ?: "Unknown CancellationException"
                 ),
                 dismissText = null,
@@ -470,7 +470,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
 
             else -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.DynamicString(
+                errorMessage = StringValue.StringWrapper(
                     throwable.message ?: throwable::class.java.simpleName
                 ),
                 dismissText = null,

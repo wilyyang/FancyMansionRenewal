@@ -70,4 +70,12 @@
 
     <string name="date_ymd">%1$d년 %2$d월 %3$d일</string>
     <string name="date_dot">%1$d.%2$d.%3$d</string>
+
+    <string name="relation_equal">같음</string>
+    <string name="relation_not_equal">다름</string>
+    <string name="relation_less_than">미만</string>
+    <string name="relation_greater_than">초과</string>
+
+    <string name="logical_and">그리고</string>
+    <string name="logical_or">또는</string>
 </resources>
