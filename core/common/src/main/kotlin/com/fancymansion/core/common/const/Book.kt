@@ -15,16 +15,6 @@ enum class ReadMode {
     EDIT, READ
 }
 
-/**s
- * Content
- */
-sealed class Source {
-    data class Text(val description: String) : Source()
-//    data class Image(val filePath: String) : Source()
-
-    // 임시
-    data class Image(val resId: Int) : Source()
-}
 
 /**
  * Logic
