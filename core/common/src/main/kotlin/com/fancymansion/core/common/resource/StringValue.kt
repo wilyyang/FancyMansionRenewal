@@ -4,20 +4,25 @@ import android.content.Context
 import androidx.annotation.StringRes
 sealed class StringValue {
 
-    data object Empty : StringValue()
-    data class StringWrapper(val value: String) : StringValue()
+    data object Empty : StringValue(){
+        override fun toString() = ""
+    }
+
+    data class StringWrapper(val value: String) : StringValue(){
+        override fun toString() = value
+    }
+
     data class StringResource(
         @StringRes val resId: Int,
         val args: List<Any> = emptyList()
     ) : StringValue()
 
-    fun asString(context: Context? = null): String {
+    fun asString(context: Context): String {
         return when (this) {
-            is Empty -> ""
-            is StringWrapper -> value
             is StringResource -> {
-                context!!.getString(resId, *args.toTypedArray())
+                context.getString(resId, *args.toTypedArray())
             }
+            else -> this.toString()
         }
     }
 }
