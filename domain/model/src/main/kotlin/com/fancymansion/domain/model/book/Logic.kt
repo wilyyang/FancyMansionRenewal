@@ -29,7 +29,7 @@ data class Selector(
 
 data class Route(
     val id: RouteId,
-    val routePageId: Long = ROUTE_PAGE_ID_NOT_ASSIGNED,
+    val routePageId: PageId,
     val routeConditions: List<Condition> = listOf()
 )
 

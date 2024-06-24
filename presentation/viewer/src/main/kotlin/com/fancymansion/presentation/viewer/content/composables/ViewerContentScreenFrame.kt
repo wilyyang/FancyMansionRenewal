@@ -48,16 +48,6 @@ fun ViewerContentScreenFrame(
         description = Navigation.Routes.VIEWER_CONTENT,
         statusBarColor = ColorSet.sky_c1ebfe,
         typePane = TypePane.SINGLE,
-        topBar = {
-            FancyMansionTopBar(
-                typePane = TypePane.SINGLE,
-                title = "임시 타이틀",
-                idRightIcon = R.drawable.img_bar_close_btn,
-                onClickRightIcon = {
-                    onCommonEventSent(CommonEvent.CloseEvent)
-                }
-            )
-        },
         isOverlayTopBar = true
     ) {
         ViewerContentScreenContent(
