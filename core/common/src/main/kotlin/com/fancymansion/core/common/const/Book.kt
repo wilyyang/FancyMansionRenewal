@@ -5,11 +5,7 @@ import com.fancymansion.core.common.resource.StringValue
 /**
  * Book
  */
-@JvmInline
-value class BookId(val id: Long)
 
-@JvmInline
-value class PageId(val id: Long)
 
 enum class ReadMode {
     EDIT, READ
@@ -19,14 +15,6 @@ enum class ReadMode {
 /**
  * Logic
  */
-@JvmInline
-value class SelectorId(val id: Long)
-
-@JvmInline
-value class RouteId(val id: Long)
-
-@JvmInline
-value class ConditionId(val id: Long)
 
 const val ROUTE_PAGE_ID_NOT_ASSIGNED = -4000L
 const val COMPARE_ID_NOT_ASSIGNED = -4000L
@@ -39,9 +27,16 @@ enum class PageType(
     ENDING(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.page_type_ending))
 }
 
+enum class ConditionType(
+    val localizedName: StringValue.StringResource
+) {
+    COUNT(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.compare_count)),
+    TARGET_VIEWS(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.compare_target_views))
+}
+
 enum class RelationOp(
     val localizedName: StringValue.StringResource,
-    val check: (Boolean, Boolean) -> Boolean
+    val check: (Int, Int) -> Boolean
 ) {
     EQUAL(
         localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.relation_equal),

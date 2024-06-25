@@ -1,7 +1,5 @@
 package com.fancymansion.domain.model.book
 
-import com.fancymansion.core.common.const.PageId
-
 /**
  * Content
  */
@@ -19,7 +17,7 @@ data class Content(
 )
 
 data class Page(
-    val id: PageId,
+    val id: Long,
     val title: String,
     val sources: List<Source>
 )

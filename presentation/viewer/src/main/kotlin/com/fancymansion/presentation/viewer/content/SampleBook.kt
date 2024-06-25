@@ -1,11 +1,9 @@
 package com.fancymansion.presentation.viewer.content
 
-import com.fancymansion.core.common.const.BookId
-import com.fancymansion.core.common.const.PageId
+import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.ROUTE_PAGE_ID_NOT_ASSIGNED
-import com.fancymansion.core.common.const.RouteId
-import com.fancymansion.core.common.const.SelectorId
+import com.fancymansion.core.common.const.RelationOp
+import com.fancymansion.domain.model.book.Condition
 import com.fancymansion.domain.model.book.Content
 import com.fancymansion.domain.model.book.Logic
 import com.fancymansion.domain.model.book.Page
@@ -16,7 +14,7 @@ import com.fancymansion.domain.model.book.Source
 import com.fancymansion.presentation.viewer.R
 
 val page1 : Page = Page(
-    id = PageId(1_00_00_00_00L),
+    id = 1_00_00_00_00L,
     title = "잠에서 깨어난 배트",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_01),
@@ -26,34 +24,34 @@ val page1 : Page = Page(
                 "\n" +
                 "\"난 벌레를 찾을 거야.\n" + "그리고 벌레들을 먹을 거야!\"\n" +
                 "\n" +
-                "무엇을 하는게 좋을까요?\n\n")
+                "무엇을 하는게 좋을까요?\n")
     )
 )
 
 val logic1 : PageLogic = PageLogic(
-    id = PageId(1_00_00_00_00L),
+    id = 1_00_00_00_00L,
     type = PageType.START,
     title = "잠에서 깨어난 배트",
     selectors = listOf(
         Selector(
-            id = SelectorId(1_01_00_00_00L),
+            id = 1_01_00_00_00L,
             text = "물가로 간다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(1_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 1_01_00_01_00L,
+                    routePageId = 2_00_00_00_00L,
                 )
             )
         ),
         Selector(
-            id = SelectorId(1_02_00_00_00L),
+            id = 1_02_00_00_00L,
             text = "옥수수밭으로 간다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(1_02_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 1_02_00_01_00L,
+                    routePageId = 3_00_00_00_00L,
                 )
             )
         )
@@ -62,7 +60,7 @@ val logic1 : PageLogic = PageLogic(
 
 
 val page2 : Page = Page(
-    id = PageId(2_00_00_00_00L),
+    id = 2_00_00_00_00L,
     title = "물가에서의 사냥",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_06),
@@ -70,34 +68,34 @@ val page2 : Page = Page(
         Source.Image(resId = R.drawable.sample_img_07),
         Source.Text("\n배트는 먹고 먹고 또 먹었어요.\n" + "배트는 날고 날고 또 날았어요.\n"),
         Source.Image(resId = R.drawable.sample_img_09),
-        Source.Text("\n그런데 이제 아주 어두워졌어요.\n" + "\"집이 어디지?\" 배트가 말했어요.\n\n")
+        Source.Text("\n그런데 이제 아주 어두워졌어요.\n" + "\"집이 어디지?\" 배트가 말했어요.\n")
     )
 )
 
 val logic2 : PageLogic = PageLogic(
-    id = PageId(2_00_00_00_00L),
+    id = 2_00_00_00_00L,
     type = PageType.NORMAL,
     title = "물가에서의 사냥",
     selectors = listOf(
         Selector(
-            id = SelectorId(2_01_00_00_00L),
+            id = 2_01_00_00_00L,
             text = "달을 향해 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(2_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 2_01_00_01_00L,
+                    routePageId = 5_00_00_00_00L
                 )
             )
         ),
         Selector(
-            id = SelectorId(2_02_00_00_00L),
+            id = 2_02_00_00_00L,
             text = "바위 틈으로 들어간다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(2_02_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 2_02_00_01_00L,
+                    routePageId = 4_00_00_00_00L
                 )
             )
         )
@@ -105,7 +103,7 @@ val logic2 : PageLogic = PageLogic(
 )
 
 val page3 : Page = Page(
-    id = PageId(3_00_00_00_00L),
+    id = 3_00_00_00_00L,
     title = "옥수수밭에 가다",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_08),
@@ -121,29 +119,29 @@ val page3 : Page = Page(
 )
 
 val logic3 : PageLogic = PageLogic(
-    id = PageId(3_00_00_00_00L),
+    id = 3_00_00_00_00L,
     type = PageType.NORMAL,
     title = "옥수수밭에 가다",
     selectors = listOf(
         Selector(
-            id = SelectorId(3_01_00_00_00L),
+            id = 3_01_00_00_00L,
             text = "헛간을 향해 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(3_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 3_01_00_01_00L,
+                    routePageId = 8_00_00_00_00L,
                 )
             )
         ),
         Selector(
-            id = SelectorId(3_02_00_00_00L),
+            id = 3_02_00_00_00L,
             text = "바위 틈으로 들어간다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(3_02_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 3_02_00_01_00L,
+                    routePageId = 4_00_00_00_00L,
                 )
             )
         )
@@ -151,7 +149,7 @@ val logic3 : PageLogic = PageLogic(
 )
 
 val page4 : Page = Page(
-    id = PageId(4_00_00_00_00L),
+    id = 4_00_00_00_00L,
     title = "바위틈에서",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_25),
@@ -160,60 +158,73 @@ val page4 : Page = Page(
 )
 
 val logic4 : PageLogic = PageLogic(
-    id = PageId(4_00_00_00_00L),
+    id = 4_00_00_00_00L,
     type = PageType.ENDING,
     title = "바위틈에서",
     selectors = listOf()
 )
 
 val page5 : Page = Page(
-    id = PageId(5_00_00_00_00L),
+    id = 5_00_00_00_00L,
     title = "플라이 투더 문",
     sources = listOf(
         Source.Text(description = "\n달을 향해 날아오르는 배트!\n" +
                 "하늘로 날아오르니 기분이 아주 좋아요!\n"),
         Source.Image(resId = R.drawable.sample_img_04),
-        Source.Text(description = "\n그런데 그 뿐이었습니다.\n" +
-                "밝은 달 아래에서 바라봐도 집이 어딘지 보이지 않아요.\n\n"),
-        Source.Image(resId = R.drawable.sample_img_09)
+        Source.Text(description = "\n그런데 그 뿐이었습니다.\n"),
+        Source.Image(resId = R.drawable.sample_img_09),
+        Source.Text(description = "밝은 달 아래에서 바라봐도 집이 어딘지 보이지 않아요.\n"),
     )
 )
 
 val logic5 : PageLogic = PageLogic(
-    id = PageId(5_00_00_00_00L),
+    id = 5_00_00_00_00L,
     type = PageType.NORMAL,
     title = "플라이 투더 문",
     selectors = listOf(
         Selector(
-            id = SelectorId(5_01_00_00_00L),
+            id = 5_01_00_00_00L,
             text = "달로 다시 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(5_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 5_01_00_01_00L,
+                    routePageId = 6_00_00_00_00L,
+                    routeConditions = listOf(
+                        Condition(
+                            id = 5_01_00_01_01L,
+                            type = ConditionType.COUNT,
+                            selfViewsId = 5_00_00_00_00L,
+                            count = 3,
+                            relationOp = RelationOp.GREATER_THAN
+                        )
+                    )
+                ),
+                Route(
+                    id = 5_01_00_02_00L,
+                    routePageId = 5_00_00_00_00L,
                 )
             )
         ),
         Selector(
-            id = SelectorId(5_02_00_00_00L),
+            id = 5_02_00_00_00L,
             text = "옥수수밭으로 간다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(5_02_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 5_02_00_01_00L,
+                    routePageId = 3_00_00_00_00L,
                 )
             )
         ),
         Selector(
-            id = SelectorId(5_03_00_00_00L),
+            id = 5_03_00_00_00L,
             text = "비가 오기 시작한다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(5_03_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 5_03_00_01_00L,
+                    routePageId = 7_00_00_00_00L,
                 )
             )
         )
@@ -221,7 +232,7 @@ val logic5 : PageLogic = PageLogic(
 )
 
 val page6 : Page = Page(
-    id = PageId(6_00_00_00_00L),
+    id = 6_00_00_00_00L,
     title = "여긴 어디지?",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_35),
@@ -230,14 +241,14 @@ val page6 : Page = Page(
 )
 
 val logic6 : PageLogic = PageLogic(
-    id = PageId(6_00_00_00_00L),
+    id = 6_00_00_00_00L,
     type = PageType.ENDING,
     title = "여긴 어디지?",
     selectors = listOf()
 )
 
 val page7 : Page = Page(
-    id = PageId(7_00_00_00_00L),
+    id = 7_00_00_00_00L,
     title = "어두운 밤에 비가 축축",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_14),
@@ -262,18 +273,18 @@ val page7 : Page = Page(
 )
 
 val logic7 : PageLogic = PageLogic(
-    id = PageId(7_00_00_00_00L),
+    id = 7_00_00_00_00L,
     type = PageType.NORMAL,
     title = "어두운 밤에 비가 축축",
     selectors = listOf(
         Selector(
-            id = SelectorId(7_01_00_00_00L),
+            id = 7_01_00_00_00L,
             text = "헛간을 향해 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(7_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 7_01_00_01_00L,
+                    routePageId = 8_00_00_00_00L,
                 )
             )
         )
@@ -281,7 +292,7 @@ val logic7 : PageLogic = PageLogic(
 )
 
 val page8 : Page = Page(
-    id = PageId(8_00_00_00_00L),
+    id = 8_00_00_00_00L,
     title = "헛간을 향해 힘찬 날개짓!",
     sources = listOf(
         Source.Text(description = "배트는 힘내어 헛간을 향해 날개짓합니다.\n"),
@@ -298,18 +309,18 @@ val page8 : Page = Page(
 )
 
 val logic8 : PageLogic = PageLogic(
-    id = PageId(8_00_00_00_00L),
+    id = 8_00_00_00_00L,
     type = PageType.NORMAL,
     title = "헛간을 향해 힘찬 날개짓!",
     selectors = listOf(
         Selector(
-            id = SelectorId(8_01_00_00_00L),
+            id = 8_01_00_00_00L,
             text = "다시한 번 날개짓한다.",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(8_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 8_01_00_01_00L,
+                    routePageId = 9_00_00_00_00L,
                 )
             )
         )
@@ -317,7 +328,7 @@ val logic8 : PageLogic = PageLogic(
 )
 
 val page9 : Page = Page(
-    id = PageId(9_00_00_00_00L),
+    id = 9_00_00_00_00L,
     title = "지붕에 도착한 배트",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_19),
@@ -332,29 +343,29 @@ val page9 : Page = Page(
 )
 
 val logic9 : PageLogic = PageLogic(
-    id = PageId(9_00_00_00_00L),
+    id = 9_00_00_00_00L,
     type = PageType.NORMAL,
     title = "지붕에 도착한 배트",
     selectors = listOf(
         Selector(
-            id = SelectorId(9_01_00_00_00L),
+            id = 9_01_00_00_00L,
             text = "가지 않고 비가 그치길 기다린다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(9_01_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 9_01_00_01_00L,
+                    routePageId = 11_00_00_00_00L,
                 )
             )
         ),
         Selector(
-            id = SelectorId(9_02_00_00_00L),
+            id = 9_02_00_00_00L,
             text = "구멍으로 들어간다",
             showConditions = listOf(),
             routes = listOf(
                 Route(
-                    id = RouteId(9_02_00_01_00L),
-                    routePageId = PageId(ROUTE_PAGE_ID_NOT_ASSIGNED),
+                    id = 9_02_00_01_00L,
+                    routePageId = 10_00_00_00_00L,
                 )
             )
         )
@@ -362,7 +373,7 @@ val logic9 : PageLogic = PageLogic(
 )
 
 val page10 : Page = Page(
-    id = PageId(10_00_00_00_00L),
+    id = 10_00_00_00_00L,
     title = "조용히 어둠 속으로…",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_23),
@@ -376,14 +387,14 @@ val page10 : Page = Page(
 )
 
 val logic10 : PageLogic = PageLogic(
-    id = PageId(10_00_00_00_00L),
+    id = 10_00_00_00_00L,
     type = PageType.ENDING,
     title = "조용히 어둠 속으로…",
     selectors = listOf()
 )
 
 val page11 : Page = Page(
-    id = PageId(11_00_00_00_00L),
+    id = 11_00_00_00_00L,
     title = "다시 집으로!",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_29),
@@ -401,7 +412,7 @@ val page11 : Page = Page(
 )
 
 val logic11 : PageLogic = PageLogic(
-    id = PageId(11_00_00_00_00L),
+    id = 11_00_00_00_00L,
     type = PageType.ENDING,
     title = "다시 집으로!",
     selectors = listOf()
@@ -409,4 +420,4 @@ val logic11 : PageLogic = PageLogic(
 
 
 val content : Content = Content(pages = listOf(page1, page2, page3, page4, page5, page6, page7, page8, page9, page10, page11))
-val logic : Logic = Logic(id = BookId(1L), logics = listOf(logic1, logic2, logic3, logic4, logic5, logic6, logic7, logic8, logic9, logic10, logic11))
+val logic : Logic = Logic(id = 1L, logics = listOf(logic1, logic2, logic3, logic4, logic5, logic6, logic7, logic8, logic9, logic10, logic11))

@@ -1,12 +1,9 @@
 package com.fancymansion.domain.model.book
 
-import com.fancymansion.core.common.const.BookId
 import com.fancymansion.core.common.const.ReadMode
 
-data class Book(val config: Config, val logic: Logic, val content: Content)
-
 data class Config(
-    val id: BookId,
+    val id: Long,
     val version: Long = 0L,
     val createTime: Long = System.currentTimeMillis(),
     val editTime: Long = System.currentTimeMillis(),

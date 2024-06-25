@@ -10,12 +10,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
-import com.fancymansion.core.presentation.R
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.frame.BaseScreen
-import com.fancymansion.core.presentation.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.frame.topBarDpMobile
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.core.presentation.theme.FancyMansionTheme
