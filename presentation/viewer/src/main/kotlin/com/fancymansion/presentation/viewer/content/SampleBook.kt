@@ -194,8 +194,8 @@ val logic5 : PageLogic = PageLogic(
                         Condition(
                             id = 5_01_00_01_01L,
                             type = ConditionType.COUNT,
-                            selfViewsId = 5_00_00_00_00L,
-                            count = 3,
+                            selfViewsId = 5_01_00_00_00L,
+                            count = 2,
                             relationOp = RelationOp.GREATER_THAN
                         )
                     )
@@ -220,7 +220,15 @@ val logic5 : PageLogic = PageLogic(
         Selector(
             id = 5_03_00_00_00L,
             text = "비가 오기 시작한다",
-            showConditions = listOf(),
+            showConditions = listOf(
+                Condition(
+                    id = 5_03_01_00_00L,
+                    type = ConditionType.COUNT,
+                    selfViewsId = 5_00_00_00_00L,
+                    relationOp = RelationOp.EQUAL,
+                    count = 3
+                )
+            ),
             routes = listOf(
                 Route(
                     id = 5_03_00_01_00L,
@@ -321,6 +329,32 @@ val logic8 : PageLogic = PageLogic(
                 Route(
                     id = 8_01_00_01_00L,
                     routePageId = 9_00_00_00_00L,
+                    routeConditions = listOf(
+                        Condition(
+                            id = 8_01_00_01_01L,
+                            type = ConditionType.COUNT,
+                            selfViewsId = 7_00_00_00_00L,
+                            count = 1,
+                            relationOp = RelationOp.EQUAL
+                        )
+                    )
+                ),
+                Route(
+                    id = 8_01_00_02_00L,
+                    routePageId = 6_00_00_00_00L,
+                    routeConditions = listOf(
+                        Condition(
+                            id = 8_01_00_02_01L,
+                            type = ConditionType.COUNT,
+                            selfViewsId = 8_00_00_00_00L,
+                            count = 3,
+                            relationOp = RelationOp.GREATER_THAN
+                        )
+                    )
+                ),
+                Route(
+                    id = 8_01_00_03_00L,
+                    routePageId = 8_00_00_00_00L,
                 )
             )
         )
@@ -332,7 +366,7 @@ val page9 : Page = Page(
     title = "지붕에 도착한 배트",
     sources = listOf(
         Source.Image(resId = R.drawable.sample_img_19),
-        Source.Text(description = "드디어 가까워진 헛간!\n" + "벌레를 먹었던 보람이 있군요?\n"),
+        Source.Text(description = "\n드디어 가까워진 헛간!\n" + "벌레를 먹었던 보람이 있군요?\n"),
         Source.Image(resId = R.drawable.sample_img_20),
         Source.Text(description = "\n겨우 헛간 지붕에 도착했습니다.\n"),
         Source.Image(resId = R.drawable.sample_img_21),

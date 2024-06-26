@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +38,7 @@ import com.fancymansion.presentation.viewer.content.ViewerContentContract
 import com.fancymansion.presentation.viewer.content.content
 import com.fancymansion.presentation.viewer.content.logic
 
+class Idx(val value: Int)
 @Composable
 fun ViewerContentScreenContent(
     modifier: Modifier = Modifier,
@@ -47,7 +49,7 @@ fun ViewerContentScreenContent(
         mutableMapOf<Long, Int>()
     }
     val idx = remember {
-        mutableIntStateOf(0)
+        mutableStateOf(Idx(0))
     }
 
     val onClickSelector : (Selector) -> Unit = { selector ->
@@ -67,22 +69,27 @@ fun ViewerContentScreenContent(
             Logger.e("FancyMansion Page count : $nextRouteId ${countMap[nextRouteId]}")
 
             val index = content.pages.indexOfFirst { it.id == nextRouteId }
-            idx.intValue  = index
+            idx.value = Idx(index)
         }
+    }
+
+    val checkConditions : (List<Condition>) -> Boolean = { conditions ->
+        checkConditions(conditions, countMap)
     }
     LaunchedEffect(key1 = Unit) {
         countMap[content.pages[0].id] = 1
     }
 
-    ViewerContentScreenPageContent(idx.intValue, onClickSelector)
+    ViewerContentScreenPageContent(idx.value, onClickSelector, checkConditions)
 }
 
 
 @Composable
-fun ViewerContentScreenPageContent(idx: Int, onClickSelector : (Selector)-> Unit) {
+fun ViewerContentScreenPageContent(idx: Idx, onClickSelector : (Selector)-> Unit, checkConditions : (List<Condition>) -> Boolean) {
     val contentTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp, lineHeight = 18.sp * 1.2)
     val listState = rememberLazyListState()
 
+    val visibleSelector = logic.logics[idx.value].selectors.filter { selector -> checkConditions(selector.showConditions) }
     LaunchedEffect(key1 = idx) {
         listState.scrollToItem(0)
     }
@@ -95,10 +102,10 @@ fun ViewerContentScreenPageContent(idx: Int, onClickSelector : (Selector)-> Unit
                 modifier = Modifier
                     .padding(vertical = 20.dp)
                     .padding(horizontal = 5.dp),
-                text = "[" +logic.logics[idx].type + "] "+content.pages[idx].title, style = MaterialTheme.typography.titleLarge
+                text = "[" +logic.logics[idx.value].type + "] "+content.pages[idx.value].title, style = MaterialTheme.typography.titleLarge
             )
         }
-        items(content.pages[idx].sources) {
+        items(content.pages[idx.value].sources) {
             when (it) {
                 is Source.Text -> {
                     Text(modifier = Modifier.padding(horizontal = 5.dp), text = it.description, style = contentTextStyle)
@@ -113,7 +120,7 @@ fun ViewerContentScreenPageContent(idx: Int, onClickSelector : (Selector)-> Unit
         item {
             Spacer(modifier = Modifier.height(20.dp))
         }
-        items(logic.logics[idx].selectors) { selector ->
+        items(visibleSelector) { selector ->
             Row(
                 modifier = Modifier
                     .padding(vertical = 10.dp, horizontal = 15.dp)
@@ -163,7 +170,7 @@ fun checkCondition(condition: Condition, countMap: MutableMap<Long, Int>) : Bool
             countMap[condition.targetViewsId]
         }
     }?:0
-    Logger.e("FancyMansion check : $selfCount $targetCount")
+    Logger.e("FancyMansion check ${condition.id}: $selfCount $targetCount")
     return condition.relationOp.check(selfCount, targetCount)
 }
 
