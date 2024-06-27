@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.fancymansion.app.navigation.NavigateAnimation.slideVerticallyComposable
 import com.fancymansion.app.navigation.destination.login.ViewerContentScreenDestination
 import com.fancymansion.core.presentation.window.TypeWindow
-import com.fancymansion.presentation.viewer.content.Navigation.Routes.VIEWER_CONTENT
+import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,11 +30,11 @@ fun AppNavigation(typeWindow : TypeWindow) {
 
     NavHost(
         navController = navController,
-        startDestination = VIEWER_CONTENT
+        startDestination = ViewerContentContract.NAME
     ) {
 
         slideVerticallyComposable(
-            route = VIEWER_CONTENT,
+            route = ViewerContentContract.NAME,
             navController = navController
         ) {
             ViewerContentScreenDestination(navController = navController, window = typeWindow)

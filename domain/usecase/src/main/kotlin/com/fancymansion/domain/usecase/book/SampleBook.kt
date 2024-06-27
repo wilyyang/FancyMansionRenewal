@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.viewer.content
+package com.fancymansion.domain.usecase.book
 
 import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
@@ -11,7 +11,7 @@ import com.fancymansion.domain.model.book.PageLogic
 import com.fancymansion.domain.model.book.Route
 import com.fancymansion.domain.model.book.Selector
 import com.fancymansion.domain.model.book.Source
-import com.fancymansion.presentation.viewer.R
+import com.fancymansion.domain.usecase.R
 
 val page1 : Page = Page(
     id = 1_00_00_00_00L,
