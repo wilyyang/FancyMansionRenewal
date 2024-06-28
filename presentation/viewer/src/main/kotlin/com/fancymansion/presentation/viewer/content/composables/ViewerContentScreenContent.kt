@@ -21,14 +21,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fancymansion.core.common.log.Logger
-import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.domain.model.book.Source
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun ViewerContentScreenContent(
@@ -47,8 +42,13 @@ fun ViewerContentScreenPageContent(
     onEventSent: (event: ViewerContentContract.Event) -> Unit
 ) {
     val contentTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp, lineHeight = 18.sp * 1.2)
-    uiState.page?.let { page ->
-        val listState = rememberLazyListState()
+    val listState = rememberLazyListState()
+
+    uiState.pageState.page?.let { page ->
+        LaunchedEffect(key1 = uiState.pageState) {
+            listState.animateScrollToItem(0)
+        }
+
 
         LazyColumn(
             modifier = modifier,
@@ -95,7 +95,7 @@ fun ViewerContentScreenPageContent(
                         )
                         .background(color = ColorSet.sky_c1ebfe)
                         .clickable {
-                            onEventSent(ViewerContentContract.Event.OnClickSelector(selector.id))
+                            onEventSent(ViewerContentContract.Event.OnClickSelector(page.id, selector.id))
                         }
                         .padding(horizontal = 15.dp, vertical = 10.dp)
                 ) {

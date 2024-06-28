@@ -11,12 +11,24 @@ class ViewerContentContract {
         const val NAME = "viewer_content"
     }
 
-    data class State(val page: Page? = null, val selectors: List<Selector> = listOf()) : ViewState
+    data class State(val pageState: PageState = PageState(), val selectors: List<Selector> = listOf()) : ViewState
     sealed class Event : ViewEvent {
-        data class OnClickSelector(val selectorId: Long) : Event()
+        data class OnClickSelector(val pageId: Long, val selectorId: Long) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect()
+    }
+}
+
+data class PageState(
+    val page: Page? = null
+) {
+    override fun equals(other: Any?): Boolean {
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return System.identityHashCode(this)
     }
 }

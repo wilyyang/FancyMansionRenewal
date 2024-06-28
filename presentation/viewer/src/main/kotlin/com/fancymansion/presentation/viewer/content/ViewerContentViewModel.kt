@@ -19,7 +19,6 @@ class ViewerContentViewModel @Inject constructor(
     private lateinit var mode : ReadMode
     private lateinit var bookId : String
     private lateinit var logic : Logic
-    private var currentPageId : Long = 0L
 
     override fun setInitialState() = ViewerContentContract.State()
 
@@ -27,22 +26,15 @@ class ViewerContentViewModel @Inject constructor(
         when (event) {
             is ViewerContentContract.Event.OnClickSelector -> {
                 useCaseBook.incrementCount(userId, mode, bookId, event.selectorId)
-                currentPageId = useCaseBook.getNextPageId(
+
+                useCaseBook.getNextPageId(
                     userId,
                     mode,
                     bookId,
-                    logic.logics.first { it.id == currentPageId }.selectors.first { it.id == event.selectorId }.routes
-                )
-
-                val page = useCaseBook.loadPage(userId, mode, bookId, currentPageId)
-                val selectors =
-                    useCaseBook.getVisibleSelectors(userId, mode, bookId, logic, currentPageId)
-
-                setState {
-                    copy(
-                        page = page,
-                        selectors = selectors
-                    )
+                    logic.logics.first { it.id == event.pageId }.selectors.first { it.id == event.selectorId }.routes
+                ).let { nextPageId ->
+                    useCaseBook.incrementCount(userId, mode, bookId, nextPageId)
+                    loadPageContent(nextPageId)
                 }
             }
         }
@@ -56,18 +48,23 @@ class ViewerContentViewModel @Inject constructor(
 
             logic = useCaseBook.loadLogic(userId, mode, bookId)
             useCaseBook.resetCount(userId, mode, bookId)
-            currentPageId = logic.logics.first { it.type == PageType.START }.id
-            val page = useCaseBook.loadPage(userId, mode, bookId, currentPageId)
-            val selectors = useCaseBook.getVisibleSelectors(userId, mode, bookId, logic, currentPageId)
 
-            useCaseBook.incrementCount(userId, mode, bookId, page.id)
-
-            setState {
-                copy(
-                    page = page,
-                    selectors = selectors
-                )
+            logic.logics.first { it.type == PageType.START }.id.let { pageId ->
+                useCaseBook.incrementCount(userId, mode, bookId, pageId)
+                loadPageContent(pageId)
             }
+        }
+    }
+
+    private fun loadPageContent(pageId : Long){
+        val page = useCaseBook.loadPage(userId, mode, bookId, pageId)
+        val selectors = useCaseBook.getVisibleSelectors(userId, mode, bookId, logic, pageId)
+
+        setState {
+            copy(
+                pageState = PageState(page = page),
+                selectors = selectors
+            )
         }
     }
 }
