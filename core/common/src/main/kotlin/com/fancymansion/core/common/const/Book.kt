@@ -5,7 +5,11 @@ import com.fancymansion.core.common.resource.StringValue
 /**
  * Book
  */
-
+data class BookRef(
+    val userId: String,
+    val mode: ReadMode,
+    val bookId: String
+)
 
 enum class ReadMode {
     EDIT, READ

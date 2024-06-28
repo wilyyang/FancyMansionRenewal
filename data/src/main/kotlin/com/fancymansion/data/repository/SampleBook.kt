@@ -1,8 +1,9 @@
-package com.fancymansion.domain.usecase.book
+package com.fancymansion.data.repository
 
 import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.RelationOp
+import com.fancymansion.data.R
 import com.fancymansion.domain.model.book.Condition
 import com.fancymansion.domain.model.book.Content
 import com.fancymansion.domain.model.book.Logic
@@ -11,7 +12,6 @@ import com.fancymansion.domain.model.book.PageLogic
 import com.fancymansion.domain.model.book.Route
 import com.fancymansion.domain.model.book.Selector
 import com.fancymansion.domain.model.book.Source
-import com.fancymansion.domain.usecase.R
 
 val page1 : Page = Page(
     id = 1_00_00_00_00L,
