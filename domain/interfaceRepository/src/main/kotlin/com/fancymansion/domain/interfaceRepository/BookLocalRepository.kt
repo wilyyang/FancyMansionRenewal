@@ -8,6 +8,7 @@ interface BookLocalRepository {
 
     suspend fun loadLogicFromFile(bookRef: BookRef): Logic
     suspend fun loadPageFromFile(bookRef: BookRef, pageId: Long): Page
+    suspend fun makeSampleBookFile()
 
     suspend fun deleteBookActionCount(bookRef: BookRef)
     suspend fun incrementActionCount(bookRef: BookRef, actionId: Long)

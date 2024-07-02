@@ -24,6 +24,10 @@ class BookLocalRepositoryImpl @Inject constructor(
         return content.pages.first { it.id == pageId }
     }
 
+    override suspend fun makeSampleBookFile() {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteBookActionCount(bookRef: BookRef) {
         actionCountMap = mutableMapOf<Long, Int>()
     }
