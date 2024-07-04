@@ -6,29 +6,29 @@ import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.RelationOp
 
-data class Logic(val id: Long, val logics: List<PageLogic> = listOf())
+data class LogicModel(val id: Long, val logics: List<PageLogicModel> = listOf())
 
-data class PageLogic(
+data class PageLogicModel(
     val id: Long,
     val type: PageType = PageType.NORMAL,
     val title: String,
-    val selectors: List<Selector> = listOf()
+    val selectors: List<SelectorModel> = listOf()
 )
 
-data class Selector(
+data class SelectorModel(
     val id: Long,
     val text: String,
-    val showConditions: List<Condition> = listOf(),
-    val routes: List<Route> = listOf()
+    val showConditions: List<ConditionModel> = listOf(),
+    val routes: List<RouteModel> = listOf()
 )
 
-data class Route(
+data class RouteModel(
     val id: Long,
     val routePageId: Long,
-    val routeConditions: List<Condition> = listOf()
+    val routeConditions: List<ConditionModel> = listOf()
 )
 
-data class Condition(
+data class ConditionModel(
     val id: Long,
     val type: ConditionType,
     val selfViewsId: Long = COMPARE_ID_NOT_ASSIGNED,

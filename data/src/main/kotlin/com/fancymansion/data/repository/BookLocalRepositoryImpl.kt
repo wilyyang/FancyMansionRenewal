@@ -1,9 +1,12 @@
 package com.fancymansion.data.repository
 
 import com.fancymansion.core.common.const.BookRef
+import com.fancymansion.data.datasource.appStorage.book.model.asModel
+import com.fancymansion.data.datasource.appStorage.book.sample.content
+import com.fancymansion.data.datasource.appStorage.book.sample.logic
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
-import com.fancymansion.domain.model.book.Logic
-import com.fancymansion.domain.model.book.Page
+import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,15 +16,15 @@ class BookLocalRepositoryImpl @Inject constructor(
     // 임시
     private var actionCountMap = mutableMapOf<Long, Int>()
 
-    override suspend fun loadLogicFromFile(bookRef: BookRef): Logic {
-        return logic
+    override suspend fun loadLogicFromFile(bookRef: BookRef): LogicModel {
+        return logic.asModel()
     }
 
     override suspend fun loadPageFromFile(
         bookRef: BookRef,
         pageId: Long
-    ): Page {
-        return content.pages.first { it.id == pageId }
+    ): PageModel {
+        return content.pages.first { it.id == pageId }.asModel()
     }
 
     override suspend fun makeSampleBookFile() {

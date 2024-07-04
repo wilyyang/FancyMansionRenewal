@@ -5,7 +5,7 @@ import com.fancymansion.core.common.const.BookRef
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.presentation.base.BaseViewModel
-import com.fancymansion.domain.model.book.Logic
+import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ class ViewerContentViewModel @Inject constructor(
     private val useCaseBookLogic: UseCaseBookLogic,
 ) : BaseViewModel<ViewerContentContract.State, ViewerContentContract.Event, ViewerContentContract.Effect>() {
     private lateinit var bookRef : BookRef
-    private lateinit var logic : Logic
+    private lateinit var logic : LogicModel
 
     override fun setInitialState() = ViewerContentContract.State()
 

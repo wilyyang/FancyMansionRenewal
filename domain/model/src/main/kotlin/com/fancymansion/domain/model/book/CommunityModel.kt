@@ -1,6 +1,6 @@
 package com.fancymansion.domain.model.book
 
-data class Community(
+data class CommunityModel(
     val publishCode: String,
     val publishTime: Long,
     val updateTime: Long,

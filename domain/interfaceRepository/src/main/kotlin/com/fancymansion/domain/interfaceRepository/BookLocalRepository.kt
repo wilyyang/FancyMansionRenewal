@@ -1,13 +1,13 @@
 package com.fancymansion.domain.interfaceRepository
 
 import com.fancymansion.core.common.const.BookRef
-import com.fancymansion.domain.model.book.Logic
-import com.fancymansion.domain.model.book.Page
+import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageModel
 
 interface BookLocalRepository {
 
-    suspend fun loadLogicFromFile(bookRef: BookRef): Logic
-    suspend fun loadPageFromFile(bookRef: BookRef, pageId: Long): Page
+    suspend fun loadLogicFromFile(bookRef: BookRef): LogicModel
+    suspend fun loadPageFromFile(bookRef: BookRef, pageId: Long): PageModel
     suspend fun makeSampleBookFile()
 
     suspend fun deleteBookActionCount(bookRef: BookRef)

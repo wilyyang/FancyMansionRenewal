@@ -1,3 +1,3 @@
 package com.fancymansion.domain.model.book
 
-data class Keyword(val name: String)
+data class KeywordModel(val name: String)

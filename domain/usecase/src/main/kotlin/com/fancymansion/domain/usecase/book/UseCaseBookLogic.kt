@@ -5,10 +5,10 @@ import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
-import com.fancymansion.domain.model.book.Condition
-import com.fancymansion.domain.model.book.Logic
-import com.fancymansion.domain.model.book.Route
-import com.fancymansion.domain.model.book.Selector
+import com.fancymansion.domain.model.book.ConditionModel
+import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.RouteModel
+import com.fancymansion.domain.model.book.SelectorModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -26,9 +26,9 @@ class UseCaseBookLogic @Inject constructor(
 
     suspend fun getVisibleSelectors(
         bookRef: BookRef,
-        logic: Logic,
+        logic: LogicModel,
         pageId: Long
-    ): List<Selector> = withContext(dispatcher) {
+    ): List<SelectorModel> = withContext(dispatcher) {
         logic.logics.first { it.id == pageId }.selectors.let {selectors ->
             selectors.filter { selector -> checkConditions(bookRef = bookRef, conditions = selector.showConditions) }
         }
@@ -41,14 +41,14 @@ class UseCaseBookLogic @Inject constructor(
 
     suspend fun getNextRoutePageId(
         bookRef: BookRef,
-        routes: List<Route>
+        routes: List<RouteModel>
     ): Long = withContext(dispatcher) {
         routes.first { route -> checkConditions(bookRef = bookRef, conditions = route.routeConditions) }.routePageId
     }
 
     private suspend fun checkConditions(
         bookRef: BookRef,
-        conditions: List<Condition>
+        conditions: List<ConditionModel>
     ): Boolean {
         var result = true
         var logicalOp = LogicalOp.AND
@@ -67,7 +67,7 @@ class UseCaseBookLogic @Inject constructor(
 
     private suspend fun checkCondition(
         bookRef: BookRef,
-        condition: Condition
+        condition: ConditionModel
     ): Boolean {
         val selfCount = bookLocalRepository.getActionCount(bookRef, actionId = condition.selfViewsId)
         val targetCount = when (condition.type) {

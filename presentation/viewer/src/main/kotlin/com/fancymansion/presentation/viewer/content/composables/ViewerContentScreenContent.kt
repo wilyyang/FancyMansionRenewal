@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fancymansion.core.presentation.theme.ColorSet
-import com.fancymansion.domain.model.book.Source
+import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
 @Composable
@@ -64,7 +64,7 @@ fun ViewerContentScreenPageContent(
             }
             items(page.sources) {
                 when (it) {
-                    is Source.Text -> {
+                    is SourceModel.TextModel -> {
                         Text(
                             modifier = Modifier.padding(horizontal = 5.dp),
                             text = it.description,
@@ -72,7 +72,7 @@ fun ViewerContentScreenPageContent(
                         )
                     }
 
-                    is Source.Image -> {
+                    is SourceModel.ImageModel -> {
                         Image(
                             modifier = Modifier.fillMaxWidth(),
                             contentScale = ContentScale.FillWidth,
