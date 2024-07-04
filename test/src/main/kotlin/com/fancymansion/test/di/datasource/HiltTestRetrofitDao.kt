@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.fancymansion.data.datasource.network.source.dao.AuthRetrofitDao
 import com.fancymansion.data.datasource.network.source.di.HiltRetrofitDao
-import com.fancymansion.test.fake.datasource.AuthRetrofitDaoFake
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
