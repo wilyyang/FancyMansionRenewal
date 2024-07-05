@@ -3,8 +3,19 @@ package com.fancymansion.data.datasource.appStorage.book
 import android.content.Context
 import com.fancymansion.core.common.const.BookRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.log.Logger
+import com.fancymansion.data.datasource.appStorage.book.model.ConfigData
+import com.fancymansion.data.datasource.appStorage.book.model.LogicData
+import com.fancymansion.data.datasource.appStorage.book.model.PageData
+import com.fancymansion.data.datasource.appStorage.book.model.SourceData
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonSerializer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,7 +25,39 @@ class BookStorageSourceImpl @Inject internal constructor(
 ) : BookStorageSource {
     private val root : File = context.getExternalFilesDir(null)!!
 
-    suspend fun makeUserDir(userId: String) {
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(SourceData::class.java, JsonSerializer<SourceData> { src, _, context -> src?.toJson(context!!) })
+        .registerTypeAdapter(SourceData::class.java, JsonDeserializer { json, _, context -> SourceData.fromJson(json!!, context!!) })
+        .create()
+
+    private fun File.writeJson(data: Any) : Boolean {
+        if (exists()) {
+            delete()
+        }
+
+        return FileOutputStream(this).use { stream ->
+            stream.write(gson.toJson(data).toByteArray())
+            exists()
+        }
+    }
+
+    private fun File.readJson(clazz: Class<*>): Any {
+        Logger.e("${this.absolutePath} = ${this.exists()}")
+        return FileInputStream(this).bufferedReader().use { stream ->
+            gson.fromJson(stream.readText(), clazz)
+        }
+    }
+
+    private suspend fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
+        outputFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream, bufferSize = 1024)
+        }
+    }
+
+    /**
+     * Dir
+     */
+    override suspend fun makeUserDir(userId: String) {
         ReadMode.entries.forEach { mode ->
             File(root, BookPath.modePath(userId, mode)).let { edit ->
                 if(!edit.exists()){
@@ -24,151 +67,61 @@ class BookStorageSourceImpl @Inject internal constructor(
         }
     }
 
-    suspend fun deleteUserDir(userId: String) {
+    override suspend fun deleteUserDir(userId: String) {
         File(root, BookPath.userPath(userId)).deleteRecursively()
     }
 
-    suspend fun makeBookDir(bookRef: BookRef) {
+    override suspend fun makeBookDir(bookRef: BookRef) {
         root.mediaFile(bookRef).mkdirs()
-        root.contentFile(bookRef).mkdirs()
+        root.pagesFile(bookRef).mkdirs()
     }
 
-    suspend fun deleteBookDir(bookRef: BookRef) {
+    override suspend fun deleteBookDir(bookRef: BookRef) {
         root.bookFile(bookRef).deleteRecursively()
     }
 
-//
-//    /**
-//     * Config
-//     */
-//    suspend fun makeConfig(config : Config) = tryBooleanScope {
-//        fileConfig(root, config.userId, ReadMode.from(config.readMode), config.bookId)?.let {
-//            if (it.exists()) {
-//                it.delete()
-//            }
-//
-//            FileOutputStream(it).use { stream ->
-//                stream.write(Gson().toJson(config).toByteArray())
-//            }
-//            it.exists()
-//        } ?: false
-//    }
-//
-//    suspend fun getConfig(userId : String, readMode : ReadMode, bookId : String) : ConfigData? = tryNullableScope {
-//        fileConfig(root, userId, readMode, bookId)?.let {
-//            if (it.exists()) {
-//                val configJson = FileInputStream(it).bufferedReader().use { stream -> stream.readText() }
-//                Gson().fromJson(configJson, ConfigData::class.java)
-//            }else{
-//                null
-//            }
-//        }
-//    }
-//
-//    suspend fun makeLogicFile(logic : LogicData, userId : String, readMode : ReadMode, bookId : String) = tryBooleanScope {
-//        fileLogic(root, userId, readMode, bookId)?.let {
-//            if (it.exists()) {
-//                it.delete()
-//            }
-//
-//            FileOutputStream(it).use { stream ->
-//                stream.write(Gson().toJson(logic).toByteArray())
-//            }
-//            it.exists()
-//        } ?: false
-//    }
-//
-//    suspend fun makePageContentFile(pageContent : PageContentData, userId : String, readMode : ReadMode, bookId : String) = tryBooleanScope {
-//        filePage(root, userId, readMode, bookId, pageContent.pageId)?.let {
-//            if (it.exists()) {
-//                it.delete()
-//            }
-//
-//            FileOutputStream(it).use { stream ->
-//                stream.write(Gson().toJson(pageContent).toByteArray())
-//            }
-//            it.exists()
-//        } ?: false
-//    }
-//
-//    suspend fun makeCoverImageFileFromResource(
-//        userId : String, readMode : ReadMode, bookId : String, imageName : String, resourceId : Int
-//    ) {
-//        fileCover(root, userId, readMode, bookId, imageName)?.let { file ->
-//            val inputStream : InputStream = context.resources.openRawResource(resourceId)
-//            val outputStream = FileOutputStream(file)
-//            val buff = ByteArray(1024)
-//
-//            var read = 0
-//            try {
-//                while (inputStream.read(buff).also { read = it } > 0) {
-//                    outputStream.write(buff, 0, read)
-//                }
-//            } finally {
-//                inputStream.close()
-//                outputStream.close()
-//            }
-//        }
-//    }
-//
-//    suspend fun makeImageFileFromResource(userId : String, readMode : ReadMode, bookId : String, imageName : String, resourceId : Int) {
-//        fileMediaImage(root, userId, readMode, bookId, imageName)?.let { file ->
-//            val inputStream : InputStream = context.resources.openRawResource(resourceId)
-//            val outputStream = FileOutputStream(file)
-//            val buff = ByteArray(1024)
-//
-//            var read = 0
-//            try {
-//                while (inputStream.read(buff).also { read = it } > 0) {
-//                    outputStream.write(buff, 0, read)
-//                }
-//            } finally {
-//                inputStream.close()
-//                outputStream.close()
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Get Object
-//     */
-//    suspend fun getConfigFromFile(userId : String, readMode : ReadMode, bookId : String) : ConfigData? = tryNullableScope {
-//        fileConfig(root, userId, readMode, bookId)?.let {
-//            if (it.exists()) {
-//                val configJson = FileInputStream(it).bufferedReader().use { stream -> stream.readText() }
-//                Gson().fromJson(configJson, ConfigData::class.java)
-//            }else{
-//                null
-//            }
-//        }
-//    }
-//
-//    suspend fun getCoverImageFromFile(userId : String, readMode : ReadMode, bookId : String, image : String) : File? = tryNullableScope {
-//        fileCover(root, userId, readMode, bookId, image)
-//    }
-//
-//    suspend fun getLogicFromFile(userId : String, readMode : ReadMode, bookId : String) : LogicData? = tryNullableScope {
-//        fileLogic(root, userId, readMode, bookId)?.let {
-//            if (it.exists()) {
-//                val logicJson = FileInputStream(it).bufferedReader().use { stream -> stream.readText() }
-//                Gson().fromJson(logicJson, LogicData::class.java)
-//            }else{
-//                null
-//            }
-//        }
-//    }
-//    suspend fun getPageContentFromFile(userId : String, readMode : ReadMode, bookId : String, pageId : Long) : PageContentData? = tryNullableScope {
-//        filePage(root, userId, readMode, bookId, pageId)?.let {
-//            if (it.exists()) {
-//                val pageJson = FileInputStream(it).bufferedReader().use { stream -> stream.readText() }
-//                Gson().fromJson(pageJson, PageContentData::class.java)
-//            }else{
-//                null
-//            }
-//        }
-//    }
-//
-//    suspend fun getImageFromFile(userId : String, readMode : ReadMode, bookId : String, image : String) : File? = tryNullableScope {
-//        fileMediaImage(root, userId, readMode, bookId, image)
-//    }
+    /**
+     * File
+     */
+    override suspend fun makeConfig(bookRef: BookRef, config: ConfigData): Boolean =
+        root.configFile(bookRef).writeJson(config)
+
+    override suspend fun loadConfig(bookRef: BookRef): ConfigData =
+        root.configFile(bookRef).readJson(ConfigData::class.java) as ConfigData
+
+    override suspend fun makeLogic(bookRef: BookRef, logic: LogicData): Boolean =
+        root.logicFile(bookRef).writeJson(logic)
+
+    override suspend fun loadLogic(bookRef: BookRef): LogicData =
+        root.logicFile(bookRef).readJson(LogicData::class.java) as LogicData
+
+    override suspend fun makePage(bookRef: BookRef, pageId: String, page: PageData): Boolean =
+        root.pageFile(bookRef, pageId).writeJson(page)
+
+    override suspend fun loadPage(bookRef: BookRef, pageId: String): PageData =
+        root.pageFile(bookRef, pageId).readJson(PageData::class.java) as PageData
+
+    override suspend fun loadImage(bookRef: BookRef, imageName: String) : File = root.pageImageFile(bookRef, imageName)
+
+    override suspend fun loadCover(bookRef: BookRef, coverName: String) : File = root.coverFile(bookRef, coverName)
+
+    override suspend fun makeImageFromResource(
+        bookRef: BookRef,
+        imageName: String,
+        resourceId: Int
+    ) {
+        val inputStream = context.resources.openRawResource(resourceId)
+        val outputFile = root.pageImageFile(bookRef, imageName)
+        copyStreamToFile(inputStream, outputFile)
+    }
+
+    override suspend fun makeCoverFromResource(
+        bookRef: BookRef,
+        coverName: String,
+        resourceId: Int
+    ) {
+        val inputStream = context.resources.openRawResource(resourceId)
+        val outputFile = root.coverFile(bookRef, coverName)
+        copyStreamToFile(inputStream, outputFile)
+    }
 }

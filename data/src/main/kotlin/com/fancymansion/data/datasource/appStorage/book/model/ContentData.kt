@@ -3,16 +3,41 @@ package com.fancymansion.data.datasource.appStorage.book.model
 import com.fancymansion.domain.model.book.ContentModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.SourceModel
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonSerializationContext
 
 /**
  * Content
  */
-sealed class SourceData {
-    data class TextData(val description: String) : SourceData()
-//    data class Image(val filePath: String) : Source()
+sealed class SourceData(val type : String) {
+    data class TextData(val description: String) : SourceData("text")
+    data class ImageData(val imageName: String) : SourceData("image")
 
-    // 임시
-    data class ImageData(val resId: Int) : SourceData()
+    fun toJson(context: JsonSerializationContext): JsonElement {
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("type", type)
+        when (this) {
+            is TextData -> jsonObject.addProperty("description", description)
+            is ImageData -> jsonObject.addProperty("imageName", imageName)
+        }
+        return jsonObject
+    }
+
+    companion object {
+        fun fromJson(json: JsonElement, context: JsonDeserializationContext): SourceData {
+            if (!json.isJsonObject) {
+                throw IllegalArgumentException("Invalid JSON format for SourceData")
+            }
+            val jsonObject = json.asJsonObject
+            return when (val type = jsonObject.get("type").asString) {
+                "text" -> TextData(jsonObject.get("description").asString)
+                "image" -> ImageData(jsonObject.get("imageName").asString)
+                else -> throw IllegalArgumentException("Unknown SourceData type: $type")
+            }
+        }
+    }
 }
 
 data class PageData(
@@ -35,7 +60,7 @@ fun SourceData.asModel(): SourceModel =
 
         is SourceData.ImageData -> {
             SourceModel.ImageModel(
-                resId = resId
+                imageName = imageName
             )
         }
     }
@@ -50,7 +75,7 @@ fun SourceModel.asData(): SourceData =
 
         is SourceModel.ImageModel -> {
             SourceData.ImageData(
-                resId = resId
+                imageName = imageName
             )
         }
     }

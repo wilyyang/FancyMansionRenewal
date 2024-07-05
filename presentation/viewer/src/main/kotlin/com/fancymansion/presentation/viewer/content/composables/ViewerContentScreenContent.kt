@@ -18,11 +18,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.domain.model.book.SourceModel
+import com.fancymansion.presentation.viewer.content.SourceWrapper
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
 @Composable
@@ -64,7 +70,7 @@ fun ViewerContentScreenPageContent(
             }
             items(page.sources) {
                 when (it) {
-                    is SourceModel.TextModel -> {
+                    is SourceWrapper.TextWrapper -> {
                         Text(
                             modifier = Modifier.padding(horizontal = 5.dp),
                             text = it.description,
@@ -72,12 +78,15 @@ fun ViewerContentScreenPageContent(
                         )
                     }
 
-                    is SourceModel.ImageModel -> {
-                        Image(
+                    is SourceWrapper.ImageWrapper -> {
+                        Logger.e("${it.imageFile.absolutePath} : ${it.imageFile.exists()}")
+                        AsyncImage(
                             modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.FillWidth,
-                            painter = painterResource(id = it.resId),
-                            contentDescription = ""
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(it.imageFile)
+                                .build(),
+                            contentDescription = "",
+                            contentScale = ContentScale.FillWidth
                         )
                     }
                 }
@@ -95,7 +104,12 @@ fun ViewerContentScreenPageContent(
                         )
                         .background(color = ColorSet.sky_c1ebfe)
                         .clickable {
-                            onEventSent(ViewerContentContract.Event.OnClickSelector(page.id, selector.id))
+                            onEventSent(
+                                ViewerContentContract.Event.OnClickSelector(
+                                    page.id,
+                                    selector.id
+                                )
+                            )
                         }
                         .padding(horizontal = 15.dp, vertical = 10.dp)
                 ) {

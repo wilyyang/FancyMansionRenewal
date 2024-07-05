@@ -3,7 +3,7 @@ package com.fancymansion.domain.model.book
 import com.fancymansion.core.common.const.ReadMode
 
 data class ConfigModel(
-    val id: Long,
+    val id: String,
     val version: Long = 0L,
     val createTime: Long,
     val editTime: Long,

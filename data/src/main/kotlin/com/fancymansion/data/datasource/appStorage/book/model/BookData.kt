@@ -6,7 +6,7 @@ import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.IntroduceModel
 
 data class ConfigData(
-    val id: Long,
+    val id: String,
     val version: Long = 0L,
     val createTime: Long = System.currentTimeMillis(),
     val editTime: Long = System.currentTimeMillis(),

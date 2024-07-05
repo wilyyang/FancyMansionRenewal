@@ -2,6 +2,12 @@ package com.fancymansion.core.common.const
 
 import com.fancymansion.core.common.R
 
+val testBookRef = BookRef(
+    userId = "test_user_id",
+    mode = ReadMode.EDIT,
+    bookId = "test_book_id"
+)
+
 const val MOBILE_BASE_SCREEN_HEIGHT_PX = 1920
 const val MOBILE_BASE_SCREEN_WIDTH_PX = 1080
 const val MOBILE_BASE_SCREEN_DPI = 480

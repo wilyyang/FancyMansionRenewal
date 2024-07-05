@@ -5,10 +5,7 @@ package com.fancymansion.domain.model.book
  */
 sealed class SourceModel {
     data class TextModel(val description: String) : SourceModel()
-//    data class Image(val filePath: String) : Source()
-
-    // 임시
-    data class ImageModel(val resId: Int) : SourceModel()
+    data class ImageModel(val imageName: String) : SourceModel()
 }
 
 

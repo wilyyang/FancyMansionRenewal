@@ -7,6 +7,7 @@ import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 class UseCaseLoadBook @Inject constructor(
@@ -15,12 +16,16 @@ class UseCaseLoadBook @Inject constructor(
 ) {
     suspend fun loadLogic(bookRef: BookRef): LogicModel =
         withContext(dispatcher) {
-            bookLocalRepository.loadLogicFromFile(bookRef)
+            bookLocalRepository.loadLogic(bookRef)
         }
 
     suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel =
         withContext(dispatcher) {
-            bookLocalRepository.loadPageFromFile(bookRef, pageId)
+            bookLocalRepository.loadPage(bookRef, "$pageId")
+        }
 
+    suspend fun loadImage(bookRef: BookRef, imageName: String): File =
+        withContext(dispatcher) {
+            bookLocalRepository.loadImage(bookRef, imageName)
         }
 }

@@ -13,7 +13,7 @@ class BookPath {
         private const val CONFIG_JSON = "config.json"
         private const val LOGIC_JSON = "logic.json"
 
-        private fun pageJson(pageName: String) = "$pageName.json"
+        private fun pageJson(pageId: String) = "$pageId.json"
 
         fun booksPath() = BOOKS
         fun userPath(userId: String) = booksPath().joinPath(userId)
