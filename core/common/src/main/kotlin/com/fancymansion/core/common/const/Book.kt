@@ -21,7 +21,7 @@ enum class ReadMode {
  */
 
 const val ROUTE_PAGE_ID_NOT_ASSIGNED = -4000L
-const val COMPARE_ID_NOT_ASSIGNED = -4000L
+const val COMPARE_ACTION_ID_NOT_ASSIGNED = -4000L
 
 enum class PageType(
     val localizedName: StringValue.StringResource

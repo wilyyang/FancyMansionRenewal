@@ -29,13 +29,13 @@ class ViewerContentViewModel @Inject constructor(
         when (event) {
             is ViewerContentContract.Event.OnClickSelector -> {
                 launchWithLoading {
-                    useCaseBookLogic.incrementCount(bookRef, countId = event.selectorId)
+                    useCaseBookLogic.incrementActionCount(bookRef, countActionId = event.selectorId)
 
                     useCaseBookLogic.getNextRoutePageId(
                         bookRef,
                         routes = logic.logics.first { it.id == event.pageId }.selectors.first { it.id == event.selectorId }.routes
                     ).let { nextPageId ->
-                        useCaseBookLogic.incrementCount(bookRef, countId = nextPageId)
+                        useCaseBookLogic.incrementActionCount(bookRef, countActionId = nextPageId)
                         loadPageContent(nextPageId)
                     }
                 }
@@ -50,10 +50,10 @@ class ViewerContentViewModel @Inject constructor(
             useCaseMakeBook.makeSampleBook()
 
             logic = useCaseLoadBook.loadLogic(bookRef)
-            useCaseBookLogic.resetBookCount(bookRef)
+            useCaseBookLogic.deleteBookActionCount(bookRef)
 
             logic.logics.first { it.type == PageType.START }.id.let { pageId ->
-                useCaseBookLogic.incrementCount(bookRef, countId = pageId)
+                useCaseBookLogic.incrementActionCount(bookRef, countActionId = pageId)
                 loadPageContent(pageId)
             }
         }
@@ -80,7 +80,7 @@ class ViewerContentViewModel @Inject constructor(
 
         setState {
             copy(
-                pageState = PageState(page = pageWrapper),
+                pageWrapper = pageWrapper,
                 selectors = selectors
             )
         }

@@ -18,7 +18,7 @@ class UseCaseBookLogic @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
-    suspend fun resetBookCount(bookRef: BookRef) =
+    suspend fun deleteBookActionCount(bookRef: BookRef) =
         withContext(dispatcher)
         {
             bookLocalRepository.deleteBookActionCount(bookRef)
@@ -34,9 +34,9 @@ class UseCaseBookLogic @Inject constructor(
         }
     }
 
-    suspend fun incrementCount(bookRef: BookRef, countId: Long) =
+    suspend fun incrementActionCount(bookRef: BookRef, countActionId: Long) =
         withContext(dispatcher) {
-            bookLocalRepository.incrementActionCount(bookRef, countId)
+            bookLocalRepository.incrementActionCount(bookRef, countActionId)
         }
 
     suspend fun getNextRoutePageId(
@@ -69,16 +69,16 @@ class UseCaseBookLogic @Inject constructor(
         bookRef: BookRef,
         condition: ConditionModel
     ): Boolean {
-        val selfCount = bookLocalRepository.getActionCount(bookRef, actionId = condition.selfViewsId)
+        val selfActionCount = bookLocalRepository.getActionCount(bookRef, actionId = condition.selfActionId)
         val targetCount = when (condition.type) {
             ConditionType.COUNT -> {
                 condition.count
             }
 
             ConditionType.TARGET_VIEWS -> {
-                bookLocalRepository.getActionCount(bookRef, actionId = condition.targetViewsId)
+                bookLocalRepository.getActionCount(bookRef, actionId = condition.targetActionId)
             }
         }
-        return condition.relationOp.check(selfCount, targetCount)
+        return condition.relationOp.check(selfActionCount, targetCount)
     }
 }

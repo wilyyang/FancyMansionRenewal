@@ -42,7 +42,6 @@ class BookStorageSourceImpl @Inject internal constructor(
     }
 
     private fun File.readJson(clazz: Class<*>): Any {
-        Logger.e("${this.absolutePath} = ${this.exists()}")
         return FileInputStream(this).bufferedReader().use { stream ->
             gson.fromJson(stream.readText(), clazz)
         }
@@ -59,9 +58,9 @@ class BookStorageSourceImpl @Inject internal constructor(
      */
     override suspend fun makeUserDir(userId: String) {
         ReadMode.entries.forEach { mode ->
-            File(root, BookPath.modePath(userId, mode)).let { edit ->
-                if(!edit.exists()){
-                    edit.mkdirs()
+            File(root, BookPath.modePath(userId, mode)).let { modeDir ->
+                if(!modeDir.exists()){
+                    modeDir.mkdirs()
                 }
             }
         }

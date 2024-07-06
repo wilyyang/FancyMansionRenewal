@@ -1,6 +1,6 @@
 package com.fancymansion.data.datasource.appStorage.book.model
 
-import com.fancymansion.core.common.const.COMPARE_ID_NOT_ASSIGNED
+import com.fancymansion.core.common.const.COMPARE_ACTION_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.PageType
@@ -36,8 +36,8 @@ data class RouteData(
 data class ConditionData(
     val id: Long,
     val type: ConditionType,
-    val selfViewsId: Long = COMPARE_ID_NOT_ASSIGNED,
-    val targetViewsId: Long = COMPARE_ID_NOT_ASSIGNED,
+    val selfActionId: Long = COMPARE_ACTION_ID_NOT_ASSIGNED,
+    val targetActionId: Long = COMPARE_ACTION_ID_NOT_ASSIGNED,
     val count: Int = 0,
     val relationOp: RelationOp = RelationOp.EQUAL,
     val logicalOp: LogicalOp = LogicalOp.AND
@@ -96,8 +96,8 @@ fun RouteModel.asData() = RouteData(
 fun ConditionData.asModel() = ConditionModel(
     id = id,
     type = type,
-    selfViewsId = selfViewsId,
-    targetViewsId = targetViewsId,
+    selfActionId = selfActionId,
+    targetActionId = targetActionId,
     count = count,
     relationOp = relationOp,
     logicalOp = logicalOp
@@ -106,8 +106,8 @@ fun ConditionData.asModel() = ConditionModel(
 fun ConditionModel.asData() = ConditionData(
     id = id,
     type = type,
-    selfViewsId = selfViewsId,
-    targetViewsId = targetViewsId,
+    selfActionId = selfActionId,
+    targetActionId = targetActionId,
     count = count,
     relationOp = relationOp,
     logicalOp = logicalOp

@@ -2,10 +2,8 @@ package com.fancymansion.data.sample
 
 import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.const.testBookRef
-import com.fancymansion.data.R
 import com.fancymansion.domain.model.book.*
 
 
@@ -190,7 +188,7 @@ val logic5 : PageLogicModel = PageLogicModel(
                         ConditionModel(
                             id = 5_01_00_01_01L,
                             type = ConditionType.COUNT,
-                            selfViewsId = 5_01_00_00_00L,
+                            selfActionId = 5_01_00_00_00L,
                             count = 2,
                             relationOp = RelationOp.GREATER_THAN
                         )
@@ -220,7 +218,7 @@ val logic5 : PageLogicModel = PageLogicModel(
                 ConditionModel(
                     id = 5_03_01_00_00L,
                     type = ConditionType.COUNT,
-                    selfViewsId = 5_00_00_00_00L,
+                    selfActionId = 5_00_00_00_00L,
                     relationOp = RelationOp.EQUAL,
                     count = 3
                 )
@@ -329,7 +327,7 @@ val logic8 : PageLogicModel = PageLogicModel(
                         ConditionModel(
                             id = 8_01_00_01_01L,
                             type = ConditionType.COUNT,
-                            selfViewsId = 7_00_00_00_00L,
+                            selfActionId = 7_00_00_00_00L,
                             count = 1,
                             relationOp = RelationOp.EQUAL
                         )
@@ -342,7 +340,7 @@ val logic8 : PageLogicModel = PageLogicModel(
                         ConditionModel(
                             id = 8_01_00_02_01L,
                             type = ConditionType.COUNT,
-                            selfViewsId = 8_00_00_00_00L,
+                            selfActionId = 8_00_00_00_00L,
                             count = 3,
                             relationOp = RelationOp.GREATER_THAN
                         )

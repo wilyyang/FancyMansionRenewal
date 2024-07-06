@@ -3,9 +3,7 @@ package com.fancymansion.presentation.viewer.content
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
-import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.SelectorModel
-import com.fancymansion.domain.model.book.SourceModel
 import java.io.File
 
 class ViewerContentContract {
@@ -13,7 +11,11 @@ class ViewerContentContract {
         const val NAME = "viewer_content"
     }
 
-    data class State(val pageState: PageState = PageState(), val imageMap : Map<String, File> = mapOf(), val selectors: List<SelectorModel> = listOf()) : ViewState
+    data class State(
+        val pageWrapper: PageWrapper? = null,
+        val selectors: List<SelectorModel> = listOf()
+    ) : ViewState
+
     sealed class Event : ViewEvent {
         data class OnClickSelector(val pageId: Long, val selectorId: Long) : Event()
     }
@@ -23,9 +25,11 @@ class ViewerContentContract {
     }
 }
 
-data class PageState(
-    val page: PageWrapper? = null
-) {
+data class PageWrapper(
+    val id: Long,
+    val title: String,
+    val sources: List<SourceWrapper>
+){
     override fun equals(other: Any?): Boolean {
         return false
     }
@@ -34,12 +38,6 @@ data class PageState(
         return System.identityHashCode(this)
     }
 }
-
-data class PageWrapper(
-    val id: Long,
-    val title: String,
-    val sources: List<SourceWrapper>
-)
 
 sealed class SourceWrapper {
     data class TextWrapper(val description: String) : SourceWrapper()
