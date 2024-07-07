@@ -1,10 +1,11 @@
-package com.fancymansion.data.sample
+package com.fancymansion.domain.usecase.book.sample
 
 import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.const.testBookRef
 import com.fancymansion.domain.model.book.*
+import com.fancymansion.domain.usecase.R
 
 
 val page1 : PageModel = PageModel(
@@ -454,5 +455,46 @@ val config : ConfigModel = ConfigModel(
     introduce = IntroduceModel(),
     editor = EditorModel()
 )
+
+val sampleImageList = listOf(
+    "test_book_id_img_1.png" to R.drawable.test_book_id_img_1,
+    "test_book_id_img_2.png" to R.drawable.test_book_id_img_2,
+    "test_book_id_img_3.png" to R.drawable.test_book_id_img_3,
+    "test_book_id_img_4.png" to R.drawable.test_book_id_img_4,
+    "test_book_id_img_5.png" to R.drawable.test_book_id_img_5,
+    "test_book_id_img_6.png" to R.drawable.test_book_id_img_6,
+    "test_book_id_img_7.png" to R.drawable.test_book_id_img_7,
+    "test_book_id_img_8.png" to R.drawable.test_book_id_img_8,
+    "test_book_id_img_9.png" to R.drawable.test_book_id_img_9,
+    "test_book_id_img_10.png" to R.drawable.test_book_id_img_10,
+    "test_book_id_img_11.png" to R.drawable.test_book_id_img_11,
+    "test_book_id_img_12.png" to R.drawable.test_book_id_img_12,
+    "test_book_id_img_13.png" to R.drawable.test_book_id_img_13,
+    "test_book_id_img_14.png" to R.drawable.test_book_id_img_14,
+    "test_book_id_img_15.png" to R.drawable.test_book_id_img_15,
+    "test_book_id_img_16.png" to R.drawable.test_book_id_img_16,
+    "test_book_id_img_17.png" to R.drawable.test_book_id_img_17,
+    "test_book_id_img_18.png" to R.drawable.test_book_id_img_18,
+    "test_book_id_img_19.png" to R.drawable.test_book_id_img_19,
+    "test_book_id_img_20.png" to R.drawable.test_book_id_img_20,
+    "test_book_id_img_21.png" to R.drawable.test_book_id_img_21,
+    "test_book_id_img_22.png" to R.drawable.test_book_id_img_22,
+    "test_book_id_img_23.png" to R.drawable.test_book_id_img_23,
+    "test_book_id_img_24.png" to R.drawable.test_book_id_img_24,
+    "test_book_id_img_25.png" to R.drawable.test_book_id_img_25,
+    "test_book_id_img_26.png" to R.drawable.test_book_id_img_26,
+    "test_book_id_img_27.png" to R.drawable.test_book_id_img_27,
+    "test_book_id_img_28.png" to R.drawable.test_book_id_img_28,
+    "test_book_id_img_29.png" to R.drawable.test_book_id_img_29,
+    "test_book_id_img_30.png" to R.drawable.test_book_id_img_30,
+    "test_book_id_img_31.png" to R.drawable.test_book_id_img_31,
+    "test_book_id_img_32.png" to R.drawable.test_book_id_img_32,
+    "test_book_id_img_33.png" to R.drawable.test_book_id_img_33,
+    "test_book_id_img_34.png" to R.drawable.test_book_id_img_34,
+    "test_book_id_img_35.png" to R.drawable.test_book_id_img_35,
+    "test_book_id_img_36.png" to R.drawable.test_book_id_img_36,
+    "test_book_id_img_37.png" to R.drawable.test_book_id_img_37,
+)
+
 val content : ContentModel = ContentModel(pages = listOf(page1, page2, page3, page4, page5, page6, page7, page8, page9, page10, page11))
 val logic : LogicModel = LogicModel(id = 1L, logics = listOf(logic1, logic2, logic3, logic4, logic5, logic6, logic7, logic8, logic9, logic10, logic11))
