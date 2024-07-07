@@ -6,6 +6,7 @@ import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
+import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
 import com.fancymansion.data.sample.config
 import com.fancymansion.data.sample.content
 import com.fancymansion.data.sample.logic
@@ -19,7 +20,8 @@ import javax.inject.Singleton
 
 @Singleton
 class BookLocalRepositoryImpl @Inject constructor(
-    private val bookStorageSource: BookStorageSource
+    private val bookStorageSource: BookStorageSource,
+    private val bookDatabaseDao: BookDatabaseDao
 ) : BookLocalRepository {
 
     /**
@@ -80,26 +82,20 @@ class BookLocalRepositoryImpl @Inject constructor(
     /**
      * Database
      */
-    // 임시
-    private var actionCountMap = mutableMapOf<Long, Int>()
 
-    override suspend fun deleteBookActionCount(bookRef: BookRef) {
-        actionCountMap = mutableMapOf<Long, Int>()
+    override suspend fun deleteActionCountByBook(bookRef: BookRef) {
+        bookDatabaseDao.deleteActionCountByBook(bookRef.userId, bookRef.mode.name, bookRef.bookId)
     }
 
-    override suspend fun incrementActionCount(
-        bookRef: BookRef,
-        actionId: Long
-    ) {
-        if (actionCountMap[actionId] != null) {
-            actionCountMap[actionId] = actionCountMap[actionId]!! + 1
-        } else {
-            actionCountMap[actionId] = 1
-        }
+    override suspend fun updateActionCount(bookRef: BookRef, actionId: Long, newCount : Int){
+        bookDatabaseDao.updateActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId", newCount)
+    }
+    override suspend fun insertActionCount(bookRef: BookRef, actionId: Long){
+        bookDatabaseDao.insertActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId")
     }
 
-    override suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int {
-        return actionCountMap[actionId] ?: 0
+    override suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int? {
+        return bookDatabaseDao.getActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId")
     }
 
 

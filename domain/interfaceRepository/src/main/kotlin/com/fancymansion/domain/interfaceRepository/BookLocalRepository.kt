@@ -21,9 +21,10 @@ interface BookLocalRepository {
     suspend fun loadImage(bookRef: BookRef, imageName: String) : File
     suspend fun loadCover(bookRef: BookRef, coverName: String) : File
 
-    suspend fun deleteBookActionCount(bookRef: BookRef)
-    suspend fun incrementActionCount(bookRef: BookRef, actionId: Long)
-    suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int
+    suspend fun deleteActionCountByBook(bookRef: BookRef)
+    suspend fun updateActionCount(bookRef: BookRef, actionId: Long, newCount : Int)
+    suspend fun insertActionCount(bookRef: BookRef, actionId: Long)
+    suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int?
 
     suspend fun makeSampleBookFile()
 }

@@ -1,4 +1,4 @@
-package com.fancymansion.data.datasource.database.base
+package com.fancymansion.data.datasource.database.source.log
 
 import android.content.Context
 import androidx.room.Database

@@ -1,16 +1,25 @@
 package com.fancymansion.data.datasource.database.source.log.di
 
-import com.fancymansion.data.datasource.database.base.LogDatabaseHelper
+import android.content.Context
+import com.fancymansion.data.datasource.database.source.log.LogDatabaseHelper
 import com.fancymansion.data.datasource.database.source.log.dao.LogDatabaseDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class HiltLogDatabaseDao {
+class HiltLogDatabase {
+    @Singleton
+    @Provides
+    fun provideLogDatabaseHelper(
+        @ApplicationContext context : Context
+    ) = LogDatabaseHelper.getDataBase(context, CoroutineScope(SupervisorJob()))
 
     @Singleton
     @Provides

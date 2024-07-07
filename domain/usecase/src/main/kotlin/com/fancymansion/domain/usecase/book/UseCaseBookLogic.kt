@@ -21,7 +21,7 @@ class UseCaseBookLogic @Inject constructor(
     suspend fun deleteBookActionCount(bookRef: BookRef) =
         withContext(dispatcher)
         {
-            bookLocalRepository.deleteBookActionCount(bookRef)
+            bookLocalRepository.deleteActionCountByBook(bookRef)
         }
 
     suspend fun getVisibleSelectors(
@@ -34,9 +34,15 @@ class UseCaseBookLogic @Inject constructor(
         }
     }
 
-    suspend fun incrementActionCount(bookRef: BookRef, countActionId: Long) =
+    suspend fun incrementActionCount(bookRef: BookRef, actionId: Long) =
         withContext(dispatcher) {
-            bookLocalRepository.incrementActionCount(bookRef, countActionId)
+            val count = bookLocalRepository.getActionCount(bookRef, actionId)
+
+            if(count != null){
+                bookLocalRepository.updateActionCount(bookRef, actionId, count + 1)
+            }else{
+                bookLocalRepository.insertActionCount(bookRef, actionId)
+            }
         }
 
     suspend fun getNextRoutePageId(
@@ -69,7 +75,7 @@ class UseCaseBookLogic @Inject constructor(
         bookRef: BookRef,
         condition: ConditionModel
     ): Boolean {
-        val selfActionCount = bookLocalRepository.getActionCount(bookRef, actionId = condition.selfActionId)
+        val selfActionCount = bookLocalRepository.getActionCount(bookRef, actionId = condition.selfActionId)?:0
         val targetCount = when (condition.type) {
             ConditionType.COUNT -> {
                 condition.count
@@ -78,7 +84,7 @@ class UseCaseBookLogic @Inject constructor(
             ConditionType.TARGET_VIEWS -> {
                 bookLocalRepository.getActionCount(bookRef, actionId = condition.targetActionId)
             }
-        }
+        }?:0
         return condition.relationOp.check(selfActionCount, targetCount)
     }
 }
