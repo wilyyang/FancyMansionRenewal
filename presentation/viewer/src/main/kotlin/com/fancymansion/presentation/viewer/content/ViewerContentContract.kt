@@ -17,6 +17,8 @@ class ViewerContentContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
+        data class OnConfirmMoveSaveDialog(val pageId: Long) : Event()
+        data object OnCancelMoveSaveDialog : Event()
         data class OnClickSelector(val pageId: Long, val selectorId: Long) : Event()
     }
 

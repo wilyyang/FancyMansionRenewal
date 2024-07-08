@@ -3,13 +3,17 @@ package com.fancymansion.presentation.viewer.content
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.BookRef
 import com.fancymansion.core.common.const.PageType
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.testBookRef
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.presentation.viewer.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -27,35 +31,81 @@ class ViewerContentViewModel @Inject constructor(
 
     override fun handleEvents(event: ViewerContentContract.Event) {
         when (event) {
+            is ViewerContentContract.Event.OnConfirmMoveSaveDialog -> {
+                launchWithLoading {
+                    loadPageContent(event.pageId)
+                }
+            }
+
+            is ViewerContentContract.Event.OnCancelMoveSaveDialog -> {
+                launchWithLoading {
+                    initializeAndLoadStartPage()
+                }
+            }
+
             is ViewerContentContract.Event.OnClickSelector -> {
                 launchWithLoading {
-                    useCaseBookLogic.incrementActionCount(bookRef, actionId = event.selectorId)
-
-                    useCaseBookLogic.getNextRoutePageId(
-                        bookRef,
-                        routes = logic.logics.first { it.id == event.pageId }.selectors.first { it.id == event.selectorId }.routes
-                    ).let { nextPageId ->
-                        useCaseBookLogic.incrementActionCount(bookRef, actionId = nextPageId)
-                        loadPageContent(nextPageId)
-                    }
+                    handleSelectorClick(pageId = event.pageId, selectorId = event.selectorId)
                 }
             }
         }
     }
 
     init {
-        launchWithLoading {
+        launchWithLoading(endLoadState = null) {
             bookRef = testBookRef
-
             useCaseMakeBook.makeSampleBook()
-
             logic = useCaseLoadBook.loadLogic(bookRef)
-            useCaseBookLogic.deleteBookActionCount(bookRef)
 
-            logic.logics.first { it.type == PageType.START }.id.let { pageId ->
-                useCaseBookLogic.incrementActionCount(bookRef, actionId = pageId)
-                loadPageContent(pageId)
+            when(bookRef.mode){
+                ReadMode.EDIT -> {
+                    initializeAndLoadStartPage()
+                    setLoadStateIdle()
+                }
+
+                ReadMode.READ -> {
+                    useCaseBookLogic.getReadingProgressPageId(bookRef).let { saveId ->
+                        if (saveId.isNullOrBlank()) {
+                            initializeAndLoadStartPage()
+                            setLoadStateIdle()
+                        } else {
+                            setLoadState(LoadState.AlarmDialog(
+                                message = StringValue.StringResource(R.string.alarm_question_move_save_page),
+                                onConfirm = {
+                                    setEvent(ViewerContentContract.Event.OnConfirmMoveSaveDialog(saveId.toLong()))
+                                },
+                                onDismiss = {
+                                    setEvent(ViewerContentContract.Event.OnCancelMoveSaveDialog)
+                                }
+                            ))
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    private suspend fun handleSelectorClick(pageId : Long, selectorId : Long) {
+        useCaseBookLogic.incrementActionCount(bookRef, actionId = selectorId)
+
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(
+            bookRef,
+            routes = logic.logics
+                .first { it.id == pageId }
+                .selectors
+                .first { it.id == selectorId }
+                .routes
+        )
+        useCaseBookLogic.incrementActionCount(bookRef, actionId = nextPageId)
+        useCaseBookLogic.updateReadingProgressPageId(bookRef, pageId)
+        loadPageContent(nextPageId)
+    }
+
+    private suspend fun initializeAndLoadStartPage(){
+        useCaseBookLogic.resetBookData(bookRef)
+        logic.logics.first { it.type == PageType.START }.id.let { pageId ->
+            useCaseBookLogic.incrementActionCount(bookRef, actionId = pageId)
+            loadPageContent(pageId)
         }
     }
 

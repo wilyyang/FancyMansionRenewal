@@ -108,4 +108,20 @@ class BookLocalRepositoryImpl @Inject constructor(
     override suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int? {
         return bookDatabaseDao.getActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId")
     }
+
+    override suspend fun deleteReadingProgressByBook(bookRef: BookRef) {
+        bookDatabaseDao.deleteReadingProgressByBook(bookRef.userId, bookRef.mode.name, bookRef.bookId)
+    }
+
+    override suspend fun getReadingProgressPageId(bookRef: BookRef): String? {
+        return bookDatabaseDao.getReadingProgressPageId(bookRef.userId, bookRef.mode.name, bookRef.bookId)
+    }
+
+    override suspend fun insertReadingProgress(bookRef: BookRef, pageId: String) {
+        bookDatabaseDao.insertReadingProgress(bookRef.userId, bookRef.mode.name, bookRef.bookId, pageId)
+    }
+
+    override suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: String) {
+        bookDatabaseDao.updateReadingProgressPageId(bookRef.userId, bookRef.mode.name, bookRef.bookId, newPageId)
+    }
 }

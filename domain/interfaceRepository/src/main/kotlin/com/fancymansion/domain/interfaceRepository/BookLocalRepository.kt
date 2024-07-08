@@ -36,4 +36,9 @@ interface BookLocalRepository {
     suspend fun updateActionCount(bookRef: BookRef, actionId: Long, newCount : Int)
     suspend fun insertActionCount(bookRef: BookRef, actionId: Long)
     suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int?
+
+    suspend fun deleteReadingProgressByBook(bookRef: BookRef)
+    suspend fun getReadingProgressPageId(bookRef: BookRef): String?
+    suspend fun insertReadingProgress(bookRef: BookRef, pageId: String)
+    suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: String)
 }

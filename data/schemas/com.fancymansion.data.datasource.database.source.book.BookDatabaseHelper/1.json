@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "eb7e9d7a348bceca489e295cf508fd0f",
+    "identityHash": "bbf3997eefcb5d173b2e8c1dc514b7ff",
     "entities": [
       {
         "tableName": "ActionCountData",
@@ -50,12 +50,52 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "ReadingProgress",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `pageId` TEXT NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mode",
+            "columnName": "mode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pageId",
+            "columnName": "pageId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "userId",
+            "mode",
+            "bookId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'eb7e9d7a348bceca489e295cf508fd0f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bbf3997eefcb5d173b2e8c1dc514b7ff')"
     ]
   }
 }

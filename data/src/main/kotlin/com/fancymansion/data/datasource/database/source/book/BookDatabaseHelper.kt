@@ -7,13 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
 import com.fancymansion.data.datasource.database.source.book.model.ActionCountData
+import com.fancymansion.data.datasource.database.source.book.model.ReadingProgress
 import kotlinx.coroutines.CoroutineScope
 
 @Database(
     version = 1,
     exportSchema = true,
     entities = [
-        ActionCountData::class
+        ActionCountData::class,
+        ReadingProgress::class
     ]
 )
 abstract class BookDatabaseHelper : RoomDatabase() {

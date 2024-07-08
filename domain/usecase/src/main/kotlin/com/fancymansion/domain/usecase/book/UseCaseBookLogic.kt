@@ -18,10 +18,28 @@ class UseCaseBookLogic @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
-    suspend fun deleteBookActionCount(bookRef: BookRef) =
+    suspend fun resetBookData(bookRef: BookRef) =
         withContext(dispatcher)
         {
+            bookLocalRepository.deleteReadingProgressByBook(bookRef)
             bookLocalRepository.deleteActionCountByBook(bookRef)
+        }
+
+    suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: Long) =
+        withContext(dispatcher)
+        {
+            val beforePageId = bookLocalRepository.getReadingProgressPageId(bookRef)
+            if(beforePageId.isNullOrBlank()){
+                bookLocalRepository.insertReadingProgress(bookRef, "$newPageId")
+            }else{
+                bookLocalRepository.updateReadingProgressPageId(bookRef, "$newPageId")
+            }
+        }
+
+    suspend fun getReadingProgressPageId(bookRef: BookRef) =
+        withContext(dispatcher)
+        {
+            bookLocalRepository.getReadingProgressPageId(bookRef)
         }
 
     suspend fun getVisibleSelectors(

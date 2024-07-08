@@ -13,3 +13,14 @@ data class ActionCountData(
     val actionId: String,
     val count: Int
 )
+
+@Entity(
+    tableName = "ReadingProgress",
+    primaryKeys = ["userId", "mode", "bookId"]
+)
+data class ReadingProgress(
+    val userId: String,
+    val mode: String,
+    val bookId: String,
+    val pageId: String
+)
