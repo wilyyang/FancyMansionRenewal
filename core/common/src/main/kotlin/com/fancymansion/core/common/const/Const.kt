@@ -4,7 +4,7 @@ import com.fancymansion.core.common.R
 
 val testBookRef = BookRef(
     userId = "test_user_id",
-    mode = ReadMode.EDIT,
+    mode = ReadMode.READ,
     bookId = "test_book_id"
 )
 
