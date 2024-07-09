@@ -29,9 +29,9 @@ interface BookStorageSource {
 
     suspend fun loadLogic(bookRef: BookRef): LogicData
 
-    suspend fun makePage(bookRef: BookRef, pageId: String, page: PageData): Boolean
+    suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageData): Boolean
 
-    suspend fun loadPage(bookRef: BookRef, pageId: String): PageData
+    suspend fun loadPage(bookRef: BookRef, pageId: Long): PageData
 
     suspend fun loadImage(bookRef: BookRef, imageName: String) : File
 

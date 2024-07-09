@@ -21,7 +21,7 @@ class UseCaseLoadBook @Inject constructor(
 
     suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel =
         withContext(dispatcher) {
-            bookLocalRepository.loadPage(bookRef, "$pageId")
+            bookLocalRepository.loadPage(bookRef, pageId)
         }
 
     suspend fun loadImage(bookRef: BookRef, imageName: String): File =

@@ -29,10 +29,10 @@ class UseCaseBookLogic @Inject constructor(
         withContext(dispatcher)
         {
             val beforePageId = bookLocalRepository.getReadingProgressPageId(bookRef)
-            if(beforePageId.isNullOrBlank()){
-                bookLocalRepository.insertReadingProgress(bookRef, "$newPageId")
+            if(beforePageId == null){
+                bookLocalRepository.insertReadingProgress(bookRef, newPageId)
             }else{
-                bookLocalRepository.updateReadingProgressPageId(bookRef, "$newPageId")
+                bookLocalRepository.updateReadingProgressPageId(bookRef, newPageId)
             }
         }
 

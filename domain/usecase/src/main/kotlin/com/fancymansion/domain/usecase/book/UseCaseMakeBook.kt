@@ -23,7 +23,7 @@ class UseCaseMakeBook @Inject constructor(
             bookLocalRepository.makeLogic(testBookRef, logic)
 
             content.pages.forEach {
-                bookLocalRepository.makePage(testBookRef, "${it.id}", it)
+                bookLocalRepository.makePage(testBookRef, it.id, it)
             }
 
             sampleImageList.forEach {

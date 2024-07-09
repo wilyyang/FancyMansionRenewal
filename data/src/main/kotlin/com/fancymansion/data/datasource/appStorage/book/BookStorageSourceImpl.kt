@@ -94,10 +94,10 @@ class BookStorageSourceImpl @Inject internal constructor(
     override suspend fun loadLogic(bookRef: BookRef): LogicData =
         root.logicFile(bookRef).readJson(LogicData::class.java) as LogicData
 
-    override suspend fun makePage(bookRef: BookRef, pageId: String, page: PageData): Boolean =
+    override suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageData): Boolean =
         root.pageFile(bookRef, pageId).writeJson(page)
 
-    override suspend fun loadPage(bookRef: BookRef, pageId: String): PageData =
+    override suspend fun loadPage(bookRef: BookRef, pageId: Long): PageData =
         root.pageFile(bookRef, pageId).readJson(PageData::class.java) as PageData
 
     override suspend fun loadImage(bookRef: BookRef, imageName: String) : File = root.pageImageFile(bookRef, imageName)

@@ -87,11 +87,11 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.loadLogic(bookRef).asModel()
     }
 
-    override suspend fun makePage(bookRef: BookRef, pageId: String, page: PageModel): Boolean {
+    override suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageModel): Boolean {
         return bookStorageSource.makePage(bookRef, pageId, page.asData())
     }
 
-    override suspend fun loadPage(bookRef: BookRef, pageId: String): PageModel {
+    override suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel {
         return bookStorageSource.loadPage(bookRef, pageId).asModel()
     }
 
@@ -128,29 +128,29 @@ class BookLocalRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateActionCount(bookRef: BookRef, actionId: Long, newCount : Int){
-        bookDatabaseDao.updateActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId", newCount)
+        bookDatabaseDao.updateActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, actionId, newCount)
     }
     override suspend fun insertActionCount(bookRef: BookRef, actionId: Long){
-        bookDatabaseDao.insertActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId")
+        bookDatabaseDao.insertActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, actionId)
     }
 
     override suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int? {
-        return bookDatabaseDao.getActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, "$actionId")
+        return bookDatabaseDao.getActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, actionId)
     }
 
     override suspend fun deleteReadingProgressByBook(bookRef: BookRef) {
         bookDatabaseDao.deleteReadingProgressByBook(bookRef.userId, bookRef.mode.name, bookRef.bookId)
     }
 
-    override suspend fun getReadingProgressPageId(bookRef: BookRef): String? {
+    override suspend fun getReadingProgressPageId(bookRef: BookRef): Long? {
         return bookDatabaseDao.getReadingProgressPageId(bookRef.userId, bookRef.mode.name, bookRef.bookId)
     }
 
-    override suspend fun insertReadingProgress(bookRef: BookRef, pageId: String) {
+    override suspend fun insertReadingProgress(bookRef: BookRef, pageId: Long) {
         bookDatabaseDao.insertReadingProgress(bookRef.userId, bookRef.mode.name, bookRef.bookId, pageId)
     }
 
-    override suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: String) {
+    override suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: Long) {
         bookDatabaseDao.updateReadingProgressPageId(bookRef.userId, bookRef.mode.name, bookRef.bookId, newPageId)
     }
 }

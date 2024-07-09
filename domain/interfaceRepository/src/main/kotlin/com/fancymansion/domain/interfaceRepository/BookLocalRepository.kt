@@ -23,8 +23,8 @@ interface BookLocalRepository {
     suspend fun loadConfig(bookRef: BookRef): ConfigModel
     suspend fun makeLogic(bookRef: BookRef, logic: LogicModel): Boolean
     suspend fun loadLogic(bookRef: BookRef): LogicModel
-    suspend fun makePage(bookRef: BookRef, pageId: String, page: PageModel): Boolean
-    suspend fun loadPage(bookRef: BookRef, pageId: String): PageModel
+    suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageModel): Boolean
+    suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel
     suspend fun loadImage(bookRef: BookRef, imageName: String) : File
     suspend fun loadCover(bookRef: BookRef, coverName: String) : File
     suspend fun makeImageFromResource(
@@ -45,7 +45,7 @@ interface BookLocalRepository {
     suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int?
 
     suspend fun deleteReadingProgressByBook(bookRef: BookRef)
-    suspend fun getReadingProgressPageId(bookRef: BookRef): String?
-    suspend fun insertReadingProgress(bookRef: BookRef, pageId: String)
-    suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: String)
+    suspend fun getReadingProgressPageId(bookRef: BookRef): Long?
+    suspend fun insertReadingProgress(bookRef: BookRef, pageId: Long)
+    suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: Long)
 }

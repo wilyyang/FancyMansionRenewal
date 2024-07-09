@@ -120,14 +120,14 @@ class ViewerContentViewModel @Inject constructor(
 
                 ReadMode.READ -> {
                     useCaseBookLogic.getReadingProgressPageId(bookRef).let { saveId ->
-                        if (saveId.isNullOrBlank()) {
+                        if (saveId == null) {
                             initializeAndLoadStartPage()
                             setLoadStateIdle()
                         } else {
                             setLoadState(LoadState.AlarmDialog(
                                 message = StringValue.StringResource(R.string.alarm_question_move_save_page),
                                 onConfirm = {
-                                    setEvent(ViewerContentContract.Event.OnConfirmMoveSaveDialog(saveId.toLong()))
+                                    setEvent(ViewerContentContract.Event.OnConfirmMoveSaveDialog(saveId))
                                 },
                                 onDismiss = {
                                     setEvent(ViewerContentContract.Event.OnCancelMoveSaveDialog)

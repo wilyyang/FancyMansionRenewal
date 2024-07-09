@@ -10,7 +10,7 @@ data class ActionCountData(
     val userId: String,
     val mode: String,
     val bookId: String,
-    val actionId: String,
+    val actionId: Long,
     val count: Int
 )
 
@@ -22,5 +22,5 @@ data class ReadingProgress(
     val userId: String,
     val mode: String,
     val bookId: String,
-    val pageId: String
+    val pageId: Long
 )
