@@ -4,9 +4,16 @@ import com.fancymansion.core.common.const.BookRef
 import com.fancymansion.domain.model.book.ConfigModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.PageSettingModel
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface BookLocalRepository {
+    suspend fun getPageSetting(bookRef: BookRef): PageSettingModel?
+    fun getPageSettingFlow(bookRef: BookRef): Flow<PageSettingModel>
+    suspend fun savePageSetting(bookRef: BookRef, pageSetting: PageSettingModel)
+    suspend fun deletePageSetting(bookRef: BookRef)
+
     suspend fun makeUserDir(userId: String)
     suspend fun deleteUserDir(userId: String)
     suspend fun makeBookDir(bookRef: BookRef)

@@ -13,13 +13,17 @@ import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.domain.usecase.book.UseCasePageSetting
 import com.fancymansion.presentation.viewer.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ViewerContentViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val useCasePageSetting: UseCasePageSetting,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseBookLogic: UseCaseBookLogic,
     private val useCaseMakeBook: UseCaseMakeBook
@@ -48,12 +52,63 @@ class ViewerContentViewModel @Inject constructor(
                     handleSelectorClick(pageId = event.pageId, selectorId = event.selectorId)
                 }
             }
+
+            is ViewerContentContract.Event.ChangePageBackgroundColor -> {
+                launchWithException {
+                    val newPageContentSetting = uiState.value.pageSetting.pageContentSetting.copy(
+                        backgroundColor = event.color
+                    )
+                    val newPageSetting = uiState.value.pageSetting.copy(
+                        pageContentSetting = newPageContentSetting
+                    )
+
+                    useCasePageSetting.savePageSetting(bookRef = bookRef, pageSetting = newPageSetting)
+                }
+            }
+
+            is ViewerContentContract.Event.ChangeContentTextSize -> {
+                launchWithException {
+                    val newPageContentSetting = uiState.value.pageSetting.pageContentSetting.copy(
+                        textSize = event.textSize
+                    )
+                    val newPageSetting = uiState.value.pageSetting.copy(
+                        pageContentSetting = newPageContentSetting
+                    )
+
+                    useCasePageSetting.savePageSetting(bookRef = bookRef, pageSetting = newPageSetting)
+                }
+            }
+
+            is ViewerContentContract.Event.ChangeImageMargin -> {
+                launchWithException {
+                    val newPageContentSetting = uiState.value.pageSetting.pageContentSetting.copy(
+                        imageMarginHorizontal = event.margin
+                    )
+                    val newPageSetting = uiState.value.pageSetting.copy(
+                        pageContentSetting = newPageContentSetting
+                    )
+
+                    useCasePageSetting.savePageSetting(bookRef = bookRef, pageSetting = newPageSetting)
+                }
+            }
         }
     }
 
     init {
+        bookRef = testBookRef
+
+        scope.launch {
+            useCasePageSetting.getPageSettingFlow(bookRef).collectLatest {
+                setState {
+                    copy(
+                        pageSetting = it
+                    )
+                }
+            }
+        }
+
         launchWithLoading(endLoadState = null) {
-            bookRef = testBookRef
+
             useCaseMakeBook.makeSampleBook()
             logic = useCaseLoadBook.loadLogic(bookRef)
 

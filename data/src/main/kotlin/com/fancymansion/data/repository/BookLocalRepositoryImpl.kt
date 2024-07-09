@@ -9,6 +9,13 @@ import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ConfigModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.PageSettingModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,6 +25,28 @@ class BookLocalRepositoryImpl @Inject constructor(
     private val bookStorageSource: BookStorageSource,
     private val bookDatabaseDao: BookDatabaseDao
 ) : BookLocalRepository {
+
+    private var temp : PageSettingModel = PageSettingModel()
+    private val tempChannel : Channel<PageSettingModel> = Channel()
+
+    private val tempFlow = tempChannel.receiveAsFlow()
+
+    override suspend fun getPageSetting(bookRef: BookRef): PageSettingModel? {
+        return temp
+    }
+
+    override fun getPageSettingFlow(bookRef: BookRef): Flow<PageSettingModel> {
+        return tempFlow
+    }
+
+    override suspend fun savePageSetting(bookRef: BookRef, pageSetting: PageSettingModel) {
+        temp = pageSetting
+        tempChannel.send(temp)
+    }
+
+    override suspend fun deletePageSetting(bookRef: BookRef) {
+
+    }
 
     /**
      * Init

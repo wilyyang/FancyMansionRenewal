@@ -1,8 +1,13 @@
 package com.fancymansion.presentation.viewer.content
 
+import com.fancymansion.core.common.const.PageColor
+import com.fancymansion.core.common.const.PageMarginHorizontal
+import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
+import com.fancymansion.domain.model.book.ConfigModel
+import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
 import java.io.File
 
@@ -12,6 +17,7 @@ class ViewerContentContract {
     }
 
     data class State(
+        val pageSetting: PageSettingModel = PageSettingModel(),
         val pageWrapper: PageWrapper? = null,
         val selectors: List<SelectorModel> = listOf()
     ) : ViewState
@@ -20,6 +26,10 @@ class ViewerContentContract {
         data class OnConfirmMoveSaveDialog(val pageId: Long) : Event()
         data object OnCancelMoveSaveDialog : Event()
         data class OnClickSelector(val pageId: Long, val selectorId: Long) : Event()
+
+        data class ChangePageBackgroundColor(val color: PageColor) : Event()
+        data class ChangeContentTextSize(val textSize: PageTextSize) : Event()
+        data class ChangeImageMargin(val margin: PageMarginHorizontal) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
