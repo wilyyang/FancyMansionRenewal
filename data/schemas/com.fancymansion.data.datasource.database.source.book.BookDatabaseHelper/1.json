@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c07199a85997927e42c9bc1cf7800587",
+    "identityHash": "57766283916950ac1ee0276bca2bc2c8",
     "entities": [
       {
         "tableName": "ActionCountData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `actionId` INTEGER NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `actionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, `actionId` INTEGER NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `episodeId`, `actionId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -23,6 +23,12 @@
           {
             "fieldPath": "bookId",
             "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "episodeId",
+            "columnName": "episodeId",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -45,6 +51,7 @@
             "userId",
             "mode",
             "bookId",
+            "episodeId",
             "actionId"
           ]
         },
@@ -53,7 +60,7 @@
       },
       {
         "tableName": "ReadingProgress",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `pageId` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, `pageId` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `episodeId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -74,6 +81,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "episodeId",
+            "columnName": "episodeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "pageId",
             "columnName": "pageId",
             "affinity": "INTEGER",
@@ -85,7 +98,8 @@
           "columnNames": [
             "userId",
             "mode",
-            "bookId"
+            "bookId",
+            "episodeId"
           ]
         },
         "indices": [],
@@ -95,7 +109,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c07199a85997927e42c9bc1cf7800587')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '57766283916950ac1ee0276bca2bc2c8')"
     ]
   }
 }

@@ -6,7 +6,6 @@ import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
-import com.fancymansion.domain.model.book.ConfigModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
 import java.io.File
@@ -23,8 +22,8 @@ class ViewerContentContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
-        data class OnConfirmMoveSaveDialog(val pageId: Long) : Event()
-        data object OnCancelMoveSaveDialog : Event()
+        data class OnConfirmMoveSavePageDialog(val pageId: Long) : Event()
+        data object OnCancelMoveSavePageDialog : Event()
         data class OnClickSelector(val pageId: Long, val selectorId: Long) : Event()
 
         data class ChangePageBackgroundColor(val color: PageColor) : Event()

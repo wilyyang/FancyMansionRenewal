@@ -1,7 +1,9 @@
 package com.fancymansion.domain.interfaceRepository
 
-import com.fancymansion.core.common.const.BookRef
-import com.fancymansion.domain.model.book.ConfigModel
+import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.PageSettingModel
@@ -9,43 +11,58 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface BookLocalRepository {
-    suspend fun getPageSetting(bookRef: BookRef): PageSettingModel?
-    fun getPageSettingFlow(bookRef: BookRef): Flow<PageSettingModel>
-    suspend fun savePageSetting(bookRef: BookRef, pageSetting: PageSettingModel)
-    suspend fun deletePageSetting(bookRef: BookRef)
+    suspend fun getEpisodePageSetting(episodeRef: EpisodeRef): PageSettingModel?
+    fun getEpisodePageSettingFlow(episodeRef: EpisodeRef): Flow<PageSettingModel>
+    suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel)
+    suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef)
 
     suspend fun makeUserDir(userId: String)
     suspend fun deleteUserDir(userId: String)
-    suspend fun makeBookDir(bookRef: BookRef)
-    suspend fun deleteBookDir(bookRef: BookRef)
+    suspend fun makeBookDir(userId: String, mode : ReadMode, bookId : String)
+    suspend fun deleteBookDir(userId: String, mode : ReadMode, bookId : String)
+    suspend fun makeEpisodeDir(episodeRef: EpisodeRef)
+    suspend fun deleteEpisodeDir(episodeRef: EpisodeRef)
 
-    suspend fun makeConfig(bookRef: BookRef, config: ConfigModel): Boolean
-    suspend fun loadConfig(bookRef: BookRef): ConfigModel
-    suspend fun makeLogic(bookRef: BookRef, logic: LogicModel): Boolean
-    suspend fun loadLogic(bookRef: BookRef): LogicModel
-    suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageModel): Boolean
-    suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel
-    suspend fun loadImage(bookRef: BookRef, imageName: String) : File
-    suspend fun loadCover(bookRef: BookRef, coverName: String) : File
-    suspend fun makeImageFromResource(
-        bookRef: BookRef,
+    suspend fun makeBookInfo(userId: String, mode : ReadMode, bookId : String, bookInfo: BookInfoModel): Boolean
+    suspend fun loadBookInfo(userId: String, mode : ReadMode, bookId : String): BookInfoModel
+    suspend fun makeEpisodeInfo(episodeRef: EpisodeRef, episodeInfo: EpisodeInfoModel): Boolean
+    suspend fun loadEpisodeInfo(episodeRef: EpisodeRef): EpisodeInfoModel
+
+    suspend fun makeLogic(episodeRef: EpisodeRef, logic: LogicModel): Boolean
+    suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel
+    suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageModel): Boolean
+    suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel
+    suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String) : File
+    suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String) : File
+    suspend fun loadCoverImage(userId: String, mode : ReadMode, bookId : String, imageName: String) : File
+
+    suspend fun makePageImageFromResource(
+        episodeRef: EpisodeRef,
         imageName: String,
         resourceId: Int
     )
 
-    suspend fun makeCoverFromResource(
-        bookRef: BookRef,
-        coverName: String,
+    suspend fun makeEpisodeThumbnailFromResource(
+        episodeRef: EpisodeRef,
+        imageName: String,
         resourceId: Int
     )
 
-    suspend fun deleteActionCountByBook(bookRef: BookRef)
-    suspend fun updateActionCount(bookRef: BookRef, actionId: Long, newCount : Int)
-    suspend fun insertActionCount(bookRef: BookRef, actionId: Long)
-    suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int?
+    suspend fun makeCoverImageFromResource(
+        userId: String,
+        mode : ReadMode,
+        bookId : String,
+        imageName: String,
+        resourceId: Int
+    )
 
-    suspend fun deleteReadingProgressByBook(bookRef: BookRef)
-    suspend fun getReadingProgressPageId(bookRef: BookRef): Long?
-    suspend fun insertReadingProgress(bookRef: BookRef, pageId: Long)
-    suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: Long)
+    suspend fun deleteActionCountByEpisode(episodeRef: EpisodeRef)
+    suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: Long, newCount : Int)
+    suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: Long)
+    suspend fun getActionCount(episodeRef: EpisodeRef, actionId: Long) : Int?
+
+    suspend fun deleteReadingProgressByEpisode(episodeRef: EpisodeRef)
+    suspend fun getReadingProgressPageId(episodeRef: EpisodeRef): Long?
+    suspend fun insertReadingProgress(episodeRef: EpisodeRef, pageId: Long)
+    suspend fun updateReadingProgressPageId(episodeRef: EpisodeRef, newPageId: Long)
 }

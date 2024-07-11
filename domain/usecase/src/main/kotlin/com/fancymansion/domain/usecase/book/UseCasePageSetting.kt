@@ -1,6 +1,6 @@
 package com.fancymansion.domain.usecase.book
 
-import com.fancymansion.core.common.const.BookRef
+import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.PageSettingModel
@@ -13,23 +13,23 @@ class UseCasePageSetting @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
-    suspend fun getPageSetting(bookRef: BookRef) : PageSettingModel? =
+    suspend fun getEpisodePageSetting(episodeRef: EpisodeRef) : PageSettingModel? =
         withContext(dispatcher)
         {
-            bookLocalRepository.getPageSetting(bookRef)
+            bookLocalRepository.getEpisodePageSetting(episodeRef)
         }
 
-    fun getPageSettingFlow(bookRef: BookRef) : Flow<PageSettingModel> = bookLocalRepository.getPageSettingFlow(bookRef)
+    fun getEpisodePageSettingFlow(episodeRef: EpisodeRef) : Flow<PageSettingModel> = bookLocalRepository.getEpisodePageSettingFlow(episodeRef)
 
-    suspend fun savePageSetting(bookRef: BookRef, pageSetting: PageSettingModel) =
+    suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel) =
         withContext(dispatcher)
         {
-            bookLocalRepository.savePageSetting(bookRef, pageSetting)
+            bookLocalRepository.saveEpisodePageSetting(episodeRef, pageSetting)
         }
 
-    suspend fun deletePageSetting(bookRef: BookRef) =
+    suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef) =
         withContext(dispatcher)
         {
-            bookLocalRepository.deletePageSetting(bookRef)
+            bookLocalRepository.deleteEpisodePageSetting(episodeRef)
         }
 }

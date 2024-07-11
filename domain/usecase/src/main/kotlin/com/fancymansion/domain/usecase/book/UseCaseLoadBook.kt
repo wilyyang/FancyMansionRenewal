@@ -1,6 +1,6 @@
 package com.fancymansion.domain.usecase.book
 
-import com.fancymansion.core.common.const.BookRef
+import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.LogicModel
@@ -14,18 +14,18 @@ class UseCaseLoadBook @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
-    suspend fun loadLogic(bookRef: BookRef): LogicModel =
+    suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel =
         withContext(dispatcher) {
-            bookLocalRepository.loadLogic(bookRef)
+            bookLocalRepository.loadLogic(episodeRef)
         }
 
-    suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel =
+    suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel =
         withContext(dispatcher) {
-            bookLocalRepository.loadPage(bookRef, pageId)
+            bookLocalRepository.loadPage(episodeRef, pageId)
         }
 
-    suspend fun loadImage(bookRef: BookRef, imageName: String): File =
+    suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File =
         withContext(dispatcher) {
-            bookLocalRepository.loadImage(bookRef, imageName)
+            bookLocalRepository.loadPageImage(episodeRef, imageName)
         }
 }

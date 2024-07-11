@@ -1,10 +1,10 @@
 package com.fancymansion.data.datasource.appStorage.book
 
 import android.content.Context
-import com.fancymansion.core.common.const.BookRef
+import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.log.Logger
-import com.fancymansion.data.datasource.appStorage.book.model.ConfigData
+import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
 import com.fancymansion.data.datasource.appStorage.book.model.SourceData
@@ -70,57 +70,102 @@ class BookStorageSourceImpl @Inject internal constructor(
         File(root, BookPath.userPath(userId)).deleteRecursively()
     }
 
-    override suspend fun makeBookDir(bookRef: BookRef) {
-        root.mediaFile(bookRef).mkdirs()
-        root.pagesFile(bookRef).mkdirs()
+    override suspend fun makeBookDir(userId: String, mode: ReadMode, bookId: String) {
+        root.bookFile(userId, mode, bookId).mkdirs()
     }
 
-    override suspend fun deleteBookDir(bookRef: BookRef) {
-        root.bookFile(bookRef).deleteRecursively()
+    override suspend fun deleteBookDir(userId: String, mode: ReadMode, bookId: String) {
+        root.bookFile(userId, mode, bookId).deleteRecursively()
+    }
+
+    override suspend fun makeEpisodeDir(episodeRef: EpisodeRef) {
+        root.mediaFile(episodeRef).mkdirs()
+        root.pagesFile(episodeRef).mkdirs()
+    }
+
+    override suspend fun deleteEpisodeDir(episodeRef: EpisodeRef) {
+        root.episodeFile(episodeRef).deleteRecursively()
     }
 
     /**
      * File
      */
-    override suspend fun makeConfig(bookRef: BookRef, config: ConfigData): Boolean =
-        root.configFile(bookRef).writeJson(config)
+    override suspend fun makeBookInfo(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        bookInfo: BookInfoData
+    ): Boolean = root.bookInfoFile(userId, mode, bookId).writeJson(bookInfo)
 
-    override suspend fun loadConfig(bookRef: BookRef): ConfigData =
-        root.configFile(bookRef).readJson(ConfigData::class.java) as ConfigData
+    override suspend fun loadBookInfo(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookInfoData = root.bookInfoFile(userId, mode, bookId).readJson(BookInfoData::class.java) as BookInfoData
 
-    override suspend fun makeLogic(bookRef: BookRef, logic: LogicData): Boolean =
-        root.logicFile(bookRef).writeJson(logic)
+    override suspend fun makeEpisodeInfo(
+        episodeRef: EpisodeRef,
+        episodeInfo: EpisodeInfoData
+    ): Boolean = root.episodeInfoFile(episodeRef).writeJson(episodeInfo)
 
-    override suspend fun loadLogic(bookRef: BookRef): LogicData =
-        root.logicFile(bookRef).readJson(LogicData::class.java) as LogicData
+    override suspend fun loadEpisodeInfo(
+        episodeRef: EpisodeRef
+    ): EpisodeInfoData = root.episodeInfoFile(episodeRef).readJson(EpisodeInfoData::class.java) as EpisodeInfoData
 
-    override suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageData): Boolean =
-        root.pageFile(bookRef, pageId).writeJson(page)
+    override suspend fun makeLogic(episodeRef: EpisodeRef, logic: LogicData): Boolean =
+        root.logicFile(episodeRef).writeJson(logic)
 
-    override suspend fun loadPage(bookRef: BookRef, pageId: Long): PageData =
-        root.pageFile(bookRef, pageId).readJson(PageData::class.java) as PageData
+    override suspend fun loadLogic(episodeRef: EpisodeRef): LogicData =
+        root.logicFile(episodeRef).readJson(LogicData::class.java) as LogicData
 
-    override suspend fun loadImage(bookRef: BookRef, imageName: String) : File = root.pageImageFile(bookRef, imageName)
+    override suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageData): Boolean =
+        root.pageFile(episodeRef, pageId).writeJson(page)
 
-    override suspend fun loadCover(bookRef: BookRef, coverName: String) : File = root.coverFile(bookRef, coverName)
+    override suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageData =
+        root.pageFile(episodeRef, pageId).readJson(PageData::class.java) as PageData
 
-    override suspend fun makeImageFromResource(
-        bookRef: BookRef,
+    override suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File =
+        root.pageImageFile(episodeRef, imageName)
+
+    override suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String): File =
+        root.episodeThumbnailFile(episodeRef, imageName)
+
+    override suspend fun loadCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): File = root.coverFile(userId, mode, bookId, imageName)
+
+    override suspend fun makePageImageFromResource(
+        episodeRef: EpisodeRef,
         imageName: String,
         resourceId: Int
     ) {
         val inputStream = context.resources.openRawResource(resourceId)
-        val outputFile = root.pageImageFile(bookRef, imageName)
+        val outputFile = root.pageImageFile(episodeRef, imageName)
         copyStreamToFile(inputStream, outputFile)
     }
 
-    override suspend fun makeCoverFromResource(
-        bookRef: BookRef,
-        coverName: String,
+    override suspend fun makeEpisodeThumbnailFromResource(
+        episodeRef: EpisodeRef,
+        imageName: String,
         resourceId: Int
     ) {
         val inputStream = context.resources.openRawResource(resourceId)
-        val outputFile = root.coverFile(bookRef, coverName)
+        val outputFile = root.episodeThumbnailFile(episodeRef, imageName)
+        copyStreamToFile(inputStream, outputFile)
+    }
+
+    override suspend fun makeCoverImageFromResource(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        resourceId: Int
+    ) {
+        val inputStream = context.resources.openRawResource(resourceId)
+        val outputFile = root.coverFile(userId, mode, bookId, imageName)
         copyStreamToFile(inputStream, outputFile)
     }
 }

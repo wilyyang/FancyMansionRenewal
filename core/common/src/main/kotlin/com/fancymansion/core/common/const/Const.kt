@@ -2,10 +2,11 @@ package com.fancymansion.core.common.const
 
 import com.fancymansion.core.common.R
 
-val testBookRef = BookRef(
+val testEpisodeRef = EpisodeRef(
     userId = "test_user_id",
     mode = ReadMode.READ,
-    bookId = "test_book_id"
+    bookId = "test_book_id",
+    episodeId = "test_book_id_0"
 )
 
 const val MOBILE_BASE_SCREEN_HEIGHT_PX = 1920

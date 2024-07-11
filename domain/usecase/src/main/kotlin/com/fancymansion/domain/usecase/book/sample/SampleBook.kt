@@ -3,7 +3,7 @@ package com.fancymansion.domain.usecase.book.sample
 import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.RelationOp
-import com.fancymansion.core.common.const.testBookRef
+import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.domain.model.book.*
 import com.fancymansion.domain.usecase.R
 
@@ -447,13 +447,17 @@ val logic11 : PageLogicModel = PageLogicModel(
     selectors = listOf()
 )
 
-val config : ConfigModel = ConfigModel(
-    id = testBookRef.bookId,
-    createTime = 0L,
-    editTime = 0L,
+val bookInfo : BookInfoModel = BookInfoModel(
+    id = testEpisodeRef.bookId,
 
     introduce = IntroduceModel(),
     editor = EditorModel()
+)
+
+val episodeInfo : EpisodeInfoModel = EpisodeInfoModel(
+    id = testEpisodeRef.episodeId,
+    bookId = testEpisodeRef.bookId,
+    title = "제 1화"
 )
 
 val sampleImageList = listOf(

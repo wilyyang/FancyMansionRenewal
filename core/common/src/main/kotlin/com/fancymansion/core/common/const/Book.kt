@@ -55,10 +55,11 @@ enum class PageMarginHorizontal(val dpSize: Float) {
 /**
  * Book
  */
-data class BookRef(
+data class EpisodeRef(
     val userId: String,
     val mode: ReadMode,
-    val bookId: String
+    val bookId: String,
+    val episodeId: String
 )
 
 enum class ReadMode {

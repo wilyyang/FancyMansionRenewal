@@ -1,21 +1,20 @@
 package com.fancymansion.data.repository
 
-import com.fancymansion.core.common.const.BookRef
+import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
-import com.fancymansion.domain.model.book.ConfigModel
+import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.shareIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,21 +30,21 @@ class BookLocalRepositoryImpl @Inject constructor(
 
     private val tempFlow = tempChannel.receiveAsFlow()
 
-    override suspend fun getPageSetting(bookRef: BookRef): PageSettingModel? {
+    override suspend fun getEpisodePageSetting(episodeRef: EpisodeRef): PageSettingModel? {
         return temp
     }
 
-    override fun getPageSettingFlow(bookRef: BookRef): Flow<PageSettingModel> {
+    override fun getEpisodePageSettingFlow(episodeRef: EpisodeRef): Flow<PageSettingModel> {
         return tempFlow
     }
 
-    override suspend fun savePageSetting(bookRef: BookRef, pageSetting: PageSettingModel) {
+    override suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel) {
         temp = pageSetting
         tempChannel.send(temp)
     }
 
-    override suspend fun deletePageSetting(bookRef: BookRef) {
-
+    override suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef) {
+        // TODO
     }
 
     /**
@@ -59,98 +58,144 @@ class BookLocalRepositoryImpl @Inject constructor(
         bookStorageSource.deleteUserDir(userId)
     }
 
-    override suspend fun makeBookDir(bookRef: BookRef) {
-        bookStorageSource.makeBookDir(bookRef)
+    override suspend fun makeBookDir(userId: String, mode: ReadMode, bookId: String) {
+        bookStorageSource.makeBookDir(userId, mode, bookId)
     }
 
-    override suspend fun deleteBookDir(bookRef: BookRef) {
-        bookStorageSource.deleteBookDir(bookRef)
+    override suspend fun deleteBookDir(userId: String, mode: ReadMode, bookId: String) {
+        bookStorageSource.deleteBookDir(userId, mode, bookId)
     }
 
+    override suspend fun makeEpisodeDir(episodeRef: EpisodeRef) {
+        bookStorageSource.makeEpisodeDir(episodeRef)
+    }
+
+    override suspend fun deleteEpisodeDir(episodeRef: EpisodeRef) {
+        bookStorageSource.deleteEpisodeDir(episodeRef)
+    }
 
     /**
      * File
      */
-    override suspend fun makeConfig(bookRef: BookRef, config: ConfigModel): Boolean {
-        return bookStorageSource.makeConfig(bookRef, config.asData())
+    override suspend fun makeBookInfo(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        bookInfo: BookInfoModel
+    ): Boolean {
+        return bookStorageSource.makeBookInfo(userId, mode, bookId, bookInfo.asData())
     }
 
-    override suspend fun loadConfig(bookRef: BookRef): ConfigModel {
-        return bookStorageSource.loadConfig(bookRef).asModel()
+    override suspend fun loadBookInfo(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookInfoModel {
+        return bookStorageSource.loadBookInfo(userId, mode, bookId).asModel()
     }
 
-    override suspend fun makeLogic(bookRef: BookRef, logic: LogicModel): Boolean {
-        return bookStorageSource.makeLogic(bookRef, logic.asData())
+    override suspend fun makeEpisodeInfo(
+        episodeRef: EpisodeRef,
+        episodeInfo: EpisodeInfoModel
+    ): Boolean {
+        return bookStorageSource.makeEpisodeInfo(episodeRef, episodeInfo.asData())
     }
 
-    override suspend fun loadLogic(bookRef: BookRef): LogicModel {
-        return bookStorageSource.loadLogic(bookRef).asModel()
+    override suspend fun loadEpisodeInfo(episodeRef: EpisodeRef): EpisodeInfoModel {
+        return bookStorageSource.loadEpisodeInfo(episodeRef).asModel()
     }
 
-    override suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageModel): Boolean {
-        return bookStorageSource.makePage(bookRef, pageId, page.asData())
+    override suspend fun makeLogic(episodeRef: EpisodeRef, logic: LogicModel): Boolean {
+        return bookStorageSource.makeLogic(episodeRef, logic.asData())
     }
 
-    override suspend fun loadPage(bookRef: BookRef, pageId: Long): PageModel {
-        return bookStorageSource.loadPage(bookRef, pageId).asModel()
+    override suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel {
+        return bookStorageSource.loadLogic(episodeRef).asModel()
     }
 
-    override suspend fun loadImage(bookRef: BookRef, imageName: String): File {
-        return bookStorageSource.loadImage(bookRef, imageName)
+    override suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageModel): Boolean {
+        return bookStorageSource.makePage(episodeRef, pageId, page.asData())
     }
 
-    override suspend fun loadCover(bookRef: BookRef, coverName: String): File {
-        return bookStorageSource.loadCover(bookRef, coverName)
+    override suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel {
+        return bookStorageSource.loadPage(episodeRef, pageId).asModel()
     }
 
-    override suspend fun makeImageFromResource(
-        bookRef: BookRef,
+    override suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File {
+        return bookStorageSource.loadPageImage(episodeRef, imageName)
+    }
+
+    override suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String): File {
+        return bookStorageSource.loadEpisodeThumbnail(episodeRef, imageName)
+    }
+
+    override suspend fun loadCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): File {
+        return bookStorageSource.loadCoverImage(userId, mode, bookId, imageName)
+    }
+
+    override suspend fun makePageImageFromResource(
+        episodeRef: EpisodeRef,
         imageName: String,
         resourceId: Int
     ){
-        bookStorageSource.makeImageFromResource(bookRef, imageName, resourceId)
+        return bookStorageSource.makePageImageFromResource(episodeRef, imageName, resourceId)
     }
 
-    override suspend fun makeCoverFromResource(
-        bookRef: BookRef,
-        coverName: String,
+    override suspend fun makeEpisodeThumbnailFromResource(
+        episodeRef: EpisodeRef,
+        imageName: String,
         resourceId: Int
-    ){
-        bookStorageSource.makeCoverFromResource(bookRef, coverName, resourceId)
+    ) {
+        return bookStorageSource.makeEpisodeThumbnailFromResource(episodeRef, imageName, resourceId)
+    }
+
+    override suspend fun makeCoverImageFromResource(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        resourceId: Int
+    ) {
+        return bookStorageSource.makeCoverImageFromResource(userId, mode, bookId, imageName, resourceId)
     }
 
     /**
      * Database
      */
 
-    override suspend fun deleteActionCountByBook(bookRef: BookRef) {
-        bookDatabaseDao.deleteActionCountByBook(bookRef.userId, bookRef.mode.name, bookRef.bookId)
+    override suspend fun deleteActionCountByEpisode(episodeRef: EpisodeRef) {
+        bookDatabaseDao.deleteActionCountByEpisode(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
 
-    override suspend fun updateActionCount(bookRef: BookRef, actionId: Long, newCount : Int){
-        bookDatabaseDao.updateActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, actionId, newCount)
+    override suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: Long, newCount : Int){
+        bookDatabaseDao.updateActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId, newCount)
     }
-    override suspend fun insertActionCount(bookRef: BookRef, actionId: Long){
-        bookDatabaseDao.insertActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, actionId)
-    }
-
-    override suspend fun getActionCount(bookRef: BookRef, actionId: Long) : Int? {
-        return bookDatabaseDao.getActionCount(bookRef.userId, bookRef.mode.name, bookRef.bookId, actionId)
+    override suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: Long){
+        bookDatabaseDao.insertActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId)
     }
 
-    override suspend fun deleteReadingProgressByBook(bookRef: BookRef) {
-        bookDatabaseDao.deleteReadingProgressByBook(bookRef.userId, bookRef.mode.name, bookRef.bookId)
+    override suspend fun getActionCount(episodeRef: EpisodeRef, actionId: Long) : Int? {
+        return bookDatabaseDao.getActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId)
     }
 
-    override suspend fun getReadingProgressPageId(bookRef: BookRef): Long? {
-        return bookDatabaseDao.getReadingProgressPageId(bookRef.userId, bookRef.mode.name, bookRef.bookId)
+    override suspend fun deleteReadingProgressByEpisode(episodeRef: EpisodeRef) {
+        bookDatabaseDao.deleteReadingProgressByEpisode(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
 
-    override suspend fun insertReadingProgress(bookRef: BookRef, pageId: Long) {
-        bookDatabaseDao.insertReadingProgress(bookRef.userId, bookRef.mode.name, bookRef.bookId, pageId)
+    override suspend fun getReadingProgressPageId(episodeRef: EpisodeRef): Long? {
+        return bookDatabaseDao.getReadingProgressPageId(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
 
-    override suspend fun updateReadingProgressPageId(bookRef: BookRef, newPageId: Long) {
-        bookDatabaseDao.updateReadingProgressPageId(bookRef.userId, bookRef.mode.name, bookRef.bookId, newPageId)
+    override suspend fun insertReadingProgress(episodeRef: EpisodeRef, pageId: Long) {
+        bookDatabaseDao.insertReadingProgress(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, pageId)
+    }
+
+    override suspend fun updateReadingProgressPageId(episodeRef: EpisodeRef, newPageId: Long) {
+        bookDatabaseDao.updateReadingProgressPageId(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, newPageId)
     }
 }

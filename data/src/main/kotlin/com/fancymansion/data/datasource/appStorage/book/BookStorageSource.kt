@@ -1,7 +1,9 @@
 package com.fancymansion.data.datasource.appStorage.book
 
-import com.fancymansion.core.common.const.BookRef
-import com.fancymansion.data.datasource.appStorage.book.model.ConfigData
+import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
 import java.io.File
@@ -14,38 +16,64 @@ interface BookStorageSource {
 
     suspend fun deleteUserDir(userId: String)
 
-    suspend fun makeBookDir(bookRef: BookRef)
+    suspend fun makeBookDir(userId: String, mode: ReadMode, bookId: String)
 
-    suspend fun deleteBookDir(bookRef: BookRef)
+    suspend fun deleteBookDir(userId: String, mode: ReadMode, bookId: String)
+
+    suspend fun makeEpisodeDir(episodeRef: EpisodeRef)
+
+    suspend fun deleteEpisodeDir(episodeRef: EpisodeRef)
 
     /**
      * File
      */
-    suspend fun makeConfig(bookRef: BookRef, config: ConfigData): Boolean
+    suspend fun makeBookInfo(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        bookInfo: BookInfoData
+    ): Boolean
 
-    suspend fun loadConfig(bookRef: BookRef): ConfigData
+    suspend fun loadBookInfo(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookInfoData
 
-    suspend fun makeLogic(bookRef: BookRef, logic: LogicData): Boolean
+    suspend fun makeEpisodeInfo(
+        episodeRef: EpisodeRef,
+        episodeInfo: EpisodeInfoData
+    ): Boolean
 
-    suspend fun loadLogic(bookRef: BookRef): LogicData
+    suspend fun loadEpisodeInfo(episodeRef: EpisodeRef): EpisodeInfoData
 
-    suspend fun makePage(bookRef: BookRef, pageId: Long, page: PageData): Boolean
+    suspend fun makeLogic(episodeRef: EpisodeRef, logic: LogicData): Boolean
 
-    suspend fun loadPage(bookRef: BookRef, pageId: Long): PageData
+    suspend fun loadLogic(episodeRef: EpisodeRef): LogicData
 
-    suspend fun loadImage(bookRef: BookRef, imageName: String) : File
+    suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageData): Boolean
 
-    suspend fun loadCover(bookRef: BookRef, coverName: String) : File
+    suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageData
 
-    suspend fun makeImageFromResource(
-        bookRef: BookRef,
+    suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String) : File
+
+    suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String): File
+
+    suspend fun loadCoverImage(userId: String, mode: ReadMode, bookId: String, imageName: String) : File
+
+    suspend fun makePageImageFromResource(episodeRef: EpisodeRef, imageName: String, resourceId: Int)
+
+    suspend fun makeEpisodeThumbnailFromResource(
+        episodeRef: EpisodeRef,
         imageName: String,
         resourceId: Int
     )
 
-    suspend fun makeCoverFromResource(
-        bookRef: BookRef,
-        coverName: String,
+    suspend fun makeCoverImageFromResource(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
         resourceId: Int
     )
 }

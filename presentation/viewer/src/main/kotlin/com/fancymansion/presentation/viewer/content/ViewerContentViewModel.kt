@@ -1,10 +1,10 @@
 package com.fancymansion.presentation.viewer.content
 
 import androidx.lifecycle.SavedStateHandle
-import com.fancymansion.core.common.const.BookRef
+import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.const.testBookRef
+import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
@@ -28,20 +28,20 @@ class ViewerContentViewModel @Inject constructor(
     private val useCaseBookLogic: UseCaseBookLogic,
     private val useCaseMakeBook: UseCaseMakeBook
 ) : BaseViewModel<ViewerContentContract.State, ViewerContentContract.Event, ViewerContentContract.Effect>() {
-    private lateinit var bookRef : BookRef
+    private var episodeRef : EpisodeRef = testEpisodeRef
     private lateinit var logic : LogicModel
 
     override fun setInitialState() = ViewerContentContract.State()
 
     override fun handleEvents(event: ViewerContentContract.Event) {
         when (event) {
-            is ViewerContentContract.Event.OnConfirmMoveSaveDialog -> {
+            is ViewerContentContract.Event.OnConfirmMoveSavePageDialog -> {
                 launchWithLoading {
                     loadPageContent(event.pageId)
                 }
             }
 
-            is ViewerContentContract.Event.OnCancelMoveSaveDialog -> {
+            is ViewerContentContract.Event.OnCancelMoveSavePageDialog -> {
                 launchWithLoading {
                     initializeAndLoadStartPage()
                 }
@@ -62,7 +62,7 @@ class ViewerContentViewModel @Inject constructor(
                         pageContentSetting = newPageContentSetting
                     )
 
-                    useCasePageSetting.savePageSetting(bookRef = bookRef, pageSetting = newPageSetting)
+                    useCasePageSetting.saveEpisodePageSetting(episodeRef = episodeRef, pageSetting = newPageSetting)
                 }
             }
 
@@ -75,7 +75,7 @@ class ViewerContentViewModel @Inject constructor(
                         pageContentSetting = newPageContentSetting
                     )
 
-                    useCasePageSetting.savePageSetting(bookRef = bookRef, pageSetting = newPageSetting)
+                    useCasePageSetting.saveEpisodePageSetting(episodeRef = episodeRef, pageSetting = newPageSetting)
                 }
             }
 
@@ -88,17 +88,15 @@ class ViewerContentViewModel @Inject constructor(
                         pageContentSetting = newPageContentSetting
                     )
 
-                    useCasePageSetting.savePageSetting(bookRef = bookRef, pageSetting = newPageSetting)
+                    useCasePageSetting.saveEpisodePageSetting(episodeRef = episodeRef, pageSetting = newPageSetting)
                 }
             }
         }
     }
 
     init {
-        bookRef = testBookRef
-
         scope.launch {
-            useCasePageSetting.getPageSettingFlow(bookRef).collectLatest {
+            useCasePageSetting.getEpisodePageSettingFlow(episodeRef).collectLatest {
                 setState {
                     copy(
                         pageSetting = it
@@ -109,17 +107,17 @@ class ViewerContentViewModel @Inject constructor(
 
         launchWithLoading(endLoadState = null) {
 
-            useCaseMakeBook.makeSampleBook()
-            logic = useCaseLoadBook.loadLogic(bookRef)
+            useCaseMakeBook.makeSampleEpisode()
+            logic = useCaseLoadBook.loadLogic(episodeRef)
 
-            when(bookRef.mode){
+            when(episodeRef.mode){
                 ReadMode.EDIT -> {
                     initializeAndLoadStartPage()
                     setLoadStateIdle()
                 }
 
                 ReadMode.READ -> {
-                    useCaseBookLogic.getReadingProgressPageId(bookRef).let { saveId ->
+                    useCaseBookLogic.getReadingProgressPageId(episodeRef).let { saveId ->
                         if (saveId == null) {
                             initializeAndLoadStartPage()
                             setLoadStateIdle()
@@ -127,10 +125,10 @@ class ViewerContentViewModel @Inject constructor(
                             setLoadState(LoadState.AlarmDialog(
                                 message = StringValue.StringResource(R.string.alarm_question_move_save_page),
                                 onConfirm = {
-                                    setEvent(ViewerContentContract.Event.OnConfirmMoveSaveDialog(saveId))
+                                    setEvent(ViewerContentContract.Event.OnConfirmMoveSavePageDialog(saveId))
                                 },
                                 onDismiss = {
-                                    setEvent(ViewerContentContract.Event.OnCancelMoveSaveDialog)
+                                    setEvent(ViewerContentContract.Event.OnCancelMoveSavePageDialog)
                                 }
                             ))
                         }
@@ -140,33 +138,33 @@ class ViewerContentViewModel @Inject constructor(
         }
     }
 
+    private suspend fun initializeAndLoadStartPage(){
+        useCaseBookLogic.resetEpisodeData(episodeRef)
+        logic.logics.first { it.type == PageType.START }.id.let { pageId ->
+            useCaseBookLogic.incrementActionCount(episodeRef, actionId = pageId)
+            loadPageContent(pageId)
+        }
+    }
+
     private suspend fun handleSelectorClick(pageId : Long, selectorId : Long) {
-        useCaseBookLogic.incrementActionCount(bookRef, actionId = selectorId)
+        useCaseBookLogic.incrementActionCount(episodeRef, actionId = selectorId)
 
         val nextPageId = useCaseBookLogic.getNextRoutePageId(
-            bookRef,
+            episodeRef,
             routes = logic.logics
                 .first { it.id == pageId }
                 .selectors
                 .first { it.id == selectorId }
                 .routes
         )
-        useCaseBookLogic.incrementActionCount(bookRef, actionId = nextPageId)
-        useCaseBookLogic.updateReadingProgressPageId(bookRef, pageId)
+        useCaseBookLogic.incrementActionCount(episodeRef, actionId = nextPageId)
+        useCaseBookLogic.updateReadingProgressPageId(episodeRef, nextPageId)
         loadPageContent(nextPageId)
     }
 
-    private suspend fun initializeAndLoadStartPage(){
-        useCaseBookLogic.resetBookData(bookRef)
-        logic.logics.first { it.type == PageType.START }.id.let { pageId ->
-            useCaseBookLogic.incrementActionCount(bookRef, actionId = pageId)
-            loadPageContent(pageId)
-        }
-    }
-
     private suspend fun loadPageContent(pageId : Long){
-        val page = useCaseLoadBook.loadPage(bookRef, pageId = pageId)
-        val selectors = useCaseBookLogic.getVisibleSelectors(bookRef, logic = logic, pageId = pageId)
+        val page = useCaseLoadBook.loadPage(episodeRef, pageId = pageId)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef, logic = logic, pageId = pageId)
 
         val pageWrapper = PageWrapper(
             id = page.id,
@@ -177,7 +175,7 @@ class ViewerContentViewModel @Inject constructor(
                         SourceWrapper.TextWrapper(it.description)
                     }
                     is SourceModel.ImageModel -> {
-                        SourceWrapper.ImageWrapper(useCaseLoadBook.loadImage(bookRef, it.imageName))
+                        SourceWrapper.ImageWrapper(useCaseLoadBook.loadPageImage(episodeRef, it.imageName))
                     }
                 }
             }
