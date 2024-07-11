@@ -1,6 +1,7 @@
 package com.fancymansion.data.datasource.database.source.book.dao
 
 import androidx.room.*
+import com.fancymansion.data.datasource.database.source.book.model.ActionIdData
 
 @Dao
 interface BookDatabaseDao {
@@ -15,13 +16,13 @@ interface BookDatabaseDao {
     suspend fun deleteActionCountByUserId(userId: String)
 
     @Query("SELECT count FROM ActionCountData WHERE userId = :userId AND mode = :mode AND bookId = :bookId AND episodeId = :episodeId AND actionId = :actionId")
-    suspend fun getActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: Long): Int?
+    suspend fun getActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: ActionIdData): Int?
 
     @Query("INSERT OR REPLACE INTO ActionCountData (userId, mode, bookId, episodeId, actionId, count) VALUES (:userId, :mode, :bookId, :episodeId, :actionId, 1)")
-    suspend fun insertActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: Long)
+    suspend fun insertActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: ActionIdData)
 
     @Query("UPDATE ActionCountData SET count = :newCount WHERE userId = :userId AND mode = :mode AND bookId = :bookId AND episodeId = :episodeId AND actionId = :actionId")
-    suspend fun updateActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: Long, newCount: Int)
+    suspend fun updateActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: ActionIdData, newCount: Int)
 
 
     /**

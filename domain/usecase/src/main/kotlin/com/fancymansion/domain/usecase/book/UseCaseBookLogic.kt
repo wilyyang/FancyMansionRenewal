@@ -5,6 +5,7 @@ import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.RouteModel
@@ -47,12 +48,18 @@ class UseCaseBookLogic @Inject constructor(
         logic: LogicModel,
         pageId: Long
     ): List<SelectorModel> = withContext(dispatcher) {
-        logic.logics.first { it.id == pageId }.selectors.let {selectors ->
+        logic.logics.first { it.pageId == pageId }.selectors.let { selectors ->
             selectors.filter { selector -> checkConditions(episodeRef = episodeRef, conditions = selector.showConditions) }
         }
     }
 
-    suspend fun incrementActionCount(episodeRef: EpisodeRef, actionId: Long) =
+    suspend fun incrementActionCount(episodeRef: EpisodeRef, pageId: Long) =
+        incrementActionCount(episodeRef, ActionIdModel(pageId = pageId, pageId))
+
+    suspend fun incrementActionCount(episodeRef: EpisodeRef, pageId: Long, selectorId: Long) =
+        incrementActionCount(episodeRef, ActionIdModel(pageId = pageId, selectorId = selectorId))
+
+    suspend fun incrementActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel) =
         withContext(dispatcher) {
             val count = bookLocalRepository.getActionCount(episodeRef, actionId)
 
@@ -67,7 +74,7 @@ class UseCaseBookLogic @Inject constructor(
         episodeRef: EpisodeRef,
         routes: List<RouteModel>
     ): Long = withContext(dispatcher) {
-        routes.first { route -> checkConditions(episodeRef = episodeRef, conditions = route.routeConditions) }.routePageId
+        routes.first { route -> checkConditions(episodeRef = episodeRef, conditions = route.routeConditions) }.routeTargetPageId
     }
 
     private suspend fun checkConditions(

@@ -9,7 +9,7 @@ import com.fancymansion.domain.usecase.R
 
 
 val page1 : PageModel = PageModel(
-    id = 1_00_00_00_00L,
+    id = 1,
     title = "잠에서 깨어난 배트",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_1.png"),
@@ -24,29 +24,35 @@ val page1 : PageModel = PageModel(
 )
 
 val logic1 : PageLogicModel = PageLogicModel(
-    id = 1_00_00_00_00L,
+    pageId = 1,
     type = PageType.START,
     title = "잠에서 깨어난 배트",
     selectors = listOf(
         SelectorModel(
-            id = 1_01_00_00_00L,
+            pageId = 1,
+            selectorId = 1,
             text = "물가로 간다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 1_01_00_01_00L,
-                    routePageId = 2_00_00_00_00L,
+                    pageId = 1,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 2,
                 )
             )
         ),
         SelectorModel(
-            id = 1_02_00_00_00L,
+            pageId = 1,
+            selectorId = 2,
             text = "옥수수밭으로 간다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 1_02_00_01_00L,
-                    routePageId = 3_00_00_00_00L,
+                    pageId = 1,
+                    selectorId = 2,
+                    routeId = 1,
+                    routeTargetPageId = 3,
                 )
             )
         )
@@ -55,7 +61,7 @@ val logic1 : PageLogicModel = PageLogicModel(
 
 
 val page2 : PageModel = PageModel(
-    id = 2_00_00_00_00L,
+    id = 2,
     title = "물가에서의 사냥",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_6.png"),
@@ -68,29 +74,35 @@ val page2 : PageModel = PageModel(
 )
 
 val logic2 : PageLogicModel = PageLogicModel(
-    id = 2_00_00_00_00L,
+    pageId = 2,
     type = PageType.NORMAL,
     title = "물가에서의 사냥",
     selectors = listOf(
         SelectorModel(
-            id = 2_01_00_00_00L,
+            pageId = 2,
+            selectorId = 1,
             text = "달을 향해 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 2_01_00_01_00L,
-                    routePageId = 5_00_00_00_00L
+                    pageId = 2,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 5
                 )
             )
         ),
         SelectorModel(
-            id = 2_02_00_00_00L,
+            pageId = 2,
+            selectorId = 2,
             text = "바위 틈으로 들어간다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 2_02_00_01_00L,
-                    routePageId = 4_00_00_00_00L
+                    pageId = 2,
+                    selectorId = 2,
+                    routeId = 1,
+                    routeTargetPageId = 4
                 )
             )
         )
@@ -98,7 +110,7 @@ val logic2 : PageLogicModel = PageLogicModel(
 )
 
 val page3 : PageModel = PageModel(
-    id = 3_00_00_00_00L,
+    id = 3,
     title = "옥수수밭에 가다",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_8.png"),
@@ -114,29 +126,35 @@ val page3 : PageModel = PageModel(
 )
 
 val logic3 : PageLogicModel = PageLogicModel(
-    id = 3_00_00_00_00L,
+    pageId = 3,
     type = PageType.NORMAL,
     title = "옥수수밭에 가다",
     selectors = listOf(
         SelectorModel(
-            id = 3_01_00_00_00L,
+            pageId = 3,
+            selectorId = 1,
             text = "헛간을 향해 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 3_01_00_01_00L,
-                    routePageId = 8_00_00_00_00L,
+                    pageId = 3,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 8,
                 )
             )
         ),
         SelectorModel(
-            id = 3_02_00_00_00L,
+            pageId = 3,
+            selectorId = 2,
             text = "바위 틈으로 들어간다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 3_02_00_01_00L,
-                    routePageId = 4_00_00_00_00L,
+                    pageId = 3,
+                    selectorId = 2,
+                    routeId = 1,
+                    routeTargetPageId = 4,
                 )
             )
         )
@@ -144,7 +162,7 @@ val logic3 : PageLogicModel = PageLogicModel(
 )
 
 val page4 : PageModel = PageModel(
-    id = 4_00_00_00_00L,
+    id = 4,
     title = "바위틈에서",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_25.png"),
@@ -153,14 +171,14 @@ val page4 : PageModel = PageModel(
 )
 
 val logic4 : PageLogicModel = PageLogicModel(
-    id = 4_00_00_00_00L,
+    pageId = 4,
     type = PageType.ENDING,
     title = "바위틈에서",
     selectors = listOf()
 )
 
 val page5 : PageModel = PageModel(
-    id = 5_00_00_00_00L,
+    id = 5,
     title = "플라이 투더 문",
     sources = listOf(
         SourceModel.TextModel(description = "\n달을 향해 날아오르는 배트!\n" +
@@ -173,61 +191,82 @@ val page5 : PageModel = PageModel(
 )
 
 val logic5 : PageLogicModel = PageLogicModel(
-    id = 5_00_00_00_00L,
+    pageId = 5,
     type = PageType.NORMAL,
     title = "플라이 투더 문",
     selectors = listOf(
         SelectorModel(
-            id = 5_01_00_00_00L,
+            pageId = 5,
+            selectorId = 1,
             text = "달로 다시 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 5_01_00_01_00L,
-                    routePageId = 6_00_00_00_00L,
+                    pageId = 5,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 6,
                     routeConditions = listOf(
                         ConditionModel(
-                            id = 5_01_00_01_01L,
+                            pageId = 5,
+                            selectorId = 1,
+                            routeId = 1,
+                            conditionId = 1,
                             type = ConditionType.COUNT,
-                            selfActionId = 5_01_00_00_00L,
+                            selfActionId = ActionIdModel(
+                                pageId = 5,
+                                selectorId = 1
+                            ),
                             count = 2,
                             relationOp = RelationOp.GREATER_THAN
                         )
                     )
                 ),
                 RouteModel(
-                    id = 5_01_00_02_00L,
-                    routePageId = 5_00_00_00_00L,
+                    pageId = 5,
+                    selectorId = 1,
+                    routeId = 2,
+                    routeTargetPageId = 5,
                 )
             )
         ),
         SelectorModel(
-            id = 5_02_00_00_00L,
+            pageId = 5,
+            selectorId = 2,
             text = "옥수수밭으로 간다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 5_02_00_01_00L,
-                    routePageId = 3_00_00_00_00L,
+                    pageId = 5,
+                    selectorId = 2,
+                    routeId = 1,
+                    routeTargetPageId = 3,
                 )
             )
         ),
         SelectorModel(
-            id = 5_03_00_00_00L,
+            pageId = 5,
+            selectorId = 3,
             text = "비가 오기 시작한다",
             showConditions = listOf(
                 ConditionModel(
-                    id = 5_03_01_00_00L,
+                    pageId = 5,
+                    selectorId = 3,
+                    conditionId = 1,
                     type = ConditionType.COUNT,
-                    selfActionId = 5_00_00_00_00L,
+                    selfActionId = ActionIdModel(
+                        pageId = 5
+                    ),
                     relationOp = RelationOp.EQUAL,
                     count = 3
                 )
             ),
             routes = listOf(
                 RouteModel(
-                    id = 5_03_00_01_00L,
-                    routePageId = 7_00_00_00_00L,
+                    pageId = 5,
+                    selectorId = 3,
+                    routeId = 1,
+                    routeTargetPageId = 7,
                 )
             )
         )
@@ -235,7 +274,7 @@ val logic5 : PageLogicModel = PageLogicModel(
 )
 
 val page6 : PageModel = PageModel(
-    id = 6_00_00_00_00L,
+    id = 6,
     title = "여긴 어디지?",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_35.png"),
@@ -244,14 +283,14 @@ val page6 : PageModel = PageModel(
 )
 
 val logic6 : PageLogicModel = PageLogicModel(
-    id = 6_00_00_00_00L,
+    pageId = 6,
     type = PageType.ENDING,
     title = "여긴 어디지?",
     selectors = listOf()
 )
 
 val page7 : PageModel = PageModel(
-    id = 7_00_00_00_00L,
+    id = 7,
     title = "어두운 밤에 비가 축축",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_14.png"),
@@ -276,18 +315,21 @@ val page7 : PageModel = PageModel(
 )
 
 val logic7 : PageLogicModel = PageLogicModel(
-    id = 7_00_00_00_00L,
+    pageId = 7,
     type = PageType.NORMAL,
     title = "어두운 밤에 비가 축축",
     selectors = listOf(
         SelectorModel(
-            id = 7_01_00_00_00L,
+            pageId = 7,
+            selectorId = 1,
             text = "헛간을 향해 날아오른다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 7_01_00_01_00L,
-                    routePageId = 8_00_00_00_00L,
+                    pageId = 7,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 8,
                 )
             )
         )
@@ -295,7 +337,7 @@ val logic7 : PageLogicModel = PageLogicModel(
 )
 
 val page8 : PageModel = PageModel(
-    id = 8_00_00_00_00L,
+    id = 8,
     title = "헛간을 향해 힘찬 날개짓!",
     sources = listOf(
         SourceModel.TextModel(description = "배트는 힘내어 헛간을 향해 날개짓합니다.\n"),
@@ -312,44 +354,61 @@ val page8 : PageModel = PageModel(
 )
 
 val logic8 : PageLogicModel = PageLogicModel(
-    id = 8_00_00_00_00L,
+    pageId = 8,
     type = PageType.NORMAL,
     title = "헛간을 향해 힘찬 날개짓!",
     selectors = listOf(
         SelectorModel(
-            id = 8_01_00_00_00L,
+            pageId = 8,
+            selectorId = 1,
             text = "다시한 번 날개짓한다.",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 8_01_00_01_00L,
-                    routePageId = 9_00_00_00_00L,
+                    pageId = 8,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 9,
                     routeConditions = listOf(
                         ConditionModel(
-                            id = 8_01_00_01_01L,
+                            pageId = 8,
+                            selectorId = 1,
+                            routeId = 1,
+                            conditionId = 1,
                             type = ConditionType.COUNT,
-                            selfActionId = 7_00_00_00_00L,
+                            selfActionId = ActionIdModel(
+                                pageId = 7
+                            ),
                             count = 1,
                             relationOp = RelationOp.EQUAL
                         )
                     )
                 ),
                 RouteModel(
-                    id = 8_01_00_02_00L,
-                    routePageId = 6_00_00_00_00L,
+                    pageId = 8,
+                    selectorId = 1,
+                    routeId = 2,
+                    routeTargetPageId = 6,
                     routeConditions = listOf(
                         ConditionModel(
-                            id = 8_01_00_02_01L,
+                            pageId = 8,
+                            selectorId = 1,
+                            routeId = 2,
+                            conditionId = 1,
                             type = ConditionType.COUNT,
-                            selfActionId = 8_00_00_00_00L,
+                            selfActionId = ActionIdModel(
+                                pageId = 8
+                            ),
                             count = 3,
                             relationOp = RelationOp.GREATER_THAN
                         )
                     )
                 ),
                 RouteModel(
-                    id = 8_01_00_03_00L,
-                    routePageId = 8_00_00_00_00L,
+                    pageId = 8,
+                    selectorId = 1,
+                    routeId = 3,
+                    routeTargetPageId = 8,
                 )
             )
         )
@@ -357,7 +416,7 @@ val logic8 : PageLogicModel = PageLogicModel(
 )
 
 val page9 : PageModel = PageModel(
-    id = 9_00_00_00_00L,
+    id = 9,
     title = "지붕에 도착한 배트",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_19.png"),
@@ -372,29 +431,35 @@ val page9 : PageModel = PageModel(
 )
 
 val logic9 : PageLogicModel = PageLogicModel(
-    id = 9_00_00_00_00L,
+    pageId = 9,
     type = PageType.NORMAL,
     title = "지붕에 도착한 배트",
     selectors = listOf(
         SelectorModel(
-            id = 9_01_00_00_00L,
+            pageId = 9,
+            selectorId = 1,
             text = "가지 않고 비가 그치길 기다린다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 9_01_00_01_00L,
-                    routePageId = 11_00_00_00_00L,
+                    pageId = 9,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 11,
                 )
             )
         ),
         SelectorModel(
-            id = 9_02_00_00_00L,
+            pageId = 9,
+            selectorId = 2,
             text = "구멍으로 들어간다",
             showConditions = listOf(),
             routes = listOf(
                 RouteModel(
-                    id = 9_02_00_01_00L,
-                    routePageId = 10_00_00_00_00L,
+                    pageId = 9,
+                    selectorId = 2,
+                    routeId = 1,
+                    routeTargetPageId = 10,
                 )
             )
         )
@@ -402,7 +467,7 @@ val logic9 : PageLogicModel = PageLogicModel(
 )
 
 val page10 : PageModel = PageModel(
-    id = 10_00_00_00_00L,
+    id = 10,
     title = "조용히 어둠 속으로…",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_23.png"),
@@ -416,14 +481,14 @@ val page10 : PageModel = PageModel(
 )
 
 val logic10 : PageLogicModel = PageLogicModel(
-    id = 10_00_00_00_00L,
+    pageId = 10,
     type = PageType.ENDING,
     title = "조용히 어둠 속으로…",
     selectors = listOf()
 )
 
 val page11 : PageModel = PageModel(
-    id = 11_00_00_00_00L,
+    id = 11,
     title = "다시 집으로!",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_29.png"),
@@ -441,7 +506,7 @@ val page11 : PageModel = PageModel(
 )
 
 val logic11 : PageLogicModel = PageLogicModel(
-    id = 11_00_00_00_00L,
+    pageId = 11,
     type = PageType.ENDING,
     title = "다시 집으로!",
     selectors = listOf()

@@ -157,8 +157,8 @@ fun ViewerContentScreenPageContent(
                             .clickable {
                                 onEventSent(
                                     ViewerContentContract.Event.OnClickSelector(
-                                        pageWrapper.id,
-                                        selector.id
+                                        selector.pageId,
+                                        selector.selectorId
                                     )
                                 )
                             }

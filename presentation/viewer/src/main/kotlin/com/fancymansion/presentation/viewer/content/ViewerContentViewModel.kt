@@ -140,24 +140,24 @@ class ViewerContentViewModel @Inject constructor(
 
     private suspend fun initializeAndLoadStartPage(){
         useCaseBookLogic.resetEpisodeData(episodeRef)
-        logic.logics.first { it.type == PageType.START }.id.let { pageId ->
-            useCaseBookLogic.incrementActionCount(episodeRef, actionId = pageId)
+        logic.logics.first { it.type == PageType.START }.pageId.let { pageId ->
+            useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId)
             loadPageContent(pageId)
         }
     }
 
     private suspend fun handleSelectorClick(pageId : Long, selectorId : Long) {
-        useCaseBookLogic.incrementActionCount(episodeRef, actionId = selectorId)
+        useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId, selectorId = selectorId)
 
         val nextPageId = useCaseBookLogic.getNextRoutePageId(
             episodeRef,
             routes = logic.logics
-                .first { it.id == pageId }
+                .first { it.pageId == pageId }
                 .selectors
-                .first { it.id == selectorId }
+                .first { it.selectorId == selectorId }
                 .routes
         )
-        useCaseBookLogic.incrementActionCount(episodeRef, actionId = nextPageId)
+        useCaseBookLogic.incrementActionCount(episodeRef, pageId = nextPageId)
         useCaseBookLogic.updateReadingProgressPageId(episodeRef, nextPageId)
         loadPageContent(nextPageId)
     }

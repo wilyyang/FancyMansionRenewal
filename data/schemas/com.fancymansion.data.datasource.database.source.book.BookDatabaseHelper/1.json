@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "57766283916950ac1ee0276bca2bc2c8",
+    "identityHash": "7976c1c0836249e8e51a4baea73e3ad4",
     "entities": [
       {
         "tableName": "ActionCountData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, `actionId` INTEGER NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `episodeId`, `actionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, `actionId` TEXT NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `episodeId`, `actionId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -35,7 +35,7 @@
           {
             "fieldPath": "actionId",
             "columnName": "actionId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -53,6 +53,40 @@
             "bookId",
             "episodeId",
             "actionId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ActionIdData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pageId` INTEGER NOT NULL, `selectorId` INTEGER NOT NULL, `routeId` INTEGER NOT NULL, PRIMARY KEY(`pageId`, `selectorId`, `routeId`))",
+        "fields": [
+          {
+            "fieldPath": "pageId",
+            "columnName": "pageId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectorId",
+            "columnName": "selectorId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routeId",
+            "columnName": "routeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "pageId",
+            "selectorId",
+            "routeId"
           ]
         },
         "indices": [],
@@ -109,7 +143,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '57766283916950ac1ee0276bca2bc2c8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7976c1c0836249e8e51a4baea73e3ad4')"
     ]
   }
 }

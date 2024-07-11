@@ -2,6 +2,7 @@ package com.fancymansion.domain.interfaceRepository
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -57,9 +58,9 @@ interface BookLocalRepository {
     )
 
     suspend fun deleteActionCountByEpisode(episodeRef: EpisodeRef)
-    suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: Long, newCount : Int)
-    suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: Long)
-    suspend fun getActionCount(episodeRef: EpisodeRef, actionId: Long) : Int?
+    suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel, newCount : Int)
+    suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel)
+    suspend fun getActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel) : Int?
 
     suspend fun deleteReadingProgressByEpisode(episodeRef: EpisodeRef)
     suspend fun getReadingProgressPageId(episodeRef: EpisodeRef): Long?

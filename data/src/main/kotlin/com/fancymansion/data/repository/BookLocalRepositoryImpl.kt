@@ -6,7 +6,9 @@ import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
+import com.fancymansion.data.datasource.database.source.book.model.asDatabaseData
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -172,15 +174,15 @@ class BookLocalRepositoryImpl @Inject constructor(
         bookDatabaseDao.deleteActionCountByEpisode(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
 
-    override suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: Long, newCount : Int){
-        bookDatabaseDao.updateActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId, newCount)
+    override suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel, newCount : Int){
+        bookDatabaseDao.updateActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData(), newCount)
     }
-    override suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: Long){
-        bookDatabaseDao.insertActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId)
+    override suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel){
+        bookDatabaseDao.insertActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData())
     }
 
-    override suspend fun getActionCount(episodeRef: EpisodeRef, actionId: Long) : Int? {
-        return bookDatabaseDao.getActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId)
+    override suspend fun getActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel) : Int? {
+        return bookDatabaseDao.getActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData())
     }
 
     override suspend fun deleteReadingProgressByEpisode(episodeRef: EpisodeRef) {
