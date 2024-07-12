@@ -72,7 +72,7 @@ enum class ReadMode {
  */
 
 const val ROUTE_PAGE_ID_NOT_ASSIGNED = -4000L
-const val ACTION_ID_NOT_ASSIGNED = -4000L
+const val ACTION_ID_NOT_ASSIGNED = 0L
 
 enum class PageType(
     val localizedName: StringValue.StringResource
@@ -80,13 +80,6 @@ enum class PageType(
     START(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.page_type_start)),
     NORMAL(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.page_type_normal)),
     ENDING(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.page_type_ending))
-}
-
-enum class ConditionType(
-    val localizedName: StringValue.StringResource
-) {
-    COUNT(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.compare_count)),
-    TARGET_VIEWS(localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.compare_target_views))
 }
 
 enum class RelationOp(

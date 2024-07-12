@@ -11,7 +11,7 @@ import com.fancymansion.core.common.const.ACTION_ID_NOT_ASSIGNED
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
 import com.fancymansion.data.datasource.database.source.book.model.ActionCountData
 import com.fancymansion.data.datasource.database.source.book.model.ActionIdData
-import com.fancymansion.data.datasource.database.source.book.model.ReadingProgress
+import com.fancymansion.data.datasource.database.source.book.model.ReadingProgressData
 import kotlinx.coroutines.CoroutineScope
 
 class ActionIdDataTypeConverter {
@@ -38,7 +38,7 @@ class ActionIdDataTypeConverter {
     entities = [
         ActionCountData::class,
         ActionIdData::class,
-        ReadingProgress::class
+        ReadingProgressData::class
     ]
 )
 @TypeConverters(ActionIdDataTypeConverter::class)

@@ -1,6 +1,5 @@
 package com.fancymansion.domain.usecase.book.sample
 
-import com.fancymansion.core.common.const.ConditionType
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.const.testEpisodeRef
@@ -207,18 +206,19 @@ val logic5 : PageLogicModel = PageLogicModel(
                     routeId = 1,
                     routeTargetPageId = 6,
                     routeConditions = listOf(
-                        ConditionModel(
+                        ConditionModel.RouteConditionModel(
                             pageId = 5,
                             selectorId = 1,
                             routeId = 1,
                             conditionId = 1,
-                            type = ConditionType.COUNT,
-                            selfActionId = ActionIdModel(
-                                pageId = 5,
-                                selectorId = 1
-                            ),
-                            count = 2,
-                            relationOp = RelationOp.GREATER_THAN
+                            conditionRule = ConditionRuleModel.CountConditionRuleModel(
+                                selfActionId = ActionIdModel(
+                                    pageId = 5,
+                                    selectorId = 1
+                                ),
+                                count = 2,
+                                relationOp = RelationOp.GREATER_THAN
+                            )
                         )
                     )
                 ),
@@ -249,16 +249,17 @@ val logic5 : PageLogicModel = PageLogicModel(
             selectorId = 3,
             text = "비가 오기 시작한다",
             showConditions = listOf(
-                ConditionModel(
+                ConditionModel.ShowSelectorConditionModel(
                     pageId = 5,
                     selectorId = 3,
                     conditionId = 1,
-                    type = ConditionType.COUNT,
-                    selfActionId = ActionIdModel(
-                        pageId = 5
-                    ),
-                    relationOp = RelationOp.EQUAL,
-                    count = 3
+                    conditionRule = ConditionRuleModel.CountConditionRuleModel(
+                        selfActionId = ActionIdModel(
+                            pageId = 5
+                        ),
+                        relationOp = RelationOp.EQUAL,
+                        count = 3
+                    )
                 )
             ),
             routes = listOf(
@@ -370,17 +371,18 @@ val logic8 : PageLogicModel = PageLogicModel(
                     routeId = 1,
                     routeTargetPageId = 9,
                     routeConditions = listOf(
-                        ConditionModel(
+                        ConditionModel.RouteConditionModel(
                             pageId = 8,
                             selectorId = 1,
                             routeId = 1,
                             conditionId = 1,
-                            type = ConditionType.COUNT,
-                            selfActionId = ActionIdModel(
-                                pageId = 7
-                            ),
-                            count = 1,
-                            relationOp = RelationOp.EQUAL
+                            conditionRule = ConditionRuleModel.CountConditionRuleModel(
+                                selfActionId = ActionIdModel(
+                                    pageId = 7
+                                ),
+                                count = 1,
+                                relationOp = RelationOp.EQUAL
+                            )
                         )
                     )
                 ),
@@ -390,17 +392,18 @@ val logic8 : PageLogicModel = PageLogicModel(
                     routeId = 2,
                     routeTargetPageId = 6,
                     routeConditions = listOf(
-                        ConditionModel(
+                        ConditionModel.RouteConditionModel(
                             pageId = 8,
                             selectorId = 1,
                             routeId = 2,
                             conditionId = 1,
-                            type = ConditionType.COUNT,
-                            selfActionId = ActionIdModel(
-                                pageId = 8
-                            ),
-                            count = 3,
-                            relationOp = RelationOp.GREATER_THAN
+                            conditionRule = ConditionRuleModel.CountConditionRuleModel(
+                                selfActionId = ActionIdModel(
+                                    pageId = 8
+                                ),
+                                count = 3,
+                                relationOp = RelationOp.GREATER_THAN
+                            )
                         )
                     )
                 ),

@@ -38,15 +38,3 @@ fun ActionIdModel.asDatabaseData() = ActionIdData(
     selectorId = selectorId,
     routeId = routeId
 )
-
-@Entity(
-    tableName = "ReadingProgress",
-    primaryKeys = ["userId", "mode", "bookId", "episodeId"]
-)
-data class ReadingProgress(
-    val userId: String,
-    val mode: String,
-    val bookId: String,
-    val episodeId: String,
-    val pageId: Long
-)

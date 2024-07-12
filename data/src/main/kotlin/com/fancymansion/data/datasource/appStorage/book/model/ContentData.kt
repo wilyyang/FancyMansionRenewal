@@ -8,12 +8,15 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 
+const val TYPE_SOURCE_TEXT = "text"
+const val TYPE_SOURCE_IMAGE = "image"
+
 /**
  * Content
  */
 sealed class SourceData(val type : String) {
-    data class TextData(val description: String) : SourceData("text")
-    data class ImageData(val imageName: String) : SourceData("image")
+    data class TextData(val description: String) : SourceData(TYPE_SOURCE_TEXT)
+    data class ImageData(val imageName: String) : SourceData(TYPE_SOURCE_IMAGE)
 
     fun toJson(context: JsonSerializationContext): JsonElement {
         val jsonObject = JsonObject()
@@ -32,8 +35,8 @@ sealed class SourceData(val type : String) {
             }
             val jsonObject = json.asJsonObject
             return when (val type = jsonObject.get("type").asString) {
-                "text" -> TextData(jsonObject.get("description").asString)
-                "image" -> ImageData(jsonObject.get("imageName").asString)
+                TYPE_SOURCE_TEXT -> TextData(jsonObject.get("description").asString)
+                TYPE_SOURCE_IMAGE -> ImageData(jsonObject.get("imageName").asString)
                 else -> throw IllegalArgumentException("Unknown SourceData type: $type")
             }
         }

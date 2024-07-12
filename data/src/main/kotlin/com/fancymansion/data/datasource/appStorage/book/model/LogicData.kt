@@ -1,12 +1,6 @@
 package com.fancymansion.data.datasource.appStorage.book.model
 
-import com.fancymansion.core.common.const.ACTION_ID_NOT_ASSIGNED
-import com.fancymansion.core.common.const.ConditionType
-import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.RelationOp
-import com.fancymansion.domain.model.book.ActionIdModel
-import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.RouteModel
@@ -25,7 +19,7 @@ data class SelectorData(
     val pageId: Long,
     val selectorId: Long,
     val text: String,
-    val showConditions: List<ConditionData> = listOf(),
+    val showConditions: List<ConditionData.ShowSelectorConditionData> = listOf(),
     val routes: List<RouteData> = listOf()
 )
 
@@ -34,26 +28,7 @@ data class RouteData(
     val selectorId: Long,
     val routeId: Long,
     val routeTargetPageId: Long,
-    val routeConditions: List<ConditionData> = listOf()
-)
-
-data class ConditionData(
-    val pageId: Long,
-    val selectorId: Long,
-    val routeId: Long,
-    val conditionId: Long,
-    val type: ConditionType,
-    val selfActionId: ActionIdData = ActionIdData(),
-    val targetActionId: ActionIdData = ActionIdData(),
-    val count: Int = 0,
-    val relationOp: RelationOp = RelationOp.EQUAL,
-    val logicalOp: LogicalOp = LogicalOp.AND
-)
-
-data class ActionIdData(
-    val pageId: Long = ACTION_ID_NOT_ASSIGNED,
-    val selectorId: Long = ACTION_ID_NOT_ASSIGNED,
-    val routeId: Long = ACTION_ID_NOT_ASSIGNED
+    val routeConditions: List<ConditionData.RouteConditionData> = listOf()
 )
 
 fun LogicData.asModel() = LogicModel(
@@ -110,42 +85,4 @@ fun RouteModel.asData() = RouteData(
     routeId = routeId,
     routeTargetPageId = routeTargetPageId,
     routeConditions = routeConditions.map { it.asData() }
-)
-
-fun ConditionData.asModel() = ConditionModel(
-    pageId = pageId,
-    selectorId = selectorId,
-    routeId = routeId,
-    conditionId = conditionId,
-    type = type,
-    selfActionId = selfActionId.asModel(),
-    targetActionId = targetActionId.asModel(),
-    count = count,
-    relationOp = relationOp,
-    logicalOp = logicalOp
-)
-
-fun ConditionModel.asData() = ConditionData(
-    pageId = pageId,
-    selectorId = selectorId,
-    routeId = routeId,
-    conditionId = conditionId,
-    type = type,
-    selfActionId = selfActionId.asStorageData(),
-    targetActionId = targetActionId.asStorageData(),
-    count = count,
-    relationOp = relationOp,
-    logicalOp = logicalOp
-)
-
-fun ActionIdData.asModel() = ActionIdModel(
-    pageId = pageId,
-    selectorId = selectorId,
-    routeId = routeId
-)
-
-fun ActionIdModel.asStorageData() = ActionIdData(
-    pageId = pageId,
-    selectorId = selectorId,
-    routeId = routeId
 )
