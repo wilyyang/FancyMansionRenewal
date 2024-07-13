@@ -1,6 +1,7 @@
 package com.fancymansion.data.datasource.appStorage.book.model
 
 import com.fancymansion.core.common.const.PageType
+import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.RouteModel
@@ -19,7 +20,7 @@ data class SelectorData(
     val pageId: Long,
     val selectorId: Long,
     val text: String,
-    val showConditions: List<ConditionData.ShowSelectorConditionData> = listOf(),
+    val showConditions: List<ConditionData> = listOf(),
     val routes: List<RouteData> = listOf()
 )
 
@@ -28,7 +29,7 @@ data class RouteData(
     val selectorId: Long,
     val routeId: Long,
     val routeTargetPageId: Long,
-    val routeConditions: List<ConditionData.RouteConditionData> = listOf()
+    val routeConditions: List<ConditionData> = listOf()
 )
 
 fun LogicData.asModel() = LogicModel(
@@ -59,7 +60,7 @@ fun SelectorData.asModel() = SelectorModel(
     pageId = pageId,
     selectorId = selectorId,
     text = text,
-    showConditions = showConditions.map { it.asModel() },
+    showConditions = showConditions.map { it.asModel() as ConditionModel.ShowSelectorConditionModel },
     routes = routes.map { it.asModel() }
 )
 
@@ -76,7 +77,7 @@ fun RouteData.asModel() = RouteModel(
     selectorId = selectorId,
     routeId = routeId,
     routeTargetPageId = routeTargetPageId,
-    routeConditions = routeConditions.map { it.asModel() }
+    routeConditions = routeConditions.map { it.asModel() as ConditionModel.RouteConditionModel }
 )
 
 fun RouteModel.asData() = RouteData(
