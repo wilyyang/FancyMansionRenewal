@@ -1,5 +1,6 @@
 package com.fancymansion.domain.usecase.book.sample
 
+import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.const.testEpisodeRef
@@ -52,6 +53,62 @@ val logic1 : PageLogicModel = PageLogicModel(
                     selectorId = 2,
                     routeId = 1,
                     routeTargetPageId = 3,
+                )
+            )
+        ),
+        SelectorModel(
+            pageId = 1,
+            selectorId = 3,
+            text = "숨겨진 행선지?",
+            showConditions = listOf(
+                ConditionModel.ShowSelectorConditionModel(
+                    pageId = 1,
+                    selectorId = 3,
+                    conditionId = 1,
+                    conditionRule = ConditionRuleModel.CountConditionRuleModel(
+                        selfActionId = ActionIdModel(
+                            pageId = 1
+                        ),
+                        relationOp = RelationOp.LESS_THAN,
+                        logicalOp = LogicalOp.AND,
+                        count = 7
+                    )
+                ),
+                ConditionModel.ShowSelectorConditionModel(
+                    pageId = 1,
+                    selectorId = 3,
+                    conditionId = 2,
+                    conditionRule = ConditionRuleModel.CountConditionRuleModel(
+                        selfActionId = ActionIdModel(
+                            pageId = 2
+                        ),
+                        relationOp = RelationOp.GREATER_THAN,
+                        logicalOp = LogicalOp.AND,
+                        count = 1
+                    )
+                ),
+                ConditionModel.ShowSelectorConditionModel(
+                    pageId = 1,
+                    selectorId = 3,
+                    conditionId = 3,
+                    conditionRule = ConditionRuleModel.TargetConditionRuleModel(
+                        selfActionId = ActionIdModel(
+                            pageId = 2
+                        ),
+                        relationOp = RelationOp.LESS_THAN,
+                        logicalOp = LogicalOp.OR,
+                        targetActionId = ActionIdModel(
+                            pageId = 3
+                        )
+                    )
+                )
+            ),
+            routes = listOf(
+                RouteModel(
+                    pageId = 1,
+                    selectorId = 3,
+                    routeId = 1,
+                    routeTargetPageId = 11
                 )
             )
         )
@@ -171,9 +228,24 @@ val page4 : PageModel = PageModel(
 
 val logic4 : PageLogicModel = PageLogicModel(
     pageId = 4,
-    type = PageType.ENDING,
+    type = PageType.NORMAL,
     title = "바위틈에서",
-    selectors = listOf()
+    selectors = listOf(
+        SelectorModel(
+            pageId = 4,
+            selectorId = 1,
+            text = "다시금 돌아간다",
+            showConditions = listOf(),
+            routes = listOf(
+                RouteModel(
+                    pageId = 4,
+                    selectorId = 1,
+                    routeId = 1,
+                    routeTargetPageId = 1,
+                )
+            )
+        )
+    )
 )
 
 val page5 : PageModel = PageModel(
