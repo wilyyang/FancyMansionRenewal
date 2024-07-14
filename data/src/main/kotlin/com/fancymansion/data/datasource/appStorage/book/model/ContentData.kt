@@ -14,6 +14,14 @@ const val TYPE_SOURCE_IMAGE = "image"
 /**
  * Content
  */
+data class ContentData(
+    val pages: List<PageData>
+)
+data class PageData(
+    val id: Long,
+    val title: String,
+    val sources: List<SourceData>
+)
 sealed class SourceData(val type : String) {
     data class TextData(val description: String) : SourceData(TYPE_SOURCE_TEXT)
     data class ImageData(val imageName: String) : SourceData(TYPE_SOURCE_IMAGE)
@@ -42,17 +50,24 @@ sealed class SourceData(val type : String) {
         }
     }
 }
-
-data class PageData(
-    val id: Long,
-    val title: String,
-    val sources: List<SourceData>
+fun ContentData.asModel() = ContentModel(
+    pages = pages.map { it.asModel() }
 )
 
-data class ContentData(
-    val pages: List<PageData>
+fun ContentModel.asData() = ContentData(
+    pages = pages.map { it.asData() }
+)
+fun PageData.asModel() = PageModel(
+    id = id,
+    title = title,
+    sources = sources.map { it.asModel() }
 )
 
+fun PageModel.asData() = PageData(
+    id = id,
+    title = title,
+    sources = sources.map { it.asData() }
+)
 fun SourceData.asModel(): SourceModel =
     when (this) {
         is SourceData.TextData -> {
@@ -83,22 +98,3 @@ fun SourceModel.asData(): SourceData =
         }
     }
 
-fun PageData.asModel() = PageModel(
-    id = id,
-    title = title,
-    sources = sources.map { it.asModel() }
-)
-
-fun PageModel.asData() = PageData(
-    id = id,
-    title = title,
-    sources = sources.map { it.asData() }
-)
-
-fun ContentData.asModel() = ContentModel(
-    pages = pages.map { it.asModel() }
-)
-
-fun ContentModel.asData() = ContentData(
-    pages = pages.map { it.asData() }
-)

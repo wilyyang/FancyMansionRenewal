@@ -12,11 +12,18 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface BookLocalRepository {
+    /**
+     * PageSetting
+     */
     suspend fun getEpisodePageSetting(episodeRef: EpisodeRef): PageSettingModel?
     fun getEpisodePageSettingFlow(episodeRef: EpisodeRef): Flow<PageSettingModel>
     suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel)
     suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef)
 
+
+    /**
+     * App Storage : Directory
+     */
     suspend fun makeUserDir(userId: String)
     suspend fun deleteUserDir(userId: String)
     suspend fun makeBookDir(userId: String, mode : ReadMode, bookId : String)
@@ -24,6 +31,9 @@ interface BookLocalRepository {
     suspend fun makeEpisodeDir(episodeRef: EpisodeRef)
     suspend fun deleteEpisodeDir(episodeRef: EpisodeRef)
 
+    /**
+     * App Storage : File
+     */
     suspend fun makeBookInfo(userId: String, mode : ReadMode, bookId : String, bookInfo: BookInfoModel): Boolean
     suspend fun loadBookInfo(userId: String, mode : ReadMode, bookId : String): BookInfoModel
     suspend fun makeEpisodeInfo(episodeRef: EpisodeRef, episodeInfo: EpisodeInfoModel): Boolean
@@ -57,13 +67,19 @@ interface BookLocalRepository {
         resourceId: Int
     )
 
+    /**
+     * ActionCount
+     */
     suspend fun deleteActionCountByEpisode(episodeRef: EpisodeRef)
     suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel, newCount : Int)
     suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel)
     suspend fun getActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel) : Int?
 
+    /**
+     * ReadingProgress
+     */
     suspend fun deleteReadingProgressByEpisode(episodeRef: EpisodeRef)
-    suspend fun getReadingProgressPageId(episodeRef: EpisodeRef): Long?
-    suspend fun insertReadingProgress(episodeRef: EpisodeRef, pageId: Long)
     suspend fun updateReadingProgressPageId(episodeRef: EpisodeRef, newPageId: Long)
+    suspend fun insertReadingProgress(episodeRef: EpisodeRef, pageId: Long)
+    suspend fun getReadingProgressPageId(episodeRef: EpisodeRef): Long?
 }

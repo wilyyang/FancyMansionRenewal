@@ -3,12 +3,6 @@ package com.fancymansion.domain.model.book
 /**
  * Content
  */
-sealed class SourceModel {
-    data class TextModel(val description: String) : SourceModel()
-    data class ImageModel(val imageName: String) : SourceModel()
-}
-
-
 data class ContentModel(
     val pages: List<PageModel>
 )
@@ -18,3 +12,7 @@ data class PageModel(
     val title: String,
     val sources: List<SourceModel>
 )
+sealed class SourceModel {
+    data class TextModel(val description: String) : SourceModel()
+    data class ImageModel(val imageName: String) : SourceModel()
+}

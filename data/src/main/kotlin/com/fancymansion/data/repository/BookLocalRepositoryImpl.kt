@@ -32,6 +32,9 @@ class BookLocalRepositoryImpl @Inject constructor(
 
     private val tempFlow = tempChannel.receiveAsFlow()
 
+    /**
+     * PageSetting
+     */
     override suspend fun getEpisodePageSetting(episodeRef: EpisodeRef): PageSettingModel? {
         return temp
     }
@@ -50,7 +53,7 @@ class BookLocalRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Init
+     * App Storage : Directory
      */
     override suspend fun makeUserDir(userId: String) {
         bookStorageSource.makeUserDir(userId)
@@ -77,7 +80,7 @@ class BookLocalRepositoryImpl @Inject constructor(
     }
 
     /**
-     * File
+     * App Storage : File
      */
     override suspend fun makeBookInfo(
         userId: String,
@@ -167,9 +170,8 @@ class BookLocalRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Database
+     * ActionCount
      */
-
     override suspend fun deleteActionCountByEpisode(episodeRef: EpisodeRef) {
         bookDatabaseDao.deleteActionCountByEpisode(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
@@ -185,19 +187,20 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookDatabaseDao.getActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData())
     }
 
+    /**
+     * ReadingProgress
+     */
     override suspend fun deleteReadingProgressByEpisode(episodeRef: EpisodeRef) {
         bookDatabaseDao.deleteReadingProgressByEpisode(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
-
+    override suspend fun updateReadingProgressPageId(episodeRef: EpisodeRef, newPageId: Long) {
+        bookDatabaseDao.updateReadingProgressPageId(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, newPageId)
+    }
+    override suspend fun insertReadingProgress(episodeRef: EpisodeRef, pageId: Long) {
+        bookDatabaseDao.insertReadingProgress(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, pageId)
+    }
     override suspend fun getReadingProgressPageId(episodeRef: EpisodeRef): Long? {
         return bookDatabaseDao.getReadingProgressPageId(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId)
     }
 
-    override suspend fun insertReadingProgress(episodeRef: EpisodeRef, pageId: Long) {
-        bookDatabaseDao.insertReadingProgress(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, pageId)
-    }
-
-    override suspend fun updateReadingProgressPageId(episodeRef: EpisodeRef, newPageId: Long) {
-        bookDatabaseDao.updateReadingProgressPageId(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, newPageId)
-    }
 }
