@@ -1,7 +1,6 @@
 package com.fancymansion.data.datasource.database.source.book.dao
 
 import androidx.room.*
-import com.fancymansion.data.datasource.database.source.book.model.ActionIdData
 
 @Dao
 interface BookDatabaseDao {
@@ -15,14 +14,14 @@ interface BookDatabaseDao {
     @Query("DELETE FROM ActionCountData WHERE userId = :userId")
     suspend fun deleteActionCountByUserId(userId: String)
 
-    @Query("SELECT count FROM ActionCountData WHERE userId = :userId AND mode = :mode AND bookId = :bookId AND episodeId = :episodeId AND actionId = :actionId")
-    suspend fun getActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: ActionIdData): Int?
+    @Query("SELECT count FROM ActionCountData WHERE userId = :userId AND mode = :mode AND bookId = :bookId AND episodeId = :episodeId AND pageId = :pageId AND selectorId = :selectorId AND routeId = :routeId")
+    suspend fun getActionCount(userId: String, mode: String, bookId: String, episodeId: String, pageId: Long, selectorId: Long, routeId: Long): Int?
 
-    @Query("INSERT OR REPLACE INTO ActionCountData (userId, mode, bookId, episodeId, actionId, count) VALUES (:userId, :mode, :bookId, :episodeId, :actionId, 1)")
-    suspend fun insertActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: ActionIdData)
+    @Query("INSERT OR REPLACE INTO ActionCountData (userId, mode, bookId, episodeId, pageId, selectorId, routeId, count) VALUES (:userId, :mode, :bookId, :episodeId, :pageId, :selectorId, :routeId, 1)")
+    suspend fun insertActionCount(userId: String, mode: String, bookId: String, episodeId: String, pageId: Long, selectorId: Long, routeId: Long)
 
-    @Query("UPDATE ActionCountData SET count = :newCount WHERE userId = :userId AND mode = :mode AND bookId = :bookId AND episodeId = :episodeId AND actionId = :actionId")
-    suspend fun updateActionCount(userId: String, mode: String, bookId: String, episodeId: String, actionId: ActionIdData, newCount: Int)
+    @Query("UPDATE ActionCountData SET count = :newCount WHERE userId = :userId AND mode = :mode AND bookId = :bookId AND episodeId = :episodeId AND pageId = :pageId AND selectorId = :selectorId AND routeId = :routeId")
+    suspend fun updateActionCount(userId: String, mode: String, bookId: String, episodeId: String, pageId: Long, selectorId: Long, routeId: Long, newCount: Int)
 
 
     /**

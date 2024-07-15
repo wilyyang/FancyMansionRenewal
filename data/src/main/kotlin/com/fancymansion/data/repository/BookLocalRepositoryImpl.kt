@@ -6,7 +6,6 @@ import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
-import com.fancymansion.data.datasource.database.source.book.model.asDatabaseData
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
@@ -177,14 +176,14 @@ class BookLocalRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel, newCount : Int){
-        bookDatabaseDao.updateActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData(), newCount)
+        bookDatabaseDao.updateActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.pageId, actionId.selectorId, actionId.routeId, newCount)
     }
     override suspend fun insertActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel){
-        bookDatabaseDao.insertActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData())
+        bookDatabaseDao.insertActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.pageId, actionId.selectorId, actionId.routeId)
     }
 
     override suspend fun getActionCount(episodeRef: EpisodeRef, actionId: ActionIdModel) : Int? {
-        return bookDatabaseDao.getActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.asDatabaseData())
+        return bookDatabaseDao.getActionCount(episodeRef.userId, episodeRef.mode.name, episodeRef.bookId, episodeRef.episodeId, actionId.pageId, actionId.selectorId, actionId.routeId)
     }
 
     /**

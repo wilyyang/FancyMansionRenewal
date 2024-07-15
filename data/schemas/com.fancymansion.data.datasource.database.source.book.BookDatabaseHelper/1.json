@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7976c1c0836249e8e51a4baea73e3ad4",
+    "identityHash": "1b676dc13fcb5872d1ed1a68b3a6180c",
     "entities": [
       {
         "tableName": "ActionCountData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, `actionId` TEXT NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `episodeId`, `actionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `episodeId` TEXT NOT NULL, `pageId` INTEGER NOT NULL, `selectorId` INTEGER NOT NULL, `routeId` INTEGER NOT NULL, `count` INTEGER NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`, `episodeId`, `pageId`, `selectorId`, `routeId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -33,36 +33,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "actionId",
-            "columnName": "actionId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "count",
-            "columnName": "count",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "userId",
-            "mode",
-            "bookId",
-            "episodeId",
-            "actionId"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "ActionIdData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pageId` INTEGER NOT NULL, `selectorId` INTEGER NOT NULL, `routeId` INTEGER NOT NULL, PRIMARY KEY(`pageId`, `selectorId`, `routeId`))",
-        "fields": [
-          {
             "fieldPath": "pageId",
             "columnName": "pageId",
             "affinity": "INTEGER",
@@ -79,11 +49,21 @@
             "columnName": "routeId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
+            "userId",
+            "mode",
+            "bookId",
+            "episodeId",
             "pageId",
             "selectorId",
             "routeId"
@@ -143,7 +123,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7976c1c0836249e8e51a4baea73e3ad4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1b676dc13fcb5872d1ed1a68b3a6180c')"
     ]
   }
 }
