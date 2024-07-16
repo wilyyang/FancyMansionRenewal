@@ -1,9 +1,33 @@
 package com.fancymansion.data.datasource.database.source.book.dao
 
 import androidx.room.*
+import com.fancymansion.data.datasource.database.source.book.model.PageSettingData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDatabaseDao {
+
+    /**
+     * PageSetting
+     */
+    @Query("DELETE FROM PageSettingData WHERE userId = :userId AND mode = :mode AND bookId = :bookId")
+    suspend fun deletePageSettingByBookId(userId: String, mode: String, bookId: String)
+
+    @Query("DELETE FROM PageSettingData WHERE userId = :userId")
+    suspend fun deletePageSettingByUserId(userId: String)
+
+    @Query("SELECT * FROM PageSettingData WHERE userId = :userId AND mode = :mode AND bookId = :bookId")
+    suspend fun getPageSetting(userId: String, mode: String, bookId: String): PageSettingData?
+
+    @Query("SELECT * FROM PageSettingData WHERE userId = :userId AND mode = :mode AND bookId = :bookId")
+    fun getPageSettingFlow(userId: String, mode: String, bookId: String): Flow<PageSettingData?>
+
+    @Insert
+    suspend fun insertPageSetting(pageSettingData: PageSettingData)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updatePageSetting(pageSettingData: PageSettingData)
+
 
     /**
      * ActionCount

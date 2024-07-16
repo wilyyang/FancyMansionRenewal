@@ -9,6 +9,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
@@ -62,7 +63,7 @@ class ViewerContentViewModel @Inject constructor(
                         pageContentSetting = newPageContentSetting
                     )
 
-                    useCasePageSetting.saveEpisodePageSetting(episodeRef = episodeRef, pageSetting = newPageSetting)
+                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)
                 }
             }
 
@@ -75,7 +76,7 @@ class ViewerContentViewModel @Inject constructor(
                         pageContentSetting = newPageContentSetting
                     )
 
-                    useCasePageSetting.saveEpisodePageSetting(episodeRef = episodeRef, pageSetting = newPageSetting)
+                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)
                 }
             }
 
@@ -88,7 +89,7 @@ class ViewerContentViewModel @Inject constructor(
                         pageContentSetting = newPageContentSetting
                     )
 
-                    useCasePageSetting.saveEpisodePageSetting(episodeRef = episodeRef, pageSetting = newPageSetting)
+                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)
                 }
             }
         }
@@ -96,11 +97,15 @@ class ViewerContentViewModel @Inject constructor(
 
     init {
         scope.launch {
-            useCasePageSetting.getEpisodePageSettingFlow(episodeRef).collectLatest {
-                setState {
-                    copy(
-                        pageSetting = it
-                    )
+            useCasePageSetting.getPageSettingFlow(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId).collectLatest {
+                if(it == null){
+                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = PageSettingModel())
+                }else{
+                    setState {
+                        copy(
+                            pageSetting = it
+                        )
+                    }
                 }
             }
         }

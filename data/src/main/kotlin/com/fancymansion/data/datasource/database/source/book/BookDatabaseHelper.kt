@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
 import com.fancymansion.data.datasource.database.source.book.model.ActionCountData
+import com.fancymansion.data.datasource.database.source.book.model.PageSettingData
 import com.fancymansion.data.datasource.database.source.book.model.ReadingProgressData
 import kotlinx.coroutines.CoroutineScope
 
@@ -15,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
     version = 1,
     exportSchema = true,
     entities = [
+        PageSettingData::class,
         ActionCountData::class,
         ReadingProgressData::class
     ]

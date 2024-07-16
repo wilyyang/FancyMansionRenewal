@@ -6,6 +6,8 @@ import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
 import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
+import com.fancymansion.data.datasource.database.source.book.model.asData
+import com.fancymansion.data.datasource.database.source.book.model.asModel
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
@@ -13,9 +15,8 @@ import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.PageSettingModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.map
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,29 +27,23 @@ class BookLocalRepositoryImpl @Inject constructor(
     private val bookDatabaseDao: BookDatabaseDao
 ) : BookLocalRepository {
 
-    private var temp : PageSettingModel = PageSettingModel()
-    private val tempChannel : Channel<PageSettingModel> = Channel()
-
-    private val tempFlow = tempChannel.receiveAsFlow()
-
     /**
      * PageSetting
      */
-    override suspend fun getEpisodePageSetting(episodeRef: EpisodeRef): PageSettingModel? {
-        return temp
+    override suspend fun getPageSetting(userId: String, mode: String, bookId: String): PageSettingModel? {
+        return bookDatabaseDao.getPageSetting(userId, mode, bookId)?.asModel()
     }
-
-    override fun getEpisodePageSettingFlow(episodeRef: EpisodeRef): Flow<PageSettingModel> {
-        return tempFlow
+    override fun getPageSettingFlow(userId: String, mode: String, bookId: String): Flow<PageSettingModel?>{
+        return bookDatabaseDao.getPageSettingFlow(userId, mode, bookId).map { it?.asModel() }
     }
-
-    override suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel) {
-        temp = pageSetting
-        tempChannel.send(temp)
+    override suspend fun insertPageSetting(userId: String, mode: String, bookId: String, pageSetting: PageSettingModel){
+        bookDatabaseDao.insertPageSetting(pageSetting.asData(userId, mode, bookId))
     }
-
-    override suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef) {
-        // TODO
+    override suspend fun updatePageSetting(userId: String, mode: String, bookId: String, pageSetting: PageSettingModel){
+        bookDatabaseDao.updatePageSetting(pageSetting.asData(userId, mode, bookId))
+    }
+    override suspend fun deletePageSettingByBookId(userId: String, mode: String, bookId: String){
+        bookDatabaseDao.deletePageSettingByBookId(userId, mode, bookId)
     }
 
     /**

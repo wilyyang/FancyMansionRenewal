@@ -1,6 +1,5 @@
 package com.fancymansion.domain.usecase.book
 
-import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.PageSettingModel
@@ -13,23 +12,28 @@ class UseCasePageSetting @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
-    suspend fun getEpisodePageSetting(episodeRef: EpisodeRef) : PageSettingModel? =
+    suspend fun getPageSetting(userId: String, mode: String, bookId: String) : PageSettingModel? =
         withContext(dispatcher)
         {
-            bookLocalRepository.getEpisodePageSetting(episodeRef)
+            bookLocalRepository.getPageSetting(userId, mode, bookId)
         }
 
-    fun getEpisodePageSettingFlow(episodeRef: EpisodeRef) : Flow<PageSettingModel> = bookLocalRepository.getEpisodePageSettingFlow(episodeRef)
+    fun getPageSettingFlow(userId: String, mode: String, bookId: String) : Flow<PageSettingModel?> = bookLocalRepository.getPageSettingFlow(userId, mode, bookId)
 
-    suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel) =
+    suspend fun savePageSetting(userId: String, mode: String, bookId: String, pageSetting: PageSettingModel) =
         withContext(dispatcher)
         {
-            bookLocalRepository.saveEpisodePageSetting(episodeRef, pageSetting)
+            val setting = bookLocalRepository.getPageSetting(userId, mode, bookId)
+            if(setting == null){
+                bookLocalRepository.insertPageSetting(userId, mode, bookId, pageSetting)
+            }else{
+                bookLocalRepository.updatePageSetting(userId, mode, bookId, pageSetting)
+            }
         }
 
-    suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef) =
+    suspend fun deletePageSetting(userId: String, mode: String, bookId: String) =
         withContext(dispatcher)
         {
-            bookLocalRepository.deleteEpisodePageSetting(episodeRef)
+            bookLocalRepository.deletePageSettingByBookId(userId, mode, bookId)
         }
 }

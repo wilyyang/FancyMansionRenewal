@@ -15,10 +15,11 @@ interface BookLocalRepository {
     /**
      * PageSetting
      */
-    suspend fun getEpisodePageSetting(episodeRef: EpisodeRef): PageSettingModel?
-    fun getEpisodePageSettingFlow(episodeRef: EpisodeRef): Flow<PageSettingModel>
-    suspend fun saveEpisodePageSetting(episodeRef: EpisodeRef, pageSetting: PageSettingModel)
-    suspend fun deleteEpisodePageSetting(episodeRef: EpisodeRef)
+    suspend fun getPageSetting(userId: String, mode: String, bookId: String): PageSettingModel?
+    fun getPageSettingFlow(userId: String, mode: String, bookId: String): Flow<PageSettingModel?>
+    suspend fun insertPageSetting(userId: String, mode: String, bookId: String, pageSetting: PageSettingModel)
+    suspend fun updatePageSetting(userId: String, mode: String, bookId: String, pageSetting: PageSettingModel)
+    suspend fun deletePageSettingByBookId(userId: String, mode: String, bookId: String)
 
 
     /**
