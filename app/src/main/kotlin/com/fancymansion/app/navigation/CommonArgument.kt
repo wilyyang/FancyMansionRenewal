@@ -3,21 +3,26 @@ package com.fancymansion.app.navigation
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.fancymansion.core.common.const.ArgName
-import com.fancymansion.core.common.const.FindAccountType
+import com.fancymansion.core.common.const.ReadMode
 
 object NavArgument{
-    val argCurriculumId = navArgument(ArgName.nameCurriculumId){
+    val argUserId = navArgument(ArgName.NAME_USER_ID){
         type = NavType.StringType
         defaultValue = ""
     }
 
-    val argFindType = navArgument(ArgName.nameFindAccountType){
-        type = NavType.EnumType(type = FindAccountType::class.java)
-        defaultValue = FindAccountType.None
+    val argReadMode = navArgument(ArgName.NAME_READ_MODE){
+        type = NavType.EnumType(ReadMode::class.java)
+        defaultValue = ReadMode.EDIT
     }
 
-    val argIsFirstScreen = navArgument(ArgName.nameIsFirstScreen) {
-        type = NavType.BoolType
-        defaultValue = false
+    val argBookId = navArgument(ArgName.NAME_BOOK_ID){
+        type = NavType.StringType
+        defaultValue = ""
+    }
+
+    val argEpisodeId = navArgument(ArgName.NAME_EPISODE_ID){
+        type = NavType.StringType
+        defaultValue = ""
     }
 }

@@ -1,6 +1,9 @@
 package com.fancymansion.presentation.viewer.content
 
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
+import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
+import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
@@ -29,7 +32,14 @@ class ViewerContentViewModel @Inject constructor(
     private val useCaseBookLogic: UseCaseBookLogic,
     private val useCaseMakeBook: UseCaseMakeBook
 ) : BaseViewModel<ViewerContentContract.State, ViewerContentContract.Event, ViewerContentContract.Effect>() {
-    private var episodeRef : EpisodeRef = testEpisodeRef
+    private var episodeRef : EpisodeRef = savedStateHandle.run {
+        EpisodeRef(
+            get<String>(NAME_USER_ID)?.ifBlank { testEpisodeRef.userId } ?: testEpisodeRef.userId,
+            testEpisodeRef.mode, //get<ReadMode>(NAME_READ_MODE)
+            get<String>(NAME_BOOK_ID)?.ifBlank { testEpisodeRef.bookId } ?: testEpisodeRef.bookId,
+            get<String>(NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId } ?: testEpisodeRef.episodeId
+        )
+    }
     private lateinit var logic : LogicModel
 
     override fun setInitialState() = ViewerContentContract.State()

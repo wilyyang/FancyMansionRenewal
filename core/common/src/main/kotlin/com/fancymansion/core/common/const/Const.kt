@@ -52,23 +52,12 @@ enum class FindAccountType(val webParam : String, val nameResId : Int){
 }
 
 object ArgName{
-    const val nameCurriculumId = "nameCurriculumId"
-    const val nameFindAccountType = "nameFindAccountType"
-    const val nameToken = "nameToken"
-    const val nameArticleId = "nameArticleId"
-    const val nameLectureId = "nameLectureId"
-    const val nameCourseId = "nameCourseId"
-    const val nameTextBookId = "nameTextBookId"
-    const val nameUrl = "nameUrl"
-    const val nameGameSeparator = "nameGameSeparator"
-    const val nameUserId = "nameUserId"
-    const val nameUserName = "nameUserName"
-    const val nameActivityDivName = "nameActivityDivName"
-    const val namePdfMainTitle = "namePdfMainTitle"
-    const val namePdfSubTitle = "namePdfSubTitle"
-    const val nameIsFirstScreen = "nameIsFirstScreen"
-    const val nameTitle = "nameTitle"
+    const val NAME_USER_ID = "NAME_USER_ID"
+    const val NAME_READ_MODE = "NAME_READ_MODE"
+    const val NAME_BOOK_ID = "NAME_BOOK_ID"
+    const val NAME_EPISODE_ID = "NAME_EPISODE_ID"
 }
+
 object CurrentDensity {
     var density : Float? = null
 }

@@ -1,4 +1,4 @@
-package com.fancymansion.app.navigation.destination.login
+package com.fancymansion.app.navigation.destination.viewer
 
 import android.app.Activity
 import androidx.compose.runtime.Composable

@@ -9,7 +9,8 @@ import androidx.compose.ui.unit.Density
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.fancymansion.app.navigation.NavigateAnimation.slideVerticallyComposable
-import com.fancymansion.app.navigation.destination.login.ViewerContentScreenDestination
+import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
+import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.presentation.window.TypeWindow
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
@@ -30,11 +31,11 @@ fun AppNavigation(typeWindow : TypeWindow) {
 
     NavHost(
         navController = navController,
-        startDestination = ViewerContentContract.NAME
+        startDestination = "${ViewerContentContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}"
     ) {
-
         slideVerticallyComposable(
-            route = ViewerContentContract.NAME,
+            route = "${ViewerContentContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}",
+            arguments = listOf(NavArgument.argUserId, NavArgument.argReadMode, NavArgument.argBookId, NavArgument.argEpisodeId),
             navController = navController
         ) {
             ViewerContentScreenDestination(navController = navController, window = typeWindow)
