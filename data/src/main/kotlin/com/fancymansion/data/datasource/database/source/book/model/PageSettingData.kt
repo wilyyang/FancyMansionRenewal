@@ -15,19 +15,19 @@ import com.fancymansion.domain.model.book.SelectorSettingModel
     primaryKeys = ["userId", "mode", "bookId"]
 )
 data class PageSettingData(
-    var userId: String = "",
-    var mode: String = "",
-    var bookId: String = "",
+    val userId: String,
+    val mode: String,
+    val bookId: String,
 
-    var contentBackgroundColor: String = PageColor.WHITE.name,
-    var contentTextSize: String = PageTextSize.SIZE_5.name,
-    var contentLineHeight: String = PageLineHeight.SIZE_5.name,
-    var contentTextMarginHorizontal: String = PageMarginHorizontal.SIZE_2.name,
-    var contentImageMarginHorizontal: String = PageMarginHorizontal.SIZE_0.name,
+    val contentBackgroundColor: String,
+    val contentTextSize: String,
+    val contentLineHeight: String,
+    val contentTextMarginHorizontal: String,
+    val contentImageMarginHorizontal: String,
 
-    var selectorBackgroundColor: String = SelectorColor.GRAY_MEDIUM.name,
-    var selectorTextSize: String = PageTextSize.SIZE_6.name,
-    var selectorLineHeight: String = PageLineHeight.SIZE_6.name
+    val selectorBackgroundColor: String,
+    val selectorTextSize: String,
+    val selectorLineHeight: String
 )
 
 

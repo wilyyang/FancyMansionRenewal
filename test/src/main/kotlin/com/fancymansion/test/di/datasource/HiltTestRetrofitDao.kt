@@ -17,11 +17,6 @@ import javax.inject.Singleton
 )
 class HiltTestRetrofitDao {
 
-    @Provides
-    @Singleton
-    fun providesAuthRetrofitDao() : AuthRetrofitDao {
-        val testContext: Context = ApplicationProvider.getApplicationContext()
-        return AuthRetrofitDaoFake(testContext)
-    }
+
 
 }

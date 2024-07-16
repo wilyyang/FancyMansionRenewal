@@ -25,7 +25,7 @@ interface BookDatabaseDao {
     @Insert
     suspend fun insertPageSetting(pageSettingData: PageSettingData)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update
     suspend fun updatePageSetting(pageSettingData: PageSettingData)
 
 
