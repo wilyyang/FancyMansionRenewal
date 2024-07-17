@@ -31,6 +31,7 @@ import coil.request.ImageRequest
 import com.fancymansion.core.common.const.PageColor
 import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
+import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
@@ -56,13 +57,13 @@ fun ViewerContentScreenPageContent(
     selectors: List<SelectorModel>,
     onEventSent: (event: ViewerContentContract.Event) -> Unit
 ) {
-    val contentTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = pageSetting.pageContentSetting.textSize.dpSize.sp, lineHeight = pageSetting.pageContentSetting.lineHeight.dpSize.sp)
-    val selectorTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = pageSetting.selectorSetting.textSize.dpSize.sp, lineHeight = pageSetting.selectorSetting.lineHeight.dpSize.sp)
+    val contentTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = pageSetting.pageContentSetting.textSize.dpSize.sp, lineHeight = pageSetting.pageContentSetting.lineHeight.dpSize.sp, color = Color(pageSetting.pageTheme.textColor.colorCode))
+    val selectorTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = pageSetting.selectorSetting.textSize.dpSize.sp, lineHeight = pageSetting.selectorSetting.lineHeight.dpSize.sp, color = Color(pageSetting.pageTheme.selectorTextColor.colorCode))
     val listState = rememberLazyListState()
 
     when (pageWrapper) {
         null -> {
-            Box(modifier = modifier.background(color = Color(pageSetting.pageContentSetting.backgroundColor.colorCode)).fillMaxSize(), contentAlignment = Alignment.Center){
+            Box(modifier = modifier.background(color = Color(pageSetting.pageTheme.pageColor.colorCode)).fillMaxSize(), contentAlignment = Alignment.Center){
                 Text(text = "No Data")
             }
         }
@@ -73,7 +74,7 @@ fun ViewerContentScreenPageContent(
 
 
             LazyColumn(
-                modifier = modifier.background(color = Color(pageSetting.pageContentSetting.backgroundColor.colorCode)),
+                modifier = modifier.background(color = Color(pageSetting.pageTheme.pageColor.colorCode)),
                 state = listState
             ) {
                 item {
@@ -86,16 +87,16 @@ fun ViewerContentScreenPageContent(
 
                     Row{
                        Text(text = "배경색")
-                       PageColor.entries.forEach {
+                       PageTheme.entries.forEach {
 
-                            Box(modifier = Modifier.size(30.dp, 30.dp).background(color = Color(it.colorCode)).then(
-                                if(pageSetting.pageContentSetting.backgroundColor == it){
+                            Box(modifier = Modifier.size(30.dp, 30.dp).background(color = Color(it.pageColor.colorCode)).then(
+                                if(pageSetting.pageTheme.pageColor == it.pageColor){
                                     Modifier.border(width = 1.dp, shape = MaterialTheme.shapes.small, color = ColorSet.sky_c1ebfe)
                                 }else{
                                     Modifier
                                 }
                             ).clickable {
-                                onEventSent(ViewerContentContract.Event.ChangePageBackgroundColor(it))
+                                onEventSent(ViewerContentContract.Event.ChangePageTheme(it))
                             })
                        }
                     }
@@ -153,7 +154,7 @@ fun ViewerContentScreenPageContent(
                             .clip(
                                 shape = MaterialTheme.shapes.small
                             )
-                            .background(color = Color(pageSetting.selectorSetting.backgroundColor.colorCode))
+                            .background(color = Color(pageSetting.pageTheme.selectorColor.colorCode))
                             .clickable {
                                 onEventSent(
                                     ViewerContentContract.Event.OnClickSelector(

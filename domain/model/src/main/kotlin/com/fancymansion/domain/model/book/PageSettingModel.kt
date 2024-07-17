@@ -1,26 +1,24 @@
 package com.fancymansion.domain.model.book
 
-import com.fancymansion.core.common.const.PageColor
 import com.fancymansion.core.common.const.PageLineHeight
 import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
-import com.fancymansion.core.common.const.SelectorColor
+import com.fancymansion.core.common.const.PageTheme
 
 data class PageContentSettingModel(
-    val backgroundColor: PageColor = PageColor.WHITE,
-    val textSize: PageTextSize = PageTextSize.SIZE_5,
-    val lineHeight: PageLineHeight = PageLineHeight.SIZE_5,
-    val textMarginHorizontal: PageMarginHorizontal = PageMarginHorizontal.SIZE_2,
-    val imageMarginHorizontal: PageMarginHorizontal = PageMarginHorizontal.SIZE_0
+    val textSize: PageTextSize = PageTextSize.TEXT_SIZE_6,
+    val lineHeight: PageLineHeight = PageLineHeight.LINE_HEIGHT_4,
+    val textMarginHorizontal: PageMarginHorizontal = PageMarginHorizontal.MARGIN_2,
+    val imageMarginHorizontal: PageMarginHorizontal = PageMarginHorizontal.MARGIN_1
 )
 
 data class SelectorSettingModel(
-    val backgroundColor: SelectorColor = SelectorColor.GRAY_MEDIUM,
-    val textSize: PageTextSize = PageTextSize.SIZE_6,
-    val lineHeight: PageLineHeight = PageLineHeight.SIZE_6,
+    val textSize: PageTextSize = PageTextSize.TEXT_SIZE_6,
+    val lineHeight: PageLineHeight = PageLineHeight.LINE_HEIGHT_4,
 )
 
 data class PageSettingModel(
+    val pageTheme: PageTheme = PageTheme.THEME_WHITE,
     val pageContentSetting: PageContentSettingModel = PageContentSettingModel(),
     val selectorSetting: SelectorSettingModel = SelectorSettingModel()
 )

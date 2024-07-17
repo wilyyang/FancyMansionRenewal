@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "12d61bc8e47bf91ea49bafc2ff3c186f",
+    "identityHash": "82844fbfdd0ce588df676497db0996e7",
     "entities": [
       {
         "tableName": "PageSettingData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `contentBackgroundColor` TEXT NOT NULL, `contentTextSize` TEXT NOT NULL, `contentLineHeight` TEXT NOT NULL, `contentTextMarginHorizontal` TEXT NOT NULL, `contentImageMarginHorizontal` TEXT NOT NULL, `selectorBackgroundColor` TEXT NOT NULL, `selectorTextSize` TEXT NOT NULL, `selectorLineHeight` TEXT NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `pageTheme` TEXT NOT NULL, `contentTextSize` TEXT NOT NULL, `contentLineHeight` TEXT NOT NULL, `contentTextMarginHorizontal` TEXT NOT NULL, `contentImageMarginHorizontal` TEXT NOT NULL, `selectorTextSize` TEXT NOT NULL, `selectorLineHeight` TEXT NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -27,8 +27,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "contentBackgroundColor",
-            "columnName": "contentBackgroundColor",
+            "fieldPath": "pageTheme",
+            "columnName": "pageTheme",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -53,12 +53,6 @@
           {
             "fieldPath": "contentImageMarginHorizontal",
             "columnName": "contentImageMarginHorizontal",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "selectorBackgroundColor",
-            "columnName": "selectorBackgroundColor",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -205,7 +199,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '12d61bc8e47bf91ea49bafc2ff3c186f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '82844fbfdd0ce588df676497db0996e7')"
     ]
   }
 }

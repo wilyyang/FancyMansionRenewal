@@ -64,13 +64,10 @@ class ViewerContentViewModel @Inject constructor(
                 }
             }
 
-            is ViewerContentContract.Event.ChangePageBackgroundColor -> {
+            is ViewerContentContract.Event.ChangePageTheme -> {
                 launchWithException {
-                    val newPageContentSetting = uiState.value.pageSetting.pageContentSetting.copy(
-                        backgroundColor = event.color
-                    )
                     val newPageSetting = uiState.value.pageSetting.copy(
-                        pageContentSetting = newPageContentSetting
+                        pageTheme = event.pageTheme
                     )
 
                     useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)

@@ -1,8 +1,8 @@
 package com.fancymansion.presentation.viewer.content
 
-import com.fancymansion.core.common.const.PageColor
 import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
+import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -26,7 +26,7 @@ class ViewerContentContract {
         data object OnCancelMoveSavePageDialog : Event()
         data class OnClickSelector(val pageId: Long, val selectorId: Long) : Event()
 
-        data class ChangePageBackgroundColor(val color: PageColor) : Event()
+        data class ChangePageTheme(val pageTheme: PageTheme) : Event()
         data class ChangeContentTextSize(val textSize: PageTextSize) : Event()
         data class ChangeImageMargin(val margin: PageMarginHorizontal) : Event()
     }
