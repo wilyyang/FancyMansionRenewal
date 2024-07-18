@@ -63,7 +63,9 @@ fun ViewerContentScreenPageContent(
 
     when (pageWrapper) {
         null -> {
-            Box(modifier = modifier.background(color = Color(pageSetting.pageTheme.pageColor.colorCode)).fillMaxSize(), contentAlignment = Alignment.Center){
+            Box(modifier = modifier
+                .background(color = Color(pageSetting.pageTheme.pageColor.colorCode))
+                .fillMaxSize(), contentAlignment = Alignment.Center){
                 Text(text = "No Data")
             }
         }
@@ -84,41 +86,6 @@ fun ViewerContentScreenPageContent(
                             .padding(horizontal = 5.dp),
                         text = pageWrapper.title, style = MaterialTheme.typography.titleLarge
                     )
-
-                    Row{
-                       Text(text = "배경색")
-                       PageTheme.entries.forEach {
-
-                            Box(modifier = Modifier.size(30.dp, 30.dp).background(color = Color(it.pageColor.colorCode)).then(
-                                if(pageSetting.pageTheme.pageColor == it.pageColor){
-                                    Modifier.border(width = 1.dp, shape = MaterialTheme.shapes.small, color = ColorSet.sky_c1ebfe)
-                                }else{
-                                    Modifier
-                                }
-                            ).clickable {
-                                onEventSent(ViewerContentContract.Event.ChangePageTheme(it))
-                            })
-                       }
-                    }
-
-                    Row{
-                        Text(text = "본문 텍스트 크기")
-                        PageTextSize.entries.forEach {
-                            Text(modifier = Modifier.size(30.dp, 30.dp).clickable {
-                                onEventSent(ViewerContentContract.Event.ChangeContentTextSize(it))
-                            }, text = it.name)
-                        }
-                    }
-
-                    Row{
-                        Text(text = "이미지 좌우 너비")
-                        PageMarginHorizontal.entries.forEach {
-                            Text(modifier = Modifier.size(30.dp, 30.dp).clickable {
-                                onEventSent(ViewerContentContract.Event.ChangeImageMargin(it))
-                            }, text = it.name)
-                        }
-                    }
-
                 }
                 items(pageWrapper.sources) {
                     when (it) {
@@ -132,7 +99,9 @@ fun ViewerContentScreenPageContent(
 
                         is SourceWrapper.ImageWrapper -> {
                             AsyncImage(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = pageSetting.pageContentSetting.imageMarginHorizontal.dpSize.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = pageSetting.pageContentSetting.imageMarginHorizontal.dpSize.dp),
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(it.imageFile)
 
@@ -170,6 +139,58 @@ fun ViewerContentScreenPageContent(
                 }
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(50.dp))
+                    
+                    Box(modifier = Modifier.height(2.dp).fillMaxWidth().background(color = Color(pageSetting.pageTheme.selectorColor.colorCode)))
+
+                    Row{
+                        Text(text = "배경색")
+                        PageTheme.entries.forEach {
+
+                            Box(modifier = Modifier
+                                .size(30.dp, 30.dp)
+                                .background(color = Color(it.pageColor.colorCode))
+                                .then(
+                                    if (pageSetting.pageTheme.pageColor == it.pageColor) {
+                                        Modifier.border(
+                                            width = 1.dp,
+                                            shape = MaterialTheme.shapes.small,
+                                            color = ColorSet.sky_c1ebfe
+                                        )
+                                    } else {
+                                        Modifier
+                                    }
+                                )
+                                .clickable {
+                                    onEventSent(ViewerContentContract.Event.ChangePageTheme(it))
+                                })
+                        }
+                    }
+
+                    Row{
+                        Text(text = "본문 텍스트 크기")
+                        PageTextSize.entries.forEach {
+                            Text(modifier = Modifier
+                                .size(30.dp, 30.dp)
+                                .clickable {
+                                    onEventSent(ViewerContentContract.Event.ChangeContentTextSize(it))
+                                }, text = it.name)
+                        }
+                    }
+
+                    Row{
+                        Text(text = "이미지 좌우 너비")
+                        PageMarginHorizontal.entries.forEach {
+                            Text(modifier = Modifier
+                                .size(30.dp, 30.dp)
+                                .clickable {
+                                    onEventSent(ViewerContentContract.Event.ChangeImageMargin(it))
+                                }, text = it.name)
+                        }
+                    }
                 }
             }
         }
