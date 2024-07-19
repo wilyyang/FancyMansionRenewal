@@ -5,6 +5,7 @@ import com.fancymansion.core.common.const.PageLineHeight
 import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.common.const.PageTheme
+import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.domain.model.book.PageContentSettingModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorSettingModel
@@ -24,7 +25,7 @@ data class PageSettingData(
     val contentTextMarginHorizontal: String,
     val contentImageMarginHorizontal: String,
     val selectorTextSize: String,
-    val selectorLineHeight: String
+    val selectorPaddingVertical: String
 )
 
 
@@ -39,7 +40,7 @@ fun PageSettingData.asModel() = PageSettingModel(
     ),
     selectorSetting = SelectorSettingModel(
         textSize = PageTextSize.valueOf(selectorTextSize),
-        lineHeight = PageLineHeight.valueOf(selectorLineHeight)
+        paddingVertical = SelectorPaddingVertical.valueOf(selectorPaddingVertical)
     )
 )
 
@@ -56,5 +57,5 @@ fun PageSettingModel.asData(userId : String, mode: String, bookId: String) = Pag
     contentImageMarginHorizontal = pageContentSetting.imageMarginHorizontal.name,
 
     selectorTextSize = selectorSetting.textSize.name,
-    selectorLineHeight = selectorSetting.lineHeight.name
+    selectorPaddingVertical = selectorSetting.paddingVertical.name
 )

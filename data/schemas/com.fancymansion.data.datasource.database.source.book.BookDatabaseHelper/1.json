@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "82844fbfdd0ce588df676497db0996e7",
+    "identityHash": "98041b1eed6ac2ed081a486e59fecb1f",
     "entities": [
       {
         "tableName": "PageSettingData",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `pageTheme` TEXT NOT NULL, `contentTextSize` TEXT NOT NULL, `contentLineHeight` TEXT NOT NULL, `contentTextMarginHorizontal` TEXT NOT NULL, `contentImageMarginHorizontal` TEXT NOT NULL, `selectorTextSize` TEXT NOT NULL, `selectorLineHeight` TEXT NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `mode` TEXT NOT NULL, `bookId` TEXT NOT NULL, `pageTheme` TEXT NOT NULL, `contentTextSize` TEXT NOT NULL, `contentLineHeight` TEXT NOT NULL, `contentTextMarginHorizontal` TEXT NOT NULL, `contentImageMarginHorizontal` TEXT NOT NULL, `selectorTextSize` TEXT NOT NULL, `selectorPaddingVertical` TEXT NOT NULL, PRIMARY KEY(`userId`, `mode`, `bookId`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -63,8 +63,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "selectorLineHeight",
-            "columnName": "selectorLineHeight",
+            "fieldPath": "selectorPaddingVertical",
+            "columnName": "selectorPaddingVertical",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -199,7 +199,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '82844fbfdd0ce588df676497db0996e7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '98041b1eed6ac2ed081a486e59fecb1f')"
     ]
   }
 }

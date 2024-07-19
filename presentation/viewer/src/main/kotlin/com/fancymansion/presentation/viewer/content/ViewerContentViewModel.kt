@@ -64,41 +64,67 @@ class ViewerContentViewModel @Inject constructor(
                 }
             }
 
-            is ViewerContentContract.Event.ChangePageTheme -> {
-                launchWithException {
-                    val newPageSetting = uiState.value.pageSetting.copy(
-                        pageTheme = event.pageTheme
-                    )
+            is ViewerContentContract.Event.SettingEvent -> handleSettingEvent(event)
+        }
+    }
 
-                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)
+    private fun handleSettingEvent(event: ViewerContentContract.Event.SettingEvent) {
+        launchWithLoading {
+            val updatedPageSetting = uiState.value.pageSetting.let { setting ->
+                when (event) {
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingPageTheme ->
+                        setting.copy(pageTheme = event.pageTheme)
+
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextSize ->
+                        setting.copy(
+                            pageContentSetting = setting.pageContentSetting.copy(
+                                textSize = event.textSize
+                            )
+                        )
+
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentLineHeight ->
+                        setting.copy(
+                            pageContentSetting = setting.pageContentSetting.copy(
+                                lineHeight = event.lineHeight
+                            )
+                        )
+
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextMargin ->
+                        setting.copy(
+                            pageContentSetting = setting.pageContentSetting.copy(
+                                textMarginHorizontal = event.margin
+                            )
+                        )
+
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentImageMargin ->
+                        setting.copy(
+                            pageContentSetting = setting.pageContentSetting.copy(
+                                imageMarginHorizontal = event.margin
+                            )
+                        )
+
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorTextSize ->
+                        setting.copy(
+                            selectorSetting = setting.selectorSetting.copy(
+                                textSize = event.textSize
+                            )
+                        )
+
+                    is ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorPaddingVertical ->
+                        setting.copy(
+                            selectorSetting = setting.selectorSetting.copy(
+                                paddingVertical = event.paddingVertical
+                            )
+                        )
                 }
             }
 
-            is ViewerContentContract.Event.ChangeContentTextSize -> {
-                launchWithException {
-                    val newPageContentSetting = uiState.value.pageSetting.pageContentSetting.copy(
-                        textSize = event.textSize
-                    )
-                    val newPageSetting = uiState.value.pageSetting.copy(
-                        pageContentSetting = newPageContentSetting
-                    )
-
-                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)
-                }
-            }
-
-            is ViewerContentContract.Event.ChangeImageMargin -> {
-                launchWithException {
-                    val newPageContentSetting = uiState.value.pageSetting.pageContentSetting.copy(
-                        imageMarginHorizontal = event.margin
-                    )
-                    val newPageSetting = uiState.value.pageSetting.copy(
-                        pageContentSetting = newPageContentSetting
-                    )
-
-                    useCasePageSetting.savePageSetting(userId = episodeRef.userId, mode = episodeRef.mode.name, bookId = episodeRef.bookId, pageSetting = newPageSetting)
-                }
-            }
+            useCasePageSetting.savePageSetting(
+                userId = episodeRef.userId,
+                mode = episodeRef.mode.name,
+                bookId = episodeRef.bookId,
+                pageSetting = updatedPageSetting
+            )
         }
     }
 

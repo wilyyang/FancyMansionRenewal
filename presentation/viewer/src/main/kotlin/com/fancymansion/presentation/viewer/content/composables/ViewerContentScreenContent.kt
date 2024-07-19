@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -24,14 +25,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.fancymansion.core.common.const.PageColor
+import com.fancymansion.core.common.const.PageLineHeight
 import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.common.const.PageTheme
+import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
@@ -57,8 +60,32 @@ fun ViewerContentScreenPageContent(
     selectors: List<SelectorModel>,
     onEventSent: (event: ViewerContentContract.Event) -> Unit
 ) {
-    val contentTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = pageSetting.pageContentSetting.textSize.dpSize.sp, lineHeight = pageSetting.pageContentSetting.lineHeight.dpSize.sp, color = Color(pageSetting.pageTheme.textColor.colorCode))
-    val selectorTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = pageSetting.selectorSetting.textSize.dpSize.sp, lineHeight = pageSetting.selectorSetting.lineHeight.dpSize.sp, color = Color(pageSetting.pageTheme.selectorTextColor.colorCode))
+    val titleTextStyle = pageSetting.pageContentSetting.run {
+        MaterialTheme.typography.titleLarge.copy(
+            fontSize = textSize.dpSize.sp,
+            lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
+            color = Color(pageSetting.pageTheme.textColor.colorCode),
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+
+    val contentTextStyle = pageSetting.pageContentSetting.run {
+        MaterialTheme.typography.bodyLarge.copy(
+            fontSize = textSize.dpSize.sp,
+            lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
+            color = Color(pageSetting.pageTheme.textColor.colorCode),
+            fontWeight = FontWeight.Normal
+        )
+    }
+
+    val selectorTextStyle = pageSetting.selectorSetting.run {
+        MaterialTheme.typography.bodyLarge.copy(
+            fontSize = textSize.dpSize.sp,
+            lineHeight = (textSize.dpSize * 1.1).sp,
+            color = Color(pageSetting.pageTheme.selectorTextColor.colorCode),
+            fontWeight = FontWeight.Medium
+        )
+    }
     val listState = rememberLazyListState()
 
     when (pageWrapper) {
@@ -81,10 +108,8 @@ fun ViewerContentScreenPageContent(
             ) {
                 item {
                     Text(
-                        modifier = Modifier
-                            .padding(vertical = 20.dp)
-                            .padding(horizontal = 5.dp),
-                        text = pageWrapper.title, style = MaterialTheme.typography.titleLarge
+                        modifier = Modifier.padding(vertical = 20.dp, horizontal = 5.dp),
+                        text = pageWrapper.title, style = titleTextStyle
                     )
                 }
                 items(pageWrapper.sources) {
@@ -99,13 +124,8 @@ fun ViewerContentScreenPageContent(
 
                         is SourceWrapper.ImageWrapper -> {
                             AsyncImage(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = pageSetting.pageContentSetting.imageMarginHorizontal.dpSize.dp),
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(it.imageFile)
-
-                                    .build(),
+                                modifier = Modifier.padding(horizontal = pageSetting.pageContentSetting.imageMarginHorizontal.dpSize.dp).fillMaxWidth(),
+                                model = ImageRequest.Builder(LocalContext.current).data(it.imageFile).build(),
                                 contentDescription = "",
                                 contentScale = ContentScale.FillWidth
                             )
@@ -132,7 +152,7 @@ fun ViewerContentScreenPageContent(
                                     )
                                 )
                             }
-                            .padding(horizontal = 15.dp, vertical = 10.dp)
+                            .padding(horizontal = 15.dp, vertical = pageSetting.selectorSetting.paddingVertical.dpSize.dp)
                     ) {
                         Text(text = selector.text, style = selectorTextStyle)
                     }
@@ -141,55 +161,113 @@ fun ViewerContentScreenPageContent(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
+                /**
+                 * 임시 페이지 설정 코드
+                 */
                 item {
                     Spacer(modifier = Modifier.height(50.dp))
                     
-                    Box(modifier = Modifier.height(2.dp).fillMaxWidth().background(color = Color(pageSetting.pageTheme.selectorColor.colorCode)))
+                    Box(modifier = Modifier
+                        .height(1.dp)
+                        .fillMaxWidth()
+                        .background(color = Color(pageSetting.pageTheme.selectorColor.colorCode)))
 
-                    Row{
-                        Text(text = "배경색")
+                    Row(
+                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
+                        verticalAlignment = Alignment.CenterVertically){
+                        Text(text = "배경색 :  ")
+
                         PageTheme.entries.forEach {
-
-                            Box(modifier = Modifier
-                                .size(30.dp, 30.dp)
-                                .background(color = Color(it.pageColor.colorCode))
-                                .then(
-                                    if (pageSetting.pageTheme.pageColor == it.pageColor) {
-                                        Modifier.border(
-                                            width = 1.dp,
-                                            shape = MaterialTheme.shapes.small,
-                                            color = ColorSet.sky_c1ebfe
+                            Box(
+                                modifier = Modifier
+                                    .padding(end = 5.dp)
+                                    .size(30.dp, 30.dp)
+                                    .clip(shape = MaterialTheme.shapes.small)
+                                    .background(color = Color(it.pageColor.colorCode))
+                                    .border(
+                                        width = 1.dp,
+                                        shape = MaterialTheme.shapes.small,
+                                        color = if (pageSetting.pageTheme.pageColor == it.pageColor) ColorSet.sky_c1ebfe else Color.Black
+                                    )
+                                    .clickable {
+                                        onEventSent(
+                                            ViewerContentContract.Event.SettingEvent.ChangeSettingPageTheme(
+                                                it
+                                            )
                                         )
-                                    } else {
-                                        Modifier
-                                    }
-                                )
-                                .clickable {
-                                    onEventSent(ViewerContentContract.Event.ChangePageTheme(it))
-                                })
+                                    },
+                                contentAlignment = Alignment.Center
+                            ){}
                         }
                     }
 
-                    Row{
-                        Text(text = "본문 텍스트 크기")
-                        PageTextSize.entries.forEach {
-                            Text(modifier = Modifier
-                                .size(30.dp, 30.dp)
-                                .clickable {
-                                    onEventSent(ViewerContentContract.Event.ChangeContentTextSize(it))
-                                }, text = it.name)
-                        }
+                    SettingRow("본문 텍스트", PageTextSize.entries, pageSetting.pageContentSetting.textSize) {
+                        onEventSent(
+                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextSize(it)
+                        )
                     }
 
-                    Row{
-                        Text(text = "이미지 좌우 너비")
-                        PageMarginHorizontal.entries.forEach {
-                            Text(modifier = Modifier
-                                .size(30.dp, 30.dp)
-                                .clickable {
-                                    onEventSent(ViewerContentContract.Event.ChangeImageMargin(it))
-                                }, text = it.name)
-                        }
+                    SettingRow("본문 줄간격", PageLineHeight.entries, pageSetting.pageContentSetting.lineHeight) {
+                        onEventSent(
+                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentLineHeight(it)
+                        )
+                    }
+
+                    SettingRow("텍스트 너비", PageMarginHorizontal.entries, pageSetting.pageContentSetting.textMarginHorizontal) {
+                        onEventSent(
+                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextMargin(it)
+                        )
+                    }
+
+                    SettingRow("이미지 너비", PageMarginHorizontal.entries, pageSetting.pageContentSetting.imageMarginHorizontal) {
+                        onEventSent(
+                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentImageMargin(it)
+                        )
+                    }
+
+                    SettingRow("설렉터 텍스트", PageTextSize.entries, pageSetting.selectorSetting.textSize) {
+                        onEventSent(
+                            ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorTextSize(it)
+                        )
+                    }
+
+                    SettingRow("설렉터 줄간격", SelectorPaddingVertical.entries, pageSetting.selectorSetting.paddingVertical) {
+                        onEventSent(
+                            ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorPaddingVertical(it)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun<T> SettingRow(title:String, settings : Iterable<T>, current : T, onClickItem: (T) -> Unit){
+    Row(
+        modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
+        verticalAlignment = Alignment.CenterVertically){
+        Text(text = "$title :  ")
+
+        LazyRow {
+            item {
+                settings.forEachIndexed { index, item ->
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 4.dp)
+                            .size(25.dp, 25.dp)
+                            .clip(shape = MaterialTheme.shapes.small)
+                            .border(
+                                width = 1.dp,
+                                shape = MaterialTheme.shapes.small,
+                                color = if (current == item) ColorSet.sky_c1ebfe else Color.Gray
+                            )
+                            .clickable {
+                                onClickItem(item)
+                            },
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text(text = "${index+1}", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray))
                     }
                 }
             }
