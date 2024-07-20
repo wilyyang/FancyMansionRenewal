@@ -32,7 +32,7 @@ enum class PageTextSize(val dpSize: Float) {
     TEXT_SIZE_3(16f),
     TEXT_SIZE_4(17f),
     TEXT_SIZE_5(18f),
-    TEXT_SIZE_6(19f),
+    TEXT_SIZE_6(18f), // DEFAULT
     TEXT_SIZE_7(20f),
     TEXT_SIZE_8(21f),
     TEXT_SIZE_9(22f),
@@ -48,7 +48,7 @@ enum class PageLineHeight(val dpSize: Float) {
     LINE_HEIGHT_1(3f),
     LINE_HEIGHT_2(5f),
     LINE_HEIGHT_3(7f),
-    LINE_HEIGHT_4(9f),
+    LINE_HEIGHT_4(12f), // DEFAULT
     LINE_HEIGHT_5(11f),
     LINE_HEIGHT_6(13f),
     LINE_HEIGHT_7(15f)
@@ -58,7 +58,7 @@ enum class SelectorPaddingVertical(val dpSize: Float) {
     PADDING_1(3f),
     PADDING_2(5f),
     PADDING_3(7f),
-    PADDING_4(9f),
+    PADDING_4(9f),   // DEFAULT
     PADDING_5(11f),
     PADDING_6(13f),
     PADDING_7(15f)
@@ -67,7 +67,7 @@ enum class SelectorPaddingVertical(val dpSize: Float) {
 enum class PageMarginHorizontal(val dpSize: Float) {
     MARGIN_1(0f),
     MARGIN_2(2f),
-    MARGIN_3(4f),
+    MARGIN_3(14f),  // DEFAULT
     MARGIN_4(6f),
     MARGIN_5(8f),
     MARGIN_6(10f),

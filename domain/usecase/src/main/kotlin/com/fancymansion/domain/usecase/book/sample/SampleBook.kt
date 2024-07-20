@@ -13,13 +13,21 @@ val page1 : PageModel = PageModel(
     title = "잠에서 깨어난 배트",
     sources = listOf(
         SourceModel.ImageModel(imageName = "test_book_id_img_1.png"),
-        SourceModel.TextModel(description = "\n배트가 잠에서 깨어났답니다.\n" +"배트는 동굴 밖으로 날아갔지요.\n"),
+        SourceModel.TextModel(description = "\n어두운 동굴 속, 깊은 잠에 잠겨 있던 박쥐 배트는 달콤한 꿈을 꾸고 있었습니다. 꿈속에서 배트는 하늘을 자유롭게 날아다니며, 수많은 맛있는 벌레들을 먹고 " +
+            "있었습니다.\n" +
+            "\n" +
+            "잠에서 깼을 때, 배트는 배가 고파 꼬르륵 거렸습니다. 그리고 꿈에서 먹었던 벌레들을 떠올리며 다시 한번 배고픔을 느꼈습니다.\n" +
+            "\n" +
+            "\"야! 이제 벌레를 먹어야겠다!\" 배트는 결심하고 동굴 밖으로 날아나갔습니다." +
+            "\n"),
         SourceModel.ImageModel(imageName = "test_book_id_img_2.png"),
-        SourceModel.TextModel("\n\"난 벌레를 원해!\"\n" + "배트가 말했어요.\n" +
-                "\n" +
-                "\"난 벌레를 찾을 거야.\n" + "그리고 벌레들을 먹을 거야!\"\n" +
-                "\n" +
-                "무엇을 하는게 좋을까요?\n")
+        SourceModel.TextModel("\n배트는 넓은 하늘을 향해 날아갔습니다. \n" +
+            "\n" +
+            "\"저기! 저 거대한 모기!\"\n배트는 흥분하며 방향을 바꾸었습니다. 배트는 빠른 속도로 모기를 향해 날아가 힘껏 날개로 모기를 잡았습니다. 그리고 맛있게 모기를 먹어 치웠습니다.\n" +
+            "\n" +
+            "\"하... 진짜 맛있다!\"\n 하지만 배트는 아직 배가 고팠습니다.\n" +
+            "\n" +
+            "배트는 더 많은 벌레를 찾아 더 멀리 날아 갔습니다.")
     )
 )
 

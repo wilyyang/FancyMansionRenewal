@@ -1,22 +1,9 @@
 package com.fancymansion.presentation.viewer.content.composables
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,24 +12,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -52,7 +30,6 @@ import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.common.const.SelectorPaddingVertical
-import com.fancymansion.core.presentation.base.clickSingle
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
@@ -119,8 +96,6 @@ fun ViewerContentScreenPageContent(
                 listState.animateScrollToItem(0)
             }
 
-            val focusRequester = remember { FocusRequester() }
-
             LazyColumn(
                 modifier = modifier.background(color = Color(pageSetting.pageTheme.pageColor.colorCode)),
                 state = listState
@@ -135,10 +110,13 @@ fun ViewerContentScreenPageContent(
                     when (it) {
                         is SourceWrapper.TextWrapper -> {
                             Text(
-                                modifier = Modifier.padding(horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp),
+                                modifier = Modifier
+                                    .padding(horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp)
+                                    .fillMaxWidth(),
                                 text = it.description,
                                 style = contentTextStyle
                             )
+
                         }
 
                         is SourceWrapper.ImageWrapper -> {
@@ -157,21 +135,6 @@ fun ViewerContentScreenPageContent(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
-                items(selectors) { selector ->
-                    UnderlinedTextWithInteraction(
-                        title = selector.text,
-                        textStyle = selectorTextStyle,
-                        focusRequester = focusRequester
-                    ) {
-                        onEventSent(
-                            ViewerContentContract.Event.OnClickSelector(
-                                selector.pageId,
-                                selector.selectorId
-                            )
-                        )
-                    }
-
-                }
                 items(selectors) { selector ->
                     Row(
                         modifier = Modifier
@@ -271,7 +234,7 @@ fun ViewerContentScreenPageContent(
                         )
                     }
 
-                    SettingRow("설렉터 줄간격", SelectorPaddingVertical.entries, pageSetting.selectorSetting.paddingVertical) {
+                    SettingRow("설렉터 높이", SelectorPaddingVertical.entries, pageSetting.selectorSetting.paddingVertical) {
                         onEventSent(
                             ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorPaddingVertical(it)
                         )
@@ -279,43 +242,6 @@ fun ViewerContentScreenPageContent(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun UnderlinedTextWithInteraction(
-    title: String,
-    textStyle: TextStyle,
-    focusRequester: FocusRequester,
-    onClickSelector: () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    var isPressed by remember { mutableStateOf(false) }
-    val animatedAlpha by animateFloatAsState(
-        targetValue = if (isPressed) 1f else 0.5f,
-        animationSpec = tween(durationMillis = 300), label = ""
-    )
-
-    val textModifier = Modifier
-        .pointerInput(interactionSource) {
-            detectTapGestures(
-                onPress = {
-                    isPressed = true
-                    tryAwaitRelease()
-                    isPressed = false
-                }
-            )
-        }
-
-    Column {
-        Text(modifier = textModifier, text = title, color = Color.Black.copy(alpha = animatedAlpha), style = textStyle, interactionSource = interactionSource)
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color.Red.copy(alpha = animatedAlpha))
-        )
     }
 }
 
