@@ -5,53 +5,55 @@ import com.fancymansion.core.common.resource.StringValue
 /**
  * Viewer Config
  */
-enum class PageTheme(val pageColor: PageColor, val textColor: TextColor, val selectorColor: SelectorColor, val selectorTextColor: TextColor) {
+enum class PageTheme(val pageColor: PageColor, val textColor: TextColor, val selectorColor: SelectorColor, val selectorTextColor: TextColor, val isDarkTheme: Boolean = false) {
     THEME_WHITE(pageColor = PageColor.WHITE, textColor = TextColor.BLACK, selectorColor = SelectorColor.WHITE_OFF, selectorTextColor = TextColor.BLACK),
-    THEME_DARK(pageColor = PageColor.BLACK, textColor = TextColor.WHITE, selectorColor = SelectorColor.GRAY_DARK, selectorTextColor = TextColor.RED)
+    THEME_DARK_GRAY(pageColor = PageColor.DARK_GRAY, textColor = TextColor.WHITE, selectorColor = SelectorColor.DARK_GRAY, selectorTextColor = TextColor.WHITE, isDarkTheme = true),
+    THEME_IVORY(pageColor = PageColor.LIGHT_IVORY, textColor = TextColor.BLACK, selectorColor = SelectorColor.DARK_IVORY, selectorTextColor = TextColor.BLACK)
 }
 
 enum class PageColor(val colorCode: Long) {
-    WHITE(0xff_ffffff),
-    BLACK(0xff_000000)
+    WHITE(0xff_fefefc),
+    DARK_GRAY(0xff_1d1d1d),
+    LIGHT_IVORY(0xff_f8f0e3)
 }
 
 enum class TextColor(val colorCode: Long) {
-    BLACK(0xff_000000),
-    WHITE(0xff_ffffff),
-    RED(0xff_ff0000)
+    BLACK(0xff_1d1d1d),
+    WHITE(0xff_fefefc)
 }
 
 enum class SelectorColor(val colorCode: Long) {
     WHITE_OFF(0xff_eeeeee),
-    GRAY_DARK(0xff_555555)
+    DARK_GRAY(0xff_404040),
+    DARK_IVORY(0xff_ebe5d4)
 }
 
 enum class PageTextSize(val dpSize: Float) {
-    TEXT_SIZE_1(14f),
-    TEXT_SIZE_2(15f),
-    TEXT_SIZE_3(16f),
-    TEXT_SIZE_4(17f),
-    TEXT_SIZE_5(18f),
+    TEXT_SIZE_1(13f),
+    TEXT_SIZE_2(14f),
+    TEXT_SIZE_3(15f),
+    TEXT_SIZE_4(16f),
+    TEXT_SIZE_5(17f),
     TEXT_SIZE_6(18f), // DEFAULT
-    TEXT_SIZE_7(20f),
-    TEXT_SIZE_8(21f),
-    TEXT_SIZE_9(22f),
-    TEXT_SIZE_10(23f),
-    TEXT_SIZE_11(24f),
-    TEXT_SIZE_12(25f),
-    TEXT_SIZE_13(26f),
-    TEXT_SIZE_14(27f),
-    TEXT_SIZE_15(28f)
+    TEXT_SIZE_7(19f),
+    TEXT_SIZE_8(20f),
+    TEXT_SIZE_9(21f),
+    TEXT_SIZE_10(22f),
+    TEXT_SIZE_11(23f),
+    TEXT_SIZE_12(24f),
+    TEXT_SIZE_13(25f),
+    TEXT_SIZE_14(26f),
+    TEXT_SIZE_15(27f)
 }
 
 enum class PageLineHeight(val dpSize: Float) {
-    LINE_HEIGHT_1(3f),
-    LINE_HEIGHT_2(5f),
-    LINE_HEIGHT_3(7f),
-    LINE_HEIGHT_4(12f), // DEFAULT
-    LINE_HEIGHT_5(11f),
-    LINE_HEIGHT_6(13f),
-    LINE_HEIGHT_7(15f)
+    LINE_HEIGHT_1(8f),
+    LINE_HEIGHT_2(10f),
+    LINE_HEIGHT_3(12f),
+    LINE_HEIGHT_4(14f), // DEFAULT
+    LINE_HEIGHT_5(16f),
+    LINE_HEIGHT_6(18f),
+    LINE_HEIGHT_7(20f)
 }
 
 enum class SelectorPaddingVertical(val dpSize: Float) {
@@ -66,12 +68,12 @@ enum class SelectorPaddingVertical(val dpSize: Float) {
 
 enum class PageMarginHorizontal(val dpSize: Float) {
     MARGIN_1(0f),
-    MARGIN_2(2f),
-    MARGIN_3(14f),  // DEFAULT
-    MARGIN_4(6f),
-    MARGIN_5(8f),
-    MARGIN_6(10f),
-    MARGIN_7(12f)
+    MARGIN_2(8f),
+    MARGIN_3(16f),  // DEFAULT
+    MARGIN_4(24f),
+    MARGIN_5(32f),
+    MARGIN_6(40f),
+    MARGIN_7(48f)
 }
 
 /**

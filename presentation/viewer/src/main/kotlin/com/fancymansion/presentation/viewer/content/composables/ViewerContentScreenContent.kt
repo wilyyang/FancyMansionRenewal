@@ -19,8 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -77,7 +75,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize * 1.1).sp,
-            color = Color(pageSetting.pageTheme.selectorTextColor.colorCode),
+            color = Color(pageSetting.pageTheme.selectorTextColor.colorCode).copy(alpha = 0.8f),
             fontWeight = FontWeight.Medium
         )
     }
@@ -102,7 +100,7 @@ fun ViewerContentScreenPageContent(
             ) {
                 item {
                     Text(
-                        modifier = Modifier.padding(vertical = 20.dp, horizontal = 5.dp),
+                        modifier = Modifier.padding(vertical = 20.dp, horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp),
                         text = pageWrapper.title, style = titleTextStyle
                     )
                 }
@@ -162,116 +160,6 @@ fun ViewerContentScreenPageContent(
                 }
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
-                }
-
-                /**
-                 * 임시 페이지 설정 코드
-                 */
-                item {
-                    Spacer(modifier = Modifier.height(50.dp))
-                    
-                    Box(modifier = Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                        .background(color = Color(pageSetting.pageTheme.selectorColor.colorCode)))
-
-                    Row(
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
-                        verticalAlignment = Alignment.CenterVertically){
-                        Text(text = "배경색 :  ")
-
-                        PageTheme.entries.forEach {
-                            Box(
-                                modifier = Modifier
-                                    .padding(end = 5.dp)
-                                    .size(30.dp, 30.dp)
-                                    .clip(shape = MaterialTheme.shapes.small)
-                                    .background(color = Color(it.pageColor.colorCode))
-                                    .border(
-                                        width = 1.dp,
-                                        shape = MaterialTheme.shapes.small,
-                                        color = if (pageSetting.pageTheme.pageColor == it.pageColor) ColorSet.sky_c1ebfe else Color.Black
-                                    )
-                                    .clickable {
-                                        onEventSent(
-                                            ViewerContentContract.Event.SettingEvent.ChangeSettingPageTheme(
-                                                it
-                                            )
-                                        )
-                                    },
-                                contentAlignment = Alignment.Center
-                            ){}
-                        }
-                    }
-
-                    SettingRow("본문 텍스트", PageTextSize.entries, pageSetting.pageContentSetting.textSize) {
-                        onEventSent(
-                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextSize(it)
-                        )
-                    }
-
-                    SettingRow("본문 줄간격", PageLineHeight.entries, pageSetting.pageContentSetting.lineHeight) {
-                        onEventSent(
-                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentLineHeight(it)
-                        )
-                    }
-
-                    SettingRow("텍스트 너비", PageMarginHorizontal.entries, pageSetting.pageContentSetting.textMarginHorizontal) {
-                        onEventSent(
-                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextMargin(it)
-                        )
-                    }
-
-                    SettingRow("이미지 너비", PageMarginHorizontal.entries, pageSetting.pageContentSetting.imageMarginHorizontal) {
-                        onEventSent(
-                            ViewerContentContract.Event.SettingEvent.ChangeSettingContentImageMargin(it)
-                        )
-                    }
-
-                    SettingRow("설렉터 텍스트", PageTextSize.entries, pageSetting.selectorSetting.textSize) {
-                        onEventSent(
-                            ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorTextSize(it)
-                        )
-                    }
-
-                    SettingRow("설렉터 높이", SelectorPaddingVertical.entries, pageSetting.selectorSetting.paddingVertical) {
-                        onEventSent(
-                            ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorPaddingVertical(it)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun<T> SettingRow(title:String, settings : Iterable<T>, current : T, onClickItem: (T) -> Unit){
-    Row(
-        modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp),
-        verticalAlignment = Alignment.CenterVertically){
-        Text(text = "$title :  ")
-
-        LazyRow {
-            item {
-                settings.forEachIndexed { index, item ->
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .size(25.dp, 25.dp)
-                            .clip(shape = MaterialTheme.shapes.small)
-                            .border(
-                                width = 1.dp,
-                                shape = MaterialTheme.shapes.small,
-                                color = if (current == item) ColorSet.sky_c1ebfe else Color.Gray
-                            )
-                            .clickable {
-                                onClickItem(item)
-                            },
-                        contentAlignment = Alignment.Center
-                    ){
-                        Text(text = "${index+1}", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Gray))
-                    }
                 }
             }
         }

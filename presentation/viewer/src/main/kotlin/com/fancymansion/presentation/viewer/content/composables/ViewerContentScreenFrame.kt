@@ -1,15 +1,17 @@
 package com.fancymansion.presentation.viewer.content.composables
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.frame.BaseScreen
-import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.core.presentation.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.window.TypePane
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
@@ -37,11 +39,13 @@ fun ViewerContentScreenFrame(
     BaseScreen(
         loadState = loadState,
         description = ViewerContentContract.NAME,
-        statusBarColor = ColorSet.sky_c1ebfe,
+        statusBarColor = Color(uiState.pageSetting.pageTheme.pageColor.colorCode),
+        isStatusBarTextDark = !uiState.pageSetting.pageTheme.isDarkTheme,
         typePane = TypePane.SINGLE,
         isOverlayTopBar = true
     ) {
         ViewerContentScreenContent(
+            modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onEventSent = onEventSent
         )
