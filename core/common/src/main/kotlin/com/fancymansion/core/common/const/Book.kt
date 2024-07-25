@@ -12,7 +12,7 @@ enum class PageTheme(val pageColor: PageColor, val textColor: TextColor, val sel
 }
 
 enum class PageColor(val colorCode: Long) {
-    WHITE(0xff_fefefc),
+    WHITE(0xff_ffffff),
     DARK_GRAY(0xff_1d1d1d),
     LIGHT_IVORY(0xff_f8f0e3)
 }

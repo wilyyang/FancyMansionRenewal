@@ -1,11 +1,15 @@
 package com.fancymansion.presentation.viewer.content.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -23,14 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.fancymansion.core.common.const.PageLineHeight
-import com.fancymansion.core.common.const.PageMarginHorizontal
-import com.fancymansion.core.common.const.PageTextSize
-import com.fancymansion.core.common.const.PageTheme
-import com.fancymansion.core.common.const.SelectorPaddingVertical
-import com.fancymansion.core.presentation.theme.ColorSet
+import com.fancymansion.core.common.resource.StringValue
+import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.screen.NoDataScreen
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
+import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.PageWrapper
 import com.fancymansion.presentation.viewer.content.SourceWrapper
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
@@ -39,9 +41,10 @@ import com.fancymansion.presentation.viewer.content.ViewerContentContract
 fun ViewerContentScreenContent(
     modifier: Modifier = Modifier,
     uiState: ViewerContentContract.State,
-    onEventSent: (event: ViewerContentContract.Event) -> Unit
+    onEventSent: (event: ViewerContentContract.Event) -> Unit,
+    onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
-    ViewerContentScreenPageContent(modifier, uiState.pageSetting, uiState.pageWrapper, uiState.selectors,  onEventSent)
+    ViewerContentScreenPageContent(modifier, uiState.pageSetting, uiState.pageWrapper, uiState.selectors,  onEventSent, onCommonEventSent)
 }
 
 
@@ -51,7 +54,8 @@ fun ViewerContentScreenPageContent(
     pageSetting: PageSettingModel,
     pageWrapper : PageWrapper?,
     selectors: List<SelectorModel>,
-    onEventSent: (event: ViewerContentContract.Event) -> Unit
+    onEventSent: (event: ViewerContentContract.Event) -> Unit,
+    onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
     val titleTextStyle = pageSetting.pageContentSetting.run {
         MaterialTheme.typography.titleLarge.copy(
@@ -86,7 +90,16 @@ fun ViewerContentScreenPageContent(
             Box(modifier = modifier
                 .background(color = Color(pageSetting.pageTheme.pageColor.colorCode))
                 .fillMaxSize(), contentAlignment = Alignment.Center){
-                Text(text = "No Data")
+
+                NoDataScreen(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    titleMessage = StringValue.StringResource(resId = R.string.screen_no_page_title),
+                    detailMessage = StringValue.StringResource(resId = R.string.screen_no_page_detail),
+                    option1Title = StringValue.StringResource(resId = com.fancymansion.core.presentation.R.string.button_back),
+                    onClickOption1 = {
+                        onCommonEventSent(CommonEvent.CloseEvent)
+                    }
+                )
             }
         }
         else -> {

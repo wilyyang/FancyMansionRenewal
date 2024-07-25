@@ -47,7 +47,8 @@ fun ViewerContentScreenFrame(
         ViewerContentScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
-            onEventSent = onEventSent
+            onEventSent = onEventSent,
+            onCommonEventSent = onCommonEventSent
         )
     }
 

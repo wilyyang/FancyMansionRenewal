@@ -2,4 +2,11 @@
 <resources>
     <string name="drawer_hello">Hello!</string>
     <string name="drawer_request_login">로그인하시면 학습 기록을 \n저장할 수 있습니다.</string>
+
+    <string name="screen_no_data_title_default">데이터가 없습니다.</string>
+    <string name="screen_no_data_detail_default">네트워크 연결 확인 후 재시도 해주세요.</string>
+
+    <string name="button_cancel">취소</string>
+    <string name="button_retry">재시도</string>
+    <string name="button_back">뒤로가기</string>
 </resources>

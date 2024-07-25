@@ -9,8 +9,10 @@ import com.fancymansion.core.presentation.theme.typography.typographyMobile
 val disableAlpha = 0.38f
 val dimmedAlpha = 0.28f
 
+
 const val ON_CONTENT_DEACTIVE_ALPHA = 0.392f
 const val ON_CONTENT_SUB_ALPHA = 0.478f
+const val ON_CONTENT_DIMMED_ALPHA = 0.95f
 
 private val LightColorScheme = lightColorScheme(
     primary = ColorSet.blue_1e9eff,
@@ -38,9 +40,11 @@ private val LightColorScheme = lightColorScheme(
     outlineVariant = ColorSet.gray_d7dbde
 )
 
+val onBackgroundDimmed = LightColorScheme.background.copy(alpha = ON_CONTENT_DIMMED_ALPHA)
 val onBackgroundDeactive = LightColorScheme.background.copy(alpha = ON_CONTENT_DEACTIVE_ALPHA)
 val onBackgroundSub = LightColorScheme.background.copy(alpha = ON_CONTENT_SUB_ALPHA)
 
+val onSurfaceDimmed = ColorSet.gray_787878
 val onSurfaceDeactive = LightColorScheme.onSurface.copy(alpha = ON_CONTENT_DEACTIVE_ALPHA)
 val onSurfaceSub = LightColorScheme.onSurface.copy(alpha = ON_CONTENT_SUB_ALPHA)
 
