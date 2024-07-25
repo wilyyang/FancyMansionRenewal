@@ -158,7 +158,6 @@ fun FancyMansionDrawer(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 7.5.dp),
-                            imageClickable = painterResource(id = R.drawable.img_small_color_white_btn),
                             contentPadding = PaddingValues(bottom = 2.5.dp),
                             text = "임시 타이틀",
                             pressScale = 0.95f,
@@ -171,7 +170,6 @@ fun FancyMansionDrawer(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 7.5.dp),
-                            imageClickable = painterResource(id = R.drawable.img_small_color_blue_btn),
                             contentPadding = PaddingValues(bottom = 2.5.dp),
                             text = stringResource(id = com.fancymansion.core.common.R.string.login_join_membership),
                             pressScale = 0.95f,
@@ -367,7 +365,6 @@ fun FancyMansionDrawerTablet(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 9.dp),
-                            imageClickable = painterResource(id = R.drawable.img_small_color_white_btn),
                             contentPadding = PaddingValues(bottom = 4.dp),
                             text = "임시 타이틀",
                             textStyle = MaterialTheme.typography.titleSmall,
@@ -380,7 +377,6 @@ fun FancyMansionDrawerTablet(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 9.dp),
-                            imageClickable = painterResource(id = R.drawable.img_small_color_blue_btn),
                             contentPadding = PaddingValues(bottom = 4.dp),
                             text = stringResource(id = com.fancymansion.core.common.R.string.login_join_membership),
                             textStyle = MaterialTheme.typography.titleSmall,
@@ -506,18 +502,9 @@ fun MenuButton(
     }
 }
 
-val menuCommonItems = listOf(
-    MenuItem(key = "1", title = "자주 묻는 질문", imageId = R.drawable.img_menu_common_qna, onClickMenu = { }),
-    MenuItem(key = "2", title = "1:1 문의하기", imageId = R.drawable.img_menu_common_ask, onClickMenu = { }),
-    MenuItem(key = "3", title = "STORE", imageId = R.drawable.img_menu_common_store, onClickMenu = { }),
-)
+val menuCommonItems = listOf<MenuItem>()
 
-val menuUserItems = listOf(
-    MenuItem(key = "4", title = "학습기록", imageId = R.drawable.img_menu_user_history, onClickMenu = { }),
-    MenuItem(key = "5", title = "출석부", imageId = R.drawable.img_menu_user_attendance, onClickMenu = { }),
-    MenuItem(key = "6", title = "상장", imageId = R.drawable.img_menu_user_certificate, onClickMenu = { }),
-    MenuItem(key = "7", title = "나의 정보", imageId = R.drawable.img_menu_user_info, onClickMenu = { }),
-)
+val menuUserItems = listOf<MenuItem>()
 
 @Preview(device = TABLET_PREVIEW_SPEC)
 @Composable

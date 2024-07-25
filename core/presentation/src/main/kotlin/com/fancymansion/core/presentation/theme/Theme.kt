@@ -7,68 +7,43 @@ import androidx.compose.runtime.Composable
 import com.fancymansion.core.presentation.theme.typography.typographyMobile
 
 val disableAlpha = 0.38f
-val dividerAlpha = 0.38f
-val dividerLightAlpha = 0.19f
-val onTextAlpha = 0.76f
-
-val subTextAlpha = 0.66f
-val lightTextAlpha = 0.48f
-
-val subWhiteTextAlpha = 0.72f
-
 val dimmedAlpha = 0.28f
-val dimmedBoldAlpha = 0.5f
 
-const val coverHolderFrontAlpha = 0.9f
-const val coverHolderCompleteAlpha = 0.3f
+const val ON_CONTENT_DEACTIVE_ALPHA = 0.392f
+const val ON_CONTENT_SUB_ALPHA = 0.478f
 
 private val LightColorScheme = lightColorScheme(
-    primary = ColorSet.blue_20b1f9,
-    onPrimary = ColorSet.default_surface,
-    primaryContainer = ColorSet.blue_20b1f9,
-    onPrimaryContainer = ColorSet.gray_333333,
-    inversePrimary = ColorSet.yellow_ffdd57,
-    secondary = ColorSet.blue_618bff,
-    onSecondary = ColorSet.default_surface,
-    secondaryContainer = ColorSet.blue_3895ff,
-    onSecondaryContainer = ColorSet.gray_333333,
-    tertiary = ColorSet.blue_3370de,
-    onTertiary = ColorSet.default_surface,
-    tertiaryContainer = ColorSet.blue_20b1f9,
-    onTertiaryContainer = ColorSet.gray_333333,
+    primary = ColorSet.blue_1e9eff,
+    onPrimary = ColorSet.white_ffffff,
+    primaryContainer = ColorSet.sky_8fc5f2,
+    onPrimaryContainer = ColorSet.white_ffffff,
 
-    surfaceTint = ColorSet.default_surface,
+    secondary = ColorSet.cyan_1ecdcd,
+    onSecondary = ColorSet.white_ffffff,
 
-    background = ColorSet.gray_f9fafc,
-    onBackground = ColorSet.gray_333333,
+    tertiary = ColorSet.navy_324155,
+    onTertiary = ColorSet.white_ffffff,
 
-    inverseSurface = ColorSet.gray_333333,
-    inverseOnSurface = ColorSet.default_surface,
+    background = ColorSet.gray_f3f4f5,
+    onBackground = ColorSet.black_303538,
 
-    // state : normal
-    surface = ColorSet.default_surface,
-    onSurface = ColorSet.gray_333333,
+    surface = ColorSet.white_ffffff,
+    onSurface = ColorSet.black_818a92,
+    surfaceVariant = ColorSet.white_f7fafc,
+    onSurfaceVariant = ColorSet.black_353a3d,
 
-    // state : not focus
-    surfaceVariant = ColorSet.gray_fdfeff,
-    onSurfaceVariant = ColorSet.gray_767b88,
+    surfaceContainer = ColorSet.gray_f2f4f5,
 
-    // state : disable
-    // surfaceDisable = surface.copy(alpha = disableAlpha)
-    // onSurfaceDisable = onSurface.copy(alpha = disableAlpha)
-
-    // outline : normal
-    outline = ColorSet.gray_333333,
-    // outline : not focus
-    outlineVariant = ColorSet.gray_a1b0c5,
-
-    error = ColorSet.red_da3b2b,
-    onError = ColorSet.default_surface,
-    errorContainer = ColorSet.pink_faa39b,
-    onErrorContainer = ColorSet.gray_333333
+    outline = ColorSet.gray_e7e9ec,
+    outlineVariant = ColorSet.gray_d7dbde
 )
 
-// Default 값은 MaterialTheme 에서 참조하고 Default가 아닌 경우 해당 객체에서 직접 참조
+val onBackgroundDeactive = LightColorScheme.background.copy(alpha = ON_CONTENT_DEACTIVE_ALPHA)
+val onBackgroundSub = LightColorScheme.background.copy(alpha = ON_CONTENT_SUB_ALPHA)
+
+val onSurfaceDeactive = LightColorScheme.onSurface.copy(alpha = ON_CONTENT_DEACTIVE_ALPHA)
+val onSurfaceSub = LightColorScheme.onSurface.copy(alpha = ON_CONTENT_SUB_ALPHA)
+
 var colorScheme = LightColorScheme
 
 @Composable
