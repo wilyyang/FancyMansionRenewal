@@ -1,41 +1,45 @@
 package com.fancymansion.presentation.viewer.content.composables
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.clickSingle
 import com.fancymansion.core.presentation.screen.NoDataScreen
-import com.fancymansion.domain.model.book.PageSettingModel
-import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.presentation.viewer.R
-import com.fancymansion.presentation.viewer.content.PageWrapper
-import com.fancymansion.presentation.viewer.content.SourceWrapper
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
+import com.fancymansion.presentation.viewer.content.composables.layer.ViewerContentFullPanel
+import com.fancymansion.presentation.viewer.content.composables.layer.ViewerContentScreenPageContent
+import com.fancymansion.presentation.viewer.content.composables.layer.ViewerContentSettingPanel
+import kotlinx.coroutines.delay
+
+const val HIDE_DELAY_MILLIS = 3000L
+
+enum class ViewerPanelState{
+    None, FullPanel, SettingPanel
+}
+
+class HideDelayRequest(val direct: Boolean = false)
 
 @Composable
 fun ViewerContentScreenContent(
@@ -44,51 +48,12 @@ fun ViewerContentScreenContent(
     onEventSent: (event: ViewerContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
-    ViewerContentScreenPageContent(modifier, uiState.pageSetting, uiState.pageWrapper, uiState.selectors,  onEventSent, onCommonEventSent)
-}
+    uiState.pageWrapper?.let { page ->
+        val setting = uiState.pageSetting
 
-
-@Composable
-fun ViewerContentScreenPageContent(
-    modifier: Modifier,
-    pageSetting: PageSettingModel,
-    pageWrapper : PageWrapper?,
-    selectors: List<SelectorModel>,
-    onEventSent: (event: ViewerContentContract.Event) -> Unit,
-    onCommonEventSent: (event: CommonEvent) -> Unit
-) {
-    val titleTextStyle = pageSetting.pageContentSetting.run {
-        MaterialTheme.typography.titleLarge.copy(
-            fontSize = textSize.dpSize.sp,
-            lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(pageSetting.pageTheme.textColor.colorCode),
-            fontWeight = FontWeight.SemiBold
-        )
-    }
-
-    val contentTextStyle = pageSetting.pageContentSetting.run {
-        MaterialTheme.typography.bodyLarge.copy(
-            fontSize = textSize.dpSize.sp,
-            lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(pageSetting.pageTheme.textColor.colorCode),
-            fontWeight = FontWeight.Normal
-        )
-    }
-
-    val selectorTextStyle = pageSetting.selectorSetting.run {
-        MaterialTheme.typography.bodyLarge.copy(
-            fontSize = textSize.dpSize.sp,
-            lineHeight = (textSize.dpSize * 1.1).sp,
-            color = Color(pageSetting.pageTheme.selectorTextColor.colorCode).copy(alpha = 0.8f),
-            fontWeight = FontWeight.Medium
-        )
-    }
-    val listState = rememberLazyListState()
-
-    when (pageWrapper) {
-        null -> {
+        if(page.title.isBlank() && page.sources.isEmpty()){
             Box(modifier = modifier
-                .background(color = Color(pageSetting.pageTheme.pageColor.colorCode))
+                .background(color = Color(setting.pageTheme.pageColor.colorCode))
                 .fillMaxSize(), contentAlignment = Alignment.Center){
 
                 NoDataScreen(
@@ -101,80 +66,74 @@ fun ViewerContentScreenPageContent(
                     }
                 )
             }
-        }
-        else -> {
-            LaunchedEffect(key1 = pageWrapper) {
-                listState.animateScrollToItem(0)
+        }else {
+            var showFullPanelRequest by remember { mutableStateOf(false) }
+            val layerState by remember {
+                derivedStateOf {
+                    if (showFullPanelRequest) {
+                        ViewerPanelState.FullPanel
+                    } else {
+                        ViewerPanelState.None // 또는 다른 초기 상태
+                    }
+                }
             }
 
-            LazyColumn(
-                modifier = modifier.background(color = Color(pageSetting.pageTheme.pageColor.colorCode)),
-                state = listState
-            ) {
-                item {
-                    Text(
-                        modifier = Modifier.padding(vertical = 20.dp, horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp),
-                        text = pageWrapper.title, style = titleTextStyle
-                    )
+            var hideLayerRequest by remember {
+                mutableStateOf(HideDelayRequest())
+            }
+            val hideDelayMillis = remember { HIDE_DELAY_MILLIS }
+            LaunchedEffect(hideLayerRequest) {
+                handleHideLayerRequest(layerState, hideLayerRequest, hideDelayMillis) { newState ->
+                    showFullPanelRequest = false
                 }
-                items(pageWrapper.sources) {
-                    when (it) {
-                        is SourceWrapper.TextWrapper -> {
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp)
-                                    .fillMaxWidth(),
-                                text = it.description,
-                                style = contentTextStyle
-                            )
+            }
 
-                        }
+            Box(modifier = modifier) {
+                ViewerContentScreenPageContent(
+                    modifier = Modifier.fillMaxSize().clickSingle {
+                        hideLayerRequest = HideDelayRequest()
+                        showFullPanelRequest = true
+                    },
+                    setting,
+                    page,
+                    uiState.selectors,
+                    onEventSent
+                )
 
-                        is SourceWrapper.ImageWrapper -> {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .padding(horizontal = pageSetting.pageContentSetting.imageMarginHorizontal.dpSize.dp)
-                                    .fillMaxWidth(),
-                                model = ImageRequest.Builder(LocalContext.current).data(it.imageFile).build(),
-                                contentDescription = "",
-                                contentScale = ContentScale.FillWidth
-                            )
-                        }
-                    }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
+                AnimatedVisibility(
+                    visible = layerState == ViewerPanelState.FullPanel,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 0)),
+                    exit = fadeOut()
+                ) {
+                    ViewerContentFullPanel(modifier = Modifier.fillMaxSize().clickable {
+                        hideLayerRequest = HideDelayRequest(direct = true)
+                    })
+
                 }
 
-                items(selectors) { selector ->
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 10.dp, horizontal = 15.dp)
-                            .fillMaxWidth()
-                            .clip(
-                                shape = MaterialTheme.shapes.small
-                            )
-                            .background(color = Color(pageSetting.pageTheme.selectorColor.colorCode))
-                            .clickable {
-                                onEventSent(
-                                    ViewerContentContract.Event.OnClickSelector(
-                                        selector.pageId,
-                                        selector.selectorId
-                                    )
-                                )
-                            }
-                            .padding(
-                                horizontal = 15.dp,
-                                vertical = pageSetting.selectorSetting.paddingVertical.dpSize.dp
-                            )
-                    ) {
-                        Text(text = selector.text, style = selectorTextStyle)
-                    }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
+                AnimatedVisibility(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    visible = layerState == ViewerPanelState.SettingPanel,
+                    enter = slideInHorizontally { it },
+                    exit = slideOutHorizontally { it }
+                ) {
+                    ViewerContentSettingPanel(modifier = Modifier.fillMaxSize())
                 }
             }
         }
+    }
+}
+
+private suspend fun handleHideLayerRequest(
+    currentState: ViewerPanelState,
+    request: HideDelayRequest,
+    delayMillis: Long,
+    onStateChanged: (ViewerPanelState) -> Unit
+) {
+    if (currentState != ViewerPanelState.None) {
+        if (!request.direct) {
+            delay(delayMillis)
+        }
+        onStateChanged(ViewerPanelState.None)
     }
 }
