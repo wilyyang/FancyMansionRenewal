@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -33,59 +34,60 @@ import com.fancymansion.presentation.viewer.content.ViewerContentContract
 @Composable
 fun ViewerContentScreenPageContent(
     modifier: Modifier,
-    pageSetting: PageSettingModel,
-    pageWrapper : PageWrapper,
+    setting: PageSettingModel,
+    page : PageWrapper,
     selectors: List<SelectorModel>,
-    onEventSent: (event: ViewerContentContract.Event) -> Unit
+    onEventSent: (event: ViewerContentContract.Event) -> Unit,
+    listState : LazyListState,
+    onClick : () -> Unit
 ) {
-    val titleTextStyle = pageSetting.pageContentSetting.run {
+    val titleTextStyle = setting.pageContentSetting.run {
         MaterialTheme.typography.titleLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(pageSetting.pageTheme.textColor.colorCode),
+            color = Color(setting.pageTheme.textColor.colorCode),
             fontWeight = FontWeight.SemiBold
         )
     }
 
-    val contentTextStyle = pageSetting.pageContentSetting.run {
+    val contentTextStyle = setting.pageContentSetting.run {
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(pageSetting.pageTheme.textColor.colorCode),
+            color = Color(setting.pageTheme.textColor.colorCode),
             fontWeight = FontWeight.Normal
         )
     }
 
-    val selectorTextStyle = pageSetting.selectorSetting.run {
+    val selectorTextStyle = setting.selectorSetting.run {
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize * 1.1).sp,
-            color = Color(pageSetting.pageTheme.selectorTextColor.colorCode).copy(alpha = 0.8f),
+            color = Color(setting.pageTheme.selectorTextColor.colorCode).copy(alpha = 0.8f),
             fontWeight = FontWeight.Medium
         )
     }
 
-    val listState = rememberLazyListState()
-    LaunchedEffect(key1 = pageWrapper) {
-        listState.animateScrollToItem(0)
-    }
+    // LaunchedEffect(key1 = page) {
+    //     listState.animateScrollToItem(0)
+    // }
 
     LazyColumn(
-        modifier = modifier.background(color = Color(pageSetting.pageTheme.pageColor.colorCode)),
+        modifier = modifier.background(color = Color(setting.pageTheme.pageColor.colorCode)).clickable { onClick() },
         state = listState
     ) {
         item {
             Text(
-                modifier = Modifier.padding(vertical = 20.dp, horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp),
-                text = pageWrapper.title, style = titleTextStyle
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = setting.pageContentSetting.textMarginHorizontal.dpSize.dp),
+                text = page.title, style = titleTextStyle
             )
         }
-        items(pageWrapper.sources) {
+        items(page.sources) {
             when (it) {
                 is SourceWrapper.TextWrapper -> {
                     Text(
                         modifier = Modifier
-                            .padding(horizontal = pageSetting.pageContentSetting.textMarginHorizontal.dpSize.dp)
+                            .padding(horizontal = setting.pageContentSetting.textMarginHorizontal.dpSize.dp)
                             .fillMaxWidth(),
                         text = it.description,
                         style = contentTextStyle
@@ -96,7 +98,7 @@ fun ViewerContentScreenPageContent(
                 is SourceWrapper.ImageWrapper -> {
                     AsyncImage(
                         modifier = Modifier
-                            .padding(horizontal = pageSetting.pageContentSetting.imageMarginHorizontal.dpSize.dp)
+                            .padding(horizontal = setting.pageContentSetting.imageMarginHorizontal.dpSize.dp)
                             .fillMaxWidth(),
                         model = ImageRequest.Builder(LocalContext.current).data(it.imageFile).build(),
                         contentDescription = "",
@@ -117,7 +119,7 @@ fun ViewerContentScreenPageContent(
                     .clip(
                         shape = MaterialTheme.shapes.small
                     )
-                    .background(color = Color(pageSetting.pageTheme.selectorColor.colorCode))
+                    .background(color = Color(setting.pageTheme.selectorColor.colorCode))
                     .clickable {
                         onEventSent(
                             ViewerContentContract.Event.OnClickSelector(
@@ -128,7 +130,7 @@ fun ViewerContentScreenPageContent(
                     }
                     .padding(
                         horizontal = 15.dp,
-                        vertical = pageSetting.selectorSetting.paddingVertical.dpSize.dp
+                        vertical = setting.selectorSetting.paddingVertical.dpSize.dp
                     )
             ) {
                 Text(text = selector.text, style = selectorTextStyle)
