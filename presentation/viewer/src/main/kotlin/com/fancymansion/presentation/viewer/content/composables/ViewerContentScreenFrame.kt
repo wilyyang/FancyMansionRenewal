@@ -56,7 +56,7 @@ fun ViewerContentScreenFrame(
         loadingContent = {
             ViewerContentSkeletonScreen()
         },
-        isLoadingHideEffect = true,
+        isFadeOutLoading = true,
         isOverlayTopBar = true
     ) {
         ViewerContentScreenContent(

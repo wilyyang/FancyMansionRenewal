@@ -1,6 +1,11 @@
 package com.fancymansion.core.presentation.frame
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +22,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.contentDescription
@@ -59,7 +63,7 @@ fun BaseScreen(
     // ui state
     loadState : LoadState,
     loadingContent: (@Composable () -> Unit)? = null,
-    isLoadingHideEffect: Boolean = false,
+    isFadeOutLoading: Boolean = false,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 )
@@ -94,7 +98,7 @@ fun BaseScreen(
 
                 loadState = loadState,
                 loadingContent = loadingContent,
-                isLoadingHideEffect = isLoadingHideEffect,
+                isFadeOutLoading = isFadeOutLoading,
 
                 content = content
             )
@@ -122,7 +126,7 @@ fun BaseScreen(
     // ui state
     loadState : LoadState,
     loadingContent: (@Composable () -> Unit)? = null,
-    isLoadingHideEffect: Boolean = false,
+    isFadeOutLoading: Boolean = false,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
@@ -144,7 +148,7 @@ fun BaseScreen(
 
         loadState = loadState,
         loadingContent = loadingContent,
-        isLoadingHideEffect = isLoadingHideEffect,
+        isFadeOutLoading = isFadeOutLoading,
 
         content = content
     )
@@ -203,7 +207,7 @@ fun CommonPopupLayerProcess(
 enum class LoadingState {
     Loading,
     FadingOut,
-    Idle
+    None
 }
 
 @Composable
@@ -217,10 +221,29 @@ fun BaseContent(
 
     loadState : LoadState,
     loadingContent: (@Composable () -> Unit)? = null,
-    isLoadingHideEffect: Boolean = false,
+    isFadeOutLoading: Boolean = false,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
+    val beforeLoadState = remember { mutableStateOf(loadState) }
+
+    val loadingState = remember { mutableStateOf(if(loadState is LoadState.Loading) LoadingState.Loading else LoadingState.None) }
+
+    LaunchedEffect(loadState) {
+        if(beforeLoadState.value is LoadState.Loading && loadState is LoadState.Idle){
+            loadingState.value = LoadingState.FadingOut
+        }else if (loadingState.value == LoadingState.FadingOut) {
+            delay(2000)
+            loadingState.value = LoadingState.None
+        }
+        beforeLoadState.value = loadState
+    }
+
+    val alpha by animateFloatAsState(
+        targetValue = if (loadingState.value == LoadingState.FadingOut) 0f else 1f,
+        animationSpec = tween(durationMillis = 2000),
+        label = "loadingContentAlpha"
+    )
 
     Scaffold(
         modifier = modifier,
@@ -239,9 +262,8 @@ fun BaseContent(
 
                 Box {
                     content(it)
-
-                    if (loadingContent != null && loadState is LoadState.Loading) {
-                        Box(modifier = Modifier) {
+                    Box(modifier = Modifier.alpha(alpha)) {
+                        if (loadingContent != null) {
                             loadingContent()
                         }
                     }
