@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -37,9 +36,7 @@ fun ViewerContentScreenPageContent(
     setting: PageSettingModel,
     page : PageWrapper,
     selectors: List<SelectorModel>,
-    onEventSent: (event: ViewerContentContract.Event) -> Unit,
-    listState : LazyListState,
-    onClick : () -> Unit
+    onEventSent: (event: ViewerContentContract.Event) -> Unit
 ) {
     val titleTextStyle = setting.pageContentSetting.run {
         MaterialTheme.typography.titleLarge.copy(
@@ -68,12 +65,13 @@ fun ViewerContentScreenPageContent(
         )
     }
 
-    // LaunchedEffect(key1 = page) {
-    //     listState.animateScrollToItem(0)
-    // }
+    val listState = rememberLazyListState()
+     LaunchedEffect(key1 = page) {
+         listState.animateScrollToItem(0)
+     }
 
     LazyColumn(
-        modifier = modifier.background(color = Color(setting.pageTheme.pageColor.colorCode)).clickable { onClick() },
+        modifier = modifier.background(color = Color(setting.pageTheme.pageColor.colorCode)),
         state = listState
     ) {
         item {

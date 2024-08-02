@@ -1,5 +1,8 @@
 package com.fancymansion.core.presentation.frame
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +13,15 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.contentDescription
@@ -20,13 +29,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.ChangeStatusBarColor
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.dialog.AlarmDialog
 import com.fancymansion.core.presentation.dialog.CustomDialog
 import com.fancymansion.core.presentation.dialog.ErrorDialog
 import com.fancymansion.core.presentation.dialog.Loading
 import com.fancymansion.core.presentation.window.TypePane
+import kotlinx.coroutines.delay
 
 @Composable
 fun BaseScreen(
@@ -48,6 +58,8 @@ fun BaseScreen(
 
     // ui state
     loadState : LoadState,
+    loadingContent: (@Composable () -> Unit)? = null,
+    isLoadingHideEffect: Boolean = false,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 )
@@ -80,11 +92,18 @@ fun BaseScreen(
                 topBar = topBar,
                 topBarHeight = topBarHeight,
 
+                loadState = loadState,
+                loadingContent = loadingContent,
+                isLoadingHideEffect = isLoadingHideEffect,
+
                 content = content
             )
         })
 
-    CommonStateProcess(loadState)
+    CommonPopupLayerProcess(
+        loadState = loadState,
+        isLoadingContent = loadingContent != null
+    )
 }
 
 @Composable
@@ -102,6 +121,8 @@ fun BaseScreen(
 
     // ui state
     loadState : LoadState,
+    loadingContent: (@Composable () -> Unit)? = null,
+    isLoadingHideEffect: Boolean = false,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
@@ -109,8 +130,6 @@ fun BaseScreen(
     statusBarColor?.let { color ->
         LocalView.current.ChangeStatusBarColor(color = color, isStatusBarTextDark = isStatusBarTextDark)
     }
-
-
 
     BaseContent(
         modifier = modifier.semantics {
@@ -123,22 +142,32 @@ fun BaseScreen(
         topBar = topBar,
         topBarHeight = topBarHeight,
 
+        loadState = loadState,
+        loadingContent = loadingContent,
+        isLoadingHideEffect = isLoadingHideEffect,
+
         content = content
     )
 
-    CommonStateProcess(loadState)
+    CommonPopupLayerProcess(
+        loadState = loadState,
+        isLoadingContent = loadingContent != null
+    )
 }
 
 @Composable
-fun CommonStateProcess(
-    loadState : LoadState
+fun CommonPopupLayerProcess(
+    loadState : LoadState,
+    isLoadingContent : Boolean
 ) {
     val context = LocalContext.current
     when(loadState){
         is LoadState.Loading -> {
-            Loading(
-                loadingMessage = loadState.message
-            )
+            if(!isLoadingContent){
+                Loading(
+                    loadingMessage = loadState.message
+                )
+            }
         }
         is LoadState.ErrorDialog -> {
             ErrorDialog(
@@ -171,6 +200,12 @@ fun CommonStateProcess(
     }
 }
 
+enum class LoadingState {
+    Loading,
+    FadingOut,
+    Idle
+}
+
 @Composable
 fun BaseContent(
     modifier : Modifier = Modifier,
@@ -180,8 +215,13 @@ fun BaseContent(
     topBar: @Composable (() -> Unit)? = null,
     topBarHeight: Dp = 0.dp,
 
+    loadState : LoadState,
+    loadingContent: (@Composable () -> Unit)? = null,
+    isLoadingHideEffect: Boolean = false,
+
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
+
     Scaffold(
         modifier = modifier,
         containerColor = containerColor ?: MaterialTheme.colorScheme.background,
@@ -196,7 +236,16 @@ fun BaseContent(
             Column(modifier = Modifier
                 .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
                 .fillMaxSize()) {
-                content(it)
+
+                Box {
+                    content(it)
+
+                    if (loadingContent != null && loadState is LoadState.Loading) {
+                        Box(modifier = Modifier) {
+                            loadingContent()
+                        }
+                    }
+                }
             }
         }
     )
