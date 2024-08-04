@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
 import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.core.presentation.theme.dimmedAlpha
 import kotlinx.coroutines.delay
@@ -30,7 +31,7 @@ fun Loading(
 ) {
     val isShowAnimation = remember{mutableStateOf(false) }
     LaunchedEffect(key1 = Unit, block = {
-        delay(300L)
+        delay(DELAY_LOADING_SHOW_MS)
         isShowAnimation.value = true
     })
     Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {

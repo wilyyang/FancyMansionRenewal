@@ -47,16 +47,9 @@ class ViewerContentContract {
 data class PageWrapper(
     val id: Long,
     val title: String,
-    val sources: List<SourceWrapper>
-){
-    override fun equals(other: Any?): Boolean {
-        return false
-    }
-
-    override fun hashCode(): Int {
-        return System.identityHashCode(this)
-    }
-}
+    val sources: List<SourceWrapper>,
+    val diff: Int = 0
+)
 
 sealed class SourceWrapper {
     data class TextWrapper(val description: String) : SourceWrapper()

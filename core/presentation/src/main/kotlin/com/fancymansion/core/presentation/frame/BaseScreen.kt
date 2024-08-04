@@ -1,11 +1,6 @@
 package com.fancymansion.core.presentation.frame
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +29,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.const.DELAY_LOADING_FADE_OUT_MS
+import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
 import com.fancymansion.core.presentation.base.ChangeStatusBarColor
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.dialog.AlarmDialog
@@ -204,10 +202,11 @@ fun CommonPopupLayerProcess(
     }
 }
 
-enum class LoadingState {
-    Loading,
-    FadingOut,
-    None
+enum class ShowLoadingState {
+    None,
+    LoadingShowDelay,
+    LoadingShow,
+    FadingOut
 }
 
 @Composable
@@ -225,25 +224,6 @@ fun BaseContent(
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
-    val beforeLoadState = remember { mutableStateOf(loadState) }
-
-    val loadingState = remember { mutableStateOf(if(loadState is LoadState.Loading) LoadingState.Loading else LoadingState.None) }
-
-    LaunchedEffect(loadState) {
-        if(beforeLoadState.value is LoadState.Loading && loadState is LoadState.Idle){
-            loadingState.value = LoadingState.FadingOut
-        }else if (loadingState.value == LoadingState.FadingOut) {
-            delay(2000)
-            loadingState.value = LoadingState.None
-        }
-        beforeLoadState.value = loadState
-    }
-
-    val alpha by animateFloatAsState(
-        targetValue = if (loadingState.value == LoadingState.FadingOut) 0f else 1f,
-        animationSpec = tween(durationMillis = 2000),
-        label = "loadingContentAlpha"
-    )
 
     Scaffold(
         modifier = modifier,
@@ -262,9 +242,59 @@ fun BaseContent(
 
                 Box {
                     content(it)
-                    Box(modifier = Modifier.alpha(alpha)) {
-                        if (loadingContent != null) {
-                            loadingContent()
+                    if (loadingContent != null) {
+                        val beforeLoadState = remember { mutableStateOf(loadState) }
+                        val showLoadingState = remember {
+                            mutableStateOf(
+                                if (loadState is LoadState.Loading) ShowLoadingState.LoadingShowDelay
+                                else ShowLoadingState.None
+                            )
+                        }
+
+                        LaunchedEffect(loadState) {
+                            showLoadingState.value = when(loadState){
+                                is LoadState.Loading -> {
+                                    ShowLoadingState.LoadingShowDelay
+                                }
+                                is LoadState.Idle -> {
+                                    if (beforeLoadState.value is LoadState.Loading
+                                        && showLoadingState.value == ShowLoadingState.LoadingShow
+                                        && isFadeOutLoading
+                                    ) {
+                                        ShowLoadingState.FadingOut
+                                    } else {
+                                        ShowLoadingState.None
+                                    }
+                                }
+                                else -> ShowLoadingState.None
+                            }
+                            beforeLoadState.value = loadState
+                        }
+
+                        LaunchedEffect(showLoadingState.value) {
+                            if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
+                                delay(DELAY_LOADING_SHOW_MS)
+                                showLoadingState.value = ShowLoadingState.LoadingShow
+                            }else if (showLoadingState.value == ShowLoadingState.FadingOut) {
+                                delay(DELAY_LOADING_FADE_OUT_MS)
+                                showLoadingState.value = ShowLoadingState.None
+                            }
+                        }
+
+                        val alpha by animateFloatAsState(
+                            targetValue = if (showLoadingState.value == ShowLoadingState.FadingOut) 0.0f else 1f,
+                            animationSpec = tween(durationMillis = DELAY_LOADING_FADE_OUT_MS.toInt()),
+                            label = "loadingContentAlpha"
+                        )
+
+                        if(showLoadingState.value == ShowLoadingState.LoadingShowDelay || showLoadingState.value == ShowLoadingState.LoadingShow){
+                            Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {}
+                        }
+
+                        if(showLoadingState.value == ShowLoadingState.LoadingShow || showLoadingState.value == ShowLoadingState.FadingOut){
+                            Box(modifier = Modifier.alpha(alpha)) {
+                                loadingContent()
+                            }
                         }
                     }
                 }

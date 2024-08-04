@@ -66,3 +66,6 @@ const val STATUS_NOT_DEFINED           = -1
 const val STATUS_SUCCESS               = 200
 const val STATUS_LOGIN_INVALID_ID_PW   = 403
 const val STATUS_LOGIN_LIMITED_SERVICE = 406
+
+const val DELAY_LOADING_SHOW_MS = 500L
+const val DELAY_LOADING_FADE_OUT_MS = 800L

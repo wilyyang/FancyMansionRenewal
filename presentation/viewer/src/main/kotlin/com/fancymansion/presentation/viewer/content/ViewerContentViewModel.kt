@@ -12,6 +12,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
@@ -204,20 +205,13 @@ class ViewerContentViewModel @Inject constructor(
         val page = useCaseLoadBook.loadPage(episodeRef, pageId = pageId)
         val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef, logic = logic, pageId = pageId)
 
-        val pageWrapper = PageWrapper(
-            id = page.id,
-            title = page.title,
-            sources = page.sources.map {
-                when(it){
-                    is SourceModel.TextModel -> {
-                        SourceWrapper.TextWrapper(it.description)
-                    }
-                    is SourceModel.ImageModel -> {
-                        SourceWrapper.ImageWrapper(useCaseLoadBook.loadPageImage(episodeRef, it.imageName))
-                    }
-                }
+        val pageWrapper = uiState.value.pageWrapper?.let { beforePage ->
+            if (page.id == beforePage.id) {
+                beforePage.copy(diff = beforePage.diff + 1)
+            } else {
+                createPageWrapper(page)
             }
-        )
+        } ?: createPageWrapper(page)
 
         setState {
             copy(
@@ -225,5 +219,23 @@ class ViewerContentViewModel @Inject constructor(
                 selectors = selectors
             )
         }
+    }
+
+    private suspend fun createPageWrapper(page : PageModel) : PageWrapper {
+        return PageWrapper(
+            id = page.id,
+            title = page.title,
+            sources = page.sources.map {
+                when (it) {
+                    is SourceModel.TextModel -> {
+                        SourceWrapper.TextWrapper(it.description)
+                    }
+
+                    is SourceModel.ImageModel -> {
+                        SourceWrapper.ImageWrapper(useCaseLoadBook.loadPageImage(episodeRef, it.imageName))
+                    }
+                }
+            }
+        )
     }
 }
