@@ -1,6 +1,8 @@
 package com.fancymansion.presentation.viewer.content.composables
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -74,16 +76,8 @@ fun ViewerContentScreenContent(
                     onEventSent = onEventSent
                 )
 
-                // Setting Panel
-                AnimatedVisibility(
-                    visible = panelState == ViewerPanelState.SettingPanel,
-                    enter = slideInVertically { fullHeight -> -fullHeight },
-                    exit = slideOutVertically { fullHeight -> -fullHeight }
-                ) {
-                    ViewerContentSettingPanel(modifier = Modifier.fillMaxSize())
-                }
+                ViewerContentSettingPanel(modifier = Modifier.fillMaxSize(), visible = panelState == ViewerPanelState.SettingPanel)
 
-                // 스크롤 시 Setting Panel 숨기기
                 LaunchedEffect(remember { derivedStateOf { listState.firstVisibleItemIndex } }) {
                     if (listState.firstVisibleItemIndex > 0 && panelState == ViewerPanelState.SettingPanel) {
                         panelState = ViewerPanelState.Content

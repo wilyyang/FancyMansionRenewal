@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.const.ANIMATION_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
 import com.fancymansion.core.presentation.base.ChangeStatusBarColor
@@ -243,7 +244,6 @@ fun BaseContent(
                 Box {
                     content(it)
                     if (loadingContent != null) {
-                        val beforeLoadState = remember { mutableStateOf(loadState) }
                         val showLoadingState = remember {
                             mutableStateOf(
                                 if (loadState is LoadState.Loading) ShowLoadingState.LoadingShowDelay
@@ -257,9 +257,7 @@ fun BaseContent(
                                     ShowLoadingState.LoadingShowDelay
                                 }
                                 is LoadState.Idle -> {
-                                    if (beforeLoadState.value is LoadState.Loading
-                                        && showLoadingState.value == ShowLoadingState.LoadingShow
-                                        && isFadeOutLoading
+                                    if (showLoadingState.value == ShowLoadingState.LoadingShow && isFadeOutLoading
                                     ) {
                                         ShowLoadingState.FadingOut
                                     } else {
@@ -268,7 +266,6 @@ fun BaseContent(
                                 }
                                 else -> ShowLoadingState.None
                             }
-                            beforeLoadState.value = loadState
                         }
 
                         LaunchedEffect(showLoadingState.value) {
@@ -283,7 +280,7 @@ fun BaseContent(
 
                         val alpha by animateFloatAsState(
                             targetValue = if (showLoadingState.value == ShowLoadingState.FadingOut) 0.0f else 1f,
-                            animationSpec = tween(durationMillis = DELAY_LOADING_FADE_OUT_MS.toInt()),
+                            animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
                             label = "loadingContentAlpha"
                         )
 
