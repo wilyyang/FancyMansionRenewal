@@ -64,22 +64,22 @@ val typographyMobile = Typography(
     // Title
     // 컴포넌트  : 라운드 버튼 (대)
     titleLarge = TextStyle(
-        lineHeight = 20.3.sp,
-        fontSize = 18.4.sp,
+        lineHeight = 22.2.sp,
+        fontSize = 20.2.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.SemiBold
     ),
     // 컴포넌트  : 서브 타이틀
     titleMedium = TextStyle(
-        lineHeight = 18.2.sp,
-        fontSize = 16.6.sp,
+        lineHeight = 18.7.sp,
+        fontSize = 17.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.SemiBold
     ),
     // 컴포넌트  : 라운드 버튼 (소)
     titleSmall = TextStyle(
-        lineHeight = 17.3.sp,
-        fontSize = 15.8.sp,
+        lineHeight = 17.8.sp,
+        fontSize = 16.2.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.SemiBold
     ),
@@ -87,22 +87,22 @@ val typographyMobile = Typography(
     // Body
     // 컴포넌트  : 본문, 텍스트 필드, 메뉴 항목 텍스트
     bodyLarge = TextStyle(
-        lineHeight = 17.7.sp,
-        fontSize = 14.7.sp,
+        lineHeight = 18.sp,
+        fontSize = 15.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     ),
     // 컴포넌트  : 부연설명 (최대)
     bodyMedium = TextStyle(
-        lineHeight = 15.9.sp,
-        fontSize = 13.3.sp,
+        lineHeight = 16.8.sp,
+        fontSize = 14.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     ),
     // 컴포넌트  : 부연설명 (최소)
     bodySmall = TextStyle(
-        lineHeight = 15.1.sp,
-        fontSize = 12.6.sp,
+        lineHeight = 15.6.sp,
+        fontSize = 13.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     ),
@@ -110,22 +110,22 @@ val typographyMobile = Typography(
     // Label
     // 컴포넌트  : 체크박스
     labelLarge = TextStyle(
-        lineHeight = 16.8.sp,
-        fontSize = 14.0.sp,
+        lineHeight = 15.6.sp,
+        fontSize = 13.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     ),
     // 컴포넌트  :
     labelMedium = TextStyle(
-        lineHeight = 15.2.sp,
-        fontSize = 12.6.sp,
+        lineHeight = 13.sp,
+        fontSize = 10.8.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     ),
     // 컴포넌트  :
     labelSmall = TextStyle(
-        lineHeight = 14.4.sp,
-        fontSize = 12.0.sp,
+        lineHeight = 8.8.sp,
+        fontSize = 7.3.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Normal
     )
