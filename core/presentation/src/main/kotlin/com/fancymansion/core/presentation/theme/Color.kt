@@ -24,7 +24,9 @@ object ColorSet {
 
     val gray_f2f4f5 = Color(0xff_f2f4f5)
 
-    val gray_787878 = Color(0xff_787878)
+    val gray_9ea7ad = Color(0xff_9ea7ad)
+    val gray_969da3 = Color(0xff_969da3)
+    val gray_a4aab0 = Color(0xff_a4aab0)
 
     val gray_eeeeee = Color(0xff_eeeeee)
 

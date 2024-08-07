@@ -271,10 +271,14 @@ fun BaseContent(
                         LaunchedEffect(showLoadingState.value) {
                             if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
                                 delay(DELAY_LOADING_SHOW_MS)
-                                showLoadingState.value = ShowLoadingState.LoadingShow
+                                if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
+                                    showLoadingState.value = ShowLoadingState.LoadingShow
+                                }
                             }else if (showLoadingState.value == ShowLoadingState.FadingOut) {
                                 delay(DELAY_LOADING_FADE_OUT_MS)
-                                showLoadingState.value = ShowLoadingState.None
+                                if(showLoadingState.value == ShowLoadingState.FadingOut){
+                                    showLoadingState.value = ShowLoadingState.None
+                                }
                             }
                         }
 

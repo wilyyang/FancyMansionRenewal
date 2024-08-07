@@ -27,7 +27,7 @@ import com.fancymansion.core.presentation.base.clickSingle
 import com.fancymansion.core.presentation.base.scaleOnPress
 import com.fancymansion.core.presentation.window.TypePane
 
-val topBarDpMobile = 55.dp
+val topBarDpMobile = 50.dp
 val topBarDpTablet = 73.dp
 
 @Composable

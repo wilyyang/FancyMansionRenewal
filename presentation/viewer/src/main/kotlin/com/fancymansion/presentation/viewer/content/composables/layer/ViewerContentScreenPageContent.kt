@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.fancymansion.core.presentation.frame.topBarDpMobile
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.presentation.viewer.content.PageWrapper
@@ -76,10 +77,16 @@ fun ViewerContentScreenPageContent(
         state = listState
     ) {
         item {
-            Text(
-                modifier = Modifier.padding(vertical = 20.dp, horizontal = setting.pageContentSetting.textMarginHorizontal.dpSize.dp),
-                text = page.title, style = titleTextStyle
-            )
+            Row(
+                modifier = Modifier
+                    .height(topBarDpMobile)
+                    .padding(horizontal = setting.pageContentSetting.textMarginHorizontal.dpSize.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = page.title, style = titleTextStyle
+                )
+            }
         }
         items(page.sources) {
             when (it) {

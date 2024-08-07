@@ -40,13 +40,13 @@ private val LightColorScheme = lightColorScheme(
     outlineVariant = ColorSet.gray_d7dbde
 )
 
-val onBackgroundDimmed = LightColorScheme.background.copy(alpha = ON_CONTENT_DIMMED_ALPHA)
-val onBackgroundDeactive = LightColorScheme.background.copy(alpha = ON_CONTENT_DEACTIVE_ALPHA)
-val onBackgroundSub = LightColorScheme.background.copy(alpha = ON_CONTENT_SUB_ALPHA)
+val onBackgroundDimmed = ColorSet.gray_9ea7ad
+val onBackgroundInactive = ColorSet.gray_9ea7ad
+val onBackgroundSub = ColorSet.gray_a4aab0
 
-val onSurfaceDimmed = ColorSet.gray_787878
-val onSurfaceDeactive = LightColorScheme.onSurface.copy(alpha = ON_CONTENT_DEACTIVE_ALPHA)
-val onSurfaceSub = LightColorScheme.onSurface.copy(alpha = ON_CONTENT_SUB_ALPHA)
+val onSurfaceDimmed = ColorSet.gray_969da3
+val onSurfaceInactive = ColorSet.gray_969da3
+val onSurfaceSub = ColorSet.gray_a4aab0
 
 var colorScheme = LightColorScheme
 
