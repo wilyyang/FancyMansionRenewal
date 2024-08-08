@@ -25,4 +25,14 @@ object NavArgument{
         type = NavType.StringType
         defaultValue = ""
     }
+
+    val argBookTitle = navArgument(ArgName.NAME_BOOK_TITLE){
+        type = NavType.StringType
+        defaultValue = ""
+    }
+
+    val argEpisodeTitle = navArgument(ArgName.NAME_EPISODE_TITLE){
+        type = NavType.StringType
+        defaultValue = ""
+    }
 }

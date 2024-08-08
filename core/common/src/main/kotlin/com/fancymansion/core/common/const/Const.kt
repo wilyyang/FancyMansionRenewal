@@ -2,6 +2,8 @@ package com.fancymansion.core.common.const
 
 import com.fancymansion.core.common.R
 
+val testBookTitle = "배트의 어드벤처"
+val testEpisodeTitle = "1화"
 val testEpisodeRef = EpisodeRef(
     userId = "test_user_id",
     mode = ReadMode.READ,
@@ -56,6 +58,8 @@ object ArgName{
     const val NAME_READ_MODE = "NAME_READ_MODE"
     const val NAME_BOOK_ID = "NAME_BOOK_ID"
     const val NAME_EPISODE_ID = "NAME_EPISODE_ID"
+    const val NAME_BOOK_TITLE = "NAME_BOOK_TITLE"
+    const val NAME_EPISODE_TITLE = "NAME_EPISODE_TITLE"
 }
 
 object CurrentDensity {

@@ -63,7 +63,10 @@ fun ViewerContentScreenContent(
                 ViewerContentScreenPageContent(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickSingle { panelState = if(panelState == ViewerPanelState.SettingPanel) ViewerPanelState.Content else ViewerPanelState.SettingPanel },
+                        .clickSingle {
+                            panelState =
+                                if (panelState == ViewerPanelState.SettingPanel) ViewerPanelState.Content else ViewerPanelState.SettingPanel
+                        },
                     setting = setting,
                     page = page,
                     selectors = uiState.selectors,
@@ -73,7 +76,11 @@ fun ViewerContentScreenContent(
 
                 ViewerContentSettingPanel(
                     modifier = Modifier.fillMaxSize(),
-                    visible = panelState == ViewerPanelState.SettingPanel
+                    visible = panelState == ViewerPanelState.SettingPanel,
+                    title = "${uiState.bookTitle} ${uiState.episodeTitle.ifBlank { "" }}" ,
+                    setting = uiState.pageSetting,
+                    onEventSent = onEventSent,
+                    onClickBack = { onCommonEventSent(CommonEvent.CloseEvent) }
                 )
 
                 LaunchedEffect(listState) {

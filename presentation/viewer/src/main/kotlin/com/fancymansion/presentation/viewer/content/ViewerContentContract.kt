@@ -18,6 +18,8 @@ class ViewerContentContract {
     }
 
     data class State(
+        val bookTitle: String = "",
+        val episodeTitle: String = "",
         val pageSetting: PageSettingModel = PageSettingModel(),
         val pageWrapper: PageWrapper? = null,
         val selectors: List<SelectorModel> = listOf()

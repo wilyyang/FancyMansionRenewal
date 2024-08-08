@@ -2,12 +2,16 @@ package com.fancymansion.presentation.viewer.content
 
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
+import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
+import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.testBookTitle
 import com.fancymansion.core.common.const.testEpisodeRef
+import com.fancymansion.core.common.const.testEpisodeTitle
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
@@ -145,6 +149,15 @@ class ViewerContentViewModel @Inject constructor(
         }
 
         launchWithLoading(endLoadState = null) {
+
+            val bookTitle = savedStateHandle.get<String>(NAME_BOOK_TITLE)?.ifBlank { testBookTitle } ?: testBookTitle
+            val episodeTitle = savedStateHandle.get<String>(NAME_EPISODE_TITLE)?.ifBlank { testEpisodeTitle } ?: testEpisodeTitle
+            setState {
+                copy(
+                    bookTitle = bookTitle,
+                    episodeTitle = episodeTitle
+                )
+            }
 
             useCaseMakeBook.makeSampleEpisode()
             logic = useCaseLoadBook.loadLogic(episodeRef)
