@@ -51,7 +51,7 @@ fun ViewerContentSettingPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(topBarDpMobile)
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .background(MaterialTheme.colorScheme.surface)
                     .borderLine(
                         density = LocalDensity.current,
                         color = MaterialTheme.colorScheme.outline,
@@ -99,7 +99,7 @@ fun ViewerContentSettingPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .background(MaterialTheme.colorScheme.surface)
                     .borderLine(
                         density = LocalDensity.current,
                         color = MaterialTheme.colorScheme.outline,

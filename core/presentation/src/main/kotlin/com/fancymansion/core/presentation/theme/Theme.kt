@@ -30,7 +30,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = ColorSet.black_303538,
 
     surface = ColorSet.white_ffffff,
-    onSurface = ColorSet.black_818a92,
+    onSurface = ColorSet.black_333333,
     surfaceVariant = ColorSet.white_f7fafc,
     onSurfaceVariant = ColorSet.black_353a3d,
 
@@ -44,8 +44,8 @@ val onBackgroundDimmed = ColorSet.gray_9ea7ad
 val onBackgroundInactive = ColorSet.gray_9ea7ad
 val onBackgroundSub = ColorSet.gray_a4aab0
 
-val onSurfaceDimmed = ColorSet.gray_969da3
-val onSurfaceInactive = ColorSet.gray_969da3
+val onSurfaceDimmed = ColorSet.gray_787878
+val onSurfaceInactive = ColorSet.gray_787878
 val onSurfaceSub = ColorSet.gray_a4aab0
 
 var colorScheme = LightColorScheme
