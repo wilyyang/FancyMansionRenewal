@@ -43,7 +43,12 @@ enum class PageTextSize(val dpSize: Float) {
     TEXT_SIZE_12(24f),
     TEXT_SIZE_13(25f),
     TEXT_SIZE_14(26f),
-    TEXT_SIZE_15(27f)
+    TEXT_SIZE_15(27f);
+
+    companion object {
+        const val OFFSET = 1
+        val values = entries.toTypedArray()
+    }
 }
 
 enum class PageLineHeight(val dpSize: Float) {

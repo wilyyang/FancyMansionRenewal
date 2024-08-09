@@ -34,6 +34,7 @@ enum class ViewerPanelState {
 fun ViewerContentScreenContent(
     modifier: Modifier = Modifier,
     uiState: ViewerContentContract.State,
+    settingItems: List<SettingCategory>,
     onEventSent: (event: ViewerContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -80,6 +81,7 @@ fun ViewerContentScreenContent(
                     title = "${uiState.bookTitle} ${uiState.episodeTitle.ifBlank { "" }}" ,
                     setting = uiState.pageSetting,
                     onEventSent = onEventSent,
+                    settingItems = settingItems,
                     onClickBack = { onCommonEventSent(CommonEvent.CloseEvent) }
                 )
 
