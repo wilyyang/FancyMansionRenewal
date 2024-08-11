@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
-import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
@@ -41,8 +40,6 @@ class SettingCategory(
 data class SettingItem(
     val title: Int,
     val icon: Int,
-    val offset: Int,
-    val max: Int,
     val onClickPlus: () -> Unit,
     val onClickMinus: () -> Unit
 )
@@ -64,19 +61,66 @@ fun ViewerContentScreenFrame(
                     SettingItem(
                         title = R.string.viewer_setting_content_text_size,
                         icon = R.drawable.ic_text_size,
-                        offset = PageTextSize.OFFSET,
-                        max = PageTextSize.entries.size,
                         onClickPlus = {
-                            val targetIdx = PageTextSize.values.indexOf(uiState.pageSetting.pageContentSetting.textSize) + 1
-                            if(targetIdx in 0 until PageTextSize.values.size){
-                                onEventSent(ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextSize(PageTextSize.values[targetIdx]))
-                            }
+                            onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextSize)
                         },
                         onClickMinus = {
-                            val targetIdx = PageTextSize.values.indexOf(uiState.pageSetting.pageContentSetting.textSize) - 1
-                            if(targetIdx in 0 until PageTextSize.values.size){
-                                onEventSent(ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextSize(PageTextSize.values[targetIdx]))
-                            }
+                            onEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentTextSize)
+                        }
+                    ),
+                    SettingItem(
+                        title = R.string.viewer_setting_content_line_height,
+                        icon = R.drawable.ic_text_size,
+                        onClickPlus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentLineHeight)
+                        },
+                        onClickMinus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentLineHeight)
+                        }
+                    ),
+                    SettingItem(
+                        title = R.string.viewer_setting_content_text_margin_horizontal,
+                        icon = R.drawable.ic_text_size,
+                        onClickPlus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextMarginHorizontal)
+                        },
+                        onClickMinus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentTextMarginHorizontal)
+                        }
+                    ),
+                    SettingItem(
+                        title = R.string.viewer_setting_content_image_margin_horizontal,
+                        icon = R.drawable.ic_text_size,
+                        onClickPlus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentImageMarginHorizontal)
+                        },
+                        onClickMinus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentImageMarginHorizontal)
+                        }
+                    )
+                )
+            ),
+            SettingCategory(
+                categoryName = R.string.viewer_setting_selector_title,
+                items = listOf(
+                    SettingItem(
+                        title = R.string.viewer_setting_selector_text_size,
+                        icon = R.drawable.ic_text_size,
+                        onClickPlus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorTextSize)
+                        },
+                        onClickMinus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingSelectorTextSize)
+                        }
+                    ),
+                    SettingItem(
+                        title = R.string.viewer_setting_selector_padding_vertical,
+                        icon = R.drawable.ic_text_size,
+                        onClickPlus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorPaddingVertical)
+                        },
+                        onClickMinus = {
+                            onEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingSelectorPaddingVertical)
                         }
                     )
                 )

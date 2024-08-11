@@ -1,17 +1,12 @@
 package com.fancymansion.presentation.viewer.content
 
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.*
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
-import com.fancymansion.core.common.const.EpisodeRef
-import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.const.testBookTitle
-import com.fancymansion.core.common.const.testEpisodeRef
-import com.fancymansion.core.common.const.testEpisodeTitle
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
@@ -80,47 +75,75 @@ class ViewerContentViewModel @Inject constructor(
                     is ViewerContentContract.Event.SettingEvent.ChangeSettingPageTheme ->
                         setting.copy(pageTheme = event.pageTheme)
 
-                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextSize ->
-                        setting.copy(
-                            pageContentSetting = setting.pageContentSetting.copy(
-                                textSize = event.textSize
-                            )
-                        )
+                    is ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextSize,
+                    is ViewerContentContract.Event.SettingEvent.DecrementSettingContentTextSize -> {
+                        val increment = if (event is ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextSize) 1 else -1
+                        val targetIdx = PageTextSize.values.indexOf(setting.pageContentSetting.textSize) + increment
+                        if (targetIdx in PageTextSize.values.indices) {
+                            setting.copy(pageContentSetting = setting.pageContentSetting.copy(textSize = PageTextSize.values[targetIdx]))
+                        } else {
+                            setting
+                        }
+                    }
 
-                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentLineHeight ->
-                        setting.copy(
-                            pageContentSetting = setting.pageContentSetting.copy(
-                                lineHeight = event.lineHeight
-                            )
-                        )
+                    is ViewerContentContract.Event.SettingEvent.IncrementSettingContentLineHeight,
+                    is ViewerContentContract.Event.SettingEvent.DecrementSettingContentLineHeight -> {
+                        val increment = if (event is ViewerContentContract.Event.SettingEvent.IncrementSettingContentLineHeight) 1 else -1
+                        val targetIdx = PageLineHeight.values.indexOf(setting.pageContentSetting.lineHeight) + increment
+                        if (targetIdx in PageLineHeight.values.indices) {
+                            setting.copy(pageContentSetting = setting.pageContentSetting.copy(lineHeight = PageLineHeight.values[targetIdx]))
+                        } else {
+                            setting
+                        }
+                    }
 
-                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentTextMargin ->
-                        setting.copy(
-                            pageContentSetting = setting.pageContentSetting.copy(
-                                textMarginHorizontal = event.margin
-                            )
-                        )
+                    is ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextMarginHorizontal,
+                    is ViewerContentContract.Event.SettingEvent.DecrementSettingContentTextMarginHorizontal -> {
+                        val increment = if (event is ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextMarginHorizontal) 1 else -1
+                        val targetIdx = PageMarginHorizontal.values.indexOf(setting.pageContentSetting.textMarginHorizontal) + increment
+                        if (targetIdx in PageMarginHorizontal.values.indices) {
+                            setting.copy(pageContentSetting = setting.pageContentSetting.copy(textMarginHorizontal = PageMarginHorizontal
+                                .values[targetIdx]))
+                        } else {
+                            setting
+                        }
+                    }
 
-                    is ViewerContentContract.Event.SettingEvent.ChangeSettingContentImageMargin ->
-                        setting.copy(
-                            pageContentSetting = setting.pageContentSetting.copy(
-                                imageMarginHorizontal = event.margin
-                            )
-                        )
+                    is ViewerContentContract.Event.SettingEvent.IncrementSettingContentImageMarginHorizontal,
+                    is ViewerContentContract.Event.SettingEvent.DecrementSettingContentImageMarginHorizontal -> {
+                        val increment = if (event is ViewerContentContract.Event.SettingEvent.IncrementSettingContentImageMarginHorizontal) 1 else -1
+                        val targetIdx = PageMarginHorizontal.values.indexOf(setting.pageContentSetting.imageMarginHorizontal) + increment
+                        if (targetIdx in PageMarginHorizontal.values.indices) {
+                            setting.copy(pageContentSetting = setting.pageContentSetting.copy(imageMarginHorizontal = PageMarginHorizontal
+                                .values[targetIdx]))
+                        } else {
+                            setting
+                        }
+                    }
 
-                    is ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorTextSize ->
-                        setting.copy(
-                            selectorSetting = setting.selectorSetting.copy(
-                                textSize = event.textSize
-                            )
-                        )
+                    is ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorTextSize,
+                    is ViewerContentContract.Event.SettingEvent.DecrementSettingSelectorTextSize -> {
+                        val increment = if (event is ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorTextSize) 1 else -1
+                        val targetIdx = PageTextSize.values.indexOf(setting.selectorSetting.textSize) + increment
+                        if (targetIdx in PageTextSize.values.indices) {
+                            setting.copy(selectorSetting = setting.selectorSetting.copy(textSize = PageTextSize
+                                .values[targetIdx]))
+                        } else {
+                            setting
+                        }
+                    }
 
-                    is ViewerContentContract.Event.SettingEvent.ChangeSettingSelectorPaddingVertical ->
-                        setting.copy(
-                            selectorSetting = setting.selectorSetting.copy(
-                                paddingVertical = event.paddingVertical
-                            )
-                        )
+                    is ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorPaddingVertical,
+                    is ViewerContentContract.Event.SettingEvent.DecrementSettingSelectorPaddingVertical -> {
+                        val increment = if (event is ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorPaddingVertical) 1 else -1
+                        val targetIdx = SelectorPaddingVertical.values.indexOf(setting.selectorSetting.paddingVertical) + increment
+                        if (targetIdx in SelectorPaddingVertical.values.indices) {
+                            setting.copy(selectorSetting = setting.selectorSetting.copy(paddingVertical = SelectorPaddingVertical
+                                .values[targetIdx]))
+                        } else {
+                            setting
+                        }
+                    }
                 }
             }
 

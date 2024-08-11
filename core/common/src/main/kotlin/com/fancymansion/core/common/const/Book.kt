@@ -58,7 +58,12 @@ enum class PageLineHeight(val dpSize: Float) {
     LINE_HEIGHT_4(14f), // DEFAULT
     LINE_HEIGHT_5(16f),
     LINE_HEIGHT_6(18f),
-    LINE_HEIGHT_7(20f)
+    LINE_HEIGHT_7(20f);
+
+    companion object {
+        const val OFFSET = 1
+        val values = entries.toTypedArray()
+    }
 }
 
 enum class SelectorPaddingVertical(val dpSize: Float) {
@@ -68,7 +73,12 @@ enum class SelectorPaddingVertical(val dpSize: Float) {
     PADDING_4(9f),   // DEFAULT
     PADDING_5(11f),
     PADDING_6(13f),
-    PADDING_7(15f)
+    PADDING_7(15f);
+
+    companion object {
+        const val OFFSET = 1
+        val values = entries.toTypedArray()
+    }
 }
 
 enum class PageMarginHorizontal(val dpSize: Float) {
@@ -78,7 +88,12 @@ enum class PageMarginHorizontal(val dpSize: Float) {
     MARGIN_4(24f),
     MARGIN_5(32f),
     MARGIN_6(40f),
-    MARGIN_7(48f)
+    MARGIN_7(48f);
+
+    companion object {
+        const val OFFSET = 0
+        val values = entries.toTypedArray()
+    }
 }
 
 /**

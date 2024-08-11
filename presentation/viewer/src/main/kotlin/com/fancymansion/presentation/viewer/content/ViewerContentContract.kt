@@ -1,10 +1,6 @@
 package com.fancymansion.presentation.viewer.content
 
-import com.fancymansion.core.common.const.PageLineHeight
-import com.fancymansion.core.common.const.PageMarginHorizontal
-import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.common.const.PageTheme
-import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -32,12 +28,20 @@ class ViewerContentContract {
 
         sealed class SettingEvent : Event() {
             data class ChangeSettingPageTheme(val pageTheme: PageTheme) : SettingEvent()
-            data class ChangeSettingContentTextSize(val textSize: PageTextSize) : SettingEvent()
-            data class ChangeSettingContentLineHeight(val lineHeight: PageLineHeight) : SettingEvent()
-            data class ChangeSettingContentTextMargin(val margin: PageMarginHorizontal) : SettingEvent()
-            data class ChangeSettingContentImageMargin(val margin: PageMarginHorizontal) : SettingEvent()
-            data class ChangeSettingSelectorTextSize(val textSize: PageTextSize) : SettingEvent()
-            data class ChangeSettingSelectorPaddingVertical(val paddingVertical: SelectorPaddingVertical) : SettingEvent()
+
+            data object IncrementSettingContentTextSize : SettingEvent()
+            data object IncrementSettingContentLineHeight : SettingEvent()
+            data object IncrementSettingContentTextMarginHorizontal : SettingEvent()
+            data object IncrementSettingContentImageMarginHorizontal : SettingEvent()
+            data object IncrementSettingSelectorTextSize : SettingEvent()
+            data object IncrementSettingSelectorPaddingVertical : SettingEvent()
+
+            data object DecrementSettingContentTextSize : SettingEvent()
+            data object DecrementSettingContentLineHeight : SettingEvent()
+            data object DecrementSettingContentTextMarginHorizontal : SettingEvent()
+            data object DecrementSettingContentImageMarginHorizontal : SettingEvent()
+            data object DecrementSettingSelectorTextSize : SettingEvent()
+            data object DecrementSettingSelectorPaddingVertical : SettingEvent()
         }
     }
 
