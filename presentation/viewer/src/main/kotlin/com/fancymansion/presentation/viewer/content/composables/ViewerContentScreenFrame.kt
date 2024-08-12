@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +20,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
+import com.fancymansion.core.common.const.PageLineHeight
+import com.fancymansion.core.common.const.PageMarginHorizontal
+import com.fancymansion.core.common.const.PageTextSize
+import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
@@ -41,8 +47,22 @@ data class SettingItem(
     val title: Int,
     val icon: Int,
     val onClickPlus: () -> Unit,
-    val onClickMinus: () -> Unit
+    val onClickMinus: () -> Unit,
 )
+
+data class SettingUiValue(
+    val value: String = "0",
+    val isMin: Boolean = false,
+    val isMax: Boolean = false
+)
+
+fun convertSettingUiValue(currentValue: Enum<*>, values: Array<out Enum<*>>, offset: Int): SettingUiValue {
+    return SettingUiValue(
+        value = "${values.indexOf(currentValue) + offset}",
+        isMin = values.indexOf(currentValue) == 0,
+        isMax = values.indexOf(currentValue) == values.size - 1
+    )
+}
 
 @Composable
 fun ViewerContentScreenFrame(
@@ -53,6 +73,26 @@ fun ViewerContentScreenFrame(
     onEventSent: (event: ViewerContentContract.Event) -> Unit,
     onNavigationRequested: (ViewerContentContract.Effect.Navigation) -> Unit
 ) {
+    val settingValues by remember {
+        derivedStateOf {
+            listOf(
+                uiState.pageSetting.pageContentSetting.let {
+                    listOf(
+                        convertSettingUiValue(it.textSize, PageTextSize.values, PageTextSize.OFFSET),
+                        convertSettingUiValue(it.lineHeight, PageLineHeight.values, PageLineHeight.OFFSET),
+                        convertSettingUiValue(it.textMarginHorizontal, PageMarginHorizontal.values, PageMarginHorizontal.OFFSET),
+                        convertSettingUiValue(it.imageMarginHorizontal, PageMarginHorizontal.values, PageMarginHorizontal.OFFSET)
+                    )
+                },
+                uiState.pageSetting.selectorSetting.let {
+                    listOf(
+                        convertSettingUiValue(it.textSize, PageTextSize.values, PageTextSize.OFFSET),
+                        convertSettingUiValue(it.paddingVertical, SelectorPaddingVertical.values, SelectorPaddingVertical.OFFSET)
+                    )
+                }
+            )
+        }
+    }
     val settingItems = remember {
         listOf(
             SettingCategory(
