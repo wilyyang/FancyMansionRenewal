@@ -51,14 +51,14 @@ data class SettingItem(
 )
 
 data class SettingUiValue(
-    val value: String = "0",
+    val order: String = "0",
     val isMin: Boolean = false,
     val isMax: Boolean = false
 )
 
 fun convertSettingUiValue(currentValue: Enum<*>, values: Array<out Enum<*>>, offset: Int): SettingUiValue {
     return SettingUiValue(
-        value = "${values.indexOf(currentValue) + offset}",
+        order = "${values.indexOf(currentValue) + offset}",
         isMin = values.indexOf(currentValue) == 0,
         isMax = values.indexOf(currentValue) == values.size - 1
     )
@@ -73,7 +73,7 @@ fun ViewerContentScreenFrame(
     onEventSent: (event: ViewerContentContract.Event) -> Unit,
     onNavigationRequested: (ViewerContentContract.Effect.Navigation) -> Unit
 ) {
-    val settingValues by remember {
+    val settingTotalValues by remember(key1 = uiState.pageSetting) {
         derivedStateOf {
             listOf(
                 uiState.pageSetting.pageContentSetting.let {
@@ -192,6 +192,7 @@ fun ViewerContentScreenFrame(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             settingItems = settingItems,
+            settingTotalValues = settingTotalValues,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent
         )

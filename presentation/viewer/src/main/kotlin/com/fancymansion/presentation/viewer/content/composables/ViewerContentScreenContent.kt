@@ -35,6 +35,7 @@ fun ViewerContentScreenContent(
     modifier: Modifier = Modifier,
     uiState: ViewerContentContract.State,
     settingItems: List<SettingCategory>,
+    settingTotalValues: List<List<SettingUiValue>>,
     onEventSent: (event: ViewerContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -79,9 +80,9 @@ fun ViewerContentScreenContent(
                     modifier = Modifier.fillMaxSize(),
                     visible = panelState == ViewerPanelState.SettingPanel,
                     title = "${uiState.bookTitle} ${uiState.episodeTitle.ifBlank { "" }}" ,
-                    setting = uiState.pageSetting,
-                    onEventSent = onEventSent,
                     settingItems = settingItems,
+                    settingTotalValues = settingTotalValues,
+                    onEventSent = onEventSent,
                     onClickBack = { onCommonEventSent(CommonEvent.CloseEvent) }
                 )
 

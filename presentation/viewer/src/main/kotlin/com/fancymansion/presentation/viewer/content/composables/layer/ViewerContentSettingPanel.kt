@@ -18,47 +18,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
-import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.presentation.base.clickSingle
 import com.fancymansion.core.presentation.base.scaleOnPress
 import com.fancymansion.core.presentation.frame.topBarDpMobile
-import com.fancymansion.core.presentation.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.util.borderLine
-import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 import com.fancymansion.presentation.viewer.content.composables.SettingCategory
 import com.fancymansion.presentation.viewer.content.composables.SettingItem
+import com.fancymansion.presentation.viewer.content.composables.SettingUiValue
 
 @Composable
 fun ViewerContentSettingPanel(
     modifier: Modifier,
     visible: Boolean,
     title: String,
-    setting: PageSettingModel,
     settingItems: List<SettingCategory>,
+    settingTotalValues: List<List<SettingUiValue>>,
     onEventSent: (event: ViewerContentContract.Event) -> Unit,
     onClickBack:() -> Unit
 ) {
@@ -135,9 +127,9 @@ fun ViewerContentSettingPanel(
                         top = 1.dp
                     )
                     .clickSingle { }) {
-                SettingFullList(
-                    setting,
-                    settingItems
+                SettingTotalList(
+                    settingItems = settingItems,
+                    settingTotalValues = settingTotalValues
                 )
             }
         }
@@ -145,22 +137,20 @@ fun ViewerContentSettingPanel(
 }
 
 @Composable
-fun SettingFullList(
-    setting: PageSettingModel,
-    settingItems: List<SettingCategory>
+fun SettingTotalList(
+    settingItems: List<SettingCategory>,
+    settingTotalValues: List<List<SettingUiValue>>,
 ) {
 
-    val settingValueList = listOf(PageTextSize.values.indexOf(setting.pageContentSetting.textSize))
-
     LazyColumn {
-        items(settingItems) { category ->
-            SettingCategoryList(category, settingValueList)
+        itemsIndexed(settingItems){ idx, category ->
+            SettingCategoryList(category = category, settingValues = settingTotalValues[idx])
         }
     }
 }
 
 @Composable
-fun SettingCategoryList(category: SettingCategory, settingValueList: List<Int>) {
+fun SettingCategoryList(category: SettingCategory, settingValues: List<SettingUiValue>){
     Column(modifier = Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)) {
@@ -169,14 +159,14 @@ fun SettingCategoryList(category: SettingCategory, settingValueList: List<Int>) 
             modifier = Modifier.padding(5.dp),
             style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground)
         )
-        category.items.forEach { item ->
-            SettingItemRow(item, settingValueList[0])
+        category.items.forEachIndexed { index, item ->
+            SettingItemRow(item = item, value = settingValues[index])
         }
     }
 }
 
 @Composable
-fun SettingItemRow(item: SettingItem, index: Int) {
+fun SettingItemRow(item: SettingItem, value: SettingUiValue) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -197,14 +187,14 @@ fun SettingItemRow(item: SettingItem, index: Int) {
         Text(modifier = Modifier
             .padding(start = 10.dp)
             .weight(1f), text = stringResource(id = item.title))
-        SettingCounter(count = index, onClickPlus = {item.onClickPlus()}, onClickMinus = {item.onClickMinus()})
+        SettingCounter(value = value, onClickPlus = {item.onClickPlus()}, onClickMinus = {item.onClickMinus()})
     }
 }
 
 @Composable
-fun SettingCounter(modifier : Modifier = Modifier, count: Int, onClickPlus: () -> Unit, onClickMinus: () -> Unit) {
+fun SettingCounter(modifier : Modifier = Modifier, value: SettingUiValue, onClickPlus: () -> Unit, onClickMinus: () -> Unit) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = Modifier.padding(horizontal = 10.dp), text = "$count")
+        Text(modifier = Modifier.padding(horizontal = 10.dp), text = value.order)
 
         Row(
             modifier = Modifier
@@ -217,9 +207,9 @@ fun SettingCounter(modifier : Modifier = Modifier, count: Int, onClickPlus: () -
                 contentDescription = "Minus",
                 modifier = Modifier
                     .size(30.dp)
-                    .padding(4.dp)
-                    .clickSingle { onClickMinus() },
-                tint = MaterialTheme.colorScheme.primary
+                    .clickable { onClickMinus() }
+                    .padding(4.dp),
+                tint = if(value.isMin) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
             )
 
             Box(modifier = Modifier
@@ -232,9 +222,9 @@ fun SettingCounter(modifier : Modifier = Modifier, count: Int, onClickPlus: () -
                 contentDescription = "Plus",
                 modifier = Modifier
                     .size(30.dp)
-                    .padding(4.dp)
-                    .clickSingle { onClickPlus() },
-                tint = MaterialTheme.colorScheme.primary
+                    .clickable { onClickPlus() }
+                    .padding(4.dp),
+                tint = if(value.isMax) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
             )
         }
     }
