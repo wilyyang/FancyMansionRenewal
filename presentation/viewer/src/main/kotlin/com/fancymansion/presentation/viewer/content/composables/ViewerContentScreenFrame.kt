@@ -110,7 +110,7 @@ fun ViewerContentScreenFrame(
                     ),
                     SettingItem(
                         title = R.string.viewer_setting_content_line_height,
-                        icon = R.drawable.ic_text_size,
+                        icon = R.drawable.ic_height,
                         onClickPlus = {
                             onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentLineHeight)
                         },
@@ -120,7 +120,7 @@ fun ViewerContentScreenFrame(
                     ),
                     SettingItem(
                         title = R.string.viewer_setting_content_text_margin_horizontal,
-                        icon = R.drawable.ic_text_size,
+                        icon = R.drawable.ic_text_width,
                         onClickPlus = {
                             onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextMarginHorizontal)
                         },
@@ -130,7 +130,7 @@ fun ViewerContentScreenFrame(
                     ),
                     SettingItem(
                         title = R.string.viewer_setting_content_image_margin_horizontal,
-                        icon = R.drawable.ic_text_size,
+                        icon = R.drawable.ic_image_width,
                         onClickPlus = {
                             onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentImageMarginHorizontal)
                         },
@@ -155,7 +155,7 @@ fun ViewerContentScreenFrame(
                     ),
                     SettingItem(
                         title = R.string.viewer_setting_selector_padding_vertical,
-                        icon = R.drawable.ic_text_size,
+                        icon = R.drawable.ic_height,
                         onClickPlus = {
                             onEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorPaddingVertical)
                         },
