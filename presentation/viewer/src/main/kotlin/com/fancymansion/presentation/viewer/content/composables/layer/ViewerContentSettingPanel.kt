@@ -1,12 +1,11 @@
 package com.fancymansion.presentation.viewer.content.composables.layer
 
-import android.graphics.drawable.ShapeDrawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,10 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +38,7 @@ import com.fancymansion.core.presentation.base.clickSingle
 import com.fancymansion.core.presentation.base.scaleOnPress
 import com.fancymansion.core.presentation.frame.topBarDpMobile
 import com.fancymansion.core.presentation.theme.onSurfaceDimmed
+import com.fancymansion.core.presentation.util.RoundedHorizontalCornerShape
 import com.fancymansion.core.presentation.util.borderLine
 import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
@@ -168,7 +159,7 @@ fun SettingCategoryList(category: SettingCategory, settingValues: List<SettingUi
         Text(
             text = stringResource(id = category.categoryName),
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.SemiBold)
+            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground)
         )
         category.items.forEachIndexed { index, item ->
             SettingItemRow(item = item, value = settingValues[index])
@@ -218,34 +209,48 @@ fun SettingCounter(modifier : Modifier = Modifier, value: SettingUiValue, onClic
             modifier = Modifier.height(IntrinsicSize.Max),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val minusColor = if(value.isMin) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
-            val roundDp = 15.dp
+            val plusColor  = if (value.isMax) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
+            val minusColor = if (value.isMin) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
+            val roundDp = 30.dp
+
             Icon(
                 painter = painterResource(id = R.drawable.ic_minus),
                 contentDescription = "Minus",
                 modifier = Modifier
                     .size(30.dp)
-                    .clip(shape = RoundedCornerShape(topStart = roundDp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = roundDp))
-                    .border(1.dp, minusColor, shape = RoundedCornerShape(topStart = roundDp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = roundDp))
-                    .clickable { onClickMinus() }
+                    .clip(shape = RoundedHorizontalCornerShape(cornerRadius = roundDp))
+                    .border(
+                        1.dp,
+                        minusColor,
+                        shape = RoundedHorizontalCornerShape(cornerRadius = roundDp)
+                    )
+                    .clickSingle(
+                        enabled = !value.isMin,
+                        indication = LocalIndication.current,
+                        clickInterval = 200
+                    ) { onClickMinus() }
                     .padding(start = 6.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
                 tint = minusColor
             )
 
-            Box(modifier = Modifier
-                .width(1.dp)
-                .fillMaxHeight()
-                .background(color = MaterialTheme.colorScheme.primary))
+            Box(modifier = Modifier.width(1.dp).fillMaxHeight().background(color = MaterialTheme.colorScheme.primary))
 
-            val plusColor = if(value.isMax) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary
             Icon(
                 painter = painterResource(id = R.drawable.ic_plus),
                 contentDescription = "Plus",
                 modifier = Modifier
                     .size(30.dp)
-                    .clip(shape = RoundedCornerShape(topStart = 0.dp, topEnd = roundDp, bottomEnd = roundDp, bottomStart = 0.dp))
-                    .border(1.dp, plusColor, shape = RoundedCornerShape(topStart = 0.dp, topEnd = roundDp, bottomEnd = roundDp, bottomStart = 0.dp))
-                    .clickable { onClickPlus() }
+                    .clip(shape = RoundedHorizontalCornerShape(cornerRadius = roundDp, isLeftDirection = false))
+                    .border(
+                        1.dp,
+                        plusColor,
+                        shape = RoundedHorizontalCornerShape(cornerRadius = roundDp,isLeftDirection = false)
+                    )
+                    .clickSingle(
+                        enabled = !value.isMax,
+                        indication = LocalIndication.current,
+                        clickInterval = 200
+                    ) { onClickPlus() }
                     .padding(start = 4.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
                 tint = plusColor
             )
