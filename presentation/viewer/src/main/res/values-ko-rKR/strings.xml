@@ -5,6 +5,8 @@
     <string name="screen_no_page_title">페이지가 없습니다.</string>
     <string name="screen_no_page_detail">페이지 정보가 없어 표시할 내용이 없습니다.\n이전 화면으로 돌아가려면\n 뒤로가기 버튼을 눌러주세요.</string>
 
+    <string name="viewer_setting_theme">테마</string>
+
     <string name="viewer_setting_content_title">페이지</string>
     <string name="viewer_setting_content_text_size">글자 크기</string>
     <string name="viewer_setting_content_line_height">줄 간격</string>

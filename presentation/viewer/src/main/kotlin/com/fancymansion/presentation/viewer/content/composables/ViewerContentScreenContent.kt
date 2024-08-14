@@ -80,9 +80,10 @@ fun ViewerContentScreenContent(
                     modifier = Modifier.fillMaxSize(),
                     visible = panelState == ViewerPanelState.SettingPanel,
                     title = "${uiState.bookTitle} ${uiState.episodeTitle.ifBlank { "" }}" ,
+                    currentTheme = uiState.pageSetting.pageTheme,
+                    onClickTheme = { onEventSent(ViewerContentContract.Event.SettingEvent.ChangeSettingPageTheme(it)) },
                     settingItems = settingItems,
                     settingTotalValues = settingTotalValues,
-                    onEventSent = onEventSent,
                     onClickBack = { onCommonEventSent(CommonEvent.CloseEvent) }
                 )
 

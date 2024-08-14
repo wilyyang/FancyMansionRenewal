@@ -8,7 +8,11 @@ import com.fancymansion.core.common.resource.StringValue
 enum class PageTheme(val pageColor: PageColor, val textColor: TextColor, val selectorColor: SelectorColor, val selectorTextColor: TextColor, val isDarkTheme: Boolean = false) {
     THEME_WHITE(pageColor = PageColor.WHITE, textColor = TextColor.BLACK, selectorColor = SelectorColor.WHITE_OFF, selectorTextColor = TextColor.BLACK),
     THEME_DARK_GRAY(pageColor = PageColor.DARK_GRAY, textColor = TextColor.WHITE, selectorColor = SelectorColor.DARK_GRAY, selectorTextColor = TextColor.WHITE, isDarkTheme = true),
-    THEME_IVORY(pageColor = PageColor.LIGHT_IVORY, textColor = TextColor.BLACK, selectorColor = SelectorColor.DARK_IVORY, selectorTextColor = TextColor.BLACK)
+    THEME_IVORY(pageColor = PageColor.LIGHT_IVORY, textColor = TextColor.BLACK, selectorColor = SelectorColor.DARK_IVORY, selectorTextColor = TextColor.BLACK);
+
+    companion object {
+        val values = PageTheme.entries.toTypedArray()
+    }
 }
 
 enum class PageColor(val colorCode: Long) {
