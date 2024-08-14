@@ -179,7 +179,7 @@ fun ViewerContentScreenFrame(
     BaseScreen(
         loadState = loadState,
         description = ViewerContentContract.NAME,
-        statusBarColor = Color(uiState.pageSetting.pageTheme.pageColor.colorCode),
+        statusBarColor = Color(uiState.pageSetting.pageTheme.mainColor.code),
         isStatusBarTextDark = !uiState.pageSetting.pageTheme.isDarkTheme,
         typePane = TypePane.SINGLE,
         loadingContent = {

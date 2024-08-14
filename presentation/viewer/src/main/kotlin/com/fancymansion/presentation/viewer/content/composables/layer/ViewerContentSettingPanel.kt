@@ -199,7 +199,7 @@ fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit)
                                 color = if(theme == currentTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 shape = CircleShape
                             )
-                            .background(color = Color(theme.pageColor.colorCode))
+                            .background(color = Color(theme.mainColor.code))
                             .clickSingle(
                                 enabled = theme != currentTheme,
                                 clickInterval = 300

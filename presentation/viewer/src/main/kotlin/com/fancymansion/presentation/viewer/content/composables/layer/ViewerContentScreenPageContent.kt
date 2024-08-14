@@ -45,7 +45,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.titleLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(setting.pageTheme.textColor.colorCode),
+            color = Color(setting.pageTheme.mainContentColor.code),
             fontWeight = FontWeight.SemiBold
         )
     }
@@ -54,7 +54,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(setting.pageTheme.textColor.colorCode),
+            color = Color(setting.pageTheme.mainContentColor.code),
             fontWeight = FontWeight.Normal
         )
     }
@@ -63,7 +63,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize * 1.1).sp,
-            color = Color(setting.pageTheme.selectorTextColor.colorCode).copy(alpha = 0.8f),
+            color = Color(setting.pageTheme.subContentColor.code).copy(alpha = 0.8f),
             fontWeight = FontWeight.Medium
         )
     }
@@ -73,7 +73,7 @@ fun ViewerContentScreenPageContent(
      }
 
     LazyColumn(
-        modifier = modifier.background(color = Color(setting.pageTheme.pageColor.colorCode)),
+        modifier = modifier.background(color = Color(setting.pageTheme.mainColor.code)),
         state = listState
     ) {
         item {
@@ -125,7 +125,7 @@ fun ViewerContentScreenPageContent(
                     .clip(
                         shape = MaterialTheme.shapes.small
                     )
-                    .background(color = Color(setting.pageTheme.selectorColor.colorCode))
+                    .background(color = Color(setting.pageTheme.subColor.code))
                     .clickable {
                         onEventSent(
                             ViewerContentContract.Event.OnClickSelector(

@@ -5,28 +5,28 @@ import com.fancymansion.core.common.resource.StringValue
 /**
  * Viewer Config
  */
-enum class PageTheme(val pageColor: PageColor, val textColor: TextColor, val selectorColor: SelectorColor, val selectorTextColor: TextColor, val isDarkTheme: Boolean = false) {
-    THEME_WHITE(pageColor = PageColor.WHITE, textColor = TextColor.BLACK, selectorColor = SelectorColor.WHITE_OFF, selectorTextColor = TextColor.BLACK),
-    THEME_DARK_GRAY(pageColor = PageColor.DARK_GRAY, textColor = TextColor.WHITE, selectorColor = SelectorColor.DARK_GRAY, selectorTextColor = TextColor.WHITE, isDarkTheme = true),
-    THEME_IVORY(pageColor = PageColor.LIGHT_IVORY, textColor = TextColor.BLACK, selectorColor = SelectorColor.DARK_IVORY, selectorTextColor = TextColor.BLACK);
+enum class PageTheme(val mainColor: MainColor, val mainContentColor: ContentColor, val subColor: SubColor, val subContentColor: ContentColor, val isDarkTheme: Boolean = false) {
+    THEME_WHITE(mainColor = MainColor.WHITE, mainContentColor = ContentColor.BLACK, subColor = SubColor.WHITE_OFF, subContentColor = ContentColor.BLACK),
+    THEME_DARK_GRAY(mainColor = MainColor.DARK_GRAY, mainContentColor = ContentColor.WHITE, subColor = SubColor.DARK_GRAY, subContentColor = ContentColor.WHITE, isDarkTheme = true),
+    THEME_IVORY(mainColor = MainColor.LIGHT_IVORY, mainContentColor = ContentColor.BLACK, subColor = SubColor.DARK_IVORY, subContentColor = ContentColor.BLACK);
 
     companion object {
         val values = PageTheme.entries.toTypedArray()
     }
 }
 
-enum class PageColor(val colorCode: Long) {
+enum class MainColor(val code: Long) {
     WHITE(0xff_ffffff),
     DARK_GRAY(0xff_1d1d1d),
     LIGHT_IVORY(0xff_f8f0e3)
 }
 
-enum class TextColor(val colorCode: Long) {
+enum class ContentColor(val code: Long) {
     BLACK(0xff_1d1d1d),
     WHITE(0xff_fefefc)
 }
 
-enum class SelectorColor(val colorCode: Long) {
+enum class SubColor(val code: Long) {
     WHITE_OFF(0xff_eeeeee),
     DARK_GRAY(0xff_404040),
     DARK_IVORY(0xff_ebe5d4)

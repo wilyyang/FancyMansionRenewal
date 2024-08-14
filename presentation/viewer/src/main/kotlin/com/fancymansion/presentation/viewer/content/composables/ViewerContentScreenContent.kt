@@ -44,7 +44,7 @@ fun ViewerContentScreenContent(
 
         if(page.title.isBlank() && page.sources.isEmpty()){
             Box(modifier = modifier
-                .background(color = Color(setting.pageTheme.pageColor.colorCode))
+                .background(color = Color(setting.pageTheme.mainColor.code))
                 .fillMaxSize(), contentAlignment = Alignment.Center){
 
                 NoDataScreen(
