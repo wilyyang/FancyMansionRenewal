@@ -17,7 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +44,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.titleLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(setting.pageTheme.mainContentColor.code),
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.SemiBold
         )
     }
@@ -54,7 +53,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize + lineHeight.dpSize).sp,
-            color = Color(setting.pageTheme.mainContentColor.code),
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Normal
         )
     }
@@ -63,7 +62,7 @@ fun ViewerContentScreenPageContent(
         MaterialTheme.typography.bodyLarge.copy(
             fontSize = textSize.dpSize.sp,
             lineHeight = (textSize.dpSize * 1.1).sp,
-            color = Color(setting.pageTheme.subContentColor.code).copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium
         )
     }
@@ -73,7 +72,7 @@ fun ViewerContentScreenPageContent(
      }
 
     LazyColumn(
-        modifier = modifier.background(color = Color(setting.pageTheme.mainColor.code)),
+        modifier = modifier.background(color = MaterialTheme.colorScheme.surface),
         state = listState
     ) {
         item {
@@ -125,7 +124,7 @@ fun ViewerContentScreenPageContent(
                     .clip(
                         shape = MaterialTheme.shapes.small
                     )
-                    .background(color = Color(setting.pageTheme.subColor.code))
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
                     .clickable {
                         onEventSent(
                             ViewerContentContract.Event.OnClickSelector(

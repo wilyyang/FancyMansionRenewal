@@ -28,8 +28,6 @@ object ColorSet {
     val gray_787878 = Color(0xff_787878)
     val gray_a4aab0 = Color(0xff_a4aab0)
 
-    val gray_eeeeee = Color(0xff_eeeeee)
-
     /**s
      * legacy color
      */

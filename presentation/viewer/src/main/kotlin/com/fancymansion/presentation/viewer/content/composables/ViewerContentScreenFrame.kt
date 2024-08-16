@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +24,7 @@ import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.common.const.PageLineHeight
 import com.fancymansion.core.common.const.PageMarginHorizontal
 import com.fancymansion.core.common.const.PageTextSize
+import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -61,6 +63,19 @@ fun convertSettingUiValue(currentValue: Enum<*>, values: Array<out Enum<*>>, off
         order = "${values.indexOf(currentValue) + offset}",
         isMin = values.indexOf(currentValue) == 0,
         isMax = values.indexOf(currentValue) == values.size - 1
+    )
+}
+
+fun ColorScheme.copyPageThemeColors(pageTheme: PageTheme): ColorScheme {
+    return copy(
+        surface = Color(pageTheme.mainColor.code),
+        onSurface = Color(pageTheme.mainContentColor.code),
+        surfaceVariant = Color(pageTheme.subColor.code),
+        onSurfaceVariant = Color(pageTheme.subContentColor.code),
+        background = Color(pageTheme.subColor.code),
+        onBackground = Color(pageTheme.subContentColor.code),
+        outline = Color(pageTheme.subColor.code),
+        outlineVariant = Color(pageTheme.subColor.code)
     )
 }
 
@@ -176,27 +191,32 @@ fun ViewerContentScreenFrame(
         }?.collect()
     }
 
-    BaseScreen(
-        loadState = loadState,
-        description = ViewerContentContract.NAME,
-        statusBarColor = Color(uiState.pageSetting.pageTheme.mainColor.code),
-        isStatusBarTextDark = !uiState.pageSetting.pageTheme.isDarkTheme,
-        typePane = TypePane.SINGLE,
-        loadingContent = {
-            ViewerContentSkeletonScreen()
-        },
-        isFadeOutLoading = true,
-        isOverlayTopBar = true
-    ) {
-        ViewerContentScreenContent(
-            modifier = Modifier.fillMaxSize(),
-            uiState = uiState,
-            settingItems = settingItems,
-            settingTotalValues = settingTotalValues,
-            onEventSent = onEventSent,
-            onCommonEventSent = onCommonEventSent
-        )
+    MaterialTheme(
+        colorScheme = MaterialTheme.colorScheme.copyPageThemeColors(pageTheme = uiState.pageSetting.pageTheme)
+    ){
+        BaseScreen(
+            loadState = loadState,
+            description = ViewerContentContract.NAME,
+            statusBarColor = MaterialTheme.colorScheme.surface,
+            isStatusBarTextDark = !uiState.pageSetting.pageTheme.isDarkTheme,
+            typePane = TypePane.SINGLE,
+            loadingContent = {
+                ViewerContentSkeletonScreen()
+            },
+            isFadeOutLoading = true,
+            isOverlayTopBar = true
+        ) {
+            ViewerContentScreenContent(
+                modifier = Modifier.fillMaxSize(),
+                uiState = uiState,
+                settingItems = settingItems,
+                settingTotalValues = settingTotalValues,
+                onEventSent = onEventSent,
+                onCommonEventSent = onCommonEventSent
+            )
+        }
     }
+
 
     BackHandler {
         onCommonEventSent(CommonEvent.CloseEvent)

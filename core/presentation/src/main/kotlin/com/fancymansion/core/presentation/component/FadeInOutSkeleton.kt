@@ -16,15 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import com.fancymansion.core.presentation.theme.ColorSet
 
-
-val fadeSkeletonDefaultColor = ColorSet.gray_eeeeee
-
-
 @Composable
 fun FadeInOutSkeleton(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.small,
-    color: Color = fadeSkeletonDefaultColor,
+    color: Color = MaterialTheme.colorScheme.background,
     durationMillis: Int = 800,
     content: (@Composable () -> Unit)? = null
 ) {

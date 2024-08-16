@@ -28,8 +28,8 @@ import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.R
 import com.fancymansion.core.presentation.base.clickSingle
+import com.fancymansion.core.presentation.theme.CONTENT_DIMMED_ALPHA
 import com.fancymansion.core.presentation.theme.FancyMansionTheme
-import com.fancymansion.core.presentation.theme.onBackgroundDimmed
 
 @Composable
 fun NoDataScreen(
@@ -51,20 +51,20 @@ fun NoDataScreen(
             painter = painterResource(id = imageResId),
             contentDescription = "No Data",
             modifier = Modifier.size(54.dp),
-            tint = onBackgroundDimmed
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = CONTENT_DIMMED_ALPHA)
         )
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
             text = titleMessage.asString(LocalContext.current),
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold, color = onBackgroundDimmed),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface.copy(alpha = CONTENT_DIMMED_ALPHA)),
             textAlign = TextAlign.Center
         )
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
             text = detailMessage.asString(LocalContext.current),
-            style = MaterialTheme.typography.bodyLarge.copy(color = onBackgroundDimmed),
+            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = CONTENT_DIMMED_ALPHA)),
             textAlign = TextAlign.Center
         )
 

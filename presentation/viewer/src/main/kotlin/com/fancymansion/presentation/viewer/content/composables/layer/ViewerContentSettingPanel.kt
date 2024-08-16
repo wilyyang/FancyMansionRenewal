@@ -42,7 +42,6 @@ import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.presentation.base.clickSingle
 import com.fancymansion.core.presentation.base.scaleOnPress
 import com.fancymansion.core.presentation.frame.topBarDpMobile
-import com.fancymansion.core.presentation.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.util.RoundedHorizontalCornerShape
 import com.fancymansion.core.presentation.util.borderLine
 import com.fancymansion.presentation.viewer.R
@@ -73,10 +72,10 @@ fun ViewerContentSettingPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(topBarDpMobile)
-                    .background(Color(currentTheme.mainColor.code))
+                    .background(MaterialTheme.colorScheme.surface)
                     .borderLine(
                         density = LocalDensity.current,
-                        color = Color(currentTheme.subColor.code),
+                        color = MaterialTheme.colorScheme.outline,
                         bottom = 1.dp
                     )
                     .clickSingle { }
@@ -101,13 +100,13 @@ fun ViewerContentSettingPanel(
                                 pressScale = 0.9f
                             ),
                         painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_back),
-                        tint = Color(currentTheme.mainContentColor.code),
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = "Back"
                     )
                     Text(
                         modifier = Modifier.padding(horizontal = 5.dp),
                         text = title,
-                        style = MaterialTheme.typography.titleLarge.copy(color = Color(currentTheme.mainContentColor.code)),
+                        style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -152,7 +151,7 @@ fun SettingTotalList(
             SettingPageTheme(currentTheme = currentTheme, onClickTheme = onClickTheme)
         }
         itemsIndexed(settingItems){ idx, category ->
-            SettingCategoryList(currentTheme = currentTheme, category = category, settingValues = settingTotalValues[idx])
+            SettingCategoryList(category = category, settingValues = settingTotalValues[idx])
         }
     }
 }
@@ -161,18 +160,18 @@ fun SettingTotalList(
 fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit){
     Column(modifier = Modifier
         .fillMaxWidth()
-        .background(Color(currentTheme.subColor.code))) {
+        .background(MaterialTheme.colorScheme.background)) {
 
         Text(
             text = stringResource(id = R.string.viewer_setting_theme),
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-            style = MaterialTheme.typography.labelMedium.copy(color = Color(currentTheme.subContentColor.code))
+            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground)
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = Color(currentTheme.mainColor.code))
+                .background(color = MaterialTheme.colorScheme.surface)
                 .borderLine(
                     density = LocalDensity.current,
                     color = MaterialTheme.colorScheme.outline,
@@ -185,7 +184,7 @@ fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit)
                 modifier = Modifier.size(25.dp),
                 painter = painterResource(id = R.drawable.ic_page_theme),
                 contentDescription = "",
-                tint = Color(currentTheme.mainContentColor.code)
+                tint = MaterialTheme.colorScheme.onSurface
             )
 
             LazyRow(modifier = Modifier.padding(start = 10.dp)){
@@ -197,7 +196,7 @@ fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit)
                             .clip(shape = CircleShape)
                             .border(
                                 width = 1.dp,
-                                color = if(theme == currentTheme) MaterialTheme.colorScheme.primary else Color(currentTheme.subColor.code),
+                                color = if(theme == currentTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 shape = CircleShape
                             )
                             .background(color = Color(theme.mainColor.code))
@@ -215,30 +214,30 @@ fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit)
 }
 
 @Composable
-fun SettingCategoryList(currentTheme: PageTheme, category: SettingCategory, settingValues: List<SettingUiValue>){
+fun SettingCategoryList(category: SettingCategory, settingValues: List<SettingUiValue>){
     Column(modifier = Modifier
         .fillMaxWidth()
-        .background(color = Color(currentTheme.subColor.code))) {
+        .background(color = MaterialTheme.colorScheme.background)) {
         Text(
             text = stringResource(id = category.categoryName),
             modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
-            style = MaterialTheme.typography.labelMedium.copy(color = Color(currentTheme.subContentColor.code))
+            style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground)
         )
         category.items.forEachIndexed { index, item ->
-            SettingItemRow(currentTheme = currentTheme, item = item, value = settingValues[index])
+            SettingItemRow(item = item, value = settingValues[index])
         }
     }
 }
 
 @Composable
-fun SettingItemRow(currentTheme: PageTheme, item: SettingItem, value: SettingUiValue) {
+fun SettingItemRow(item: SettingItem, value: SettingUiValue) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color(currentTheme.mainColor.code))
+            .background(color = MaterialTheme.colorScheme.surface)
             .borderLine(
                 density = LocalDensity.current,
-                color = Color(currentTheme.subColor.code),
+                color = MaterialTheme.colorScheme.outline,
                 bottom = 1.dp
             )
             .padding(vertical = 5.dp, horizontal = 10.dp),
@@ -248,12 +247,12 @@ fun SettingItemRow(currentTheme: PageTheme, item: SettingItem, value: SettingUiV
             modifier = Modifier.size(25.dp),
             painter = painterResource(id = item.icon),
             contentDescription = "",
-            tint = Color(currentTheme.subContentColor.code)
+            tint = MaterialTheme.colorScheme.onSurface
         )
         Text(modifier = Modifier
             .padding(start = 10.dp)
             .weight(1f), text = stringResource(id = item.title),
-            color = Color(currentTheme.mainColor.code))
+            color = MaterialTheme.colorScheme.onSurface)
         SettingCounter(value = value, onClickPlus = {item.onClickPlus()}, onClickMinus = {item.onClickMinus()})
     }
 }
@@ -265,7 +264,7 @@ fun SettingCounter(modifier : Modifier = Modifier, value: SettingUiValue, onClic
             modifier = Modifier.padding(horizontal = 10.dp),
             text = value.order,
             style = MaterialTheme.typography.labelLarge.copy(
-                color = onSurfaceDimmed,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold
             )
         )

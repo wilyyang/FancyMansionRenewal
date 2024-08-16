@@ -9,6 +9,7 @@ import com.fancymansion.core.presentation.theme.typography.typographyMobile
 val disableAlpha = 0.38f
 val dimmedAlpha = 0.28f
 
+const val CONTENT_DIMMED_ALPHA = 0.56f
 
 const val ON_CONTENT_DEACTIVE_ALPHA = 0.392f
 const val ON_CONTENT_SUB_ALPHA = 0.478f
