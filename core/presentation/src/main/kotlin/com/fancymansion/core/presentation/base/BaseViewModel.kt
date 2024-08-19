@@ -66,6 +66,7 @@ sealed class LoadState {
     data class AlarmDialog(
         val title : StringValue? = null,
         val message : StringValue? = null,
+        val backgroundColorCode : Int? = null,
         val confirmText : StringValue? = StringValue.Empty,
         val dismissText : StringValue? = StringValue.Empty,
         val onConfirm : () -> Unit = {},
@@ -74,6 +75,7 @@ sealed class LoadState {
         constructor(
             title: String? = null,
             message: String? = null,
+            backgroundColorCode : Int? = null,
             confirmText: String? = "",
             dismissText: String? = "",
             onConfirm: () -> Unit = {},
@@ -81,6 +83,7 @@ sealed class LoadState {
         ) : this(
             title = title?.let { StringValue.StringWrapper(title) },
             message = message?.let { StringValue.StringWrapper(message) },
+            backgroundColorCode = backgroundColorCode,
             confirmText = confirmText?.let{ StringValue.StringWrapper(confirmText)},
             dismissText = dismissText?.let { StringValue.StringWrapper(dismissText) },
             onConfirm = onConfirm,

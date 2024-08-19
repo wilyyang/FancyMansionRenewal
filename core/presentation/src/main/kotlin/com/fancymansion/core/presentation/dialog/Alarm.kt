@@ -1,6 +1,5 @@
 package com.fancymansion.core.presentation.dialog
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,38 +12,42 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
-import com.fancymansion.core.presentation.R
-import com.fancymansion.core.presentation.theme.ColorSet
 import com.fancymansion.core.presentation.theme.FancyMansionTheme
-import com.fancymansion.core.presentation.theme.dimmedAlpha
+import com.fancymansion.core.presentation.theme.onSurfaceDimmed
+import com.fancymansion.core.presentation.theme.onSurfaceSub
+import com.fancymansion.core.presentation.util.borderLine
 
 @Composable
 fun AlarmDialog(
     title : String? = null,
     alarmMessage : String? = null,
+    background : Color? = null,
     confirmText : String? = "",
     dismissText : String? = "",
     onConfirm: () -> Unit = { },
@@ -61,102 +64,105 @@ fun AlarmDialog(
                         contentDescription = "AlarmDialog"
                     }
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = dimmedAlpha)),
+                    .background(color = background ?: Color.Transparent),
                 contentAlignment = Alignment.Center
             ){
                 Column(modifier = Modifier
-                    .padding(vertical = 30.dp)
-                    .width(280.dp)
+                    .width(300.dp)
                     .height(IntrinsicSize.Min)
                     .heightIn(min = 0.dp, max = height * 0.6f)
-                    .clip(shape = MaterialTheme.shapes.small)
+                    .clip(shape = MaterialTheme.shapes.medium)
                     .background(Color.White)
                 ) {
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(ColorSet.blue_20b1f9)
-                            .padding(horizontal = 7.dp)
-                            .padding(top = 10.dp, bottom = 5.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp).padding(top = 30.dp),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_bell),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(bottom = 5.dp)
-                                .size(24.dp)
-                        )
                         Text(
                             text = title?:stringResource(id = com.fancymansion.core.common.R.string.alarm),
-                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp),
-                            color = Color.White,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 5.dp)
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 20.dp)
-                    ) {
+                    Box (modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 5.dp)){
                         Text(
-                            modifier = Modifier
-                                .padding(end = 20.dp)
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState())
-                                .padding(top = 15.dp)
-                                .heightIn(min = 50.dp),
+                            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                                .padding(horizontal = 25.dp).padding(vertical = 15.dp),
                             text = alarmMessage ?: "",
-                            style = MaterialTheme.typography.bodyLarge.copy(lineHeight = 22.sp)
+                            style = MaterialTheme.typography.bodyMedium.copy(color = onSurfaceDimmed, lineHeight = 22.sp),
+                            textAlign = TextAlign.Center
                         )
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ){
-                            dismissText?.let {
-                                Box(
-                                    modifier = Modifier
-                                        .padding(end = 5.dp)
-                                        .clip(shape = MaterialTheme.shapes.small)
-                                        .clickable {
-                                            onDismiss()
-                                            isShowDialog.value = false
-                                        }
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .align(Alignment.Center)
-                                            .padding(15.dp),
-                                        text = it.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.cancel) },
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                        color = ColorSet.gray_5f5f5f
-                                    )
-                                }
+                        Box(modifier = Modifier.fillMaxWidth().height(15.dp).align(Alignment.TopStart).background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White,
+                                    Color.Transparent
+                                )
+                            )
+                        ))
+
+                        Box(modifier = Modifier.fillMaxWidth().height(15.dp).align(Alignment.BottomStart).background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.White
+                                )
+                            )
+                        ))
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min)
+                            .borderLine(
+                                density = LocalDensity.current,
+                                color = MaterialTheme.colorScheme.outline,
+                                top = 1.dp
+                            )
+                    ){
+                        dismissText?.let {
+                            Box(
+                                modifier = Modifier
+                                    .weight(0.5f)
+                                    .clickable {
+                                        onDismiss()
+                                        isShowDialog.value = false
+                                    }
+                            ) {
+                                Text(
+                                    modifier = Modifier.align(Alignment.Center).padding(20.dp),
+                                    text = it.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.cancel) },
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                    color = onSurfaceSub
+                                )
                             }
+                        }
 
-                            confirmText?.let {
-                                Box (
-                                    modifier = Modifier
-                                        .clip(shape = MaterialTheme.shapes.small)
-                                        .clickable {
-                                            onConfirm()
-                                            isShowDialog.value = false
-                                        }
-                                        .padding(end = 5.dp)
-                                ){
-                                    Text(
-                                        modifier = Modifier
-                                            .align(Alignment.Center)
-                                            .padding(15.dp),
-                                        text = confirmText.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.confirm) },
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                        color = ColorSet.blue_20b1f9
-                                    )
+                        if(dismissText != null && confirmText != null){
+                            VerticalDivider(modifier = Modifier.width(1.dp), color = MaterialTheme.colorScheme.outline)
+                        }
 
-                                }
+                        confirmText?.let {
+                            Box (
+                                modifier = Modifier
+                                    .weight(0.5f)
+                                    .clickable {
+                                        onConfirm()
+                                        isShowDialog.value = false
+                                    }
+                            ){
+                                Text(
+                                    modifier = Modifier.align(Alignment.Center).padding(20.dp),
+                                    text = confirmText.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.confirm) },
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+
                             }
                         }
                     }
