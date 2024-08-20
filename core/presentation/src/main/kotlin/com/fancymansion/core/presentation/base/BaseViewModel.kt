@@ -40,8 +40,9 @@ sealed class LoadState {
         val title : StringValue? = null,
         val message : StringValue? = null,
         val errorMessage : StringValue? = null,
-        val confirmText: StringValue = StringValue.Empty,
-        val dismissText: StringValue? = StringValue.Empty,
+        val backgroundColorCode : Int? = null,
+        val confirmText : StringValue? = StringValue.Empty,
+        val dismissText : StringValue? = StringValue.Empty,
         val onConfirm : () -> Unit = {},
         val onDismiss : () -> Unit = {}
     ) : LoadState(){
@@ -49,7 +50,8 @@ sealed class LoadState {
             title: String? = null,
             message: String? = null,
             errorMessage: String? = null,
-            confirmText: String = "",
+            backgroundColorCode : Int? = null,
+            confirmText: String? = "",
             dismissText: String? = "",
             onConfirm: () -> Unit = {},
             onDismiss: () -> Unit = {}
@@ -57,7 +59,8 @@ sealed class LoadState {
             title = title?.let { StringValue.StringWrapper(title) },
             message = message?.let { StringValue.StringWrapper(message) },
             errorMessage = errorMessage?.let { StringValue.StringWrapper(errorMessage) },
-            confirmText = StringValue.StringWrapper(confirmText),
+            backgroundColorCode = backgroundColorCode,
+            confirmText = confirmText?.let{ StringValue.StringWrapper(confirmText)},
             dismissText = dismissText?.let { StringValue.StringWrapper(dismissText) },
             onConfirm = onConfirm,
             onDismiss = onDismiss

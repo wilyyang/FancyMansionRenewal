@@ -177,7 +177,8 @@ fun CommonPopupLayerProcess(
                 title = loadState.title?.asString(context),
                 message = loadState.message?.asString(context),
                 errorMessage = loadState.errorMessage?.asString(context),
-                confirmText = loadState.confirmText.asString(context),
+                background = loadState.backgroundColorCode?.let { Color(it) },
+                confirmText = loadState.confirmText?.asString(context),
                 dismissText = loadState.dismissText?.asString(context),
                 onConfirm = loadState.onConfirm,
                 onDismiss = loadState.onDismiss
@@ -186,7 +187,7 @@ fun CommonPopupLayerProcess(
         is LoadState.AlarmDialog -> {
             AlarmDialog(
                 title = loadState.title?.asString(context),
-                alarmMessage = loadState.message?.asString(context),
+                message = loadState.message?.asString(context),
                 background = loadState.backgroundColorCode?.let { Color(it) },
                 confirmText = loadState.confirmText?.asString(context),
                 dismissText = loadState.dismissText?.asString(context),

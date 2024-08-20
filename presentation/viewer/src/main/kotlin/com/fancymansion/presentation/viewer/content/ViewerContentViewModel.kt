@@ -198,6 +198,7 @@ class ViewerContentViewModel @Inject constructor(
                             setLoadStateIdle()
                         } else {
                             setLoadState(LoadState.AlarmDialog(
+                                title = StringValue.StringResource(R.string.alarm_title_move_save_page),
                                 message = StringValue.StringResource(R.string.alarm_question_move_save_page),
                                 onConfirm = {
                                     setEvent(ViewerContentContract.Event.OnConfirmMoveSavePageDialog(saveId))

@@ -2,11 +2,11 @@ package com.fancymansion.core.presentation.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,7 +46,7 @@ import com.fancymansion.core.presentation.util.borderLine
 @Composable
 fun AlarmDialog(
     title : String? = null,
-    alarmMessage : String? = null,
+    message : String? = null,
     background : Color? = null,
     confirmText : String? = "",
     dismissText : String? = "",
@@ -75,23 +75,26 @@ fun AlarmDialog(
                     .background(Color.White)
                 ) {
 
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp).padding(top = 30.dp),
-                        horizontalArrangement = Arrangement.Center
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = title?:stringResource(id = com.fancymansion.core.common.R.string.alarm),
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        if(title != null){
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
 
                     Box (modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 5.dp)){
                         Text(
                             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
                                 .padding(horizontal = 25.dp).padding(vertical = 15.dp),
-                            text = alarmMessage ?: "",
+                            text = message ?: "",
                             style = MaterialTheme.typography.bodyMedium.copy(color = onSurfaceDimmed, lineHeight = 22.sp),
                             textAlign = TextAlign.Center
                         )
@@ -179,7 +182,7 @@ fun AlarmDialogPreview(
     FancyMansionTheme {
         AlarmDialog(
             title = "알림",
-            alarmMessage = "로그아웃 하시겠습니까?",
+            message = "로그아웃 하시겠습니까?",
             onConfirm = {},
             onDismiss = {}
         )
