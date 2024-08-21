@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -121,6 +122,21 @@ fun HandleCommonEffect(
                 /**
                  * etc
                  */
+                is CommonEffect.SendLogToEmailEffect -> {
+                    val uri = FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.fileprovider",
+                        effect.logFile
+                    )
+                    val logMailIntent = Intent(Intent.ACTION_SEND).apply {
+                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        type = "message/rfc822"
+                        putExtra(Intent.EXTRA_SUBJECT, "FancyMansion Log Data")
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf("ehdrnr1178@gmail.com" ))
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                    }
+                    context.startActivity(Intent.createChooser(logMailIntent,"FancyMansion"))
+                }
 
                 is CommonEffect.RequestFirebaseToken -> {
                     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->

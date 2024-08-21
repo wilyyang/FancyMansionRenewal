@@ -20,7 +20,6 @@ import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_DENSITY
 import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_HEIGHT_PX
 import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_WIDTH_PX
 import com.fancymansion.core.common.log.Logger
-import com.fancymansion.core.common.log.SaveLogHandler
 import com.fancymansion.core.presentation.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.theme.typography.typographyMobile
 import com.fancymansion.core.presentation.theme.typography.typographyTablet
@@ -28,26 +27,16 @@ import com.fancymansion.core.presentation.window.Feature
 import com.fancymansion.core.presentation.window.TypeOrientation
 import com.fancymansion.core.presentation.window.TypePane
 import com.fancymansion.core.presentation.window.TypeWindow
-import com.fancymansion.domain.usecase.log.UseCaseInsertLog
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var useCaseInsertLog: UseCaseInsertLog
+
 
     private lateinit var typeWindow : TypeWindow
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
-
-        Logger.setSaveLogHandler(saveLogHandler = object : SaveLogHandler() {
-            override suspend fun saveLog(message: String, type : Int, tag: String) {
-                useCaseInsertLog(message = message, type = type, tag = tag)
-            }
-        })
 
         typeWindow = Feature.getTypeWindow(context = this)
         val typography = if(typeWindow.pane == TypePane.SINGLE){

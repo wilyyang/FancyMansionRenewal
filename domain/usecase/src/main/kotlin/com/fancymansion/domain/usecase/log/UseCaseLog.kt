@@ -18,7 +18,7 @@ class UseCaseMakeFileFromLog @Inject constructor(
 ) {
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
         val logs = logRepository.getLogAll()
-        val fileName = "fancy_mansion_logs_" + System.currentTimeMillis() + ".txt"
+        val fileName = "fancy_mansion_logs.txt"
 
         val file = File(context.filesDir, "/$fileName").apply {
             createNewFile()

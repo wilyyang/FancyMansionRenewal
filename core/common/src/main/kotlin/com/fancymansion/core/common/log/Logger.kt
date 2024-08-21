@@ -3,12 +3,20 @@ package com.fancymansion.core.common.log
 import android.util.Log
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 object Logger {
     const val BASIC_TAG_NAME = "FancyMansion"
     private var saveLogHandler : SaveLogHandler? = null
+    fun setSaveLogHandler(saveLogHandler : SaveLogHandler){
+        Logger.saveLogHandler = saveLogHandler
+    }
+
+    /**
+     * 로그 호출 코드의 위치를 정확히하기 위해서 일부러 메소드를 중복하여 작성 (수정하지 말 것)
+     */
     fun v(message: String) {
         Log.println(Log.VERBOSE, BASIC_TAG_NAME, changeMessage(message))
         saveLogHandler?.saveLogWithLaunch(message = message, type = Log.VERBOSE, tag = BASIC_TAG_NAME)
@@ -61,18 +69,12 @@ object Logger {
             .append('\t').append(message)
             .append(" (").append(Thread.currentThread().stackTrace[4].fileName).append(":")
             .append(Thread.currentThread().stackTrace[4].lineNumber).append(")");
-
-
         return msgBuilder.toString()
-    }
-
-    fun setSaveLogHandler(saveLogHandler : SaveLogHandler){
-        Logger.saveLogHandler = saveLogHandler
     }
 }
 
 abstract class SaveLogHandler{
-    private val scopeApplication by lazy { CoroutineScope(SupervisorJob()) }
+    private val scopeApplication by lazy { CoroutineScope(Dispatchers.IO + SupervisorJob()) }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
