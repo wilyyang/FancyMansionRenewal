@@ -11,8 +11,6 @@ import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.fancymansion.app.BuildConfig
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.fancymansion.app.navigation.AppScreenConfiguration
 import com.fancymansion.core.common.const.CurrentDensity
 import com.fancymansion.core.common.const.MOBILE_BASE_SCREEN_DENSITY
@@ -23,8 +21,6 @@ import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_HEIGHT_PX
 import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_WIDTH_PX
 import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.log.SaveLogHandler
-import com.fancymansion.core.common.throwable.ExceptionReporter
-import com.fancymansion.core.common.throwable.ThrowableManager
 import com.fancymansion.core.presentation.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.theme.typography.typographyMobile
 import com.fancymansion.core.presentation.theme.typography.typographyTablet
@@ -34,8 +30,9 @@ import com.fancymansion.core.presentation.window.TypePane
 import com.fancymansion.core.presentation.window.TypeWindow
 import com.fancymansion.domain.usecase.log.UseCaseInsertLog
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.Exception
 import javax.inject.Inject
+
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,24 +42,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var typeWindow : TypeWindow
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseAnalytics.getInstance(this).let { firebaseAnalytics ->
-            val exceptionReporter = object : ExceptionReporter {
-                override fun sendException(exception: Exception, map: Map<String, String>?) {
-                    firebaseAnalytics.logEvent(name = exception.javaClass.simpleName) {
-                        map?.asSequence()?.forEach {
-                            param(it.key, it.value)
-                        }
-                    }
-                }
-
-                override fun sendLog(message: String, tag: String) {
-                    firebaseAnalytics.logEvent(name = FirebaseAnalytics.Event.SCREEN_VIEW) {
-                        param(tag, message)
-                    }
-                }
-            }
-            ThrowableManager.setExceptionReporter(exceptionReporter)
-        }
 
         Logger.setSaveLogHandler(saveLogHandler = object : SaveLogHandler() {
             override suspend fun saveLog(message: String, type : Int, tag: String) {

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.com.google.gms.google.services)
     alias(libs.plugins.com.google.firebase.crashlytics)
     alias(libs.plugins.com.google.dagger.hilt.android)
     kotlin("kapt")

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "847271683213",
+    "project_id": "fancymansionrenewal",
+    "storage_bucket": "fancymansionrenewal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:847271683213:android:3521a0e03abbe26e406ec4",
+        "android_client_info": {
+          "package_name": "com.fancymansion.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsSOmiHQ9kPI0GgihqigOS5Dc2DGGtMNA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
