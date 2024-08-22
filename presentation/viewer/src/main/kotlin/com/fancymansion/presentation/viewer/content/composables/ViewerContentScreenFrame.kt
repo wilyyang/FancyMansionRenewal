@@ -29,9 +29,9 @@ import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
-import com.fancymansion.core.presentation.component.FadeInOutSkeleton
-import com.fancymansion.core.presentation.frame.BaseScreen
-import com.fancymansion.core.presentation.theme.FancyMansionTheme
+import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
+import com.fancymansion.core.presentation.compose.frame.BaseScreen
+import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.window.TypePane
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.presentation.viewer.R

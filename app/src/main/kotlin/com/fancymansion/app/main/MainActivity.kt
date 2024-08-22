@@ -20,9 +20,9 @@ import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_DENSITY
 import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_HEIGHT_PX
 import com.fancymansion.core.common.const.TABLET_BASE_SCREEN_WIDTH_PX
 import com.fancymansion.core.common.log.Logger
-import com.fancymansion.core.presentation.theme.FancyMansionTheme
-import com.fancymansion.core.presentation.theme.typography.typographyMobile
-import com.fancymansion.core.presentation.theme.typography.typographyTablet
+import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
+import com.fancymansion.core.presentation.compose.theme.typography.typographyMobile
+import com.fancymansion.core.presentation.compose.theme.typography.typographyTablet
 import com.fancymansion.core.presentation.window.Feature
 import com.fancymansion.core.presentation.window.TypeOrientation
 import com.fancymansion.core.presentation.window.TypePane

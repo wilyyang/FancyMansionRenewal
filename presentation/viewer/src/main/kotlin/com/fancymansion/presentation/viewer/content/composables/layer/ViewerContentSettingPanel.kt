@@ -39,11 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.PageTheme
-import com.fancymansion.core.presentation.base.clickSingle
-import com.fancymansion.core.presentation.base.scaleOnPress
-import com.fancymansion.core.presentation.frame.topBarDpMobile
-import com.fancymansion.core.presentation.util.RoundedHorizontalCornerShape
-import com.fancymansion.core.presentation.util.borderLine
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
+import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
+import com.fancymansion.core.presentation.compose.shape.RoundedHorizontalCornerShape
+import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.composables.SettingCategory
 import com.fancymansion.presentation.viewer.content.composables.SettingItem

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.fancymansion.core.presentation.frame.topBarDpMobile
+import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.presentation.viewer.content.PageWrapper

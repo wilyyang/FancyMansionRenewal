@@ -2,6 +2,7 @@ package com.fancymansion.core.common.resource
 
 import android.content.Context
 import androidx.annotation.StringRes
+
 sealed class StringValue {
 
     data object Empty : StringValue(){

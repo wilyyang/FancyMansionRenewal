@@ -15,12 +15,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.base.clickSingle
-import com.fancymansion.core.presentation.screen.NoDataScreen
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 import com.fancymansion.presentation.viewer.content.composables.layer.ViewerContentScreenPageContent
