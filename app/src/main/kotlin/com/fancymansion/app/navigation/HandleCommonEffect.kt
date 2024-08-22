@@ -33,8 +33,8 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun HandleCommonEffect(
-    commonEffectFlow: Flow<CommonEffect>,
     navController: NavController,
+    commonEffectFlow: Flow<CommonEffect>,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
     val context = LocalContext.current

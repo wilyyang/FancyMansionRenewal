@@ -39,7 +39,7 @@ fun ViewerContentScreenDestination(
         }
     }
 
-    HandleCommonEffect(commonEffectFlow = viewModel.commonEffect, onCommonEventSent = onCommonEventSent, navController = navController)
+    HandleCommonEffect(navController = navController, commonEffectFlow = viewModel.commonEffect, onCommonEventSent = onCommonEventSent)
 
     ViewerContentScreenFrame(
         uiState = viewModel.uiState.value,

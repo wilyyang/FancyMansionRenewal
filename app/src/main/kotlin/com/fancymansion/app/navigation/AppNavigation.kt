@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.fancymansion.app.navigation.NavigateAnimation.slideVerticallyComposable
+import com.fancymansion.app.navigation.NavigateAnimation.upScreenTransition
 import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.presentation.window.TypeWindow
@@ -33,7 +33,7 @@ fun AppNavigation(typeWindow : TypeWindow) {
         navController = navController,
         startDestination = "${ViewerContentContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}/{${ArgName.NAME_BOOK_TITLE}}/{${ArgName.NAME_EPISODE_TITLE}}"
     ) {
-        slideVerticallyComposable(
+        upScreenTransition(
             route = "${ViewerContentContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}/{${ArgName.NAME_BOOK_TITLE}}/{${ArgName.NAME_EPISODE_TITLE}}",
             arguments = listOf(NavArgument.argUserId, NavArgument.argReadMode, NavArgument.argBookId, NavArgument.argEpisodeId, NavArgument.argBookTitle, NavArgument.argEpisodeTitle),
             navController = navController
