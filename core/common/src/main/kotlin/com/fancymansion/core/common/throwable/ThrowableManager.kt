@@ -4,8 +4,8 @@ import android.util.Log
 import com.fancymansion.core.common.log.Logger
 import java.lang.Exception
 
-const val EVENT_DEFAULT_TAG = "default_event"
-const val EVENT_EXCEPTION_TAG = "exception_event"
+const val EVENT_MESSAGE_TAG = "event_message"
+const val EVENT_EXCEPTION_TAG = "event_exception"
 const val MESSAGE_KEY = "message"
 const val EXCEPTION_KEY = "exception"
 
@@ -37,15 +37,11 @@ object ThrowableManager {
         }
     }
 
-    fun sendMessageToReporter(map: Map<String, String>, tag : String = EVENT_DEFAULT_TAG){
-        exceptionReporter?.logEventWithParams(map = map, tag = tag)
-    }
-
-    fun sendMessageToReporter(message : String, tag : String = EVENT_DEFAULT_TAG){
+    fun sendMessageToReporter(message : String, tag : String = EVENT_MESSAGE_TAG){
         exceptionReporter?.logEventWithParams(map = mapOf(MESSAGE_KEY to message), tag = tag)
     }
 }
 
 interface ExceptionReporter {
-    fun logEventWithParams(tag: String = EVENT_DEFAULT_TAG, exception: Exception? = null, map: Map<String, String> = emptyMap())
+    fun logEventWithParams(tag: String = EVENT_MESSAGE_TAG, exception: Exception? = null, map: Map<String, String> = emptyMap())
 }
