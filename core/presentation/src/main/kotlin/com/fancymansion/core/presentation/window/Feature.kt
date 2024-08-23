@@ -13,18 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowInsetsCompat
-import com.fancymansion.core.common.log.Logger
-import com.fancymansion.core.common.util.isTablet
 
 object Feature {
     fun getTypeWindow(context : Context) : TypeWindow {
-       return if (isTablet(context)) {
-           Logger.i("isTablet : true")
-           TypeWindow(TypePane.DUAL, TypeOrientation.LANDSCAPE)
-       } else {
-           Logger.i("isTablet : false")
-           TypeWindow(TypePane.SINGLE, TypeOrientation.PORTRAIT)
-       }
+       return TypeWindow(TypePane.SINGLE, TypeOrientation.PORTRAIT)
     }
 
     fun setOrientation(activity: Activity, typeOrientation: TypeOrientation) {

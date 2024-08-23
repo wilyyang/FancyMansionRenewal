@@ -6,9 +6,9 @@ import com.fancymansion.core.common.wrapper.ClientError
 import com.fancymansion.core.common.wrapper.ServerError
 import com.fancymansion.core.common.wrapper.StatusError
 import com.fancymansion.core.common.wrapper.Success
-import com.fancymansion.core.common.throwable.ApiNetworkException
-import com.fancymansion.core.common.throwable.ApiResultStatusException
-import com.fancymansion.core.common.throwable.RequestInternetCheckException
+import com.fancymansion.core.common.throwable.exception.ApiNetworkException
+import com.fancymansion.core.common.throwable.exception.ApiResultStatusException
+import com.fancymansion.core.common.throwable.exception.RequestInternetCheckException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlin.reflect.KClass

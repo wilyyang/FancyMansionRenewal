@@ -1,14 +1,5 @@
 package com.fancymansion.core.common.const
 
-val testBookTitle = "배트의 어드벤처"
-val testEpisodeTitle = "1화"
-val testEpisodeRef = EpisodeRef(
-    userId = "test_user_id",
-    mode = ReadMode.READ,
-    bookId = "test_book_id",
-    episodeId = "test_book_id_0"
-)
-
 const val MOBILE_BASE_SCREEN_HEIGHT_PX = 2340
 const val MOBILE_BASE_SCREEN_WIDTH_PX = 1080
 const val MOBILE_BASE_SCREEN_DPI = 450

@@ -171,7 +171,7 @@ fun FancyMansionDrawer(
                                 .weight(1f)
                                 .padding(start = 7.5.dp),
                             contentPadding = PaddingValues(bottom = 2.5.dp),
-                            text = stringResource(id = com.fancymansion.core.common.R.string.login_join_membership),
+                            text = stringResource(id = com.fancymansion.core.common.R.string.page_type_normal),
                             pressScale = 0.95f,
                             textStyle = MaterialTheme.typography.titleSmall,
                             onClick = onJoinMemberButtonClicked
@@ -249,7 +249,7 @@ fun FancyMansionDrawer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),
-                text = stringResource(id = com.fancymansion.core.common.R.string.logout_title),
+                text = stringResource(id = com.fancymansion.core.common.R.string.page_type_normal),
                 colorText = ColorSet.gray_9d9d9d,
                 colorBackground = ColorSet.gray_f1f1f1,
                 onClick = onLogoutButtonClicked
@@ -378,7 +378,7 @@ fun FancyMansionDrawerTablet(
                                 .weight(1f)
                                 .padding(start = 9.dp),
                             contentPadding = PaddingValues(bottom = 4.dp),
-                            text = stringResource(id = com.fancymansion.core.common.R.string.login_join_membership),
+                            text = stringResource(id = com.fancymansion.core.common.R.string.page_type_normal),
                             textStyle = MaterialTheme.typography.titleSmall,
                             pressScale = 0.95f,
                             onClick = onJoinMemberButtonClicked
@@ -457,7 +457,7 @@ fun FancyMansionDrawerTablet(
                     .fillMaxWidth()
                     .height(47.5.dp),
                 textStyle = MaterialTheme.typography.bodyLarge,
-                text = stringResource(id = com.fancymansion.core.common.R.string.logout_title),
+                text = stringResource(id = com.fancymansion.core.common.R.string.page_type_ending),
                 colorText = ColorSet.gray_9d9d9d,
                 colorBackground = ColorSet.gray_f1f1f1,
                 onClick = onLogoutButtonClicked

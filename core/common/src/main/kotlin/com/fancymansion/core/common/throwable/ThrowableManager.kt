@@ -2,6 +2,8 @@ package com.fancymansion.core.common.throwable
 
 import android.util.Log
 import com.fancymansion.core.common.log.Logger
+import com.fancymansion.core.common.throwable.exception.ApiCallException
+import com.fancymansion.core.common.throwable.exception.ScreenDataInitFailException
 import java.lang.Exception
 
 const val EVENT_MESSAGE_TAG = "event_message"

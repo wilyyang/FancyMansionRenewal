@@ -21,8 +21,8 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.fancymansion.core.common.const.NetworkState
 import com.fancymansion.core.common.log.Logger
-import com.fancymansion.core.common.throwable.ApiUnknownException
-import com.fancymansion.core.common.throwable.InternetDisconnectException
+import com.fancymansion.core.common.throwable.exception.ApiUnknownException
+import com.fancymansion.core.common.throwable.exception.InternetDisconnectException
 import com.fancymansion.core.presentation.base.COMMON_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.CommonEffect
 import com.fancymansion.core.presentation.base.CommonEvent

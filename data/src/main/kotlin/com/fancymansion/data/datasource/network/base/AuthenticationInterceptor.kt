@@ -2,7 +2,6 @@ package com.fancymansion.data.datasource.network.base
 
 import android.content.Context
 import android.os.Build
-import com.fancymansion.core.common.util.isTablet
 import com.fancymansion.data.datasource.datastore.AuthDatastore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
@@ -19,7 +18,6 @@ internal class AuthenticationInterceptor @Inject constructor(
 ) : Interceptor {
 
     private val app_name = "FANCY_MANSION_APP_AOS"
-    private val device_type = if(isTablet(context)) "tablet" else "phone"
 
     private val app_version =
         context.packageManager.getPackageInfo(context.packageName, 0).versionName
@@ -37,7 +35,7 @@ internal class AuthenticationInterceptor @Inject constructor(
         val request = chain.request().newBuilder()
             .addHeader(
                 "api-user-info",
-                "$app_name:$device_type/$app_version/$device_name/$os_name:$os_version"
+                "$app_name:$app_version/$device_name/$os_name:$os_version"
             ).apply {
                 if (token.isNotBlank()) {
                     addHeader("Authorization", "Bearer $token")

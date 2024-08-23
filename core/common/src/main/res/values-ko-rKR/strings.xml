@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common Dialog -->
     <string name="confirm">확인</string>
-    <string name="download">다운로드</string>
     <string name="cancel">취소</string>
     <string name="close">닫기</string>
 
     <string name="next">다음</string>
-    <string name="show_total">전체보기</string>
-    <string name="faq_title">자주 묻는 질문</string>
-    <string name="news_title">새소식</string>
-    <string name="notification_label">[공지]</string>
-    <string name="answer">정답</string>
     <string name="alarm">알림</string>
     <string name="move_screen">이동</string>
 
@@ -18,60 +13,13 @@
     <string name="permission_required_message">권한 요청이 거부되었습니다. 해당 서비스 이용을 위해 권한을 허용해야 합니다. 앱 설정 화면에서 권한을 허용해주세요.\n%s</string>
     <string name="permission_denied_title">권한 미허용</string>
     <string name="permission_denied_message">권한이 허용되지 않아서 이전 화면으로 이동합니다.</string>
-    <string name="download_permission_denied_message">권한이 없어서 다운로드를 할 수 없습니다.</string>
-
-    <string name="error_title_duplicate_login">중복 로그인 오류</string>
-    <string name="error_message_duplicate_login">중복 로그인이 발생했습니다. 로그아웃 후 로그인 화면으로 이동합니다. 재로그인해주세요.</string>
-
-    <string name="web_error_connect_title">웹 접속 에러</string>
-    <string name="web_error_connect_back_message">웹 접속 에러가 발생했습니다.\n이전 페이지로 이동합니다.</string>
-
-    <string name="find_account_type_none">계정</string>
-    <string name="find_account_type_id">아이디</string>
-    <string name="find_account_type_password">비밀번호</string>
-
-    <string name="work_detail_alphabet">알파벳</string>
-    <string name="work_detail_short_vowel">단모음</string>
-    <string name="work_detail_long_vowel">장모음</string>
-    <string name="work_detail_blend_consonant">겹자음</string>
-    <string name="work_detail_double_consonant">이중 자음</string>
-    <string name="work_detail_double_vowel">이중 모음</string>
-    <string name="work_detail_sight_word">사이트 워드</string>
-
-    <string name="login_find_id">아이디 찾기</string>
-    <string name="login_find_password">비밀번호 찾기</string>
-    <string name="login_join_membership">회원가입</string>
-    <string name="logout_title">로그아웃</string>
-
-    <string name="main_dialog_logout_message">로그아웃 하시겠습니까?</string>
-    <string name="main_dialog_logout_dismiss">닫기</string>
-
-    <string name="main_menu_qna">자주 묻는 질문</string>
-    <string name="main_menu_ask">1:1 문의하기</string>
-    <string name="main_menu_store">STORE</string>
-    <string name="main_menu_user_history">학습기록</string>
-    <string name="main_menu_user_attendance">출석부</string>
-    <string name="main_menu_user_certificate">상장</string>
-    <string name="main_menu_user_info">나의 정보</string>
-
-    <string name="main_content_bottom_introduce">처음 오셨어요?</string>
-    <string name="main_content_bottom_study">학습 가이드</string>
-    <string name="main_content_bottom_guide">활용 가이드</string>
-    <string name="main_content_bottom_news">새소식</string>
-
-    <string name="dialog_message_completed_download">다운로드가 완료되었습니다.</string>
-    <string name="download_error">다운로드 에러</string>
-    <string name="download_error_message">다운로드하는데 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.</string>
 
     <string name="dialog_error">예상치 못한 오류가 발생했습니다.</string>
     <string name="dialog_error_simple">로드에 실패하였습니다.</string>
-    <string name="dialog_error_back">예상치 못한 오류가 발생했습니다.\n이전 페이지로 이동합니다.</string>
+    <string name="dialog_error_back">로드에 실패하였습니다.\n이전 페이지로 이동합니다.</string>
     <string name="dialog_network_error">인터넷 연결이 원활하지 않습니다.\n잠시 후 다시 시도해 주세요.</string>
 
-    <string name="date_ymd">%1$d년 %2$d월 %3$d일</string>
-    <string name="date_dot">%1$d.%2$d.%3$d</string>
-
-    <!-- FancyMansion Resource -->
+    <!-- Book -->
     <string name="page_type_start">시작</string>
     <string name="page_type_normal">일반</string>
     <string name="page_type_ending">엔딩</string>
