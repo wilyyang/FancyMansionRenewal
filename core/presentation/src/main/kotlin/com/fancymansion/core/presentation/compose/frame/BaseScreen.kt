@@ -35,7 +35,6 @@ import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
 import com.fancymansion.core.presentation.compose.util.ChangeStatusBarColor
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.compose.dialog.AlarmDialog
-import com.fancymansion.core.presentation.compose.dialog.CustomDialog
 import com.fancymansion.core.presentation.compose.dialog.ErrorDialog
 import com.fancymansion.core.presentation.compose.dialog.Loading
 import com.fancymansion.core.presentation.window.TypePane
@@ -193,12 +192,6 @@ fun CommonPopupLayerProcess(
                 dismissText = loadState.dismissText?.asString(context),
                 onConfirm = loadState.onConfirm,
                 onDismiss = loadState.onDismiss
-            )
-        }
-
-        is LoadState.CustomDialog -> {
-            CustomDialog(
-                customDialog = loadState.customDialog
             )
         }
         else -> {}

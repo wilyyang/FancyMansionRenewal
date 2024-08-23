@@ -1,12 +1,12 @@
 package com.fancymansion.core.presentation.base
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fancymansion.core.common.R
+import com.fancymansion.core.common.const.DEFAULT_PROCESSING_DELAY_TIME
 import com.fancymansion.core.common.const.NetworkState
 import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.resource.StringValue
@@ -25,9 +25,10 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import java.io.File
-import java.io.IOException
-import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
+
+const val COMMON_EFFECTS_KEY = "COMMON_EFFECTS_KEY"
+const val SIDE_EFFECTS_KEY = "SIDE_EFFECTS_KEY"
 
 interface ViewState
 interface ViewEvent
@@ -93,71 +94,61 @@ sealed class LoadState {
             onDismiss = onDismiss
         )
     }
-
-    class CustomDialog(
-        val customDialog : @Composable () -> Unit
-    ) : LoadState()
 }
 
 sealed class CommonEvent : ViewEvent {
     /**
      * Orientation
      */
-    object OrientationLandscapeEvent : CommonEvent()
-    object OrientationPortraitEvent : CommonEvent()
-
+    data object OrientationLandscapeEvent : CommonEvent()
+    data object OrientationPortraitEvent : CommonEvent()
+    /**
+     * Compose Life Cycle
+     */
+    data object OnCreate : CommonEvent()
+    data object OnResume : CommonEvent()
+    data object OnPause : CommonEvent()
+    data object OnDestroy : CommonEvent()
     /**
      * Permission
      */
     class PermissionCheckAndRequest(val permissions : Array<String>) : CommonEvent()
     class PermissionRequestAllGranted(val permissions : Array<String>) : CommonEvent()
     class PermissionRequestDenied(val deniedPermissions : Array<String>) : CommonEvent()
-    object PermissionSettingResultDenied : CommonEvent()
-
+    data object PermissionSettingResultDenied : CommonEvent()
     /**
-     * Life Cycle
+     * etc
      */
-    object OnCreate : CommonEvent()
-    object OnResume : CommonEvent()
-    object OnPause : CommonEvent()
-    object OnDestroy : CommonEvent()
+    data object CloseEvent : CommonEvent()
+    data object ApplicationExitEvent : CommonEvent()
+    data class OpenWebBrowser(val url :String) : CommonEvent()
+    data class SendNetworkState(val state: NetworkState) : CommonEvent()
+    class RequestInternetExceptionResultEvent(val throwable: Throwable) : CommonEvent()
+}
+
+sealed class CommonEffect : ViewSideEffect {
+    /**
+     * Permission
+     */
+    class PermissionCheckAndRequestEffect(val permissions : Array<String>) : CommonEffect()
+    class PermissionMoveSettingAppEffect(val permissions : Array<String>) : CommonEffect()
 
     /**
      * etc
      */
-    object CloseEvent : CommonEvent()
-    object ApplicationExitEvent : CommonEvent()
-    class ReceiveFirebaseToken(val token: String?) : CommonEvent()
-
-    data class SendToHelpEmail(val loginId: String?) : CommonEvent()
-    data class SendNetworkState(val state: NetworkState) : CommonEvent()
-    class RequestInternetExceptionResultEvent(val throwable: Throwable) : CommonEvent()
-    data class OpenWebBrowser(val url :String) : CommonEvent()
-}
-
-sealed class CommonEffect : ViewSideEffect {
-    class PermissionCheckAndRequestEffect(val permissions : Array<String>) : CommonEffect()
-    class PermissionMoveSettingAppEffect(val permissions : Array<String>) : CommonEffect()
-    data class SendToHelpEmail(val loginId : String?) : CommonEffect()
-    class SendLogToEmailEffect(val logFile : File) : CommonEffect()
-    object RequestFirebaseToken : CommonEffect()
-    object RequestNetworkState : CommonEffect()
-    class HandleRequestInternetExceptionEffect(val throwable: RequestInternetCheckException) : CommonEffect()
     data class OpenWebBrowser(val url :String) : CommonEffect()
+    data object RequestNetworkState : CommonEffect()
+    class RequestInternetCheckExceptionEffect(val throwable: RequestInternetCheckException) : CommonEffect()
+    class SendLogToEmailEffect(val logFile : File) : CommonEffect()
 
     sealed class Navigation : CommonEffect() {
-        object NavigateLogin : Navigation()
-        object NavigateMain : Navigation()
-        object NavigateBack : Navigation()
-        object NavigateApplicationExit : Navigation()
+        data object NavigateBack : Navigation()
+        data object NavigateApplicationExit : Navigation()
+        data object NavigateMain : Navigation()
+        data object NavigateLogin : Navigation()
         data class NavigateWebBrowser(val url : String) : Navigation()
-        data class NavigatePlayStore(val uri : String) : Navigation()
     }
 }
-
-const val COMMON_EFFECTS_KEY = "common_effects_key"
-const val SIDE_EFFECTS_KEY = "side_effects_key"
-const val DEFAULT_DELAY_TIME = 15000L
 
 abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : ViewSideEffect> : ViewModel() {
 
@@ -169,86 +160,13 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     protected val scope = CoroutineScope(rootContext)
 
     /**
-     * BaseViewModel 을 상속하는 ViewModel은
+     * BaseViewModel을 상속하는 ViewModel은
      * UiState의 초기값을 할당하는 setInitialState 와
      * 전달받은 Event를 처리할 handleEvents 를 구현해야 한다.
      */
     abstract fun setInitialState() : UiState
+
     abstract fun handleEvents(event : Event)
-    open fun handleCommonEvents(event : CommonEvent){
-        when(event){
-
-            /**
-             * Permission
-             */
-            is CommonEvent.PermissionCheckAndRequest -> {
-                setCommonEffect{
-                    CommonEffect.PermissionCheckAndRequestEffect(event.permissions)
-                }
-            }
-
-            is CommonEvent.PermissionRequestDenied -> {
-                val denied = listOf(event.deniedPermissions.reduce { acc, s -> "-$acc\n-$s" })
-                setLoadState(LoadState.AlarmDialog(
-                    title = StringValue.StringResource(R.string.permission_required_title),
-                    message = StringValue.StringResource(
-                        R.string.permission_required_message,
-                        denied
-                    ),
-                    confirmText = StringValue.StringResource(R.string.move_screen),
-                    dismissText = StringValue.StringResource(R.string.cancel),
-                    onConfirm = {
-                        setCommonEffect {
-                            CommonEffect.PermissionMoveSettingAppEffect(
-                                event.deniedPermissions
-                            )
-                        }
-                    },
-                    onDismiss = { setCommonEvent(CommonEvent.CloseEvent) }
-                ))
-            }
-
-            is CommonEvent.PermissionSettingResultDenied -> {
-                scope.launch {
-                    delay(500)
-                    setLoadState(LoadState.ErrorDialog(
-                        title = StringValue.StringResource(R.string.permission_denied_title),
-                        message = StringValue.StringResource(R.string.permission_denied_message),
-                        confirmText = StringValue.StringResource(R.string.move_screen),
-                        dismissText = null,
-                        onConfirm = { setCommonEvent(CommonEvent.CloseEvent) }
-                    ))
-                }
-            }
-
-            is CommonEvent.ApplicationExitEvent -> {
-                setCommonEffect{
-                    CommonEffect.Navigation.NavigateApplicationExit
-                }
-            }
-
-            /**
-             * etc
-             */
-            is CommonEvent.CloseEvent -> {
-                setCommonEffect{
-                    CommonEffect.Navigation.NavigateBack
-                }
-            }
-
-            is CommonEvent.RequestInternetExceptionResultEvent -> {
-                sendError(event.throwable)
-            }
-
-            is CommonEvent.OpenWebBrowser -> {
-                setCommonEffect {
-                    CommonEffect.OpenWebBrowser(event.url)
-                }
-            }
-
-            else -> {}
-        }
-    }
 
     private val initialState : UiState by lazy { setInitialState() }
 
@@ -296,7 +214,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     }
 
     /**
-     * UiState, Event, Effect의 Setter
+     * State, Event, Effect의 Setter
      */
     protected fun setState(reducer : UiState.() -> UiState) {
         val newState = uiState.value.reducer()
@@ -306,6 +224,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     protected fun setLoadState(loadState : LoadState) {
         _loadState.value = loadState
     }
+
     protected fun setLoadStateIdle() {
         _loadState.value = LoadState.Idle
     }
@@ -331,12 +250,88 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     }
 
     /**
-     * 로딩
+     * handleCommonEvents : ViewModel 공통 이벤트를 처리하는 메소드
+     */
+    open fun handleCommonEvents(event : CommonEvent){
+        when(event){
+            /**
+             * Permission
+             */
+            is CommonEvent.PermissionCheckAndRequest -> {
+                setCommonEffect{
+                    CommonEffect.PermissionCheckAndRequestEffect(event.permissions)
+                }
+            }
+
+            is CommonEvent.PermissionRequestDenied -> {
+                val denied = listOf(event.deniedPermissions.reduce { acc, s -> "-$acc\n-$s" })
+                setLoadState(LoadState.AlarmDialog(
+                    title = StringValue.StringResource(R.string.permission_required_title),
+                    message = StringValue.StringResource(
+                        R.string.permission_required_message,
+                        denied
+                    ),
+                    confirmText = StringValue.StringResource(R.string.move_screen),
+                    dismissText = StringValue.StringResource(R.string.cancel),
+                    onConfirm = {
+                        setCommonEffect {
+                            CommonEffect.PermissionMoveSettingAppEffect(
+                                event.deniedPermissions
+                            )
+                        }
+                    },
+                    onDismiss = { setCommonEvent(CommonEvent.CloseEvent) }
+                ))
+            }
+
+            is CommonEvent.PermissionSettingResultDenied -> {
+                scope.launch {
+                    delay(500)
+                    setLoadState(LoadState.ErrorDialog(
+                        title = StringValue.StringResource(R.string.permission_denied_title),
+                        message = StringValue.StringResource(R.string.permission_denied_message),
+                        confirmText = StringValue.StringResource(R.string.move_screen),
+                        dismissText = null,
+                        onConfirm = { setCommonEvent(CommonEvent.CloseEvent) }
+                    ))
+                }
+            }
+
+            /**
+             * etc
+             */
+            is CommonEvent.CloseEvent -> {
+                setCommonEffect{
+                    CommonEffect.Navigation.NavigateBack
+                }
+            }
+            is CommonEvent.ApplicationExitEvent -> {
+                setCommonEffect{
+                    CommonEffect.Navigation.NavigateApplicationExit
+                }
+            }
+            is CommonEvent.OpenWebBrowser -> {
+                setCommonEffect {
+                    CommonEffect.OpenWebBrowser(event.url)
+                }
+            }
+            is CommonEvent.RequestInternetExceptionResultEvent -> {
+                sendError(event.throwable)
+            }
+
+            else -> {}
+        }
+    }
+
+    /**
+     * 작업 처리를 위한 블록
+     * - launchWithLoading : 시작할 때 Loading, 끝나면 Idle 상태
+     * - launchWithException : Loading 상태는 없지만 Exception 처리하기 위한 블록
      */
     fun launchWithLoading(
         context : CoroutineContext = Dispatchers.IO,
         start : CoroutineStart = CoroutineStart.DEFAULT,
-        delayTime : Long = DEFAULT_DELAY_TIME,
+        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
         endLoadState: LoadState? = LoadState.Idle,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
@@ -365,21 +360,16 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         }
     }
 
-    /**
-     * Exception 추가
-     */
     fun launchWithException(
         context : CoroutineContext = Dispatchers.IO,
         start : CoroutineStart = CoroutineStart.DEFAULT,
-        delayTime : Long = DEFAULT_DELAY_TIME,
+        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
         return scope.launch(context, start) {
-            withContext(Dispatchers.Main) {
-                withContext(context = context) {
-                    withTimeout(delayTime) {
-                        block.invoke(this)
-                    }
+            withContext(context = context) {
+                withTimeout(delayTime) {
+                    block.invoke(this)
                 }
             }
         }.apply {
@@ -401,7 +391,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     protected fun sendError(throwable: Throwable) {
         if(throwable is RequestInternetCheckException){
             setCommonEffect {
-                CommonEffect.HandleRequestInternetExceptionEffect(throwable)
+                CommonEffect.RequestInternetCheckExceptionEffect(throwable)
             }
         }else {
             ThrowableManager.handleError(throwable)
@@ -415,6 +405,16 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         defaultDismiss : ()-> Unit = ::setLoadStateIdle
     ){
         _loadState.value = when(throwable){
+            /**
+             * CommonException
+             */
+            is ScreenDataInitFailException -> LoadState.ErrorDialog(
+                message = StringValue.StringResource(R.string.dialog_error_back),
+                errorMessage = StringValue.StringWrapper(throwable.message),
+                dismissText = null,
+                onConfirm = defaultConfirm
+            )
+
             is WebViewException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
                 errorMessage = StringValue.StringWrapper(
@@ -424,30 +424,12 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
                 onConfirm = defaultConfirm
             )
 
-            is ScreenDataInitFailException -> LoadState.ErrorDialog(
+            /**
+             * NetworkException
+             */
+            is ApiNetworkException, is ApiResultStatusException, is ApiUnknownException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(throwable.message),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
-
-            is ApiNetworkException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(throwable.message),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
-
-            is ApiUnknownException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(throwable.message),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
-
-            is ApiResultStatusException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(throwable.message),
+                errorMessage = throwable.message?.let { StringValue.StringWrapper(it) },
                 dismissText = null,
                 onConfirm = defaultConfirm
             )
@@ -458,18 +440,14 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
                 onConfirm = defaultConfirm
             )
 
+            /**
+             * 부모 Exception (가장 하단에 위치함)
+             */
             is CancellationException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
                 errorMessage = StringValue.StringWrapper(
                     throwable.message ?: "Unknown CancellationException"
                 ),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
-
-            // 인터넷 연결 오류
-            is IOException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_network_error),
                 dismissText = null,
                 onConfirm = defaultConfirm
             )

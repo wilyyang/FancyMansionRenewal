@@ -12,6 +12,8 @@ const val TABLET_BASE_SCREEN_DENSITY = TABLET_BASE_SCREEN_DPI / 160f // 2.125f
 
 const val BASE_URL = "https://test.com"
 
+const val DEFAULT_PROCESSING_DELAY_TIME = 15000L
+
 const val DURATION_SHORTER              = 150L
 const val DURATION_SHORT                = 300L
 const val DURATION_NORMAL               = 500L
@@ -20,7 +22,7 @@ const val DURATION_LONGER               = 1500L
 
 enum class NetworkState{
     TYPE_NOT_CONNECTED,
-    TYPE_MOBILE,
+    TYPE_MOBILE_DATA,
     TYPE_WIFI,
     TYPE_ETC
 }

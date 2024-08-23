@@ -17,10 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.fancymansion.core.common.const.NetworkState
-import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.throwable.exception.ApiUnknownException
 import com.fancymansion.core.common.throwable.exception.InternetDisconnectException
 import com.fancymansion.core.presentation.base.COMMON_EFFECTS_KEY
@@ -112,13 +109,6 @@ fun HandleCommonEffect(
                     (navController.context as? Activity)?.startActivity(intent)
                 }
 
-                is CommonEffect.Navigation.NavigatePlayStore -> {
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(effect.uri)
-                    }
-                    (navController.context as? Activity)?.startActivity(intent)
-                }
-
                 /**
                  * etc
                  */
@@ -138,18 +128,6 @@ fun HandleCommonEffect(
                     context.startActivity(Intent.createChooser(logMailIntent,"FancyMansion"))
                 }
 
-                is CommonEffect.RequestFirebaseToken -> {
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                        if (!task.isSuccessful) {
-                            onCommonEventSent(CommonEvent.ReceiveFirebaseToken(null))
-                            Logger.w( "FCM registration token failed ${task.exception}", "FCM")
-                        } else {
-                            onCommonEventSent(CommonEvent.ReceiveFirebaseToken(task.result))
-                            Logger.w( "token ${task.result}", "FCM")
-                        }
-                    })
-                }
-
                 is CommonEffect.RequestNetworkState -> {
                     val state = context.getSystemService(ConnectivityManager::class.java).run {
                         getNetworkCapabilities(activeNetwork).let { capabilities ->
@@ -157,7 +135,7 @@ fun HandleCommonEffect(
                                 if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                                     NetworkState.TYPE_WIFI
                                 } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                                    NetworkState.TYPE_MOBILE
+                                    NetworkState.TYPE_MOBILE_DATA
                                 } else {
                                     NetworkState.TYPE_ETC
                                 }
@@ -170,7 +148,7 @@ fun HandleCommonEffect(
                     onCommonEventSent(CommonEvent.SendNetworkState(state))
                 }
 
-                is CommonEffect.HandleRequestInternetExceptionEffect -> {
+                is CommonEffect.RequestInternetCheckExceptionEffect -> {
 
                     val isConnect = context.getSystemService(ConnectivityManager::class.java).run {
                         getNetworkCapabilities(activeNetwork).let { capabilities ->
