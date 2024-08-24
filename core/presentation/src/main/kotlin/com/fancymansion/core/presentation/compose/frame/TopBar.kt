@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
-import com.fancymansion.core.presentation.window.TypePane
+import com.fancymansion.core.presentation.base.window.TypePane
 
 val topBarDpMobile = 50.dp
 val topBarDpTablet = 73.dp
@@ -53,11 +53,11 @@ fun FancyMansionTopBar(
     topBarImage : Int? = null,
     shadowElevation: Dp = 0.dp
 ) {
-    val topBarHeight = if (typePane == TypePane.SINGLE) topBarDpMobile else topBarDpTablet
-    val topBarVerticalPadding = if (typePane == TypePane.SINGLE) 6.6.dp else 10.dp
-    val topBarHorizontalPadding = if (typePane == TypePane.SINGLE) 12.6.dp else 18.dp
-    val titleStyle = if (typePane == TypePane.SINGLE) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium
-    val subTitleStyle = if (typePane == TypePane.SINGLE) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyLarge
+    val topBarHeight = if (typePane == TypePane.MOBILE) topBarDpMobile else topBarDpTablet
+    val topBarVerticalPadding = if (typePane == TypePane.MOBILE) 6.6.dp else 10.dp
+    val topBarHorizontalPadding = if (typePane == TypePane.MOBILE) 12.6.dp else 18.dp
+    val titleStyle = if (typePane == TypePane.MOBILE) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium
+    val subTitleStyle = if (typePane == TypePane.MOBILE) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyLarge
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,7 +116,7 @@ fun FancyMansionTopBar(
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .fillMaxWidth(if(typePane== TypePane.SINGLE) 0.67f else 0.93f),
+                    .fillMaxWidth(if(typePane== TypePane.MOBILE) 0.67f else 0.93f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 subTitle?.let {

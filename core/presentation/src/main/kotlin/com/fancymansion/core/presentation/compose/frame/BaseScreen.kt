@@ -37,7 +37,7 @@ import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.compose.dialog.AlarmDialog
 import com.fancymansion.core.presentation.compose.dialog.ErrorDialog
 import com.fancymansion.core.presentation.compose.dialog.Loading
-import com.fancymansion.core.presentation.window.TypePane
+import com.fancymansion.core.presentation.base.window.TypePane
 import kotlinx.coroutines.delay
 
 @Composable
@@ -52,7 +52,7 @@ fun BaseScreen(
     // top bar
     isOverlayTopBar : Boolean = false,
     topBar: @Composable (() -> Unit)? = null,
-    topBarHeight: Dp = if(typePane == TypePane.SINGLE) topBarDpMobile else topBarDpTablet,
+    topBarHeight: Dp = if(typePane == TypePane.MOBILE) topBarDpMobile else topBarDpTablet,
 
     // drawer
     drawerState : DrawerState,
@@ -119,7 +119,7 @@ fun BaseScreen(
 
     isOverlayTopBar : Boolean = false,
     topBar: @Composable (() -> Unit)? = null,
-    topBarHeight: Dp = if(typePane == TypePane.SINGLE) topBarDpMobile else topBarDpTablet,
+    topBarHeight: Dp = if(typePane == TypePane.MOBILE) topBarDpMobile else topBarDpTablet,
 
     // ui state
     loadState : LoadState,

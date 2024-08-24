@@ -11,22 +11,22 @@ import androidx.navigation.compose.rememberNavController
 import com.fancymansion.app.navigation.NavigateAnimation.upScreenTransition
 import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
 import com.fancymansion.core.common.const.ArgName
-import com.fancymansion.core.presentation.window.TypeWindow
+import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AppScreenConfiguration(typeWindow: TypeWindow, density: Float) {
+fun AppScreenConfiguration(typePane : TypePane, density: Float) {
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null,
         LocalDensity provides Density(density = density, fontScale = 1.0f),
     ){
-        AppNavigation(typeWindow)
+        AppNavigation(typePane)
     }
 }
 
 @Composable
-fun AppNavigation(typeWindow : TypeWindow) {
+fun AppNavigation(typePane : TypePane) {
     val navController = rememberNavController()
 
     NavHost(
@@ -38,7 +38,7 @@ fun AppNavigation(typeWindow : TypeWindow) {
             arguments = listOf(NavArgument.argUserId, NavArgument.argReadMode, NavArgument.argBookId, NavArgument.argEpisodeId, NavArgument.argBookTitle, NavArgument.argEpisodeTitle),
             navController = navController
         ) {
-            ViewerContentScreenDestination(navController = navController, window = typeWindow)
+            ViewerContentScreenDestination(navController = navController, typePane = typePane)
         }
     }
 }

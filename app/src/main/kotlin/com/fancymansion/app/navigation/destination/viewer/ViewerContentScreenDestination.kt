@@ -8,7 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.window.TypeWindow
+import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 import com.fancymansion.presentation.viewer.content.ViewerContentViewModel
 import com.fancymansion.presentation.viewer.content.composables.ViewerContentScreenFrame
@@ -16,7 +16,7 @@ import com.fancymansion.presentation.viewer.content.composables.ViewerContentScr
 @Composable
 fun ViewerContentScreenDestination(
     navController: NavController,
-    window: TypeWindow
+    typePane : TypePane
 ) {
     val viewModel: ViewerContentViewModel = hiltViewModel()
     val activity = (LocalContext.current as Activity)

@@ -1,22 +1,18 @@
-package com.fancymansion.core.presentation.window
+package com.fancymansion.core.presentation.base.window
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
 import android.view.WindowManager
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowInsetsCompat
 
 object Feature {
-    fun getTypeWindow(context : Context) : TypeWindow {
-       return TypeWindow(TypePane.SINGLE, TypeOrientation.PORTRAIT)
+    fun getTypeWindow(context : Context) : Pair<TypePane, TypeOrientation> {
+       return Pair(TypePane.MOBILE, TypeOrientation.PORTRAIT)
     }
 
     fun setOrientation(activity: Activity, typeOrientation: TypeOrientation) {
@@ -26,8 +22,8 @@ object Feature {
         }
     }
 
-    fun hideSystemUI(window: Window) {
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
+    fun hideSystemUi(window: Window) {
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
         if (Build.VERSION.SDK_INT >= 30) {
             window.insetsController?.systemBarsBehavior =
@@ -44,7 +40,7 @@ object Feature {
         }
     }
 
-    fun showSystemUI(window: Window) {
+    fun showSystemUi(window: Window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(true)
         } else {
@@ -53,16 +49,4 @@ object Feature {
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         }
     }
-
-    @Composable
-    fun findWindow(): Window? =
-        (LocalView.current.parent as? DialogWindowProvider)?.window
-            ?: LocalView.current.context.findWindow()
-
-    private tailrec fun Context.findWindow(): Window? =
-        when (this) {
-            is Activity -> window
-            is ContextWrapper -> baseContext.findWindow()
-            else -> null
-        }
 }

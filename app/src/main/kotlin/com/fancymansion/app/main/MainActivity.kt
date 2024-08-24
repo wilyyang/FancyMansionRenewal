@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
-import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.fancymansion.app.BuildConfig
 import com.fancymansion.app.navigation.AppScreenConfiguration
 import com.fancymansion.core.common.const.CurrentDensity
 import com.fancymansion.core.common.const.MOBILE_BASE_SCREEN_DENSITY
@@ -23,31 +21,29 @@ import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.compose.theme.typography.typographyMobile
 import com.fancymansion.core.presentation.compose.theme.typography.typographyTablet
-import com.fancymansion.core.presentation.window.Feature
-import com.fancymansion.core.presentation.window.TypeOrientation
-import com.fancymansion.core.presentation.window.TypePane
-import com.fancymansion.core.presentation.window.TypeWindow
+import com.fancymansion.core.presentation.base.window.Feature
+import com.fancymansion.core.presentation.base.window.TypeOrientation
+import com.fancymansion.core.presentation.base.window.TypePane
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var typeWindow : TypeWindow
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
 
-        typeWindow = Feature.getTypeWindow(context = this)
-        val typography = if(typeWindow.pane == TypePane.SINGLE){
+        val (typePane, typeOrientation) = Feature.getTypeWindow(context = this)
+        val typography = if(typePane == TypePane.MOBILE){
             typographyMobile
         }else{
             typographyTablet
         }
 
         if (CurrentDensity.density == null) {
-            CurrentDensity.density = getScreenSize(typeWindow.pane == TypePane.DUAL).let { (deviceWidth, deviceHeight) ->
+            CurrentDensity.density = getScreenSize(typePane == TypePane.TABLET).let { (deviceWidth, deviceHeight) ->
                 val (baseWidth, baseHeight, baseDensity) =
-                    if (typeWindow.pane == TypePane.DUAL) Triple(TABLET_BASE_SCREEN_WIDTH_PX, TABLET_BASE_SCREEN_HEIGHT_PX, TABLET_BASE_SCREEN_DENSITY)
+                    if (typePane == TypePane.TABLET) Triple(TABLET_BASE_SCREEN_WIDTH_PX, TABLET_BASE_SCREEN_HEIGHT_PX, TABLET_BASE_SCREEN_DENSITY)
                     else Triple(MOBILE_BASE_SCREEN_WIDTH_PX, MOBILE_BASE_SCREEN_HEIGHT_PX, MOBILE_BASE_SCREEN_DENSITY)
 
                 val widthRatio = deviceWidth / baseWidth.toFloat()
@@ -61,7 +57,7 @@ class MainActivity : ComponentActivity() {
             "device_name" to Build.MODEL,
             "os_name" to "android",
             "os_version" to Build.VERSION.RELEASE,
-            "device_type" to if(typeWindow.pane == TypePane.SINGLE) "phone" else "tablet",
+            "device_type" to if(typePane == TypePane.MOBILE) "phone" else "tablet",
             "device_density" to this.resources.displayMetrics.density,
             "current_density" to CurrentDensity.density
         ).forEach { (item, value) ->
@@ -72,17 +68,13 @@ class MainActivity : ComponentActivity() {
             FancyMansionTheme(
                 typography = typography
             ) {
-                AppScreenConfiguration(typeWindow, CurrentDensity.density!!)
+                AppScreenConfiguration(typePane, CurrentDensity.density!!)
             }
         }
 
-        if (BuildConfig.DEBUG) {
-            WebView.setWebContentsDebuggingEnabled(true)
-        }
-
-        Feature.setOrientation(activity = this, typeOrientation = typeWindow.orientation)
-        if(typeWindow.orientation != TypeOrientation.PORTRAIT){
-            Feature.hideSystemUI(window)
+        Feature.setOrientation(activity = this, typeOrientation = typeOrientation)
+        if(typeOrientation != TypeOrientation.PORTRAIT){
+            Feature.hideSystemUi(window)
 
             /**
              * SDK < 30 에서

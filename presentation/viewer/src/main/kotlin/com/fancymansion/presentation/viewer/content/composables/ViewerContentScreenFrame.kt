@@ -32,7 +32,7 @@ import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
-import com.fancymansion.core.presentation.window.TypePane
+import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
@@ -199,7 +199,7 @@ fun ViewerContentScreenFrame(
             description = ViewerContentContract.NAME,
             statusBarColor = MaterialTheme.colorScheme.surface,
             isStatusBarTextDark = !uiState.pageSetting.pageTheme.isDarkTheme,
-            typePane = TypePane.SINGLE,
+            typePane = TypePane.MOBILE,
             loadingContent = {
                 ViewerContentSkeletonScreen()
             },

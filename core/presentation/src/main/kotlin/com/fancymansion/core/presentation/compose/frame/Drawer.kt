@@ -43,7 +43,7 @@ import com.fancymansion.core.presentation.compose.component.DefaultButton
 import com.fancymansion.core.presentation.compose.component.FlexibleImageButton
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
-import com.fancymansion.core.presentation.window.TypePane
+import com.fancymansion.core.presentation.base.window.TypePane
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -514,7 +514,7 @@ fun FancyMansionDrawerTabletPreview(){
         BaseScreen(
             loadState = LoadState.Idle,
             isOverlayTopBar = true,
-            typePane = TypePane.DUAL,
+            typePane = TypePane.TABLET,
             drawerState = drawerState,
             drawerContent = {
                 FancyMansionDrawerTablet(
@@ -539,7 +539,7 @@ fun FancyMansionDrawerPreview(){
         BaseScreen(
             loadState = LoadState.Idle,
             isOverlayTopBar = true,
-            typePane = TypePane.SINGLE,
+            typePane = TypePane.MOBILE,
             drawerState = drawerState,
             drawerContent = {
                 FancyMansionDrawer(
