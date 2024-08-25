@@ -35,23 +35,30 @@ fun HandleCommonEffect(
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
     val context = LocalContext.current
+
+    /**
+     * LauncherForActivityResult
+     *
+     * @launcherPermissions : Permission Dialog Result
+     * @launcherSetting : System Setting App Result
+     */
     val launcherPermissions = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionsMap ->
+    ) { permissionsResult ->
 
-        val deniedArray = permissionsMap.filter {
+        val deniedPermissions = permissionsResult.filter {
             !it.value
         }.keys.toTypedArray()
 
-        if (deniedArray.isEmpty()) {
-            onCommonEventSent(CommonEvent.PermissionRequestAllGranted(permissionsMap.filter { it.value }.keys.toTypedArray()))
+        if (deniedPermissions.isEmpty()) {
+            onCommonEventSent(CommonEvent.PermissionRequestAllGranted(permissionsResult.filter { it.value }.keys.toTypedArray()))
         } else {
-            onCommonEventSent(CommonEvent.PermissionRequestDenied(deniedArray))
+            onCommonEventSent(CommonEvent.PermissionRequestDenied(deniedPermissions))
         }
     }
 
     val settingsPermission  = remember { mutableStateOf<Array<String>?>(null) }
-    val launcherSetting = rememberLauncherForActivityResult(
+    val launcherSettingApp = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
         val isAllGranted = settingsPermission.value?.all { permission ->
@@ -66,6 +73,9 @@ fun HandleCommonEffect(
         }
     }
 
+    /**
+     * Handle Effect
+     */
     LaunchedEffect(COMMON_EFFECTS_KEY) {
         commonEffectFlow.onEach { effect ->
             when (effect) {
@@ -87,7 +97,7 @@ fun HandleCommonEffect(
                 is CommonEffect.PermissionMoveSettingAppEffect -> {
                     settingsPermission.value = effect.permissions
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}"))
-                    launcherSetting.launch(intent)
+                    launcherSettingApp.launch(intent)
                 }
 
                 /**
@@ -112,20 +122,10 @@ fun HandleCommonEffect(
                 /**
                  * etc
                  */
-                is CommonEffect.SendLogToEmailEffect -> {
-                    val uri = FileProvider.getUriForFile(
-                        context,
-                        "${context.packageName}.fileprovider",
-                        effect.logFile
-                    )
-                    val logMailIntent = Intent(Intent.ACTION_SEND).apply {
-                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        type = "message/rfc822"
-                        putExtra(Intent.EXTRA_SUBJECT, "FancyMansion Log Data")
-                        putExtra(Intent.EXTRA_EMAIL, arrayOf("ehdrnr1178@gmail.com" ))
-                        putExtra(Intent.EXTRA_STREAM, uri)
-                    }
-                    context.startActivity(Intent.createChooser(logMailIntent,"FancyMansion"))
+                is CommonEffect.OpenWebBrowser -> {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(browserIntent)
                 }
 
                 is CommonEffect.RequestNetworkState -> {
@@ -166,10 +166,20 @@ fun HandleCommonEffect(
                     )
                 }
 
-                is CommonEffect.OpenWebBrowser -> {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
-                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(browserIntent)
+                is CommonEffect.SendLogToEmailEffect -> {
+                    val uri = FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.fileprovider",
+                        effect.logFile
+                    )
+                    val logMailIntent = Intent(Intent.ACTION_SEND).apply {
+                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        type = "message/rfc822"
+                        putExtra(Intent.EXTRA_SUBJECT, "FancyMansion Log Data")
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf("ehdrnr1178@gmail.com" ))
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                    }
+                    context.startActivity(Intent.createChooser(logMailIntent,"FancyMansion"))
                 }
 
                 else -> {

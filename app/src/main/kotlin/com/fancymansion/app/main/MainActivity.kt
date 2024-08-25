@@ -41,14 +41,14 @@ class MainActivity : ComponentActivity() {
         }
 
         if (CurrentDensity.density == null) {
-            CurrentDensity.density = getScreenSize(typePane == TypePane.TABLET).let { (deviceWidth, deviceHeight) ->
+            CurrentDensity.density = getDeviceScreenSize(typePane = typePane).let { (deviceWidth, deviceHeight) ->
                 val (baseWidth, baseHeight, baseDensity) =
                     if (typePane == TypePane.TABLET) Triple(TABLET_BASE_SCREEN_WIDTH_PX, TABLET_BASE_SCREEN_HEIGHT_PX, TABLET_BASE_SCREEN_DENSITY)
                     else Triple(MOBILE_BASE_SCREEN_WIDTH_PX, MOBILE_BASE_SCREEN_HEIGHT_PX, MOBILE_BASE_SCREEN_DENSITY)
 
                 val widthRatio = deviceWidth / baseWidth.toFloat()
                 val heightRatio = deviceHeight / baseHeight.toFloat()
-                baseDensity * heightRatio.coerceAtMost(widthRatio)
+                baseDensity * (Math.min(heightRatio, widthRatio))
             }
         }
 
@@ -89,26 +89,31 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    private fun getScreenSize(isTablet:Boolean): ScreenSize {
-        return (getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
+
+    /**
+     * 기기의 화면 크기를 반환
+     * 태블릿 세로모드는 긴 쪽을 너비로 계산하고 모바일 가로모드는 긴 쪽을 높이로 계산하기 위함
+     * @param typePane 기기 유형 (TypePane)
+     * @return 화면 크기 (ScreenSize)
+     */
+    private fun getDeviceScreenSize(typePane : TypePane): ScreenSize {
+        val (height, width) = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).let { windowManager ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val bounds = windowManager.currentWindowMetrics.bounds
-                if((isTablet && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                    || (!isTablet && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-                    ScreenSize(width = bounds.height(), height = bounds.width())
-                } else {
-                    ScreenSize(width = bounds.width(), height = bounds.height())
+                windowManager.currentWindowMetrics.bounds.let {
+                    it.height() to it.width()
                 }
-            } else {
-                val displayMetrics = DisplayMetrics()
-                windowManager.defaultDisplay.getRealMetrics(displayMetrics)
-                if((isTablet && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                    || (!isTablet && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)) {
-                    ScreenSize(width = displayMetrics.heightPixels, height = displayMetrics.widthPixels)
-                } else {
-                    ScreenSize(width = displayMetrics.widthPixels, height = displayMetrics.heightPixels)
-                }
+            }else{
+                val metrics = DisplayMetrics()
+                windowManager.defaultDisplay.getRealMetrics(metrics)
+                metrics.heightPixels to metrics.widthPixels
             }
+        }
+        val configOrientation = resources.configuration.orientation
+        return if((typePane == TypePane.TABLET && configOrientation == Configuration.ORIENTATION_PORTRAIT)
+            || (typePane == TypePane.MOBILE && configOrientation == Configuration.ORIENTATION_LANDSCAPE)) {
+            ScreenSize(width = height, height = width)
+        } else {
+            ScreenSize(width = width, height = height)
         }
     }
 }
