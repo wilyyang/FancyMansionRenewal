@@ -30,10 +30,10 @@ import com.fancymansion.core.presentation.compose.theme.ColorSet
 @Composable
 fun TextCheckBox(
     modifier : Modifier = Modifier,
-    checked : Boolean = true,
     checkBoxSize : Dp,
-    checkBackgroundColor : Color = ColorSet.blue_20b1f9,
-    checkBorderColor : Color = ColorSet.gray_bfbfbf,
+    checked : Boolean = true,
+    checkBackgroundColor : Color = MaterialTheme.colorScheme.primary,
+    checkBorderColor : Color = MaterialTheme.colorScheme.outline,
 
     checkboxText : String = "",
     textColor : Color = ColorSet.gray_333333,
@@ -97,8 +97,8 @@ fun BasicCheckBox(
     modifier : Modifier = Modifier,
     checkBoxSize: Dp,
     checked : Boolean = true,
-    checkBackgroundColor : Color = ColorSet.blue_20b1f9,
-    checkBorderColor : Color = ColorSet.gray_bfbfbf,
+    checkBackgroundColor : Color = MaterialTheme.colorScheme.primary,
+    checkBorderColor : Color = MaterialTheme.colorScheme.outline,
     onClickChecked : (Boolean) -> Unit = {}
 ) {
     Card(
@@ -134,24 +134,24 @@ fun TextCheckBoxPreview(){
     Column (modifier = Modifier.background(color = Color.White)){
 
         TextCheckBox(
-            modifier = Modifier.padding(10.dp).background(ColorSet.gray_e8f0f6),
+            modifier = Modifier.padding(10.dp).background(MaterialTheme.colorScheme.background),
             checkBoxSize = 40.dp,
             checkboxText = "힌트힌트힌트"
         )
         TextCheckBox(
-            modifier = Modifier.padding(10.dp).background(ColorSet.gray_e8f0f6),
+            modifier = Modifier.padding(10.dp).background(MaterialTheme.colorScheme.background),
             checkBoxSize = 40.dp,
             checkboxText = "힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트"
         )
         TextCheckBox(
-            modifier = Modifier.padding(10.dp).height(100.dp).background(ColorSet.gray_e8f0f6),
+            modifier = Modifier.padding(10.dp).height(100.dp).background(MaterialTheme.colorScheme.background),
             checkBoxSize = 40.dp,
             checkboxText = "힌트힌트힌트",
             textStyle = MaterialTheme.typography.bodySmall
         )
 
         TextCheckBox(
-            modifier = Modifier.padding(10.dp).height(100.dp).background(ColorSet.gray_e8f0f6),
+            modifier = Modifier.padding(10.dp).height(100.dp).background(MaterialTheme.colorScheme.background),
             checkBoxSize = 40.dp,
             isMatchTop = true,
             checkboxText = "힌트힌트힌트",
@@ -159,14 +159,14 @@ fun TextCheckBoxPreview(){
         )
 
         TextCheckBox(
-            modifier = Modifier.padding(10.dp).height(100.dp).background(ColorSet.gray_e8f0f6),
+            modifier = Modifier.padding(10.dp).height(100.dp).background(MaterialTheme.colorScheme.background),
             checkBoxSize = 10.dp,
             checkboxText = "힌트힌트힌트",
             textStyle = MaterialTheme.typography.titleLarge
         )
 
         TextCheckBox(
-            modifier = Modifier.padding(10.dp).height(100.dp).background(ColorSet.gray_e8f0f6),
+            modifier = Modifier.padding(10.dp).height(100.dp).background(MaterialTheme.colorScheme.background),
             checkBoxSize = 10.dp,
             checkboxText = "힌트힌트힌트",
             isMatchTop = true,
