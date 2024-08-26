@@ -20,7 +20,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
-import com.fancymansion.core.presentation.compose.base.ScreenPopup
+import com.fancymansion.core.presentation.compose.custom.popup.ScreenPopup
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.dimmedAlpha
 import kotlinx.coroutines.delay

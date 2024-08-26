@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.R
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
-import com.fancymansion.core.presentation.compose.theme.ColorSet
+import com.fancymansion.core.presentation.compose.theme.onSurfaceInactive
 
 @Preview
 @Composable
@@ -71,7 +69,7 @@ fun FlexibleImageButton(
         pressScale = pressScale
     ) else Modifier
 
-    buttonImage.intrinsicSize
+    val imageIntrinsicSize = buttonImage.intrinsicSize
     BoxWithConstraints(
         modifier = modifier
             .background(color = Color.Transparent)
@@ -83,40 +81,34 @@ fun FlexibleImageButton(
                 onClick = { onClick() }
             ).then(buttonEffect)
     ) {
-        val heightDp = (buttonImage.intrinsicSize.height / LocalDensity.current.density).dp
-        val widthDp = (buttonImage.intrinsicSize.width / LocalDensity.current.density).dp
 
-        val (imageModifier, contentScale) = if(minHeight > 0.0.dp && minWidth > 0.0.dp){
-            Pair(Modifier.fillMaxSize(), ContentScale.FillBounds)
-        }else if(minHeight > 0.0.dp){
-            val adaptWidthDp = widthDp * (minHeight / heightDp)
-            if(adaptWidthDp > maxWidth){
-                Pair(Modifier.fillMaxSize(), ContentScale.FillBounds)
-            }else{
-                Pair(Modifier.fillMaxHeight(), ContentScale.FillHeight)
-            }
-        }else if(minWidth > 0.0.dp){
-            val adaptHeightDp = heightDp * (minWidth / widthDp)
-            if(adaptHeightDp > maxHeight){
-                Pair(Modifier.fillMaxSize(), ContentScale.FillBounds)
-            }else{
-                Pair(Modifier.fillMaxWidth(), ContentScale.FillWidth)
-            }
-        }else{
-            if(heightDp > maxHeight && widthDp > maxWidth){
-                val adaptHeightDp = heightDp * (maxWidth / widthDp)
-                if(adaptHeightDp > maxHeight){
-                    Pair(Modifier.fillMaxHeight(), ContentScale.FillHeight)
-                }else{
-                    Pair(Modifier.fillMaxWidth(), ContentScale.FillWidth)
-                }
-            }else if(heightDp > maxHeight){
-                Pair(Modifier.fillMaxHeight(), ContentScale.FillHeight)
-            }else if(widthDp > maxWidth){
-                Pair(Modifier.fillMaxWidth(), ContentScale.FillWidth)
-            }else{
-                Pair(Modifier.wrapContentSize(), ContentScale.None)
-            }
+        val fillBoundGroup = Modifier.fillMaxSize() to ContentScale.FillBounds
+        val fillHeightGroup = Modifier.fillMaxHeight() to ContentScale.FillHeight
+        val fillWidthGroup = Modifier.fillMaxWidth() to ContentScale.FillWidth
+
+        val heightDp = (imageIntrinsicSize.height / LocalDensity.current.density).dp
+        val widthDp = (imageIntrinsicSize.width / LocalDensity.current.density).dp
+
+        val minScaledWidth = widthDp * (minHeight / heightDp)
+        val minScaledHeight = heightDp * (minWidth / widthDp)
+        val maxScaledHeight = heightDp * (maxWidth / widthDp)
+
+        val (imageModifier, contentScale) = when{
+            // 높이, 너비가 정해짐
+            minHeight > 0.dp && minWidth > 0.dp -> fillBoundGroup
+            // 높이만 정해짐. 높이에 맞춘 너비와 가능한 너비 비교
+            minHeight > 0.dp -> if(maxWidth  <  minScaledWidth)  fillBoundGroup else fillHeightGroup
+            // 너비만 정해짐. 너비에 맞춘 높이와 가능한 높이 비교
+            minWidth  > 0.dp -> if(maxHeight <  minScaledHeight) fillBoundGroup else fillWidthGroup
+
+            // 높이, 너비 모두 크기 초과. 축소 하여 맞춤
+            maxHeight < heightDp  && maxWidth < widthDp -> if(maxHeight < maxScaledHeight) fillHeightGroup else fillWidthGroup
+            // 높이만 초과. 높이에 맞춤
+            maxHeight < heightDp        -> fillHeightGroup
+            // 너비만 초과. 너비에 맞춤
+            maxWidth  < widthDp         -> fillWidthGroup
+            // 이미지 맞춤.
+            else -> Modifier.wrapContentSize() to ContentScale.None
         }
 
         Image(
@@ -148,28 +140,31 @@ fun DefaultButton(
     modifier: Modifier = Modifier,
     buttonPadding: PaddingValues = ButtonDefaults.ContentPadding,
     arrangementTextAndIcon: Arrangement.Horizontal = Arrangement.Center,
+
+    colorBackground: Color = MaterialTheme.colorScheme.primary,
+    colorText : Color = MaterialTheme.colorScheme.onPrimary,
+
     text: String? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleSmall,
     textOverflow: TextOverflow = TextOverflow.Clip,
     textMaxLines: Int = Int.MAX_VALUE,
+
     iconStart: Int? = null,
     iconEnd: Int? = null,
     iconPadding: Dp = 0.dp,
     iconColor: Color? = null,
+
     isClickable: Boolean = true,
-    colorBackground: Color = MaterialTheme.colorScheme.primary,
-    colorText : Color = MaterialTheme.colorScheme.onPrimary,
     clickInterval: Int = 600,
     onClick: () -> Unit,
 ) {
     val (backgroundColor, textColor) = if (isClickable) {
         (colorBackground to colorText)
     } else {
-        (ColorSet.gray_9d9d9d to ColorSet.gray_f1f1f1)
+        (MaterialTheme.colorScheme.surfaceVariant to onSurfaceInactive)
     }
 
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(color = backgroundColor)
             .height(IntrinsicSize.Min)
@@ -181,38 +176,33 @@ fun DefaultButton(
                 onClick = { onClick() }
             )
             .padding(buttonPadding),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = arrangementTextAndIcon,
     ) {
         iconStart?.also {
             Icon(
+                modifier = Modifier.fillMaxHeight().padding(end = iconPadding),
                 painter = painterResource(id = it),
-                contentDescription = null,
                 tint = iconColor ?: textColor,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f)
+                contentDescription = null
             )
-            Spacer(modifier = Modifier.width(iconPadding))
         }
         text?.also {
             Text(
+                modifier = if (textOverflow != TextOverflow.Clip) Modifier.weight(1f) else Modifier.wrapContentWidth(),
                 text = it,
                 color = textColor,
                 style = textStyle,
                 overflow = textOverflow,
                 maxLines = textMaxLines,
-                modifier = if (textOverflow != TextOverflow.Clip) Modifier.weight(1f) else Modifier.wrapContentWidth()
             )
         }
         iconEnd?.also {
-            Spacer(modifier = Modifier.width(iconPadding))
             Icon(
+                modifier = Modifier.fillMaxHeight().padding(start = iconPadding),
                 painter = painterResource(id = it),
-                contentDescription = null,
                 tint = iconColor ?: textColor,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f)
+                contentDescription = null
             )
         }
     }

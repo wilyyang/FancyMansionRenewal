@@ -1,4 +1,4 @@
-package com.fancymansion.core.presentation.compose.base
+package com.fancymansion.core.presentation.compose.custom.popup
 
 import android.annotation.SuppressLint
 import android.content.Context

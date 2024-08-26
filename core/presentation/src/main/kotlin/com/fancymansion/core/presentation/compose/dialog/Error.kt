@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.presentation.R
-import com.fancymansion.core.presentation.compose.base.ScreenPopup
+import com.fancymansion.core.presentation.compose.custom.popup.ScreenPopup
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
