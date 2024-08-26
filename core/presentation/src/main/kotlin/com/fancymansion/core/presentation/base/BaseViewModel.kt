@@ -146,7 +146,6 @@ sealed class CommonEffect : ViewSideEffect {
         data object NavigateApplicationExit : Navigation()
         data object NavigateMain : Navigation()
         data object NavigateLogin : Navigation()
-        data class NavigateWebBrowser(val url : String) : Navigation()
     }
 }
 

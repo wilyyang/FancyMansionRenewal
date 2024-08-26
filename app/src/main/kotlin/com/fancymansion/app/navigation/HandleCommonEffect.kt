@@ -111,21 +111,13 @@ fun HandleCommonEffect(
                     (navController.context as? Activity)?.finish()
                 }
 
-                is CommonEffect.Navigation.NavigateWebBrowser -> {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(effect.url)
-                    )
-                    (navController.context as? Activity)?.startActivity(intent)
-                }
-
                 /**
                  * etc
                  */
                 is CommonEffect.OpenWebBrowser -> {
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
                     browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(browserIntent)
+                    (navController.context as? Activity)?.startActivity(browserIntent)
                 }
 
                 is CommonEffect.RequestNetworkState -> {
