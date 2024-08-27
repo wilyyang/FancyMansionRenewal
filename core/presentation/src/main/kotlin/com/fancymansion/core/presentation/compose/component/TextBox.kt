@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.R
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 
 @Composable
 fun RoundedTextField(
@@ -67,9 +67,9 @@ fun RoundedTextField(
     val textColor = MaterialTheme.colorScheme.onSurface
     val backgroundColor = if (isEnabled) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
     val borderColor = if (rememberFocus.value) {
-        MaterialTheme.colorScheme.outline
+        MaterialTheme.colorScheme.outlineVariant
     } else {
-        backgroundColor
+        MaterialTheme.colorScheme.outline
     }
 
 
@@ -116,7 +116,7 @@ fun RoundedTextField(
 
                 // 힌트 영역
                 if (value.isEmpty() && hint.isNotEmpty()) {
-                    Text(text = hint,  maxLines = maxLine, style = textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
+                    Text(text = hint,  maxLines = maxLine, style = textStyle.copy(color = onSurfaceSub))
                 }
                 innerTextField()
             },
