@@ -8,54 +8,59 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
-import com.fancymansion.core.presentation.compose.theme.ColorSet
+import com.fancymansion.core.presentation.compose.shape.RoundedRectangleShape
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 
 @Composable
 fun BasicSwitch(
-    height: Dp = 18.dp,
-    switchOutSidePadding : Dp = 7.dp,
-    checkedColor : Color = ColorSet.blue_20b1f9,
-    uncheckedColor : Color = ColorSet.gray_cecece,
+    modifier: Modifier,
+
+    checkedColor : Color = MaterialTheme.colorScheme.primary,
+    uncheckedColor : Color = MaterialTheme.colorScheme.outline,
+
     thumbColor: Color = Color.White,
     thumbPadding : Dp = 1.dp,
-    isSwitchOn: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+
+    checked: Boolean,
+    onClickChecked: (Boolean) -> Unit
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isSwitchOn) checkedColor else uncheckedColor,
+        targetValue = if (checked) checkedColor else uncheckedColor,
         animationSpec = tween(durationMillis = 200),
         label = "background color"
     )
     val thumbSpaceRatio by animateFloatAsState(
-        targetValue = if (isSwitchOn) 0.5f else 0f,
+        targetValue = if (checked) 0.5f else 0f,
         animationSpec = tween(durationMillis = 200),
         label = "thumb animation"
     )
+
     Box(
-        modifier = Modifier
-            .padding(switchOutSidePadding)
-            .height(height)
+        modifier = modifier
             .aspectRatio(1.9f / 1f)
-            .clip(RoundedCornerShape(height))
+            .clip(shape = RoundedRectangleShape())
             .background(backgroundColor)
             .clickSingle {
-                onCheckedChange(!isSwitchOn)
+                onClickChecked(!checked)
             }
     ) {
         Row(
@@ -65,8 +70,8 @@ fun BasicSwitch(
         ) {
             Spacer(modifier = Modifier.fillMaxWidth(thumbSpaceRatio))
             Box(modifier = Modifier
-                .size(height-1.dp)
-                .clip(RoundedCornerShape(height))
+                .fillMaxHeight().aspectRatio(1f)
+                .clip(CircleShape)
                 .background(thumbColor)
             )
         }
@@ -78,6 +83,6 @@ fun BasicSwitch(
 fun SettingScreenPreview(
 ) {
     FancyMansionTheme {
-        BasicSwitch(isSwitchOn = true, onCheckedChange = {})
+        BasicSwitch(modifier = Modifier.height(30.dp), checked = true, onClickChecked = {})
     }
 }

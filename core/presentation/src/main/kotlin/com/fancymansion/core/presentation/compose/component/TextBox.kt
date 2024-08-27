@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,7 +39,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.R
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
-import com.fancymansion.core.presentation.compose.theme.ColorSet
 
 @Composable
 fun RoundedTextField(
@@ -64,10 +64,10 @@ fun RoundedTextField(
     isEnabled : Boolean = true,
     onValueChange : (String) -> Unit,
 ) {
-    val textColor = ColorSet.gray_333333
-    val backgroundColor = if (isEnabled) Color.White else ColorSet.gray_f1f1f1
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val backgroundColor = if (isEnabled) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
     val borderColor = if (rememberFocus.value) {
-        ColorSet.gray_767b88
+        MaterialTheme.colorScheme.outline
     } else {
         backgroundColor
     }
@@ -88,8 +88,7 @@ fun RoundedTextField(
             .clip(
                 shape = borderShape
             )
-            .background(backgroundColor)
-            .padding(vertical = textPadding).padding(start = textPadding, end = 8.dp)
+            .background(backgroundColor).padding(start = textPadding, end = 8.dp)
             .focusRequester(focusRequester = focusRequester),
 
         verticalAlignment = Alignment.CenterVertically) {
@@ -97,6 +96,7 @@ fun RoundedTextField(
         // 입력 영역
         BasicTextField(
             modifier = Modifier.weight(1f)
+                .padding(vertical = textPadding)
                 .onFocusChanged {rememberFocus.value = it.isFocused },
             enabled = isEnabled,
 
@@ -116,7 +116,7 @@ fun RoundedTextField(
 
                 // 힌트 영역
                 if (value.isEmpty() && hint.isNotEmpty()) {
-                    Text(text = hint,  maxLines = maxLine, style = textStyle.copy(color = ColorSet.gray_bcbcbc))
+                    Text(text = hint,  maxLines = maxLine, style = textStyle.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
                 }
                 innerTextField()
             },
@@ -125,30 +125,30 @@ fun RoundedTextField(
 
         if (keyboardType == KeyboardType.Password) {
             Image(
-                modifier = Modifier.padding(horizontal = 6.dp).height(textStyle.lineHeight.value.dp).clickSingle {
+                modifier = Modifier.padding(start = 6.dp, end = 3.dp).height(textStyle.lineHeight.value.dp + textPadding/2).clickSingle {
                     focusRequester.requestFocus()
                     passwordVisible.value = !passwordVisible.value
                 },
                 painter = painterResource(id = if (passwordVisible.value) {
-                    R.drawable.ic_textbox_password_hide
+                    R.drawable.ic_text_password_hide
                 } else {
-                    R.drawable.ic_textbox_password_show
+                    R.drawable.ic_text_password_show
                 }),
                 contentDescription = null,
                 contentScale = ContentScale.FillHeight,
-                colorFilter = ColorFilter.tint(ColorSet.gray_dddddd)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
             )
 
         }else if(value.isNotEmpty()){
             Image(
-                modifier = Modifier.padding(horizontal = 6.dp).height(textStyle.lineHeight.value.dp).clickSingle {
+                modifier = Modifier.padding(start = 6.dp, end = 3.dp).height(textStyle.lineHeight.value.dp + textPadding/2).clickSingle {
                     focusRequester.requestFocus()
                     onValueChange("")
                 },
-                painter = painterResource(id = R.drawable.ic_textbox_cancel),
+                painter = painterResource(id = R.drawable.ic_text_cancel),
                 contentDescription = null,
                 contentScale = ContentScale.FillHeight,
-                colorFilter = ColorFilter.tint(ColorSet.gray_dddddd)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
             )
         }
 
@@ -157,7 +157,7 @@ fun RoundedTextField(
 
 @Preview
 @Composable
-fun RoundedTextField(){
+fun RoundedTextFieldPreview(){
     Column (modifier = Modifier.background(color = Color.Red)){
         RoundedTextField(
             modifier = Modifier.padding(10.dp),

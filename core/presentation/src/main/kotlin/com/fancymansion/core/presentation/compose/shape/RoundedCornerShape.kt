@@ -1,6 +1,8 @@
 package com.fancymansion.core.presentation.compose.shape
 
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
@@ -54,6 +56,32 @@ class RoundedHorizontalCornerShape(
                 )
                 lineTo(0f, 0f)
             }
+        }
+        return Outline.Generic(path)
+    }
+}
+
+class RoundedRectangleShape : Shape {
+
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val cornerRadius = size.minDimension / 2
+        val path = Path().apply {
+            addRoundRect(
+                roundRect = RoundRect(
+                    left = 0f,
+                    top = 0f,
+                    right = size.width,
+                    bottom = size.height,
+                    topLeftCornerRadius = CornerRadius(cornerRadius),
+                    topRightCornerRadius = CornerRadius(cornerRadius),
+                    bottomLeftCornerRadius = CornerRadius(cornerRadius),
+                    bottomRightCornerRadius = CornerRadius(cornerRadius)
+                )
+            )
         }
         return Outline.Generic(path)
     }
