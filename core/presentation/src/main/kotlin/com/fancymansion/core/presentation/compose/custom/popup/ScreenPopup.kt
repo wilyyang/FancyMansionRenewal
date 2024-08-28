@@ -170,8 +170,11 @@ class PopupProperties @ExperimentalComposeUiApi constructor(
  * @param properties [PopupProperties] for further customization of this popup's behavior.
  * @param content The content to be displayed inside the popup.
  */
+
 /**
- * TODO WILLY : Name - ScreenPopup
+ * <custom>
+ * ScreenPopup : 기존 androidx.compose.ui.window.Popup을 Custom
+ * @see androidx.compose.ui.window.Popup
  */
 @Composable
 fun ScreenPopup(
@@ -209,7 +212,13 @@ fun ScreenPopup(
  * @param content The content to be displayed inside the popup.
  */
 /**
- * TODO WILLY : Name - ScreenPopup
+ * <custom>
+ * ScreenPopup : 기존 androidx.compose.ui.window.Popup을 Custom
+ *
+ * - 앱에서 설정한 Density 사용
+ * val density = Density(density = CurrentDensity.density!!)
+ * CompositionLocalProvider(LocalDensity provides Density(density = density.density, fontScale = 1.0f))
+ * @see androidx.compose.ui.window.Popup
  */
 @Composable
 fun ScreenPopup(
@@ -295,7 +304,7 @@ fun ScreenPopup(
     // and only do the other position calculations in that case.
     LaunchedEffect(popupLayout) {
         while (isActive) {
-            withInfiniteAnimationFrameNanos {} // TODO Willy : add import
+            withInfiniteAnimationFrameNanos {}
             popupLayout.pollForLocationOnScreenChange()
         }
     }
@@ -414,6 +423,8 @@ internal class PopupLayout(
 
     override val subCompositionView: AbstractComposeView get() = this
 
+    // <custom> snapshotStateObserver 제거 (미사용)
+
     init {
         id = android.R.id.content
         setViewTreeLifecycleOwner(composeView.findViewTreeLifecycleOwner())
@@ -462,9 +473,7 @@ internal class PopupLayout(
         content()
     }
 
-    /**
-     * TODO Willy : Internal Method - internalOnMeasure, internalOnLayout to MATCH_PARENT
-     */
+    // <custom> onAttachedToWindow, onDetachedFromWindow, internalOnMeasure, internalOnLayout 제거
 
     private val displayWidth: Int
         get() {
@@ -543,15 +552,12 @@ internal class PopupLayout(
             // Undo fixed size in internalOnLayout, which would suppress size changes when
             // usePlatformDefaultWidth is true.
 
-            /**
-             * TODO WILLY : WRAP_CONTENT -> MATCH_PARENT
-             */
+            // <custom>  params.width, params.height : WRAP_CONTENT -> MATCH_PARENT
             params.width = WindowManager.LayoutParams.MATCH_PARENT
             params.height = WindowManager.LayoutParams.MATCH_PARENT
 
             popupLayoutHelper.updateViewLayout(windowManager, this, params)
         }
-
         this.properties = properties
         this.testTag = testTag
         setIsFocusable(properties.focusable)
@@ -634,6 +640,7 @@ internal class PopupLayout(
             IntSize(width = bounds.width, height = bounds.height)
         }
 
+        // <custom>  var popupPosition = IntOffset.Zero 변경
         val popupPosition = positionProvider.calculatePosition(
             parentBounds,
             windowSize,
@@ -720,22 +727,18 @@ internal class PopupLayout(
             // Enables us to intercept outside clicks even when popup is not focusable
             flags = flags or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 
-            /**
-             * TODO WILLY : FLAG_NOT_FOCUSABLE
-             */
+            // <custom>  add code : flags = flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             if(!properties.focusable){
                 flags = flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             }
-
+            // <custom> legacy : TYPE_APPLICATION_SUB_PANEL -> TYPE_APPLICATION_PANEL
             type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL
 
             // Get the Window token from the parent view
             token = composeView.applicationWindowToken
 
-            /**
-             * TODO WILLY : WRAP_CONTENT -> MATCH_PARENT
-             */
             // Wrap the frame layout which contains composable content
+            // <custom>  width, height : WRAP_CONTENT -> MATCH_PARENT
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.MATCH_PARENT
 
@@ -746,6 +749,7 @@ internal class PopupLayout(
             title = composeView.context.resources.getString(R.string.default_popup_window_title)
         }
     }
+    // <custom>  onCommitAffectingPopupPosition 제거
 }
 
 /**
@@ -821,61 +825,3 @@ private fun Rect.toIntBounds() = IntRect(
 @TestOnly
 fun isPopupLayout(view: View, testTag: String? = null): Boolean =
     view is PopupLayout && (testTag == null || testTag == view.testTag)
-
-
-/**
- * TODO Willy : Add Method
- */
-internal fun SecureFlagPolicy.shouldApplySecureFlag(isSecureFlagSetOnParent: Boolean): Boolean {
-    return when (this) {
-        SecureFlagPolicy.SecureOff -> false
-        SecureFlagPolicy.SecureOn -> true
-        SecureFlagPolicy.Inherit -> isSecureFlagSetOnParent
-    }
-}
-
-internal class AlignmentOffsetPositionProvider(
-    val alignment: Alignment,
-    val offset: IntOffset
-) : PopupPositionProvider {
-    override fun calculatePosition(
-        anchorBounds: IntRect,
-        windowSize: IntSize,
-        layoutDirection: LayoutDirection,
-        popupContentSize: IntSize
-    ): IntOffset {
-        // TODO: Decide which is the best way to round to result without reimplementing Alignment.align
-        var popupPosition = IntOffset(0, 0)
-
-        // Get the aligned point inside the parent
-        val parentAlignmentPoint = alignment.align(
-            IntSize.Zero,
-            IntSize(anchorBounds.width, anchorBounds.height),
-            layoutDirection
-        )
-        // Get the aligned point inside the child
-        val relativePopupPos = alignment.align(
-            IntSize.Zero,
-            IntSize(popupContentSize.width, popupContentSize.height),
-            layoutDirection
-        )
-
-        // Add the position of the parent
-        popupPosition += IntOffset(anchorBounds.left, anchorBounds.top)
-
-        // Add the distance between the parent's top left corner and the alignment point
-        popupPosition += parentAlignmentPoint
-
-        // Subtract the distance between the children's top left corner and the alignment point
-        popupPosition -= IntOffset(relativePopupPos.x, relativePopupPos.y)
-
-        // Add the user offset
-        val resolvedOffset = IntOffset(
-            offset.x * (if (layoutDirection == LayoutDirection.Ltr) 1 else -1),
-            offset.y
-        )
-        popupPosition += resolvedOffset
-
-        return popupPosition
-    }
-}

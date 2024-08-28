@@ -49,12 +49,14 @@ fun Loading(
                         .background(Color.Black.copy(alpha = dimmedAlpha)),
                     contentAlignment = Alignment.Center
                 ){
-                    CircularLoadingAnimation()
-                    loadingMessage?.let {
-                        Spacer(Modifier.height(20.dp))
-                        Text(text = loadingMessage,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.surface)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularLoadingAnimation()
+                        loadingMessage?.let {
+                            Spacer(Modifier.height(20.dp))
+                            Text(text = loadingMessage,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.surface)
+                        }
                     }
                 }
             }
@@ -62,22 +64,22 @@ fun Loading(
     }
 }
 
-class CircleAnim(val easing : CubicBezierEasing, val radius : Float, val color : Color = ColorSet.default_surface)
+class CircleAnim(val easing : CubicBezierEasing, val radius : Float, val color : Color)
 
 @Composable
 fun CircularLoadingAnimation() {
     val durationMillis = 1400
     val circleAnims = listOf(
-        CircleAnim(easing = CubicBezierEasing(0.44f, 0.0f, 0.9f, 1.0f), radius = 3f, color = ColorSet.gray_d9dce0),
-        CircleAnim(easing = CubicBezierEasing(0.36f, 0.0f, 0.8f, 1.0f), radius = 5f, color = ColorSet.gray_dcdee0),
-        CircleAnim(easing = CubicBezierEasing(0.28f, 0.0f, 0.7f, 1.0f), radius = 7f, color = ColorSet.gray_edeef0),
-        CircleAnim(easing = CubicBezierEasing(0.2f,  0.0f, 0.6f, 1.0f), radius = 10f, color = ColorSet.gray_f0f2f5),
-        CircleAnim(easing = CubicBezierEasing(0.12f, 0.0f, 0.5f, 1.0f), radius = 13f, color = ColorSet.gray_f9fafc),
-        CircleAnim(easing = CubicBezierEasing(0.04f, 0.0f, 0.4f, 1.0f), radius = 16f, color = ColorSet.gray_fdfeff),
+        CircleAnim(easing = CubicBezierEasing(0.44f, 0.0f, 0.9f, 1.0f), radius = 3f, color = ColorSet.loading_gray_1),
+        CircleAnim(easing = CubicBezierEasing(0.36f, 0.0f, 0.8f, 1.0f), radius = 5f, color = ColorSet.loading_gray_2),
+        CircleAnim(easing = CubicBezierEasing(0.28f, 0.0f, 0.7f, 1.0f), radius = 7f, color = ColorSet.loading_gray_3),
+        CircleAnim(easing = CubicBezierEasing(0.2f,  0.0f, 0.6f, 1.0f), radius = 10f, color = ColorSet.loading_gray_4),
+        CircleAnim(easing = CubicBezierEasing(0.12f, 0.0f, 0.5f, 1.0f), radius = 13f, color = ColorSet.loading_gray_5),
+        CircleAnim(easing = CubicBezierEasing(0.04f, 0.0f, 0.4f, 1.0f), radius = 16f, color = ColorSet.loading_gray_6),
     )
 
     val animationAngles = circleAnims.map {
-        val infiniteTransition = rememberInfiniteTransition()
+        val infiniteTransition = rememberInfiniteTransition(label = "")
         infiniteTransition.animateFloat(
             initialValue = 0f,
             targetValue = 360f,
@@ -87,7 +89,7 @@ fun CircularLoadingAnimation() {
                     easing = it.easing
                 ),
                 repeatMode = RepeatMode.Restart
-            )
+            ), label = ""
         )
     }
 
