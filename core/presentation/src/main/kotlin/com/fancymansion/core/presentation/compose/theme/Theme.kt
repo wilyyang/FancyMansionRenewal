@@ -6,14 +6,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.fancymansion.core.presentation.compose.theme.typography.typographyMobile
 
-val disableAlpha = 0.38f
-val dimmedAlpha = 0.28f
-
+const val DIMMED_ALPHA = 0.28f
 const val CONTENT_DIMMED_ALPHA = 0.56f
-
-const val ON_CONTENT_DEACTIVE_ALPHA = 0.392f
-const val ON_CONTENT_SUB_ALPHA = 0.478f
-const val ON_CONTENT_DIMMED_ALPHA = 0.95f
 
 private val LightColorScheme = lightColorScheme(
     primary = ColorSet.blue_1e9eff,

@@ -36,7 +36,7 @@ fun TextCheckBox(
     checkBorderColor : Color = MaterialTheme.colorScheme.outline,
 
     checkboxText : String = "",
-    textColor : Color = ColorSet.gray_333333,
+    textColor : Color = MaterialTheme.colorScheme.onSurface,
     textStartPadding : Dp = 6.dp,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
 

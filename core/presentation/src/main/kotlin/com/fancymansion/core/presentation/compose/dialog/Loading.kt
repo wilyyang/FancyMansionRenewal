@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
 import com.fancymansion.core.presentation.compose.custom.popup.ScreenPopup
 import com.fancymansion.core.presentation.compose.theme.ColorSet
-import com.fancymansion.core.presentation.compose.theme.dimmedAlpha
+import com.fancymansion.core.presentation.compose.theme.DIMMED_ALPHA
 import kotlinx.coroutines.delay
 
 @Composable
@@ -46,7 +46,7 @@ fun Loading(
                             contentDescription = "Loading"
                         }
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = dimmedAlpha)),
+                        .background(Color.Black.copy(alpha = DIMMED_ALPHA)),
                     contentAlignment = Alignment.Center
                 ){
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {

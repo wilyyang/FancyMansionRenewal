@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.semantics.Role
+import com.fancymansion.core.common.const.DELAY_CLICK_SINGLE_MS
 
 class OnSingleClickListener(
     private val interval : Int = 600,
@@ -29,7 +30,7 @@ fun Modifier.clickSingle(
     enabled: Boolean = true,
     onClickLabel: String? = null,
     role: Role? = null,
-    clickInterval: Int = 600,
+    clickInterval: Int = DELAY_CLICK_SINGLE_MS,
     indication : Indication? = null,
     interactionSource : MutableInteractionSource? = null,
     onClick: () -> Unit

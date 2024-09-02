@@ -19,14 +19,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.theme.ColorSet
+import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 
 @Composable
 fun TextWithDot(
     modifier: Modifier = Modifier,
     dotSize: Dp,
-    dotColor : Color = ColorSet.gray_a1b0c5,
+    dotColor : Color = MaterialTheme.colorScheme.onSurface,
     text: AnnotatedString,
-    textColor : Color = ColorSet.gray_333333,
+    textColor : Color = MaterialTheme.colorScheme.onSurface,
     textStartPadding : Dp = 6.dp,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge
 ) {
@@ -67,10 +68,10 @@ fun TextWithDot(
     modifier: Modifier = Modifier,
 
     dotSize: Dp,
-    dotColor : Color = ColorSet.gray_a1b0c5,
+    dotColor : Color = MaterialTheme.colorScheme.onSurface,
 
     text: String,
-    textColor : Color = ColorSet.gray_333333,
+    textColor : Color = MaterialTheme.colorScheme.onSurface,
     textStartPadding : Dp = 6.dp,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge
 ) {
@@ -109,35 +110,35 @@ fun TextWithDot(
 @Preview
 @Composable
 fun TextWithDotPreview(){
-    Column (modifier = Modifier.background(color = Color.White)){
+    FancyMansionTheme {
+        Column (modifier = Modifier.background(color = Color.White)){
 
-        TextWithDot(
-            modifier = Modifier.padding(10.dp),
-            dotSize = 3.dp,
-            dotColor = Color.Red,
-            text = "힌트힌트힌트"
-        )
-        TextWithDot(
-            modifier = Modifier.padding(10.dp),
-            dotSize = 3.dp,
-            dotColor = Color.Red,
-            text = "힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트"
-        )
+            TextWithDot(
+                modifier = Modifier.padding(10.dp),
+                dotSize = 3.dp,
+                dotColor = Color.Red,
+                text = "힌트힌트힌트"
+            )
+            TextWithDot(
+                modifier = Modifier.padding(10.dp),
+                dotSize = 3.dp,
+                text = "힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트 힌트힌트힌트"
+            )
 
-        TextWithDot(
-            modifier = Modifier.padding(10.dp),
-            dotSize = 5.dp,
-            dotColor = Color.Black,
-            text = "힌트힌트힌트",
-            textStyle = MaterialTheme.typography.labelSmall
-        )
+            TextWithDot(
+                modifier = Modifier.padding(10.dp),
+                dotSize = 5.dp,
+                text = "힌트힌트힌트",
+                textStyle = MaterialTheme.typography.labelSmall
+            )
 
-        TextWithDot(
-            modifier = Modifier.padding(10.dp),
-            dotSize = 7.dp,
-            text = "힌트힌트힌트",
-            textStartPadding = 2.dp,
-            textStyle = MaterialTheme.typography.headlineLarge
-        )
+            TextWithDot(
+                modifier = Modifier.padding(10.dp),
+                dotSize = 7.dp,
+                text = "힌트힌트힌트",
+                textStartPadding = 2.dp,
+                textStyle = MaterialTheme.typography.headlineLarge
+            )
+        }
     }
 }

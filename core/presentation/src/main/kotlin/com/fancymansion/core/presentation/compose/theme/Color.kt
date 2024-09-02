@@ -37,15 +37,4 @@ object ColorSet {
     val loading_gray_4  = Color(0xff_f2f4f5)
     val loading_gray_5  = Color(0xff_f7fafc)
     val loading_gray_6  = Color(0xff_fdfdfd)
-
-    /**
-     * legacy color
-     */
-    val sky_f1faff = Color(0xff_f1faff)
-    val blue_20b1f9 = Color(0xff_20b1f9)
-    val blue_3370de = Color(0xff_3370de)
-    val gray_f1f1f1  = Color(0xff_f1f1f1)
-    val gray_a1b0c5  = Color(0xff_a1b0c5)
-    val gray_9d9d9d  = Color(0xff_9d9d9d)
-    val gray_333333  = Color(0xff_333333)
 }
