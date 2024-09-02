@@ -45,7 +45,7 @@ import com.fancymansion.core.presentation.compose.theme.onSurfaceInactive
 fun FlexibleImageButton(
     modifier : Modifier = Modifier,
     contentPadding : PaddingValues = ButtonDefaults.ContentPadding,
-    imageClickable : Painter = painterResource(id = R.drawable.img_longest_color_blue_btn),
+    imageClickable : Painter,
     imageNotClickable : Painter? = null,
 
     text : String? = null,
