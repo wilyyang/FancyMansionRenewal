@@ -46,7 +46,6 @@ fun FancyMansionTopBar(
     onClickLeftIcon: (() -> Unit) = { },
 
     idRightIcon: Int? = null,
-    idRightIconRatio: Float? = null,
     onClickRightIcon: (() -> Unit) = { },
 
     topBarColor : Color? = Color.Transparent,
@@ -147,8 +146,8 @@ fun FancyMansionTopBar(
                 Image(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .fillMaxHeight(idRightIconRatio?:1f)
-                        .padding(vertical = if(idRightIconRatio != null) topBarVerticalPadding/2 else topBarVerticalPadding)
+                        .fillMaxHeight()
+                        .padding(vertical = topBarVerticalPadding)
                         .clickSingle(
                             onClick = onClickRightIcon,
                             interactionSource = rightIconInteractionSource
