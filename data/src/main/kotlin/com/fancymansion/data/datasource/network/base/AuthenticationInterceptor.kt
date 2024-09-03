@@ -2,7 +2,6 @@ package com.fancymansion.data.datasource.network.base
 
 import android.content.Context
 import android.os.Build
-import com.fancymansion.data.datasource.datastore.AuthDatastore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -14,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 internal class AuthenticationInterceptor @Inject constructor(
     @ApplicationContext context : Context,
-    private val authDatastore : AuthDatastore
+//    private val authDatastore : AuthDatastore
 ) : Interceptor {
 
     private val app_name = "FANCY_MANSION_APP_AOS"
@@ -27,7 +26,8 @@ internal class AuthenticationInterceptor @Inject constructor(
 
     private val token : String
         get() = runBlocking {
-            authDatastore.getToken()
+            //authDatastore.getToken()
+            "TEST_TOKEN"
         }
 
     @Throws(IOException::class)

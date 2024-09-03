@@ -2,8 +2,6 @@ package com.fancymansion.test.di.datasource
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.fancymansion.data.datasource.datastore.AuthDatastore
-import com.fancymansion.data.datasource.datastore.di.HiltDatastore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent

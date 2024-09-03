@@ -5,9 +5,9 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
-import com.fancymansion.data.datasource.database.source.book.dao.BookDatabaseDao
-import com.fancymansion.data.datasource.database.source.book.model.asData
-import com.fancymansion.data.datasource.database.source.book.model.asModel
+import com.fancymansion.data.datasource.database.book.dao.BookDatabaseDao
+import com.fancymansion.data.datasource.database.book.model.asData
+import com.fancymansion.data.datasource.database.book.model.asModel
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel

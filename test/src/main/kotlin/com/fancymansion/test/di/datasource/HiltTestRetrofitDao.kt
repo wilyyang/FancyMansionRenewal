@@ -1,14 +1,9 @@
 package com.fancymansion.test.di.datasource
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import com.fancymansion.data.datasource.network.source.dao.AuthRetrofitDao
-import com.fancymansion.data.datasource.network.source.di.HiltRetrofitDao
+import com.fancymansion.data.datasource.network.auth.di.HiltRetrofitDao
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import javax.inject.Singleton
 
 @Module
 @TestInstallIn(

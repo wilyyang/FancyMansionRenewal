@@ -1,8 +1,8 @@
 package com.fancymansion.data.repository
 
-import com.fancymansion.data.datasource.database.source.log.dao.LogDatabaseDao
-import com.fancymansion.data.datasource.database.source.log.model.LogData
-import com.fancymansion.data.datasource.database.source.log.model.asModel
+import com.fancymansion.data.datasource.database.log.dao.LogDatabaseDao
+import com.fancymansion.data.datasource.database.log.model.LogData
+import com.fancymansion.data.datasource.database.log.model.asModel
 import com.fancymansion.domain.interfaceRepository.LogRepository
 import com.fancymansion.domain.model.log.LogModel
 import javax.inject.Inject

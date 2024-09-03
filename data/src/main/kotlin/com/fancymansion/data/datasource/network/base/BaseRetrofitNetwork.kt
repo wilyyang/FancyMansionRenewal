@@ -8,7 +8,7 @@ import com.fancymansion.core.common.wrapper.ServerError
 import com.fancymansion.core.common.wrapper.Success
 import com.fancymansion.core.common.wrapper.ApiError
 import com.fancymansion.core.common.wrapper.StatusError
-import com.fancymansion.data.datasource.network.source.model.AbstractResponse
+import com.fancymansion.data.datasource.network.base.model.AbstractResponse
 
 abstract class BaseRetrofitNetwork {
     suspend fun <A : AbstractResponse<D>, D, R> callApi(
