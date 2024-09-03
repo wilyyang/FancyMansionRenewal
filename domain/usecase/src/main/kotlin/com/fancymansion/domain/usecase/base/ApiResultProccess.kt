@@ -1,4 +1,4 @@
-package com.fancymansion.domain.usecase
+package com.fancymansion.domain.usecase.base
 
 import com.fancymansion.core.common.wrapper.ApiError
 import com.fancymansion.core.common.wrapper.ApiResult
