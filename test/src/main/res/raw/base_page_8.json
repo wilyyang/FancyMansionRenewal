@@ -1,0 +1,34 @@
+{
+  "id": 8,
+  "sources": [
+    {
+      "type": "text",
+      "description": "배트는 힘내어 헛간을 향해 날개짓합니다.\n"
+    },
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_37.png"
+    },
+    {
+      "type": "text",
+      "description": "\n\"하나! 둘! 좀만 더 힘을 내면 된다!\"\n\"휘우우우우웅!\"\n\n강풍이 몰아칩니다.\n"
+    },
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_15.png"
+    },
+    {
+      "type": "text",
+      "description": "\n배트는 강풍에 그만 땅에 떨어졌습니다.\n"
+    },
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_16.png"
+    },
+    {
+      "type": "text",
+      "description": "\n땅에 박혀버린 배트… 이제 날 힘이 거의 없는걸까요?\n"
+    }
+  ],
+  "title": "헛간을 향해 힘찬 날개짓!"
+}

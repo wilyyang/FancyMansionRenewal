@@ -1,6 +1,8 @@
 package com.fancymansion.test.di
 
+import com.fancymansion.data.repository.BookLocalRepositoryImpl
 import com.fancymansion.di.injectRepository.HiltRepository
+import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
@@ -13,5 +15,6 @@ import dagger.hilt.testing.TestInstallIn
 )
 interface HiltTestRepository {
 
-
+    @Binds
+    fun bindAuthRepository(repository : BookLocalRepositoryImpl) : BookLocalRepository
 }
