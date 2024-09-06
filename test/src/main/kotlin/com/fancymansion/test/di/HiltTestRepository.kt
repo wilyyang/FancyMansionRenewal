@@ -16,5 +16,5 @@ import dagger.hilt.testing.TestInstallIn
 interface HiltTestRepository {
 
     @Binds
-    fun bindAuthRepository(repository : BookLocalRepositoryImpl) : BookLocalRepository
+    fun bindBookLocalRepository(repository : BookLocalRepositoryImpl) : BookLocalRepository
 }

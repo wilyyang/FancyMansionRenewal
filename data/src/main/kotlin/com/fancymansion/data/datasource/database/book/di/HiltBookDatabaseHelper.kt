@@ -2,7 +2,6 @@ package com.fancymansion.data.datasource.database.book.di
 
 import android.content.Context
 import com.fancymansion.data.datasource.database.book.BookDatabaseHelper
-import com.fancymansion.data.datasource.database.book.dao.BookDatabaseDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,14 +13,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class HiltBookDatabase {
+class HiltBookDatabaseHelper {
+
     @Singleton
     @Provides
     fun provideBookDatabaseHelper(
         @ApplicationContext context : Context
     ) = BookDatabaseHelper.getDataBase(context, CoroutineScope(SupervisorJob()))
-
-    @Singleton
-    @Provides
-    fun provideBookDatabaseDao(databaseHelper : BookDatabaseHelper) : BookDatabaseDao = databaseHelper.bookDatabaseDao()
 }

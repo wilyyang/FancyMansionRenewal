@@ -11,18 +11,12 @@ import com.fancymansion.data.datasource.appStorage.book.model.SourceData
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class BookStorageSourceImpl @Inject internal constructor(
-    @ApplicationContext private val context : Context
-) : BookStorageSource {
+class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     private val root : File = context.getExternalFilesDir(null)!!
 
     private val gson = GsonBuilder()
