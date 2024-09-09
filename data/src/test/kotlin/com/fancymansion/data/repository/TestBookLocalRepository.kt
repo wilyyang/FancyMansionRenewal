@@ -24,24 +24,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import javax.inject.Inject
 
-object Given {
-    suspend fun from_Database(block: suspend When.() -> Unit) {
-        When.block()
-    }
-}
-
-object When {
-    suspend fun PageSetting_insert_update_get(block: suspend Then.() -> Unit) {
-        Then.block()
-    }
-}
-
-object Then {
-    suspend fun Success_equal(block: suspend () -> Unit) {
-        block()
-    }
-}
-
 @HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 @Config(application = HiltTestApplication::class, sdk = [33])
@@ -56,6 +38,7 @@ class TestBookLocalRepository {
     lateinit var bookStorage : BookStorageSource
 
 
+
     @Before
     fun setUp() = runTest {
         hiltRule.inject()
@@ -68,34 +51,24 @@ class TestBookLocalRepository {
         episodeId = "test_book_id_0"
     )
 
-
     @Test
-    fun `#Database #Setting #Base - insert, load, get`()  = runTest {
-        Given.from_Database {
-            When.PageSetting_insert_update_get {
-                Then.Success_equal {
-                    val pageSetting = PageSettingModel()
-                    repository.insertPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, pageSetting)
+    fun `Given - Database, Target - PageSetting, When - insert, load, get, Then - Success equal`()  = runTest {
+        val pageSetting = PageSettingModel()
+        repository.insertPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, pageSetting)
 
-                    val updateSetting = pageSetting.copy(pageTheme = PageTheme.THEME_IVORY)
-                    repository.updatePageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, updateSetting)
+        val updateSetting = pageSetting.copy(pageTheme = PageTheme.THEME_IVORY)
+        repository.updatePageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, updateSetting)
 
-                    val targetSetting = repository.getPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId)
+        val targetSetting = repository.getPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId)
 
-                    Truth.assertThat(pageSetting == targetSetting).isFalse()
-                    Truth.assertThat(updateSetting == targetSetting).isTrue()
-                }
-            }
-        }
+        Truth.assertThat(pageSetting == targetSetting).isFalse()
+        Truth.assertThat(updateSetting == targetSetting).isTrue()
     }
 
     @Test
-    fun `#Storage #Logic #Base - load`()  = runTest {
-
+    fun `Given - Storage, Target - Logic, When - load, Then - Success equal`()  = runTest {
         val logic = bookStorage.loadLogic(defaultRef).asModel()
-
         val loadLogic = repository.loadLogic(defaultRef)
-
         Truth.assertThat(logic == loadLogic).isTrue()
     }
 }
