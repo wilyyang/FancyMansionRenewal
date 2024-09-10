@@ -107,4 +107,11 @@ class TestBookLocalRepository {
         val loadPage = repository.loadPage(defaultRef, pageId = 1)
         Truth.assertThat(page == loadPage).isTrue()
     }
+
+    @Test
+    fun `Given - Storage, Target - Page, When - load, Then - Fail not equal`()  = runTest {
+        val page1 = repository.loadPage(defaultRef, pageId = 1)
+        val page2 = repository.loadPage(defaultRef, pageId = 2)
+        Truth.assertThat(page1 == page2).isFalse()
+    }
 }
