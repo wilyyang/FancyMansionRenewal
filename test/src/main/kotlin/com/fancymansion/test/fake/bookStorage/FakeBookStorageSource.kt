@@ -97,4 +97,6 @@ class FakeBookStorageSource(context: Context) : BookStorageSource {
         imageName: String,
         resourceId: Int
     ) { }
+
+    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean { return true }
 }

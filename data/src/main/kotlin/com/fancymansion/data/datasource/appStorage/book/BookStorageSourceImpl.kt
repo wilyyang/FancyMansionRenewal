@@ -3,11 +3,15 @@ package com.fancymansion.data.datasource.appStorage.book
 import android.content.Context
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.util.readModuleRawFile
+import com.fancymansion.core.common.util.type
+import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
 import com.fancymansion.data.datasource.appStorage.book.model.SourceData
+import com.fancymansion.data.datasource.appStorage.book.sample.SAMPLE_IMAGE_LIST
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
@@ -161,5 +165,53 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         val inputStream = context.resources.openRawResource(resourceId)
         val outputFile = root.coverFile(userId, mode, bookId, imageName)
         copyStreamToFile(inputStream, outputFile)
+    }
+
+    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(SourceData::class.java, JsonSerializer<SourceData> { src, _, context -> src?.toJson(context!!) })
+            .registerTypeAdapter(SourceData::class.java, JsonDeserializer { json, _, context -> SourceData.fromJson(json!!, context!!) })
+            .create()
+
+        // make sample dir
+        makeBookDir(
+            userId = episodeRef.userId,
+            mode = episodeRef.mode,
+            bookId = episodeRef.bookId
+        )
+
+        makeEpisodeDir(
+            episodeRef = episodeRef
+        )
+
+        // make sample image
+        SAMPLE_IMAGE_LIST.forEach {
+            makePageImageFromResource(episodeRef, it.first, it.second)
+        }
+
+        // read raw file
+        val bookInfo : BookInfoData = gson.fromJson(context.readModuleRawFile(R.raw.base_book_info), type<BookInfoData>())
+        val episodeInfo : EpisodeInfoData = gson.fromJson(context.readModuleRawFile(R.raw.base_episode_info), type<EpisodeInfoData>())
+        val logic : LogicData = gson.fromJson(context.readModuleRawFile(R.raw.base_logic), type<LogicData>())
+        val pages = (1..11).map { pageId ->
+            val resourceId = getSamplePageResourceId(pageId)
+            gson.fromJson<PageData>(context.readModuleRawFile(resourceId), type<PageData>())
+        }
+
+
+        // make sample file
+        return makeBookInfo(
+            userId = episodeRef.userId,
+            mode = episodeRef.mode,
+            bookId = episodeRef.bookId,
+            bookInfo = bookInfo
+        ) && makeEpisodeInfo(episodeRef = episodeRef, episodeInfo = episodeInfo)
+          && makeLogic(episodeRef, logic)
+          && pages.all { page -> makePage(episodeRef, page.id, page) }
+    }
+
+    private fun getSamplePageResourceId(pageId: Int): Int {
+        val resourceName = "base_page_$pageId"
+        return context.resources.getIdentifier(resourceName, "raw", context.packageName)
     }
 }

@@ -1,0 +1,30 @@
+{
+  "id": 10,
+  "sources": [
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_23.png"
+    },
+    {
+      "type": "text",
+      "description": "\n구멍에 들어간 배트!\n"
+    },
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_26.png"
+    },
+    {
+      "type": "text",
+      "description": "\n여긴 어디죠? 어둡고 깜깜한 헛간에 배트는 갇히고 말았습니다.\n"
+    },
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_28.png"
+    },
+    {
+      "type": "text",
+      "description": "\n그러나 배트는 박쥐입니다. 거꾸로 메달린 배트는 조용히 천천히.. 잠에 듭니다.\n"
+    }
+  ],
+  "title": "조용히 어둠 속으로…"
+}

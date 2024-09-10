@@ -76,4 +76,6 @@ interface BookStorageSource {
         imageName: String,
         resourceId: Int
     )
+
+    suspend fun makeSampleEpisode(episodeRef: EpisodeRef) : Boolean
 }

@@ -163,6 +163,10 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.makeCoverImageFromResource(userId, mode, bookId, imageName, resourceId)
     }
 
+    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
+        return bookStorageSource.makeSampleEpisode(episodeRef)
+    }
+
     /**
      * ActionCount
      */

@@ -1,0 +1,14 @@
+{
+  "id": 6,
+  "sources": [
+    {
+      "type": "image",
+      "imageName": "test_book_id_img_35.png"
+    },
+    {
+      "type": "text",
+      "description": "\n어느새 비가 그치고 날이 밝았습니다. 그런데 여긴 어디죠? 박쥐는 낮에 잘 보이지 않습니다. 길을 잃은 배트는 그렇게 정처없이 날았답니다.."
+    }
+  ],
+  "title": "여긴 어디지?"
+}
