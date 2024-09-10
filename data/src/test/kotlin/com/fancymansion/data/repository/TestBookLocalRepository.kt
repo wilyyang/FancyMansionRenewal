@@ -9,6 +9,7 @@ import com.fancymansion.data.datasource.appStorage.book.di.HiltBookStorage
 import com.fancymansion.data.datasource.appStorage.book.model.asModel
 import com.fancymansion.data.datasource.database.book.di.HiltBookDatabaseHelper
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.google.common.truth.Truth
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -52,7 +53,7 @@ class TestBookLocalRepository {
     )
 
     @Test
-    fun `Given - Database, Target - PageSetting, When - insert, load, get, Then - Success equal`()  = runTest {
+    fun `Given - Database, Target - PageSetting, When - insert, update, Then - Success equal`()  = runTest {
         val pageSetting = PageSettingModel()
         repository.insertPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, pageSetting)
 
@@ -66,9 +67,45 @@ class TestBookLocalRepository {
     }
 
     @Test
+    fun `Given - Database, Target - ActionCount, When - insert, update, Then - Success equal`()  = runTest {
+        val actionId = ActionIdModel(pageId = 1, selectorId = 1)
+        repository.insertActionCount(defaultRef, actionId)
+        val initValue = repository.getActionCount(defaultRef, actionId)
+        Truth.assertThat(initValue == 1).isTrue()
+
+        repository.updateActionCount(defaultRef, actionId, newCount = 2)
+        val newValue = repository.getActionCount(defaultRef, actionId)
+        Truth.assertThat(newValue == 2).isTrue()
+    }
+
+    @Test
+    fun `Given - Database, Target - ReadingProgress, When - initValue, get, Then - Success equal null`()  = runTest {
+        val initPageId = repository.getReadingProgressPageId(defaultRef)
+        Truth.assertThat(initPageId == null).isTrue()
+    }
+
+    @Test
+    fun `Given - Database, Target - ReadingProgress, When - insert, update, Then - Success equal`()  = runTest {
+        repository.insertReadingProgress(defaultRef, pageId = 3)
+        val insertPageId = repository.getReadingProgressPageId(defaultRef)
+        Truth.assertThat(insertPageId?.toInt() == 3).isTrue()
+
+        repository.updateReadingProgressPageId(defaultRef, newPageId = 5)
+        val newPageId = repository.getReadingProgressPageId(defaultRef)
+        Truth.assertThat(newPageId?.toInt() == 5).isTrue()
+    }
+
+    @Test
     fun `Given - Storage, Target - Logic, When - load, Then - Success equal`()  = runTest {
         val logic = bookStorage.loadLogic(defaultRef).asModel()
         val loadLogic = repository.loadLogic(defaultRef)
         Truth.assertThat(logic == loadLogic).isTrue()
+    }
+
+    @Test
+    fun `Given - Storage, Target - Page, When - load, Then - Success equal`()  = runTest {
+        val page = bookStorage.loadPage(defaultRef, pageId = 1).asModel()
+        val loadPage = repository.loadPage(defaultRef, pageId = 1)
+        Truth.assertThat(page == loadPage).isTrue()
     }
 }
