@@ -38,19 +38,18 @@ class TestBookLocalRepository {
     @Inject
     lateinit var bookStorage : BookStorageSource
 
-
-
-    @Before
-    fun setUp() = runTest {
-        hiltRule.inject()
-    }
-
     private val defaultRef = EpisodeRef(
         userId = "test_user_id",
         mode = ReadMode.READ,
         bookId = "test_book_id",
         episodeId = "test_book_id_0"
     )
+
+    @Before
+    fun setUp() = runTest {
+        hiltRule.inject()
+        repository.makeSampleEpisode(defaultRef)
+    }
 
     @Test
     fun `Given - Database, Target - PageSetting, When - insert, update, Then - Success equal`()  = runTest {
