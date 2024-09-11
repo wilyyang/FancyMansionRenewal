@@ -46,9 +46,6 @@ class TestBookUseCase {
         episodeId = "test_book_id_0"
     )
 
-    private val pageIdCountConditionRule = 3L
-    private val routeIdDefault = 6L
-
 
     @Before
     fun setUp() = runTest {
@@ -84,7 +81,7 @@ class TestBookUseCase {
     }
 
     /**
-     * Test Target
+     * Test Selector
      * "pageId": 1,
      *       "selectors": [
      *         { "selectorId": 1, "routes": [ { "routeTargetPageId": 2  } ] },
@@ -108,22 +105,95 @@ class TestBookUseCase {
      *         }
      *       ]
      */
+    private val TEST_SELECTOR_CONDITION_COUNT_TARGET_PAGE_ID = 1L
+    private val TEST_SELECTOR_CONDITION_TARGET_ID_2 = 2L
+    private val TEST_SELECTOR_CONDITION_TARGET_ID_3 = 3L
     @Test
     fun `Given - UseCase, Target - Logic, When - selector first, Then - Success`()  = runTest {
         val logic = useCaseLoadBook.loadLogic(defaultRef)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = 1L)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_COUNT_TARGET_PAGE_ID)
         Truth.assertThat(selectors.size == 2).isTrue()
     }
 
     @Test
-    fun `Given - UseCase, Target - Logic, When - selector condition, Then - Success`()  = runTest {
+    fun `Given - UseCase, Target - Logic, When - selector condition, COUNT+TARGET, Then - Success`()  = runTest {
         val logic = useCaseLoadBook.loadLogic(defaultRef)
-        useCaseBookLogic.incrementActionCount(defaultRef, 2)
-        useCaseBookLogic.incrementActionCount(defaultRef, 2)
-        useCaseBookLogic.incrementActionCount(defaultRef, 3)
-        useCaseBookLogic.incrementActionCount(defaultRef, 3)
-        useCaseBookLogic.incrementActionCount(defaultRef, 3)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = 1L)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_2)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_2)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_3)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_3)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_3)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_COUNT_TARGET_PAGE_ID)
         Truth.assertThat(selectors.size == 3).isTrue()
+    }
+
+    @Test
+    fun `Given - UseCase, Target - Logic, When - selector condition, COUNT+TARGET, Then - Fail (TARGET not)`()  = runTest {
+        val logic = useCaseLoadBook.loadLogic(defaultRef)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_2)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_2)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_3)
+        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_TARGET_ID_3)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_COUNT_TARGET_PAGE_ID)
+        Truth.assertThat(selectors.size == 3).isFalse()
+    }
+
+    /**
+     * Test Route
+     * "pageId": 5,
+     *       "selectors": [
+     *         {
+     *           "selectorId": 1,
+     *           "routes": [
+     *             {  "routeId": 1,  "routeTargetPageId": 6,
+     *                "routeConditions": [  {  "conditionId": 1,
+     *                                         "conditionRule": {  "count": 2, "relationOp": "GREATER_THAN",
+     *                                                             "selfActionId": { "pageId": 5, "selectorId": 1  },
+     *                                                             "type": "COUNT" }  }  ]
+     *             },
+     *             {  "routeId": 2,  "routeTargetPageId": 5  }
+     *       ]
+     */
+    private val TEST_ROUTE_CONDITION_COUNT_PAGE_ID = 5L
+    private val TEST_ROUTE_CONDITION_COUNT_ID_5 = 5L
+
+    private val TEST_ROUTE_TARGET_PAGE_ID_6 = 6L
+    private val TEST_ROUTE_TARGET_PAGE_ID_5 = 5L
+
+    @Test
+    fun `Given - UseCase, Target - Logic, When - route default, Then - Success pageId 5`()  = runTest {
+        val logic = useCaseLoadBook.loadLogic(defaultRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_ROUTE_CONDITION_COUNT_PAGE_ID)
+        val selector = selectors.first { it.selectorId == 1L }
+
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, selector.routes)
+        Truth.assertThat(nextPageId == TEST_ROUTE_TARGET_PAGE_ID_5).isTrue()
+    }
+
+    @Test
+    fun `Given - UseCase, Target - Logic, When - route count condition, Then - Fail pageId 6`()  = runTest {
+        val logic = useCaseLoadBook.loadLogic(defaultRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_ROUTE_CONDITION_COUNT_PAGE_ID)
+        val selector = selectors.first { it.selectorId == 1L }
+
+        useCaseBookLogic.incrementActionCount(defaultRef, pageId = 5L, selectorId = 1L)
+        useCaseBookLogic.incrementActionCount(defaultRef, pageId = 5L, selectorId = 1L)
+
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, selector.routes)
+        Truth.assertThat(nextPageId == TEST_ROUTE_TARGET_PAGE_ID_6).isFalse()
+    }
+
+    @Test
+    fun `Given - UseCase, Target - Logic, When - route count condition, Then - Success pageId 6`()  = runTest {
+        val logic = useCaseLoadBook.loadLogic(defaultRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_ROUTE_CONDITION_COUNT_PAGE_ID)
+        val selector = selectors.first { it.selectorId == 1L }
+
+        useCaseBookLogic.incrementActionCount(defaultRef, pageId = 5L, selectorId = 1L)
+        useCaseBookLogic.incrementActionCount(defaultRef, pageId = 5L, selectorId = 1L)
+        useCaseBookLogic.incrementActionCount(defaultRef, pageId = 5L, selectorId = 1L)
+
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, selector.routes)
+        Truth.assertThat(nextPageId == TEST_ROUTE_TARGET_PAGE_ID_6).isTrue()
     }
 }
