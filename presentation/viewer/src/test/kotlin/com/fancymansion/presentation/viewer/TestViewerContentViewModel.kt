@@ -14,9 +14,13 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.PageLineHeight
+import com.fancymansion.core.common.const.PageMarginHorizontal
+import com.fancymansion.core.common.const.PageTextSize
 import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.SelectorPaddingVertical
 import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -35,6 +39,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import dagger.hilt.android.testing.UninstallModules
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -85,7 +90,8 @@ class TestViewerContentViewModel {
         episodeId = "test_book_id_0"
     )
 
-    private fun ComposeTestRule.waitForLoadingEnd() {
+    private suspend fun ComposeTestRule.waitForLoadingEnd() {
+        delay(200L)
         this.waitUntil {
             this.onAllNodesWithTag(LoadState.Loading::class.java.simpleName)
                 .fetchSemanticsNodes().isEmpty()
@@ -228,119 +234,125 @@ class TestViewerContentViewModel {
     fun `Target - Event, When - SettingContentTextSize, Then - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.textSize
+        val incValue = PageTextSize.values[PageTextSize.values.indexOf(origin) + 1]
 
         // Call Event Increment
         testEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextSize)
         composeRule.waitForLoadingEnd()
 
-        val incValue = viewModel.uiState.value.pageSetting.pageContentSetting.textSize
-        Truth.assertThat(incValue).isNotEqualTo(origin)
+        var currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.textSize
+        Truth.assertThat(currentValue).isEqualTo(incValue)
 
         // Call Event Decrement
         testEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentTextSize)
         composeRule.waitForLoadingEnd()
 
-        val decValue = viewModel.uiState.value.pageSetting.pageContentSetting.textSize
-        Truth.assertThat(decValue).isEqualTo(origin)
+        currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.textSize
+        Truth.assertThat(currentValue).isEqualTo(origin)
     }
 
     @Test
     fun `Target - Event, When - SettingContentLineHeight, Then - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.lineHeight
+        val incValue = PageLineHeight.values[PageLineHeight.values.indexOf(origin) + 1]
 
         // Call Event Increment
         testEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentLineHeight)
         composeRule.waitForLoadingEnd()
 
-        val incValue = viewModel.uiState.value.pageSetting.pageContentSetting.lineHeight
-        Truth.assertThat(incValue).isNotEqualTo(origin)
+        var currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.lineHeight
+        Truth.assertThat(currentValue).isEqualTo(incValue)
 
         // Call Event Decrement
         testEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentLineHeight)
         composeRule.waitForLoadingEnd()
 
-        val decValue = viewModel.uiState.value.pageSetting.pageContentSetting.lineHeight
-        Truth.assertThat(decValue).isEqualTo(origin)
+        currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.lineHeight
+        Truth.assertThat(currentValue).isEqualTo(origin)
     }
 
     @Test
     fun `Target - Event, When - SettingContentTextMarginHorizontal, Then - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.textMarginHorizontal
+        val incValue = PageMarginHorizontal.values[PageMarginHorizontal.values.indexOf(origin) + 1]
 
         // Call Event Increment
         testEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentTextMarginHorizontal)
         composeRule.waitForLoadingEnd()
 
-        val incValue = viewModel.uiState.value.pageSetting.pageContentSetting.textMarginHorizontal
-        Truth.assertThat(incValue).isNotEqualTo(origin)
+        var currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.textMarginHorizontal
+        Truth.assertThat(currentValue).isEqualTo(incValue)
 
         // Call Event Decrement
         testEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentTextMarginHorizontal)
         composeRule.waitForLoadingEnd()
 
-        val decValue = viewModel.uiState.value.pageSetting.pageContentSetting.textMarginHorizontal
-        Truth.assertThat(decValue).isEqualTo(origin)
+        currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.textMarginHorizontal
+        Truth.assertThat(currentValue).isEqualTo(origin)
     }
 
     @Test
     fun `Target - Event, When - SettingContentImageMarginHorizontal, Then - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.imageMarginHorizontal
+        val incValue = PageMarginHorizontal.values[PageMarginHorizontal.values.indexOf(origin) + 1]
 
         // Call Event Increment
         testEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingContentImageMarginHorizontal)
         composeRule.waitForLoadingEnd()
 
-        val incValue = viewModel.uiState.value.pageSetting.pageContentSetting.imageMarginHorizontal
-        Truth.assertThat(incValue).isNotEqualTo(origin)
+        var currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.imageMarginHorizontal
+        Truth.assertThat(currentValue).isEqualTo(incValue)
 
         // Call Event Decrement
         testEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingContentImageMarginHorizontal)
         composeRule.waitForLoadingEnd()
 
-        val decValue = viewModel.uiState.value.pageSetting.pageContentSetting.imageMarginHorizontal
-        Truth.assertThat(decValue).isEqualTo(origin)
+        currentValue = viewModel.uiState.value.pageSetting.pageContentSetting.imageMarginHorizontal
+        Truth.assertThat(currentValue).isEqualTo(origin)
     }
 
     @Test
     fun `Target - Event, When - SettingSelectorTextSize, Then - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.selectorSetting.textSize
+        val incValue = PageTextSize.values[PageTextSize.values.indexOf(origin) + 1]
 
         // Call Event Increment
         testEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorTextSize)
         composeRule.waitForLoadingEnd()
 
-        val incValue = viewModel.uiState.value.pageSetting.selectorSetting.textSize
-        Truth.assertThat(incValue).isNotEqualTo(origin)
+        var currentValue = viewModel.uiState.value.pageSetting.selectorSetting.textSize
+        Truth.assertThat(currentValue).isEqualTo(incValue)
 
         // Call Event Decrement
         testEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingSelectorTextSize)
         composeRule.waitForLoadingEnd()
 
-        val decValue = viewModel.uiState.value.pageSetting.selectorSetting.textSize
-        Truth.assertThat(decValue).isEqualTo(origin)
+        currentValue = viewModel.uiState.value.pageSetting.selectorSetting.textSize
+        Truth.assertThat(currentValue).isEqualTo(origin)
     }
 
     @Test
     fun `Target - Event, When - SettingSelectorPaddingVertical, Then - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.selectorSetting.paddingVertical
+        val incValue = SelectorPaddingVertical.values[SelectorPaddingVertical.values.indexOf(origin) + 1]
 
         // Call Event Increment
         testEventSent(ViewerContentContract.Event.SettingEvent.IncrementSettingSelectorPaddingVertical)
         composeRule.waitForLoadingEnd()
 
-        val incValue = viewModel.uiState.value.pageSetting.selectorSetting.paddingVertical
-        Truth.assertThat(incValue).isNotEqualTo(origin)
+        var currentValue = viewModel.uiState.value.pageSetting.selectorSetting.paddingVertical
+        Truth.assertThat(currentValue).isEqualTo(incValue)
 
         // Call Event Decrement
         testEventSent(ViewerContentContract.Event.SettingEvent.DecrementSettingSelectorPaddingVertical)
         composeRule.waitForLoadingEnd()
 
-        val decValue = viewModel.uiState.value.pageSetting.selectorSetting.paddingVertical
-        Truth.assertThat(decValue).isEqualTo(origin)
+        currentValue = viewModel.uiState.value.pageSetting.selectorSetting.paddingVertical
+        Truth.assertThat(currentValue).isEqualTo(origin)
     }
 }
