@@ -1,6 +1,7 @@
 package com.fancymansion.presentation.bookOverview.home.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -16,6 +17,11 @@ fun OverviewHomeScreenContent(
     onEventSent: (event: OverviewHomeContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize().background(color = Color.Yellow))
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(color = Color.Yellow)
+        .clickable {
+            onEventSent(OverviewHomeContract.Event.ReadBookButtonClicked)
+        })
 
 }

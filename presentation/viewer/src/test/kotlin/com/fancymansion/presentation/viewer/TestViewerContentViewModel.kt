@@ -111,8 +111,7 @@ class TestViewerContentViewModel {
                     saveStatedHandle,
                     useCasePageSetting,
                     useCaseLoadBook,
-                    useCaseBookLogic,
-                    useCaseMakeBook
+                    useCaseBookLogic
                 ) as T
             }
         }

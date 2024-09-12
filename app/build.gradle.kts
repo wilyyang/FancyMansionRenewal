@@ -80,4 +80,5 @@ dependencies {
     implementation(project(":core:presentation"))
     implementation(project(":domain:usecase"))
     implementation(project(":presentation:viewer"))
+    implementation(project(":presentation:bookOverview"))
 }

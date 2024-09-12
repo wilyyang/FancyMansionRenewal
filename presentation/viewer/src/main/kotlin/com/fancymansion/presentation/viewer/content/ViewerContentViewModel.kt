@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_TITLE
+import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -29,15 +30,14 @@ class ViewerContentViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCasePageSetting: UseCasePageSetting,
     private val useCaseLoadBook: UseCaseLoadBook,
-    private val useCaseBookLogic: UseCaseBookLogic,
-    private val useCaseMakeBook: UseCaseMakeBook
+    private val useCaseBookLogic: UseCaseBookLogic
 ) : BaseViewModel<ViewerContentContract.State, ViewerContentContract.Event, ViewerContentContract.Effect>() {
     private var episodeRef : EpisodeRef = savedStateHandle.run {
         EpisodeRef(
-            get<String>(NAME_USER_ID)?.ifBlank { testEpisodeRef.userId } ?: testEpisodeRef.userId,
-            testEpisodeRef.mode, //get<ReadMode>(NAME_READ_MODE)
-            get<String>(NAME_BOOK_ID)?.ifBlank { testEpisodeRef.bookId } ?: testEpisodeRef.bookId,
-            get<String>(NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId } ?: testEpisodeRef.episodeId
+            get<String>(NAME_USER_ID)!!,
+            get<ReadMode>(NAME_READ_MODE)!!,
+            get<String>(NAME_BOOK_ID)!!,
+            get<String>(NAME_EPISODE_ID)!!
         )
     }
     private lateinit var logic : LogicModel
@@ -173,8 +173,8 @@ class ViewerContentViewModel @Inject constructor(
 
         launchWithLoading(endLoadState = null) {
 
-            val bookTitle = savedStateHandle.get<String>(NAME_BOOK_TITLE)?.ifBlank { testBookTitle } ?: testBookTitle
-            val episodeTitle = savedStateHandle.get<String>(NAME_EPISODE_TITLE)?.ifBlank { testEpisodeTitle } ?: testEpisodeTitle
+            val bookTitle = savedStateHandle.get<String>(NAME_BOOK_TITLE)!!
+            val episodeTitle = savedStateHandle.get<String>(NAME_EPISODE_TITLE)!!
             setState {
                 copy(
                     bookTitle = bookTitle,
@@ -182,7 +182,6 @@ class ViewerContentViewModel @Inject constructor(
                 )
             }
 
-            useCaseMakeBook.makeSampleEpisode()
             logic = useCaseLoadBook.loadLogic(episodeRef)
 
             when(episodeRef.mode){

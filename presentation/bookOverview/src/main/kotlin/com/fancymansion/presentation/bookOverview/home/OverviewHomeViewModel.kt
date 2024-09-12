@@ -3,7 +3,9 @@ package com.fancymansion.presentation.bookOverview.home
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.testBookTitle
 import com.fancymansion.core.common.const.testEpisodeRef
+import com.fancymansion.core.common.const.testEpisodeTitle
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -27,10 +29,31 @@ class OverviewHomeViewModel @Inject constructor(
 
     override fun setInitialState() = OverviewHomeContract.State()
 
-    override fun handleEvents(event: OverviewHomeContract.Event) { }
+    override fun handleEvents(event: OverviewHomeContract.Event) {
+        when (event) {
+            OverviewHomeContract.Event.ReadBookButtonClicked -> {
+                setEffect {
+                    OverviewHomeContract.Effect.Navigation.NavigateViewerContentScreen(
+                        episodeRef = episodeRef,
+                        bookTitle = testBookTitle,
+                        episodeTitle = testEpisodeTitle
+                    )
+                }
+            }
+
+            OverviewHomeContract.Event.ReviewMoreButtonClicked -> {
+                setEffect {
+                    OverviewHomeContract.Effect.Navigation.NavigateReviewListScreen(
+                        userId = episodeRef.userId,
+                        bookId = episodeRef.bookId
+                    )
+                }
+            }
+        }
+    }
 
     init {
-        launchWithLoading(endLoadState = null) {
+        launchWithLoading {
             useCaseMakeBook.makeSampleEpisode()
         }
     }
