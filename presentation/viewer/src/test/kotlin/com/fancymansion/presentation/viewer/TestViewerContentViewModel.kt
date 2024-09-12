@@ -91,7 +91,7 @@ class TestViewerContentViewModel {
     )
 
     private suspend fun ComposeTestRule.waitForLoadingEnd() {
-        delay(200L)
+        delay(300L)
         this.waitUntil {
             this.onAllNodesWithTag(LoadState.Loading::class.java.simpleName)
                 .fetchSemanticsNodes().isEmpty()
