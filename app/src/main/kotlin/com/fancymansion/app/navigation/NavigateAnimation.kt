@@ -39,13 +39,13 @@ val slideUpEnter: EnterLambda = {
     slideIntoContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Up,
         animationSpec = tween(ANIM_DURATION_VERTICAL_ENTER)
-    ) + scaleIn(initialScale = SCALE)
+    )
 }
 val slideDownExit: ExitLambda = {
     slideOutOfContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Down,
         animationSpec = tween(ANIM_DURATION_EXIT),
-    ) + scaleOut(targetScale = SCALE)
+    )
 }
 
 /**
