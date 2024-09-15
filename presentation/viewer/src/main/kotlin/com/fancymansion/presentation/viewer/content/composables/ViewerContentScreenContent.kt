@@ -22,8 +22,8 @@ import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
-import com.fancymansion.presentation.viewer.content.composables.layer.ViewerContentScreenPageContent
-import com.fancymansion.presentation.viewer.content.composables.layer.ViewerContentSettingPanel
+import com.fancymansion.presentation.viewer.content.composables.panel.ViewerContentScreenPageContent
+import com.fancymansion.presentation.viewer.content.composables.panel.ViewerContentSettingPanel
 
 enum class ViewerPanelState {
     Content,

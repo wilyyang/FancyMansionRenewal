@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.viewer.content.composables.layer
+package com.fancymansion.presentation.viewer.content.composables.panel
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically

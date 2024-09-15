@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.viewer.content.composables.layer
+package com.fancymansion.presentation.viewer.content.composables.panel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
