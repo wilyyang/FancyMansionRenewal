@@ -55,6 +55,12 @@ class OverviewHomeViewModel @Inject constructor(
     init {
         launchWithLoading {
             useCaseMakeBook.makeSampleEpisode()
+            val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
+            setState {
+                copy(
+                    bookInfo = bookInfo
+                )
+            }
         }
     }
 }

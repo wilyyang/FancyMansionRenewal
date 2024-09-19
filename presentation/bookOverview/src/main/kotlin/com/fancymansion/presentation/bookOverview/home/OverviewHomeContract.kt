@@ -4,6 +4,7 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
+import com.fancymansion.domain.model.book.BookInfoModel
 
 class OverviewHomeContract {
     companion object {
@@ -11,7 +12,7 @@ class OverviewHomeContract {
     }
 
     data class State(
-        val data: String = ""
+        val bookInfo : BookInfoModel? = null
     ) : ViewState
 
     sealed class Event : ViewEvent {
