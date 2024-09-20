@@ -26,8 +26,8 @@ import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewContentScreenDetailPanel
-import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewContentScreenHome
+import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewScreenDetailPanel
+import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewScreenHomePanel
 
 enum class OverviewPanelState {
     Home,
@@ -64,7 +64,7 @@ fun OverviewHomeScreenContent(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 // 홈 화면
-                OverviewContentScreenHome(
+                OverviewScreenHomePanel(
                     modifier = Modifier.align(Alignment.TopCenter),
                     bookInfo = uiState.bookInfo,
                     showDetailPanel = {
@@ -96,7 +96,7 @@ fun OverviewHomeScreenContent(
                     enter = slideInVertically { it },
                     exit = slideOutVertically { it },
                 ) {
-                    OverviewContentScreenDetailPanel(
+                    OverviewScreenDetailPanel(
                         modifier = Modifier.align(Alignment.BottomStart),
                         bookInfo = uiState.bookInfo,
                         onEventSent = onEventSent

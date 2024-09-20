@@ -18,7 +18,7 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 
 @Composable
-fun OverviewContentScreenDetailPanel(
+fun OverviewScreenDetailPanel(
     modifier: Modifier,
     bookInfo : BookInfoModel,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
