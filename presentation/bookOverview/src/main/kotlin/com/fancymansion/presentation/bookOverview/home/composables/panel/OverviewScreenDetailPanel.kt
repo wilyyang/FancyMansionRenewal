@@ -1,5 +1,8 @@
 package com.fancymansion.presentation.bookOverview.home.composables.panel
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -21,10 +24,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.common.log.Logger
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun OverviewScreenDetailPanel(
@@ -38,13 +39,19 @@ fun OverviewScreenDetailPanel(
 
     val listState = rememberLazyListState()
     var baseHeight by remember { mutableFloatStateOf(screenHeightDp * 0.7f) }
-    var panelHeightState by remember { mutableFloatStateOf(baseHeight) }
-    val panelHeightFlow = remember { MutableStateFlow(panelHeightState) }
 
-    LaunchedEffect(key1 = panelHeightState) {
-        panelHeightFlow.emit(panelHeightState)
+    var targetHeightDp by remember { mutableFloatStateOf(baseHeight) }
+    var isDragging by remember { mutableStateOf(false) }
+
+    val panelHeight = remember { Animatable(baseHeight) } // Animatable 사용
+
+    LaunchedEffect(key1 = targetHeightDp) { // targetHeightDp 변경 시 애니메이션 실행
+        if (!isDragging) {
+            panelHeight.animateTo(targetHeightDp, animationSpec = tween(durationMillis = 300))
+        }
     }
-    val panelHeightDp by panelHeightFlow.collectAsState()
+
+    val panelHeightDp = if (isDragging) targetHeightDp else panelHeight.value
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -69,17 +76,20 @@ fun OverviewScreenDetailPanel(
                                 .fillMaxWidth()
                                 .pointerInput(Unit) {
                                     detectVerticalDragGestures(
-                                        onDragStart = { },
+                                        onDragStart = { isDragging = true  },
                                         onDragEnd = {
-                                            if(panelHeightDp <= baseHeight){
+                                            isDragging = false
+
+                                            // panelHeight.snapTo(targetHeightDp)
+                                            if(targetHeightDp <= baseHeight){
                                                 onHideDetailPanel()
                                             }else{
-                                                panelHeightState = screenHeightDp.toFloat()
+                                                targetHeightDp = screenHeightDp.toFloat()
                                                 baseHeight = screenHeightDp.toFloat()
                                             }
                                         },
                                         onVerticalDrag = { change, dragAmountPx ->
-                                            panelHeightState -= (dragAmountPx / density)
+                                            targetHeightDp -= (dragAmountPx / density)
                                             change.consume()
                                         }
                                     )
