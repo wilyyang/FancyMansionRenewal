@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
+import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
 
 enum class DetailPanelState(private val ratio: Float) {
     COLLAPSED(0.7f),
@@ -42,6 +43,7 @@ enum class DetailPanelState(private val ratio: Float) {
 @Composable
 fun OverviewScreenDetailPanel(
     modifier: Modifier,
+    key: Any,
     bookInfo: BookInfoModel,
     onHideDetailPanel: () -> Unit,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
@@ -62,6 +64,14 @@ fun OverviewScreenDetailPanel(
 
     // Panel 적용 높이
     val panelHeightDp = if (isSnapToCurrentHeight) dragEndAnimateHeightDp.value else dragHeightDp
+
+    LaunchedEffect(key) {
+        when (key) {
+            OverviewPanelState.Detail.ordinal -> {
+                dragHeightDp = panelState.getBaseScreen(screenHeightDp)
+            }
+        }
+    }
 
     LaunchedEffect(key1 = dragEndEffect) {
         if (dragEndEffect) {

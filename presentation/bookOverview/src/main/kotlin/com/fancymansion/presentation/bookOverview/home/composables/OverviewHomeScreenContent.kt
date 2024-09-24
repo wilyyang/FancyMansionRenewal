@@ -98,6 +98,7 @@ fun OverviewHomeScreenContent(
                 ) {
                     OverviewScreenDetailPanel(
                         modifier = Modifier.align(Alignment.BottomStart),
+                        key = panelState.ordinal,
                         bookInfo = uiState.bookInfo,
                         onHideDetailPanel = { panelState = OverviewPanelState.Home },
                         onEventSent = onEventSent
