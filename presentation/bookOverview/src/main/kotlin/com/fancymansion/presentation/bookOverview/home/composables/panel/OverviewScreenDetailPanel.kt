@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,17 +66,39 @@ fun OverviewScreenDetailPanel(
     // Panel 적용 높이
     val panelHeightDp = if (isSnapToCurrentHeight) dragEndAnimateHeightDp.value else dragHeightDp
 
+    // 초기화 코드
     LaunchedEffect(key) {
         when (key) {
             OverviewPanelState.Detail.ordinal -> {
+                panelState = DetailPanelState.COLLAPSED
                 dragHeightDp = panelState.getBaseScreen(screenHeightDp)
+                dragEndEffect = false
             }
+        }
+    }
+
+    // Scroll 이펙트 영역
+    var previousIndex by remember { mutableIntStateOf(listState.firstVisibleItemIndex) }
+    var previousOffset by remember { mutableIntStateOf(listState.firstVisibleItemScrollOffset) }
+    var isScrollingUp by remember { mutableStateOf(false) }
+
+    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
+        val currentIndex = listState.firstVisibleItemIndex
+        val currentOffset = listState.firstVisibleItemScrollOffset
+        isScrollingUp = currentIndex > previousIndex || (currentIndex == previousIndex && currentOffset > previousOffset)
+        previousIndex = currentIndex
+        previousOffset = currentOffset
+    }
+
+    LaunchedEffect(key1 = isScrollingUp) {
+        if (isScrollingUp) {
+            dragEndEffect = true
         }
     }
 
     LaunchedEffect(key1 = dragEndEffect) {
         if (dragEndEffect) {
-            if (dragHeightDp <= panelState.getBaseScreen(screenHeightDp)) {
+            if (dragHeightDp < panelState.getBaseScreen(screenHeightDp)) {
                 onHideDetailPanel()
             } else {
                 // 현재 높이로 Snap
