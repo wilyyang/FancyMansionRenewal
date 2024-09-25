@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -32,7 +33,7 @@ fun OverviewScreenDetailTabPager(
 
     // 초기화 코드
     LaunchedEffect(key) {
-        if(pagerState.currentPage == 1){
+        if(key == OverviewPanelState.Detail.ordinal && pagerState.currentPage == 1){
             pagerState.animateScrollToPage(0)
         }
     }
