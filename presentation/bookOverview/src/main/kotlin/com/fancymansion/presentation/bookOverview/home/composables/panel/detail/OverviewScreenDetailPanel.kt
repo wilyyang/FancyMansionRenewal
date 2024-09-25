@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home.composables.panel
+package com.fancymansion.presentation.bookOverview.home.composables.panel.detail
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -6,14 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +32,7 @@ import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanel
 
 enum class DetailPanelState(private val ratio: Float) {
     COLLAPSED(0.7f),
-    EXPANDED(1.0f);
+    EXPANDED(0.95f);
 
     fun getBaseScreen(screenHeight:Int) = screenHeight * ratio
 }
@@ -107,71 +103,46 @@ fun OverviewScreenDetailPanel(
 
                 // 최대 높이로 슬라이드
                 dragEndAnimateHeightDp.animateTo(
-                    targetValue = screenHeightDp.toFloat(),
+                    targetValue = DetailPanelState.EXPANDED.getBaseScreen(screenHeightDp),
                     animationSpec = tween(durationMillis = 300)
                 )
 
                 // 값 조정
                 panelState = DetailPanelState.EXPANDED
-                dragHeightDp = screenHeightDp.toFloat()
+                dragHeightDp = panelState.getBaseScreen(screenHeightDp)
             }
             dragEndEffect = false
         }
     }
 
-
     Box(modifier = Modifier.fillMaxSize()) {
 
-        Box(
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .height(panelHeightDp.dp)
                 .background(Color.LightGray)
         ) {
-            LazyColumn(
-                modifier = modifier
+            Text(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(color = Color.LightGray),
-                state = listState
-            ) {
-                item {
-                    Column {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .pointerInput(Unit) {
-                                    detectVerticalDragGestures(
-                                        onDragStart = { isSnapToCurrentHeight = false },
-                                        onDragEnd = {
-                                            dragEndEffect = true
-                                        },
-                                        onVerticalDrag = { change, dragAmountPx ->
-                                            dragHeightDp -= (dragAmountPx / density)
-                                            change.consume()
-                                        }
-                                    )
-                                },
-                            text = bookInfo.id
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures(
+                            onDragStart = { isSnapToCurrentHeight = false },
+                            onDragEnd = {
+                                dragEndEffect = true
+                            },
+                            onVerticalDrag = { change, dragAmountPx ->
+                                dragHeightDp -= (dragAmountPx / density)
+                                change.consume()
+                            }
                         )
-                        Text(
-                            text = bookInfo.editor.editorName
-                        )
+                    },
+                text = bookInfo.id
+            )
 
-                        Text(
-                            text = bookInfo.introduce.description
-                        )
-
-                        Spacer(modifier = Modifier.height(30.dp))
-
-                        Text(
-                            text = bookInfo.introduce.description,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            }
+            OverviewScreenDetailTabPager(bookInfo = bookInfo, key = key, listState = listState)
         }
     }
 }

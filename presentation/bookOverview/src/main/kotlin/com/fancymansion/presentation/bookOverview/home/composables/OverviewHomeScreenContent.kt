@@ -26,7 +26,7 @@ import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewScreenDetailPanel
+import com.fancymansion.presentation.bookOverview.home.composables.panel.detail.OverviewScreenDetailPanel
 import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewScreenHomePanel
 
 enum class OverviewPanelState {
