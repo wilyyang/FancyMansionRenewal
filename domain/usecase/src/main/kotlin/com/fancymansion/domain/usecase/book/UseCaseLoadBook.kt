@@ -34,4 +34,9 @@ class UseCaseLoadBook @Inject constructor(
         withContext(dispatcher) {
             bookLocalRepository.loadPageImage(episodeRef, imageName)
         }
+
+    suspend fun loadCoverImage(episodeRef: EpisodeRef, imageName: String): File =
+        withContext(dispatcher) {
+            bookLocalRepository.loadCoverImage(episodeRef.userId, episodeRef.mode, episodeRef.bookId, imageName)
+        }
 }

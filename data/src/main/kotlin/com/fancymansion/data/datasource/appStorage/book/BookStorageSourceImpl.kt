@@ -185,6 +185,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         )
 
         // make sample image
+        makeCoverImageFromResource(episodeRef.userId, episodeRef.mode, episodeRef.bookId, "test_book_id_cover_1.png", R.drawable.test_book_id_cover_1)
         SAMPLE_IMAGE_LIST.forEach {
             makePageImageFromResource(episodeRef, it.first, it.second)
         }

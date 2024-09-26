@@ -5,6 +5,7 @@ import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
+import java.io.File
 
 class OverviewHomeContract {
     companion object {
@@ -12,7 +13,8 @@ class OverviewHomeContract {
     }
 
     data class State(
-        val bookInfo : BookInfoModel? = null
+        val bookInfo : BookInfoModel? = null,
+        val coverImageFile : File? = null
     ) : ViewState
 
     sealed class Event : ViewEvent {

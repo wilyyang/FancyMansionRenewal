@@ -23,16 +23,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.presentation.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
+import java.io.File
 
 @Composable
 fun OverviewHomeTopBar(
@@ -56,7 +60,7 @@ fun OverviewHomeTopBar(
         ) {
             Icon(
                 modifier = Modifier.fillMaxHeight(),
-                painter = painterResource(id = R.drawable.ic_back),
+                painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_back),
                 tint = contentColor,
                 contentDescription = "Back"
             )
@@ -75,15 +79,15 @@ fun OverviewHomeTopBar(
 fun OverviewScreenHomePanel(
     modifier: Modifier,
     bookInfo: BookInfoModel,
+    bookCoverHeightDp : Float,
+    coverImageFile: File?,
     showDetailPanel: () -> Unit,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
 ) {
     val density = LocalDensity.current
     val colorScheme = MaterialTheme.colorScheme
-    val screenHeight = LocalConfiguration.current.screenHeightDp
 
     val topBarPx = remember { topBarDpMobile.value * density.density }
-    val bookCoverHeightDp = remember { screenHeight * 0.3f }
     val bookCoverHeightPx = remember { bookCoverHeightDp * density.density }
     val topBarShowStartPx = remember { bookCoverHeightPx - topBarPx }
 
@@ -127,12 +131,22 @@ fun OverviewScreenHomePanel(
             state = listState
         ) {
             item {
-                Box(
+                Column (
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(bookCoverHeightDp.dp)
-                        .background(color = Color.Green)
-                )
+                        .background(color = MaterialTheme.colorScheme.surface)){
+
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(coverImageFile)
+                            .fallback(R.drawable.img_not_found_file)
+                            .build(),
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
             item {
                 Column(

@@ -30,11 +30,9 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
 
-enum class DetailPanelState(private val ratio: Float) {
-    COLLAPSED(0.7f),
-    EXPANDED(0.95f);
-
-    fun getBaseScreen(screenHeight:Int) = screenHeight * ratio
+enum class DetailPanelState {
+    COLLAPSED,
+    EXPANDED
 }
 
 @Composable
@@ -42,20 +40,26 @@ fun OverviewScreenDetailPanel(
     modifier: Modifier,
     key: Any,
     bookInfo: BookInfoModel,
+    collapsedHeightDp: Float,
     onHideDetailPanel: () -> Unit,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
 ) {
     val density = LocalDensity.current.density
     val screenHeightDp = LocalConfiguration.current.screenHeightDp
 
+    fun DetailPanelState.getPanelHeight() : Float = when(this){
+        DetailPanelState.COLLAPSED -> collapsedHeightDp
+        DetailPanelState.EXPANDED -> screenHeightDp * 0.95f
+    }
+
     val listState = rememberLazyListState()
     var panelState by remember { mutableStateOf(DetailPanelState.COLLAPSED) }
 
     // Drag 시 적용 높이
-    var dragHeightDp by remember { mutableFloatStateOf(panelState.getBaseScreen(screenHeightDp)) }
+    var dragHeightDp by remember { mutableFloatStateOf(panelState.getPanelHeight()) }
 
     // Drag 종료 시 적용 높이
-    val dragEndAnimateHeightDp = remember { Animatable(panelState.getBaseScreen(screenHeightDp)) }
+    val dragEndAnimateHeightDp = remember { Animatable(panelState.getPanelHeight()) }
     var dragEndEffect by remember { mutableStateOf(false) }
     var isSnapToCurrentHeight by remember { mutableStateOf(false) }
 
@@ -67,7 +71,7 @@ fun OverviewScreenDetailPanel(
         when (key) {
             OverviewPanelState.Detail.ordinal -> {
                 panelState = DetailPanelState.COLLAPSED
-                dragHeightDp = panelState.getBaseScreen(screenHeightDp)
+                dragHeightDp = panelState.getPanelHeight()
                 dragEndEffect = false
             }
         }
@@ -94,7 +98,7 @@ fun OverviewScreenDetailPanel(
 
     LaunchedEffect(key1 = dragEndEffect) {
         if (dragEndEffect) {
-            if (dragHeightDp < panelState.getBaseScreen(screenHeightDp)) {
+            if (dragHeightDp < panelState.getPanelHeight()) {
                 onHideDetailPanel()
             } else {
                 // 현재 높이로 Snap
@@ -103,13 +107,13 @@ fun OverviewScreenDetailPanel(
 
                 // 최대 높이로 슬라이드
                 dragEndAnimateHeightDp.animateTo(
-                    targetValue = DetailPanelState.EXPANDED.getBaseScreen(screenHeightDp),
+                    targetValue = DetailPanelState.EXPANDED.getPanelHeight(),
                     animationSpec = tween(durationMillis = 300)
                 )
 
                 // 값 조정
                 panelState = DetailPanelState.EXPANDED
-                dragHeightDp = panelState.getBaseScreen(screenHeightDp)
+                dragHeightDp = panelState.getPanelHeight()
             }
             dragEndEffect = false
         }

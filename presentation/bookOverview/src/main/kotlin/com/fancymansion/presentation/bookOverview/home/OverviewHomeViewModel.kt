@@ -56,9 +56,14 @@ class OverviewHomeViewModel @Inject constructor(
         launchWithLoading {
             useCaseMakeBook.makeSampleEpisode()
             val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
+            val coverImageFile = if(bookInfo.introduce.coverList.isNotEmpty()){
+                useCaseLoadBook.loadCoverImage(episodeRef, bookInfo.introduce.coverList[0])
+            }else null
+
             setState {
                 copy(
-                    bookInfo = bookInfo
+                    bookInfo = bookInfo,
+                    coverImageFile = coverImageFile
                 )
             }
         }
