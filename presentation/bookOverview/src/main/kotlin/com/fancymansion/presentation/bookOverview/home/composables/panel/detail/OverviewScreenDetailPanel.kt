@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
+import com.fancymansion.presentation.bookOverview.home.composables.detailPanelShape
 
 enum class DetailPanelState {
     COLLAPSED,
@@ -126,6 +128,7 @@ fun OverviewScreenDetailPanel(
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .height(panelHeightDp.dp)
+                .clip(detailPanelShape)
                 .background(Color.LightGray)
         ) {
             Text(

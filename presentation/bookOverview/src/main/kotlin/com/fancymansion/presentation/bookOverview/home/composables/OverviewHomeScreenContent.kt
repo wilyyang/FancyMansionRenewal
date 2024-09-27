@@ -19,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -39,6 +38,8 @@ enum class OverviewPanelState {
 fun OverviewHomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: OverviewHomeContract.State,
+    bookCoverHeightDp : Float,
+    bookInfoContentHeightDp: Float,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -62,10 +63,6 @@ fun OverviewHomeScreenContent(
             }
         } else {
             var panelState by remember { mutableStateOf(OverviewPanelState.Home) }
-            val screenWidth = LocalConfiguration.current.screenWidthDp
-            val screenHeight = LocalConfiguration.current.screenHeightDp
-            val bookCoverHeightDp = remember { screenWidth * 0.72f }
-            val bookInfoContentHeightDp = remember { screenHeight - bookCoverHeightDp }
 
             Box(modifier = Modifier.fillMaxSize()) {
                 // 홈 화면
@@ -73,6 +70,7 @@ fun OverviewHomeScreenContent(
                     modifier = Modifier.align(Alignment.TopCenter),
                     bookInfo = uiState.bookInfo,
                     bookCoverHeightDp = bookCoverHeightDp,
+                    bookInfoContentHeightDp = bookInfoContentHeightDp,
                     coverImageFile = uiState.coverImageFile,
                     showDetailPanel = {
                         panelState = OverviewPanelState.Detail

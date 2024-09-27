@@ -26,6 +26,12 @@ fun View.ChangeStatusBarColor(
                 it.statusBarColor = color.toArgb()
                 WindowCompat.getInsetsController(it, this)
                     .isAppearanceLightStatusBars = isStatusBarTextDark
+
+                if (color == Color.Transparent) {
+                    WindowCompat.setDecorFitsSystemWindows(it, false)
+                } else {
+                    WindowCompat.setDecorFitsSystemWindows(it, true)
+                }
             }
         }
     }

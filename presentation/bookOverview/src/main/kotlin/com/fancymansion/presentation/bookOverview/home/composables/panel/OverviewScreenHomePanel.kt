@@ -5,11 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -40,15 +42,15 @@ import java.io.File
 
 @Composable
 fun OverviewHomeTopBar(
+    modifier: Modifier,
     bookInfo: BookInfoModel,
     surfaceColor: Color,
     titleColor: Color,
     contentColor: Color
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(topBarDpMobile)
             .background(surfaceColor).clickSingle {  }
     ) {
         Row(
@@ -80,6 +82,7 @@ fun OverviewScreenHomePanel(
     modifier: Modifier,
     bookInfo: BookInfoModel,
     bookCoverHeightDp : Float,
+    bookInfoContentHeightDp : Float,
     coverImageFile: File?,
     showDetailPanel: () -> Unit,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
@@ -87,8 +90,9 @@ fun OverviewScreenHomePanel(
     val density = LocalDensity.current
     val colorScheme = MaterialTheme.colorScheme
 
-    val topBarPx = remember { topBarDpMobile.value * density.density }
-    val bookCoverHeightPx = remember { bookCoverHeightDp * density.density }
+    val statusBarDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this) }
+    val topBarPx = remember { (topBarDpMobile.value + statusBarDp) * density.density }
+    val bookCoverHeightPx = remember { (bookCoverHeightDp + statusBarDp) * density.density }
     val topBarShowStartPx = remember { bookCoverHeightPx - topBarPx }
 
     val listState = rememberLazyListState()
@@ -168,7 +172,10 @@ fun OverviewScreenHomePanel(
             }
         }
 
+        val statusBarPadding = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
+
         OverviewHomeTopBar(
+            modifier = Modifier.height(topBarDpMobile + statusBarPadding).padding(top = statusBarPadding),
             bookInfo = bookInfo,
             surfaceColor = topBarSurfaceColor,
             titleColor = topBarTitleColor,
