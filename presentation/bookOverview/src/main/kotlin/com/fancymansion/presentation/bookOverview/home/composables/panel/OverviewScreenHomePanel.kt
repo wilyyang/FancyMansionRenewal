@@ -2,16 +2,16 @@ package com.fancymansion.presentation.bookOverview.home.composables.panel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
@@ -35,23 +36,32 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
+import com.fancymansion.presentation.bookOverview.home.composables.detailPanelCornerHeight
+import com.fancymansion.presentation.bookOverview.home.composables.detailPanelShape
 import java.io.File
 
 @Composable
 fun OverviewHomeTopBar(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    statusBarPaddingDp : Float,
     bookInfo: BookInfoModel,
     surfaceColor: Color,
     titleColor: Color,
-    contentColor: Color
+    contentColor: Color,
+    onClickBack: () -> Unit
 ) {
+    val backInteractionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(surfaceColor).clickSingle {  }
+            .height(topBarDpMobile + statusBarPaddingDp.dp)
+            .background(surfaceColor)
+            .padding(top = statusBarPaddingDp.dp)
+            .clickSingle { }
     ) {
         Row(
             modifier = Modifier
@@ -61,7 +71,16 @@ fun OverviewHomeTopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clickSingle(
+                        onClick = onClickBack,
+                        interactionSource = backInteractionSource
+                    )
+                    .scaleOnPress(
+                        interactionSource = backInteractionSource,
+                        pressScale = 0.9f
+                    ),
                 painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_back),
                 tint = contentColor,
                 contentDescription = "Back"
@@ -82,34 +101,33 @@ fun OverviewScreenHomePanel(
     modifier: Modifier,
     bookInfo: BookInfoModel,
     bookCoverHeightDp : Float,
-    bookInfoContentHeightDp : Float,
+    statusBarPaddingDp : Float,
     coverImageFile: File?,
     showDetailPanel: () -> Unit,
+    onClickBack: () -> Unit,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
 ) {
     val density = LocalDensity.current
-    val colorScheme = MaterialTheme.colorScheme
-
-    val statusBarDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this) }
-    val topBarPx = remember { (topBarDpMobile.value + statusBarDp) * density.density }
-    val bookCoverHeightPx = remember { (bookCoverHeightDp + statusBarDp) * density.density }
-    val topBarShowStartPx = remember { bookCoverHeightPx - topBarPx }
-
     val listState = rememberLazyListState()
-
+    val bookCoverExceptTopBarDp = remember { (bookCoverHeightDp - topBarDpMobile.value) }
     val alphaColor = remember {
         derivedStateOf {
             when (listState.firstVisibleItemIndex) {
-                0 -> maxOf(
-                    0f,
-                    (listState.firstVisibleItemScrollOffset - topBarShowStartPx) / topBarPx
-                )
+                0 -> {
+                    val temp = (with(density) { listState.firstVisibleItemScrollOffset.toDp() }.value - bookCoverExceptTopBarDp) / topBarDpMobile.value
+                    when {
+                        temp > 1f -> 1f
+                        temp < 0f -> 0f
+                        else -> temp
+                    }
+                }
 
                 else -> 1f
             }
         }
     }
 
+    val colorScheme = MaterialTheme.colorScheme
     val topBarSurfaceColor by remember(colorScheme, alphaColor) {
         derivedStateOf {
             colorScheme.surface.copy(alpha = alphaColor.value)
@@ -129,17 +147,15 @@ fun OverviewScreenHomePanel(
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.Yellow),
+            modifier = Modifier.fillMaxSize(),
             state = listState
         ) {
             item {
                 Column (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(bookCoverHeightDp.dp)
-                        .background(color = MaterialTheme.colorScheme.surface)){
+                        .height((bookCoverHeightDp + statusBarPaddingDp).dp)
+                        .background(color = Color.Red)){
 
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
@@ -154,32 +170,34 @@ fun OverviewScreenHomePanel(
             }
             item {
                 Column(
-                    modifier = Modifier.clickable {
-                        showDetailPanel()
-                    }
+                    modifier = Modifier
+                        .offset(y = -(detailPanelCornerHeight).dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .clip(shape = detailPanelShape)
+                        .background(color = Color.Yellow)
                 ) {
                     Text(
+                        modifier = Modifier.clickable {
+                            showDetailPanel()
+                        },
                         text = bookInfo.introduce.title,
                         style = MaterialTheme.typography.titleLarge
                     )
-                }
-            }
-
-            item {
-                Column(modifier = Modifier.height(1000.dp)) {
+                    Text(text = bookInfo.introduce.description)
+                    Text(text = bookInfo.introduce.description)
                     Text(text = bookInfo.introduce.description)
                 }
             }
         }
 
-        val statusBarPadding = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
-
         OverviewHomeTopBar(
-            modifier = Modifier.height(topBarDpMobile + statusBarPadding).padding(top = statusBarPadding),
+            statusBarPaddingDp = statusBarPaddingDp,
             bookInfo = bookInfo,
             surfaceColor = topBarSurfaceColor,
             titleColor = topBarTitleColor,
-            contentColor = topBarContentColor
+            contentColor = topBarContentColor,
+            onClickBack = onClickBack
         )
     }
 }

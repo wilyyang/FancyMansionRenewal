@@ -38,8 +38,9 @@ enum class OverviewPanelState {
 fun OverviewHomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: OverviewHomeContract.State,
+    statusBarPaddingDp : Float,
     bookCoverHeightDp : Float,
-    bookInfoContentHeightDp: Float,
+    bookBottomInfoHeightDp : Float,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -64,16 +65,19 @@ fun OverviewHomeScreenContent(
         } else {
             var panelState by remember { mutableStateOf(OverviewPanelState.Home) }
 
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = modifier) {
                 // 홈 화면
                 OverviewScreenHomePanel(
                     modifier = Modifier.align(Alignment.TopCenter),
                     bookInfo = uiState.bookInfo,
+                    statusBarPaddingDp = statusBarPaddingDp,
                     bookCoverHeightDp = bookCoverHeightDp,
-                    bookInfoContentHeightDp = bookInfoContentHeightDp,
                     coverImageFile = uiState.coverImageFile,
                     showDetailPanel = {
                         panelState = OverviewPanelState.Detail
+                    },
+                    onClickBack = {
+                      onCommonEventSent(CommonEvent.CloseEvent)
                     },
                     onEventSent = onEventSent
                 )
@@ -105,7 +109,7 @@ fun OverviewHomeScreenContent(
                         modifier = Modifier.align(Alignment.BottomStart),
                         key = panelState.ordinal,
                         bookInfo = uiState.bookInfo,
-                        collapsedHeightDp = bookInfoContentHeightDp,
+                        collapsedHeightDp = bookBottomInfoHeightDp,
                         onHideDetailPanel = { panelState = OverviewPanelState.Home },
                         onEventSent = onEventSent
                     )

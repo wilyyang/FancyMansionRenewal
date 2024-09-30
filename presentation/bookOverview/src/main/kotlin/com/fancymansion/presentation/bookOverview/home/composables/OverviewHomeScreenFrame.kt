@@ -2,22 +2,22 @@ package com.fancymansion.presentation.bookOverview.home.composables
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -60,8 +60,11 @@ fun OverviewHomeScreenFrame(
     }
 
     val screenSize = LocalConfiguration.current
+    val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
+    val navigationBarPaddingDp = with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
+
     val bookCoverHeightDp = remember { screenSize.screenWidthDp * 0.72f }
-    val bookInfoContentHeightDp = remember { screenSize.screenHeightDp + detailPanelCornerHeight - bookCoverHeightDp }
+    val bookBottomInfoHeightDp = remember { screenSize.screenHeightDp - statusBarPaddingDp.value - bookCoverHeightDp + detailPanelCornerHeight - navigationBarPaddingDp.value  }
 
     BaseScreen(
         loadState = loadState,
@@ -71,19 +74,20 @@ fun OverviewHomeScreenFrame(
         loadingContent = {
 
             OverviewHomeSkeletonScreen(
-                modifier = Modifier.fillMaxSize(),
-                bookCoverHeightDp = bookCoverHeightDp,
-                bookInfoContentHeightDp = bookInfoContentHeightDp
+                modifier = Modifier.fillMaxSize().padding(bottom = navigationBarPaddingDp),
+                statusBarPaddingDp = statusBarPaddingDp.value,
+                bookCoverHeightDp = bookCoverHeightDp
             )
         },
         isFadeOutLoading = true,
         isOverlayTopBar = true
     ) {
         OverviewHomeScreenContent(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(bottom = navigationBarPaddingDp),
             uiState = uiState,
+            statusBarPaddingDp = statusBarPaddingDp.value,
             bookCoverHeightDp = bookCoverHeightDp,
-            bookInfoContentHeightDp = bookInfoContentHeightDp,
+            bookBottomInfoHeightDp = bookBottomInfoHeightDp,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent
         )
@@ -97,28 +101,26 @@ fun OverviewHomeScreenFrame(
 @Composable
 fun OverviewHomeSkeletonScreen(
     modifier: Modifier = Modifier,
-    bookCoverHeightDp : Float,
-    bookInfoContentHeightDp: Float,
+    statusBarPaddingDp : Float,
+    bookCoverHeightDp : Float
 ) {
-    val statusBarPadding = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
-    Box(modifier = modifier) {
+
+    Column(modifier = modifier) {
         FadeInOutSkeleton(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .height(bookCoverHeightDp.dp + statusBarPadding)
+                .height((bookCoverHeightDp + statusBarPaddingDp).dp)
                 .fillMaxWidth(),
             shape = RectangleShape
         )
 
         Column(
             modifier = Modifier
-                .systemBarsPadding()
-                .align(Alignment.BottomStart)
-                .height(bookInfoContentHeightDp.dp)
+                .offset(y = -(detailPanelCornerHeight).dp)
+                .fillMaxHeight()
                 .fillMaxWidth()
                 .clip(detailPanelShape)
                 .background(color = MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
+                .padding(detailPanelCornerHeight.dp)
         ) {
             FadeInOutSkeleton(Modifier.padding(vertical = 10.dp).height(20.dp).width(100.dp))
 
