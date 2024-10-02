@@ -1,11 +1,9 @@
 package com.fancymansion.presentation.bookOverview.home.composables.panel
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -39,6 +36,7 @@ import coil.request.ImageRequest
 import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
+import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
@@ -150,7 +148,7 @@ fun OverviewScreenHomePanel(
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface),
             state = listState
         ) {
             item {
@@ -196,10 +194,7 @@ fun OverviewScreenHomePanel(
 
             item {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .background(color = MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Column(modifier = Modifier
                         .fillMaxWidth()
@@ -223,7 +218,7 @@ fun OverviewScreenHomePanel(
                                 Icon(
                                     modifier = Modifier
                                         .align(Alignment.CenterEnd)
-                                        .height((MaterialTheme.typography.headlineSmall.lineHeight.value + 6).dp)
+                                        .height(MaterialTheme.typography.headlineSmall.lineHeight.value.dp)
                                         .clickSingle {
                                             showDetailPanel()
                                         },
@@ -232,6 +227,30 @@ fun OverviewScreenHomePanel(
                                     contentDescription = "Expand"
                                 )
                             }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.height(MaterialTheme.typography.bodyLarge.lineHeight.value.dp),
+                                painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_star_fill),
+                                tint = ColorSet.red_dc3232,
+                                contentDescription = "Star"
+                            )
+
+                            Text(
+                                text = "4.9점",
+                                color = ColorSet.red_dc3232,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+
+                            Text(
+                                text = "(2051)",
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
                     }
                 }
