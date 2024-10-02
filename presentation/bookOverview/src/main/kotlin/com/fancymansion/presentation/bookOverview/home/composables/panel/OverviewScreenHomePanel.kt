@@ -109,12 +109,13 @@ fun OverviewScreenHomePanel(
 ) {
     val density = LocalDensity.current
     val listState = rememberLazyListState()
-    val bookCoverExceptTopBarDp = remember { (bookCoverHeightDp - topBarDpMobile.value) }
+    val bookCoverExceptTopBarDp = remember { (bookCoverHeightDp - topBarDpMobile.value - detailPanelCornerHeight) }
     val alphaColor = remember {
         derivedStateOf {
             when (listState.firstVisibleItemIndex) {
                 0 -> {
-                    val temp = (with(density) { listState.firstVisibleItemScrollOffset.toDp() }.value - bookCoverExceptTopBarDp) / topBarDpMobile.value
+                    val offsetDp = with(density) { listState.firstVisibleItemScrollOffset.toDp() }.value
+                    val temp = (offsetDp - bookCoverExceptTopBarDp ) / topBarDpMobile.value
                     when {
                         temp > 1f -> 1f
                         temp < 0f -> 0f
@@ -154,8 +155,7 @@ fun OverviewScreenHomePanel(
                 Column (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((bookCoverHeightDp + statusBarPaddingDp).dp)
-                        .background(color = Color.Red)){
+                        .height((bookCoverHeightDp + statusBarPaddingDp).dp)){
 
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
@@ -169,12 +169,32 @@ fun OverviewScreenHomePanel(
                 }
             }
             item {
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .offset(y = -(detailPanelCornerHeight).dp)
+                            .height(detailPanelCornerHeight.dp)
+                            .fillMaxWidth()
+                            .clip(shape = detailPanelShape)
+                            .background(color = Color.Cyan)
+                    ){}
+
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .height(detailPanelCornerHeight.dp)
+                            .fillMaxWidth()
+                            .background(color = Color.Cyan)
+                    ){}
+                }
+
+            }
+
+            item {
                 Column(
                     modifier = Modifier
-                        .offset(y = -(detailPanelCornerHeight).dp)
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .clip(shape = detailPanelShape)
                         .background(color = Color.Yellow)
                 ) {
                     Text(

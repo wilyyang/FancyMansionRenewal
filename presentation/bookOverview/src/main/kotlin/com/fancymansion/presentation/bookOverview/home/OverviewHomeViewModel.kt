@@ -10,7 +10,6 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,7 +60,6 @@ class OverviewHomeViewModel @Inject constructor(
                 useCaseLoadBook.loadCoverImage(episodeRef, bookInfo.introduce.coverList[0])
             }else null
 
-            delay(3000L)
             setState {
                 copy(
                     bookInfo = bookInfo,

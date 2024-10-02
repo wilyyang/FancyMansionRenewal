@@ -64,6 +64,9 @@ fun OverviewHomeScreenContent(
             }
         } else {
             var panelState by remember { mutableStateOf(OverviewPanelState.Home) }
+            val expandedHeightDp = remember {
+                (bookCoverHeightDp + bookBottomInfoHeightDp - detailPanelCornerHeight) * 0.95f
+            }
 
             Box(modifier = modifier) {
                 // 홈 화면
@@ -106,10 +109,10 @@ fun OverviewHomeScreenContent(
                     exit = slideOutVertically { it },
                 ) {
                     OverviewScreenDetailPanel(
-                        modifier = Modifier.align(Alignment.BottomStart),
                         key = panelState.ordinal,
                         bookInfo = uiState.bookInfo,
                         collapsedHeightDp = bookBottomInfoHeightDp,
+                        expandedHeightDp = expandedHeightDp,
                         onHideDetailPanel = { panelState = OverviewPanelState.Home },
                         onEventSent = onEventSent
                     )

@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.fancymansion.domain.model.book.BookInfoModel
@@ -39,19 +38,18 @@ enum class DetailPanelState {
 
 @Composable
 fun OverviewScreenDetailPanel(
-    modifier: Modifier,
     key: Any,
     bookInfo: BookInfoModel,
     collapsedHeightDp: Float,
+    expandedHeightDp: Float,
     onHideDetailPanel: () -> Unit,
     onEventSent: (event: OverviewHomeContract.Event) -> Unit
 ) {
     val density = LocalDensity.current.density
-    val screenHeightDp = LocalConfiguration.current.screenHeightDp
 
     fun DetailPanelState.getPanelHeight() : Float = when(this){
         DetailPanelState.COLLAPSED -> collapsedHeightDp
-        DetailPanelState.EXPANDED -> screenHeightDp * 0.95f
+        DetailPanelState.EXPANDED -> expandedHeightDp
     }
 
     val listState = rememberLazyListState()
@@ -79,25 +77,7 @@ fun OverviewScreenDetailPanel(
         }
     }
 
-    // Scroll 이펙트 영역
-    var previousIndex by remember { mutableIntStateOf(listState.firstVisibleItemIndex) }
-    var previousOffset by remember { mutableIntStateOf(listState.firstVisibleItemScrollOffset) }
-    var isScrollingUp by remember { mutableStateOf(false) }
-
-    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
-        val currentIndex = listState.firstVisibleItemIndex
-        val currentOffset = listState.firstVisibleItemScrollOffset
-        isScrollingUp = currentIndex > previousIndex || (currentIndex == previousIndex && currentOffset > previousOffset)
-        previousIndex = currentIndex
-        previousOffset = currentOffset
-    }
-
-    LaunchedEffect(key1 = isScrollingUp) {
-        if (isScrollingUp) {
-            dragEndEffect = true
-        }
-    }
-
+    // 화면 높이 조절 이펙트
     LaunchedEffect(key1 = dragEndEffect) {
         if (dragEndEffect) {
             if (dragHeightDp < panelState.getPanelHeight()) {
@@ -118,6 +98,25 @@ fun OverviewScreenDetailPanel(
                 dragHeightDp = panelState.getPanelHeight()
             }
             dragEndEffect = false
+        }
+    }
+
+    // 화면 Scroll 이펙트 영역
+    var previousIndex by remember { mutableIntStateOf(listState.firstVisibleItemIndex) }
+    var previousOffset by remember { mutableIntStateOf(listState.firstVisibleItemScrollOffset) }
+    var isScrollingUp by remember { mutableStateOf(false) }
+
+    LaunchedEffect(listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset) {
+        val currentIndex = listState.firstVisibleItemIndex
+        val currentOffset = listState.firstVisibleItemScrollOffset
+        isScrollingUp = currentIndex > previousIndex || (currentIndex == previousIndex && currentOffset > previousOffset)
+        previousIndex = currentIndex
+        previousOffset = currentOffset
+    }
+
+    LaunchedEffect(key1 = isScrollingUp) {
+        if (isScrollingUp) {
+            dragEndEffect = true
         }
     }
 
