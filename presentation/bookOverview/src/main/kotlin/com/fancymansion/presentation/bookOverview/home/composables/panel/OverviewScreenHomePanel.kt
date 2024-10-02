@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -155,7 +157,8 @@ fun OverviewScreenHomePanel(
                 Column (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((bookCoverHeightDp + statusBarPaddingDp).dp)){
+                        .height((bookCoverHeightDp + statusBarPaddingDp).dp)
+                        .background(color = MaterialTheme.colorScheme.background)){
 
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
@@ -169,6 +172,7 @@ fun OverviewScreenHomePanel(
                 }
             }
             item {
+                // Bottom Round Corner Area
                 Box {
                     Column(
                         modifier = Modifier
@@ -176,7 +180,7 @@ fun OverviewScreenHomePanel(
                             .height(detailPanelCornerHeight.dp)
                             .fillMaxWidth()
                             .clip(shape = detailPanelShape)
-                            .background(color = Color.Cyan)
+                            .background(color = MaterialTheme.colorScheme.surface)
                     ){}
 
                     Column(
@@ -185,9 +189,9 @@ fun OverviewScreenHomePanel(
                             .height(detailPanelCornerHeight.dp)
                             .fillMaxWidth()
                             .background(color = Color.Cyan)
+                            .background(color = MaterialTheme.colorScheme.surface)
                     ){}
                 }
-
             }
 
             item {
@@ -195,18 +199,41 @@ fun OverviewScreenHomePanel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .background(color = Color.Yellow)
+                        .background(color = MaterialTheme.colorScheme.surface)
                 ) {
-                    Text(
-                        modifier = Modifier.clickable {
-                            showDetailPanel()
-                        },
-                        text = bookInfo.introduce.title,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(text = bookInfo.introduce.description)
-                    Text(text = bookInfo.introduce.description)
-                    Text(text = bookInfo.introduce.description)
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 14.dp, end = 12.dp)
+                        .padding(vertical = 6.dp)) {
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(0.9f),
+                                text = bookInfo.introduce.title,
+                                color = Color.Black,
+                                style = MaterialTheme.typography.headlineSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                Icon(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .height((MaterialTheme.typography.headlineSmall.lineHeight.value + 6).dp)
+                                        .clickSingle {
+                                            showDetailPanel()
+                                        },
+                                    painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_arrow_down_semi_bold),
+                                    tint = Color.Black,
+                                    contentDescription = "Expand"
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

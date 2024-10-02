@@ -51,8 +51,8 @@ val typographyMobile = Typography(
         fontWeight = FontWeight.Bold
     ),
     headlineSmall = TextStyle(
-        lineHeight = 19.9.sp,
-        fontSize = 18.1.sp,
+        lineHeight = 22.8.sp,
+        fontSize = 20.8.sp,
         fontFamily = pretendard,
         fontWeight = FontWeight.Bold
     ),
