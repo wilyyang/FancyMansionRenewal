@@ -1,18 +1,14 @@
 package com.fancymansion.presentation.bookOverview.home.composables.panel
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +25,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -36,7 +35,7 @@ import coil.request.ImageRequest
 import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
-import com.fancymansion.core.presentation.compose.theme.ColorSet
+import com.fancymansion.core.presentation.compose.shape.RoundedRectangleShape
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
@@ -148,7 +147,9 @@ fun OverviewScreenHomePanel(
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.surface),
             state = listState
         ) {
             item {
@@ -191,6 +192,9 @@ fun OverviewScreenHomePanel(
                     ){}
                 }
             }
+            val startPadding = 14.dp
+            val endPadding = 12.dp
+            val verticalPadding = 6.dp
 
             item {
                 Column(
@@ -198,8 +202,8 @@ fun OverviewScreenHomePanel(
                 ) {
                     Column(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 14.dp, end = 12.dp)
-                        .padding(vertical = 6.dp)) {
+                        .padding(start = startPadding, end = endPadding)
+                        .padding(vertical = verticalPadding)) {
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -228,31 +232,52 @@ fun OverviewScreenHomePanel(
                                 )
                             }
                         }
+                    }
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                modifier = Modifier.height(MaterialTheme.typography.bodyLarge.lineHeight.value.dp),
-                                painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_star_fill),
-                                tint = ColorSet.red_dc3232,
-                                contentDescription = "Star"
-                            )
-
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = verticalPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        itemsIndexed(bookInfo.introduce.keywordList){ index, keyword ->
                             Text(
-                                text = "4.9점",
-                                color = ColorSet.red_dc3232,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Text(
-                                text = "(2051)",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodyLarge
+                                modifier = Modifier
+                                    .padding(start = if (index == 0) startPadding else 0.dp, end = 2.dp)
+                                    .clip(shape = MaterialTheme.shapes.extraSmall)
+                                    .padding(0.5.dp)
+                                    .border(
+                                        width = 0.5.dp,
+                                        color = MaterialTheme.colorScheme.outline,
+                                        shape = MaterialTheme.shapes.extraSmall
+                                    )
+                                    .padding(horizontal = 7.dp, vertical = 5.dp),
+                                text = "#${keyword.name}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Black
                             )
                         }
                     }
+
+                    HorizontalDivider(modifier = Modifier
+                        .padding(top = 16.dp, start = startPadding, end = endPadding)
+                        .height(0.5.dp), color = MaterialTheme.colorScheme.outline)
+
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 18.dp, start = startPadding, end = endPadding)
+                            .width(130.dp)
+                            .clip(shape = RoundedRectangleShape())
+                            .background(
+                                color = Color.Black
+                            )
+                            .padding(vertical = 12.dp)
+                            .clickSingle { onEventSent(OverviewHomeContract.Event.ReadBookButtonClicked) },
+                        text = stringResource(id = R.string.button_overview_read_book),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
                 }
             }
         }

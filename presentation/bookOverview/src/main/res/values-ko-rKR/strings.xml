@@ -2,4 +2,6 @@
 <resources>
     <string name="screen_no_book_info_title">책 정보가 없습니다.</string>
     <string name="screen_no_book_info_detail">책 정보가 없어 표시할 내용이 없습니다.\n이전 화면으로 돌아가려면\n 뒤로가기 버튼을 눌러주세요.</string>
+
+    <string name="button_overview_read_book">책 읽기</string>
 </resources>
