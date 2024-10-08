@@ -2,6 +2,7 @@ package com.fancymansion.presentation.bookOverview.home.composables
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,11 +13,18 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -64,11 +72,25 @@ fun OverviewHomeScreenFrame(
     val bookCoverHeightDp = remember { screenSize.screenWidthDp * 0.72f }
     val bookBottomInfoHeightDp = remember { screenSize.screenHeightDp - bookCoverHeightDp + detailPanelCornerHeight }
 
+    val leftDrawerState = rememberDrawerState(DrawerValue.Closed)
+
     BaseScreen(
         loadState = loadState,
         description = OverviewHomeContract.NAME,
         statusBarColor = Color.Transparent,
         typePane = TypePane.MOBILE,
+        bottomDrawerState = leftDrawerState,
+        bottomDrawerContent = {
+            LazyColumn (modifier = Modifier.fillMaxHeight().fillMaxWidth().background(color = Color.Red)){
+                item {
+                    Text(text = uiState.bookInfo?.introduce?.description?:"")
+                    Text(text = uiState.bookInfo?.introduce?.description?:"")
+                    Text(text = uiState.bookInfo?.introduce?.description?:"")
+                    Text(text = uiState.bookInfo?.introduce?.description?:"")
+                    Text(text = uiState.bookInfo?.introduce?.description?:"")
+                }
+            }
+        },
         loadingContent = {
 
             OverviewHomeSkeletonScreen(
@@ -91,8 +113,17 @@ fun OverviewHomeScreenFrame(
         )
     }
 
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showToast) {
+        if(showToast){
+            leftDrawerState.open()
+        }else{
+            leftDrawerState.close()
+        }
+    }
     BackHandler {
-        onCommonEventSent(CommonEvent.CloseEvent)
+        showToast = !showToast
     }
 }
 
