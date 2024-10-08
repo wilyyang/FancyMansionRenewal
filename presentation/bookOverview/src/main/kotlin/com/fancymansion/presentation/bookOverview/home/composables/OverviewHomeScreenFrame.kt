@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -27,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
@@ -59,12 +59,10 @@ fun OverviewHomeScreenFrame(
         }?.collect()
     }
 
-    val screenSize = LocalConfiguration.current
     val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
-    val navigationBarPaddingDp = with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
-
+    val screenSize = LocalConfiguration.current
     val bookCoverHeightDp = remember { screenSize.screenWidthDp * 0.72f }
-    val bookBottomInfoHeightDp = remember { screenSize.screenHeightDp - statusBarPaddingDp.value - bookCoverHeightDp + detailPanelCornerHeight - navigationBarPaddingDp.value  }
+    val bookBottomInfoHeightDp = remember { screenSize.screenHeightDp - bookCoverHeightDp + detailPanelCornerHeight }
 
     BaseScreen(
         loadState = loadState,
@@ -74,7 +72,7 @@ fun OverviewHomeScreenFrame(
         loadingContent = {
 
             OverviewHomeSkeletonScreen(
-                modifier = Modifier.fillMaxSize().padding(bottom = navigationBarPaddingDp),
+                modifier = Modifier.fillMaxSize(),
                 statusBarPaddingDp = statusBarPaddingDp.value,
                 bookCoverHeightDp = bookCoverHeightDp
             )
@@ -83,7 +81,7 @@ fun OverviewHomeScreenFrame(
         isOverlayTopBar = true
     ) {
         OverviewHomeScreenContent(
-            modifier = Modifier.fillMaxSize().padding(bottom = navigationBarPaddingDp),
+            modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             statusBarPaddingDp = statusBarPaddingDp.value,
             bookCoverHeightDp = bookCoverHeightDp,

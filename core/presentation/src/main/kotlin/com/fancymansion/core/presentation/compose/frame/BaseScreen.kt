@@ -1,18 +1,26 @@
 package com.fancymansion.core.presentation.compose.frame
 
+import android.app.Activity
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,21 +28,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import com.fancymansion.core.common.const.ANIMATION_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
-import com.fancymansion.core.presentation.compose.util.ChangeStatusBarColor
 import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.dialog.AlarmDialog
 import com.fancymansion.core.presentation.compose.dialog.ErrorDialog
 import com.fancymansion.core.presentation.compose.dialog.Loading
-import com.fancymansion.core.presentation.base.window.TypePane
 import kotlinx.coroutines.delay
 
 @Composable
@@ -67,35 +76,53 @@ fun BaseScreen(
     content : @Composable (paddingValues : PaddingValues) -> Unit
 )
 {
-    statusBarColor?.let { color ->
-        LocalView.current.ChangeStatusBarColor(color = color, isStatusBarTextDark = isStatusBarTextDark)
+    val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
+    val navigationBarPaddingDp = with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
+
+    val view = LocalView.current
+    SideEffect {
+        (view.context as Activity).window.let {
+            WindowCompat.getInsetsController(it, view)
+                .isAppearanceLightStatusBars = isStatusBarTextDark
+        }
     }
 
-    SideDrawer(
-        leftDrawerState = leftDrawerState,
-        leftDrawerContent = leftDrawerContent,
-        rightDrawerState = rightDrawerState,
-        rightDrawerContent = rightDrawerContent,
-        bottomDrawerState = bottomDrawerState,
-        bottomDrawerContent = bottomDrawerContent
-    ){
-        BaseContent(
-            modifier = modifier.semantics {
-                contentDescription = description
-                testTag = loadState.javaClass.simpleName
-            },
-            containerColor = containerColor,
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(bottom = navigationBarPaddingDp)) {
 
-            isOverlayTopBar = isOverlayTopBar,
-            topBar = topBar,
-            topBarHeight = topBarHeight,
-
-            loadState = loadState,
-            loadingContent = loadingContent,
-            isFadeOutLoading = isFadeOutLoading,
-
-            content = content
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
+                .background(color = statusBarColor ?: Color.Transparent)
         )
+
+        SideDrawer(
+            leftDrawerState = leftDrawerState,
+            leftDrawerContent = leftDrawerContent,
+            rightDrawerState = rightDrawerState,
+            rightDrawerContent = rightDrawerContent,
+            bottomDrawerState = bottomDrawerState,
+            bottomDrawerContent = bottomDrawerContent
+        ){
+            BaseContent(
+                modifier = modifier.semantics {
+                    contentDescription = description
+                    testTag = loadState.javaClass.simpleName
+                },
+                containerColor = containerColor,
+
+                isOverlayTopBar = isOverlayTopBar,
+                topBar = topBar,
+                topBarHeight = topBarHeight,
+
+                loadState = loadState,
+                loadingContent = loadingContent,
+                isFadeOutLoading = isFadeOutLoading,
+
+                content = content
+            )
+        }
     }
 
     CommonPopupLayerProcess(

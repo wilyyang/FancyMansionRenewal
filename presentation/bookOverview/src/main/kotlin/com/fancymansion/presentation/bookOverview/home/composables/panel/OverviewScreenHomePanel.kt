@@ -278,6 +278,10 @@ fun OverviewScreenHomePanel(
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
+
+                    Text(text = bookInfo.introduce.description)
+                    Text(text = bookInfo.introduce.description)
+                    Text(text = bookInfo.introduce.description)
                 }
             }
         }

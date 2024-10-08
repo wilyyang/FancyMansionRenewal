@@ -49,7 +49,8 @@ fun OverviewHomeScreenContent(
             Box(
                 modifier = modifier
                     .background(color = MaterialTheme.colorScheme.surface)
-                    .fillMaxSize(), contentAlignment = Alignment.Center
+                    .padding(top = statusBarPaddingDp.dp),
+                contentAlignment = Alignment.Center
             ) {
 
                 NoDataScreen(

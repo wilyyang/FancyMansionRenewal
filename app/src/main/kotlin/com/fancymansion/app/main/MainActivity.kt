@@ -2,6 +2,7 @@ package com.fancymansion.app.main
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
 import com.fancymansion.app.navigation.AppScreenConfiguration
 import com.fancymansion.core.common.const.CurrentDensity
 import com.fancymansion.core.common.const.MOBILE_BASE_SCREEN_DENSITY
@@ -32,6 +34,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.statusBarColor = Color.TRANSPARENT
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val (typePane, typeOrientation) = Feature.getTypeWindow(context = this)
         val typography = if(typePane == TypePane.MOBILE){
