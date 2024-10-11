@@ -39,9 +39,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.presentation.R
-import com.fancymansion.core.presentation.compose.custom.popup.ScreenPopup
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
@@ -59,125 +59,130 @@ fun ErrorDialog(
     onDismiss: () -> Unit = { }
 ) {
     val isShowDialog = remember{ mutableStateOf(true) }
-    ScreenPopup()
-    {
-        if(isShowDialog.value){
-            val height = LocalConfiguration.current.screenHeightDp.dp
-            Box (
-                modifier = Modifier
-                    .semantics {
-                        contentDescription = "ErrorDialog"
-                    }
-                    .fillMaxSize()
-                    .background(color = background ?: Color.Transparent),
-                contentAlignment = Alignment.Center
-            ){
-                Column(modifier = Modifier
-                    .width(300.dp)
-                    .height(IntrinsicSize.Min)
-                    .heightIn(min = 0.dp, max = height * 0.6f)
-                    .clip(shape = MaterialTheme.shapes.medium)
-                    .background(Color.White)
-                ) {
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp).padding(top = 30.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            modifier = Modifier.height(35.dp),
-                            painter = painterResource(id = R.drawable.ic_error),
-                            tint = onSurfaceDimmed,
-                            contentDescription = "Error"
-                        )
-
-                        if(title != null){
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = background ?: Color.Transparent)
+    ) {
+        Popup()
+        {
+            if(isShowDialog.value){
+                val height = LocalConfiguration.current.screenHeightDp.dp
+                Box (
+                    modifier = Modifier
+                        .semantics {
+                            contentDescription = "ErrorDialog"
                         }
-                    }
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Column(modifier = Modifier
+                        .width(300.dp)
+                        .height(IntrinsicSize.Min)
+                        .heightIn(min = 0.dp, max = height * 0.6f)
+                        .clip(shape = MaterialTheme.shapes.medium)
+                        .background(Color.White)
+                    ) {
 
-                    Box (modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 5.dp)){
-                        Text(
-                            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-                                .padding(horizontal = 25.dp).padding(vertical = 15.dp),
-                            text = message ?: "",
-                            style = MaterialTheme.typography.bodyMedium.copy(color = onSurfaceDimmed, lineHeight = 22.sp),
-                            textAlign = TextAlign.Center
-                        )
-
-                        Box(modifier = Modifier.fillMaxWidth().height(15.dp).align(Alignment.TopStart).background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.White,
-                                    Color.Transparent
-                                )
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp).padding(top = 30.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                modifier = Modifier.height(35.dp),
+                                painter = painterResource(id = R.drawable.ic_error),
+                                tint = onSurfaceDimmed,
+                                contentDescription = "Error"
                             )
-                        ))
 
-                        Box(modifier = Modifier.fillMaxWidth().height(15.dp).align(Alignment.BottomStart).background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.White
-                                )
-                            )
-                        ))
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min)
-                            .borderLine(
-                                density = LocalDensity.current,
-                                color = MaterialTheme.colorScheme.outline,
-                                top = 1.dp
-                            )
-                    ){
-                        dismissText?.let {
-                            Box(
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .clickable {
-                                        onDismiss()
-                                        isShowDialog.value = false
-                                    }
-                            ) {
+                            if(title != null){
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    modifier = Modifier.align(Alignment.Center).padding(20.dp),
-                                    text = it.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.cancel) },
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                    color = onSurfaceSub
+                                    text = title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
 
-                        if(dismissText != null && confirmText != null){
-                            VerticalDivider(modifier = Modifier.width(1.dp), color = MaterialTheme.colorScheme.outline)
+                        Box (modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 5.dp)){
+                            Text(
+                                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                                    .padding(horizontal = 25.dp).padding(vertical = 15.dp),
+                                text = message ?: "",
+                                style = MaterialTheme.typography.bodyMedium.copy(color = onSurfaceDimmed, lineHeight = 22.sp),
+                                textAlign = TextAlign.Center
+                            )
+
+                            Box(modifier = Modifier.fillMaxWidth().height(15.dp).align(Alignment.TopStart).background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White,
+                                        Color.Transparent
+                                    )
+                                )
+                            ))
+
+                            Box(modifier = Modifier.fillMaxWidth().height(15.dp).align(Alignment.BottomStart).background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color.White
+                                    )
+                                )
+                            ))
                         }
 
-                        confirmText?.let {
-                            Box (
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .clickable {
-                                        onConfirm()
-                                        isShowDialog.value = false
-                                    }
-                            ){
-                                Text(
-                                    modifier = Modifier.align(Alignment.Center).padding(20.dp),
-                                    text = confirmText.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.confirm) },
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.onSurface
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min)
+                                .borderLine(
+                                    density = LocalDensity.current,
+                                    color = MaterialTheme.colorScheme.outline,
+                                    top = 1.dp
                                 )
+                        ){
+                            dismissText?.let {
+                                Box(
+                                    modifier = Modifier
+                                        .weight(0.5f)
+                                        .clickable {
+                                            onDismiss()
+                                            isShowDialog.value = false
+                                        }
+                                ) {
+                                    Text(
+                                        modifier = Modifier.align(Alignment.Center).padding(20.dp),
+                                        text = it.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.cancel) },
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                        color = onSurfaceSub
+                                    )
+                                }
+                            }
 
+                            if(dismissText != null && confirmText != null){
+                                VerticalDivider(modifier = Modifier.width(1.dp), color = MaterialTheme.colorScheme.outline)
+                            }
+
+                            confirmText?.let {
+                                Box (
+                                    modifier = Modifier
+                                        .weight(0.5f)
+                                        .clickable {
+                                            onConfirm()
+                                            isShowDialog.value = false
+                                        }
+                                ){
+                                    Text(
+                                        modifier = Modifier.align(Alignment.Center).padding(20.dp),
+                                        text = confirmText.ifBlank { stringResource(id = com.fancymansion.core.common.R.string.confirm) },
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+
+                                }
                             }
                         }
                     }

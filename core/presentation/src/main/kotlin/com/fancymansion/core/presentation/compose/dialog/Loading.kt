@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
-import com.fancymansion.core.presentation.compose.custom.popup.ScreenPopup
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.DIMMED_ALPHA
 import kotlinx.coroutines.delay
@@ -37,29 +37,31 @@ fun Loading(
     })
     Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {
         if(isShowAnimation.value){
-            ScreenPopup(
-                onDismissRequest = onDismiss
-            ){
-                Box (
-                    modifier = Modifier
-                        .semantics {
-                            contentDescription = "Loading"
-                        }
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = DIMMED_ALPHA)),
-                    contentAlignment = Alignment.Center
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = DIMMED_ALPHA))
+            ) {
+                Popup(
+                    onDismissRequest = onDismiss
                 ){
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularLoadingAnimation()
-                        loadingMessage?.let {
-                            Spacer(Modifier.height(20.dp))
-                            Text(text = loadingMessage,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.surface)
+                    Box (
+                        modifier = Modifier.semantics { contentDescription = "Loading"}.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularLoadingAnimation()
+                            loadingMessage?.let {
+                                Spacer(Modifier.height(20.dp))
+                                Text(text = loadingMessage,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.surface)
+                            }
                         }
                     }
                 }
             }
+
         }
     }
 }

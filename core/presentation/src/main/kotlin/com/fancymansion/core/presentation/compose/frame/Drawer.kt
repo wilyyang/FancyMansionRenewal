@@ -66,7 +66,7 @@ fun SideDrawer(
 
         // 하단 Drawer
         if(bottomDrawerState != null && bottomDrawerContent != null){
-            val bottomDrawerOffset = animateDpAsState(if (bottomDrawerState.isOpen) 0.dp else screenHeight, label = "").value
+            val bottomDrawerOffset = animateDpAsState(if (bottomDrawerState.isOpen) 0.dp else (screenHeight + 40.dp), label = "").value
 
             LaunchedEffect(bottomDrawerState.isOpen) {
                 if (bottomDrawerState.isOpen) {
