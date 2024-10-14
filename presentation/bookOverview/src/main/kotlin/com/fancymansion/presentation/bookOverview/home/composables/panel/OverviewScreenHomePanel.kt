@@ -6,7 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
@@ -240,10 +241,13 @@ fun OverviewScreenHomePanel(
                             .padding(top = verticalPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        itemsIndexed(bookInfo.introduce.keywordList){ index, keyword ->
+                        item {
+                            Spacer(modifier = Modifier.width(startPadding))
+                        }
+                        items(bookInfo.introduce.keywordList) { keyword ->
                             Text(
                                 modifier = Modifier
-                                    .padding(start = if (index == 0) startPadding else 0.dp, end = 2.dp)
+                                    .padding(end = 2.dp)
                                     .clip(shape = MaterialTheme.shapes.extraSmall)
                                     .padding(0.5.dp)
                                     .border(
@@ -257,11 +261,14 @@ fun OverviewScreenHomePanel(
                                 color = Color.Black
                             )
                         }
+                        item {
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
                     }
 
                     HorizontalDivider(modifier = Modifier
                         .padding(top = 16.dp, start = startPadding, end = endPadding)
-                        .height(0.5.dp), color = MaterialTheme.colorScheme.outline)
+                        .height(0.3.dp), color = MaterialTheme.colorScheme.outline)
 
                     Text(
                         modifier = Modifier
@@ -279,9 +286,30 @@ fun OverviewScreenHomePanel(
                         color = Color.White
                     )
 
-                    Text(text = bookInfo.introduce.description)
-                    Text(text = bookInfo.introduce.description)
-                    Text(text = bookInfo.introduce.description)
+                    Column(
+                        modifier = Modifier.padding(
+                            top = 25.dp,
+                            start = startPadding,
+                            end = endPadding
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.title_book_introduce),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.8.sp, fontWeight = FontWeight.Bold),
+                            color = Color.Black
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(top = 16.dp),
+                            text = bookInfo.introduce.description,
+                            maxLines = 4,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 24.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+                        )
+                    }
                 }
             }
         }
