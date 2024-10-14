@@ -6,4 +6,7 @@
     <string name="button_overview_read_book">책 읽기</string>
     <string name="title_book_introduce">작품 소개</string>
     <string name="title_book_review">리뷰</string>
+
+    <string name="tab_title_book_introduce">작품 소개</string>
+    <string name="tab_title_book_info">작품 정보</string>
 </resources>

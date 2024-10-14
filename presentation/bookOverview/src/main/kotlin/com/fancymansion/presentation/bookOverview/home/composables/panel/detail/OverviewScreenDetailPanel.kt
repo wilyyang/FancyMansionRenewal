@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
@@ -128,25 +132,33 @@ fun OverviewScreenDetailPanel(
                 .fillMaxWidth()
                 .height(panelHeightDp.dp)
                 .clip(detailPanelShape)
-                .background(Color.LightGray)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pointerInput(Unit) {
-                        detectVerticalDragGestures(
-                            onDragStart = { isSnapToCurrentHeight = false },
-                            onDragEnd = {
-                                dragEndEffect = true
-                            },
-                            onVerticalDrag = { change, dragAmountPx ->
-                                dragHeightDp -= (dragAmountPx / density)
-                                change.consume()
-                            }
-                        )
-                    },
-                text = bookInfo.id
-            )
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .pointerInput(Unit) {
+                    detectVerticalDragGestures(
+                        onDragStart = { isSnapToCurrentHeight = false },
+                        onDragEnd = {
+                            dragEndEffect = true
+                        },
+                        onVerticalDrag = { change, dragAmountPx ->
+                            dragHeightDp -= (dragAmountPx / density)
+                            change.consume()
+                        }
+                    )
+                }) {
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(vertical = 11.dp)
+                        .height(4.dp)
+                        .width(38.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .background(MaterialTheme.colorScheme.outlineVariant)
+                )
+            }
 
             OverviewScreenDetailTabPager(bookInfo = bookInfo, key = key, listState = listState)
         }
