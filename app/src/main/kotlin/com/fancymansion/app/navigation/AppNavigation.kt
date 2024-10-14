@@ -56,5 +56,5 @@ fun AppNavigation(typePane : TypePane) {
 }
 
 fun NavController.navigateViewerContentScreen(episodeRef: EpisodeRef, bookTitle: String, episodeTitle: String) {
-    navigate(route = "${ViewerContentContract.NAME}/${episodeRef.userId}/${episodeRef.mode.name}/${episodeRef.bookId}/${episodeRef.episodeId}/$bookTitle/$episodeTitle}")
+    navigate(route = "${ViewerContentContract.NAME}/${episodeRef.userId}/${episodeRef.mode.name}/${episodeRef.bookId}/${episodeRef.episodeId}/$bookTitle/$episodeTitle")
 }
