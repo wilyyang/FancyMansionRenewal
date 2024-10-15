@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.bookOverview.home.composables.panel.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -162,5 +163,8 @@ fun OverviewScreenDetailPanel(
 
             OverviewScreenDetailTabPager(bookInfo = bookInfo, key = key, listState = listState)
         }
+    }
+    BackHandler {
+        onHideDetailPanel()
     }
 }

@@ -45,6 +45,10 @@ fun OverviewScreenDetailTabPager(
         }
     }
 
+    LaunchedEffect(pagerState.currentPage) {
+        listState.scrollToItem(0)
+    }
+
     Column(modifier = modifier.fillMaxWidth()) {
         // Tab Titles
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -87,29 +91,40 @@ fun OverviewScreenDetailTabPager(
 
     val pageVerticalPadding = 20.dp
     val pageHorizontalPadding = 15.dp
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        state = listState
-    ) {
-        item{
-            // Horizontal Pager
-            HorizontalPager(
-                state = pagerState,
-                verticalAlignment = Alignment.Top
-            ) { page ->
-                when (page) {
-                    0 -> IntroduceContent(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = pageVerticalPadding, horizontal = pageHorizontalPadding), bookInfo = bookInfo)
-                    1 -> InfoContent(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(vertical = pageVerticalPadding, horizontal = pageHorizontalPadding), bookInfo = bookInfo)
+    BoxWithConstraints {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            state = listState
+        ) {
+            item{
+                // Horizontal Pager
+                HorizontalPager(
+                    state = pagerState,
+                    verticalAlignment = Alignment.Top
+                ) { page ->
+                    when (page) {
+                        0 -> IntroduceContent(modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = maxHeight)
+                            .padding(
+                                vertical = pageVerticalPadding,
+                                horizontal = pageHorizontalPadding
+                            ), bookInfo = bookInfo)
+                        1 -> InfoContent(modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = maxHeight)
+                            .padding(
+                                vertical = pageVerticalPadding,
+                                horizontal = pageHorizontalPadding
+                            ), bookInfo = bookInfo)
+                    }
                 }
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -171,12 +186,44 @@ fun InfoContent(
     modifier: Modifier = Modifier,
     bookInfo : BookInfoModel
 ) {
-    val titleTextStyle = TypeStyles.titleSmallVariant
+    val titleBottomPadding = 13.dp
+    val contentBottomPadding = 34.dp
+
     Column(modifier = modifier) {
-        Text("Info content")
-        Text(bookInfo.editor.editorName)
-        Text(bookInfo.editor.editorEmail)
-        Text(bookInfo.editor.editorId)
-        Text(bookInfo.introduce.description)
+        Text(
+            modifier = Modifier.padding(bottom = titleBottomPadding),
+            text = stringResource(id = R.string.info_tab_title_detail),
+            style = TypeStyles.titleSmallVariant
+        )
+
+        Column(modifier = Modifier.padding(bottom = contentBottomPadding)) {
+            InfoRow(
+                title = stringResource(id = R.string.info_tab_title_detail_editor_name),
+                text = bookInfo.editor.editorName
+            )
+        }
+    }
+}
+
+@Composable
+fun InfoRow(title: String, text: String){
+    Row (modifier = Modifier
+        .padding(bottom = 12.dp)
+        .fillMaxWidth()){
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(0.2f)
+                .padding(end = 10.dp),
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(0.8f),
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+        )
     }
 }

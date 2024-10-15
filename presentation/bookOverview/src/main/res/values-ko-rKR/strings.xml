@@ -12,4 +12,7 @@
 
     <string name="introduce_tab_title_keyword">키워드</string>
     <string name="introduce_tab_title_introduce">작품 소개</string>
+
+    <string name="info_tab_title_detail">상세 정보</string>
+    <string name="info_tab_title_detail_editor_name">편집자</string>
 </resources>
