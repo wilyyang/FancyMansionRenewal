@@ -16,6 +16,15 @@ val pretendard = FontFamily(
     Font(R.font.pretendard_bold, FontWeight.Bold, FontStyle.Normal)
 )
 
+object TypeStyles {
+    val titleSmallVariant = TextStyle(
+        lineHeight = 17.8.sp,
+        fontSize = 15.8.sp,
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Bold
+    )
+}
+
 val typographyMobile = Typography(
     // Display
     displayLarge = TextStyle(

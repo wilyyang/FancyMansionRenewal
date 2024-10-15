@@ -37,6 +37,7 @@ import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
 import com.fancymansion.core.presentation.compose.shape.RoundedRectangleShape
+import com.fancymansion.core.presentation.compose.theme.typography.TypeStyles
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
@@ -297,7 +298,7 @@ fun OverviewScreenHomePanel(
                             text = stringResource(id = R.string.title_book_introduce),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.8.sp, fontWeight = FontWeight.Bold),
+                            style = TypeStyles.titleSmallVariant,
                             color = Color.Black
                         )
 

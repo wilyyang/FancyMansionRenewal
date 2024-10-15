@@ -9,4 +9,7 @@
 
     <string name="tab_title_book_introduce">작품 소개</string>
     <string name="tab_title_book_info">작품 정보</string>
+
+    <string name="introduce_tab_title_keyword">키워드</string>
+    <string name="introduce_tab_title_introduce">작품 소개</string>
 </resources>
