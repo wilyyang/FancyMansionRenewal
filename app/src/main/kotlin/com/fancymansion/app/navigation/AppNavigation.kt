@@ -9,13 +9,16 @@ import androidx.compose.ui.unit.Density
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.fancymansion.app.navigation.NavigateAnimation.leftScreenTransition
 import com.fancymansion.app.navigation.NavigateAnimation.upScreenTransition
 import com.fancymansion.app.navigation.destination.bookOverview.OverviewHomeScreenDestination
+import com.fancymansion.app.navigation.destination.editor.EditorBookOverviewScreenDestination
 import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
+import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,9 +38,9 @@ fun AppNavigation(typePane : TypePane) {
 
     NavHost(
         navController = navController,
-        startDestination = "${OverviewHomeContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}"
+        startDestination = "${EditorBookOverviewContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}"
     ) {
-        upScreenTransition(
+        leftScreenTransition(
             route = "${OverviewHomeContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}",
             arguments = listOf(NavArgument.argUserId, NavArgument.argReadMode, NavArgument.argBookId, NavArgument.argEpisodeId),
             navController = navController
@@ -52,7 +55,19 @@ fun AppNavigation(typePane : TypePane) {
         ) {
             ViewerContentScreenDestination(navController = navController, typePane = typePane)
         }
+
+        upScreenTransition(
+            route = "${EditorBookOverviewContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}",
+            arguments = listOf(NavArgument.argUserId, NavArgument.argReadMode, NavArgument.argBookId, NavArgument.argEpisodeId),
+            navController = navController
+        ) {
+            EditorBookOverviewScreenDestination(navController = navController, typePane = typePane)
+        }
     }
+}
+
+fun NavController.navigateOverviewScreen(episodeRef: EpisodeRef) {
+    navigate(route = "${OverviewHomeContract.NAME}/${episodeRef.userId}/${episodeRef.mode.name}/${episodeRef.bookId}/${episodeRef.episodeId}")
 }
 
 fun NavController.navigateViewerContentScreen(episodeRef: EpisodeRef, bookTitle: String, episodeTitle: String) {
