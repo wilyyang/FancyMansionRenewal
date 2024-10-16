@@ -104,7 +104,9 @@ fun HandleCommonEffect(
                  * Navigate
                  */
                 is CommonEffect.Navigation.NavigateBack -> {
-                    navController.popBackStack()
+                    if (!navController.popBackStack()) {
+                        (navController.context as? Activity)?.finish()
+                    }
                 }
 
                 is CommonEffect.Navigation.NavigateApplicationExit -> {
