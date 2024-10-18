@@ -173,6 +173,7 @@ fun CommonPopupLayerProcess(
 }
 
 enum class ShowLoadingState {
+    ScreenAnimationDelay,
     None,
     LoadingShowDelay,
     LoadingShow,
@@ -195,6 +196,52 @@ fun BaseContent(
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
 
+    val showLoadingState = remember {
+        mutableStateOf( ShowLoadingState.ScreenAnimationDelay)
+    }
+
+    LaunchedEffect(loadState) {
+        if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay){
+            return@LaunchedEffect
+        }
+        showLoadingState.value = when(loadState){
+            is LoadState.Loading -> {
+                ShowLoadingState.LoadingShowDelay
+            }
+            is LoadState.Idle -> {
+                if (showLoadingState.value == ShowLoadingState.LoadingShow && isFadeOutLoading
+                ) {
+                    ShowLoadingState.FadingOut
+                } else {
+                    ShowLoadingState.None
+                }
+            }
+            else -> ShowLoadingState.None
+        }
+    }
+
+    LaunchedEffect(showLoadingState.value) {
+        if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
+            delay(DELAY_LOADING_SHOW_MS)
+            if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
+                showLoadingState.value = ShowLoadingState.LoadingShow
+            }
+        }else if (showLoadingState.value == ShowLoadingState.FadingOut) {
+            delay(DELAY_LOADING_FADE_OUT_MS)
+            if(showLoadingState.value == ShowLoadingState.FadingOut){
+                showLoadingState.value = ShowLoadingState.None
+            }
+        }else if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay){
+            delay(150L)
+            showLoadingState.value = when(loadState){
+                is LoadState.Loading -> {
+                    ShowLoadingState.LoadingShowDelay
+                }
+                else -> ShowLoadingState.FadingOut
+            }
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = containerColor ?: MaterialTheme.colorScheme.background,
@@ -211,57 +258,22 @@ fun BaseContent(
                 .fillMaxSize()) {
 
                 Box {
-                    content(it)
+                    if(showLoadingState.value != ShowLoadingState.ScreenAnimationDelay){
+                        content(it)
+                    }
+
                     if (loadingContent != null) {
-                        val showLoadingState = remember {
-                            mutableStateOf(
-                                if (loadState is LoadState.Loading) ShowLoadingState.LoadingShowDelay
-                                else ShowLoadingState.None
-                            )
-                        }
-
-                        LaunchedEffect(loadState) {
-                            showLoadingState.value = when(loadState){
-                                is LoadState.Loading -> {
-                                    ShowLoadingState.LoadingShowDelay
-                                }
-                                is LoadState.Idle -> {
-                                    if (showLoadingState.value == ShowLoadingState.LoadingShow && isFadeOutLoading
-                                    ) {
-                                        ShowLoadingState.FadingOut
-                                    } else {
-                                        ShowLoadingState.None
-                                    }
-                                }
-                                else -> ShowLoadingState.None
-                            }
-                        }
-
-                        LaunchedEffect(showLoadingState.value) {
-                            if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
-                                delay(DELAY_LOADING_SHOW_MS)
-                                if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
-                                    showLoadingState.value = ShowLoadingState.LoadingShow
-                                }
-                            }else if (showLoadingState.value == ShowLoadingState.FadingOut) {
-                                delay(DELAY_LOADING_FADE_OUT_MS)
-                                if(showLoadingState.value == ShowLoadingState.FadingOut){
-                                    showLoadingState.value = ShowLoadingState.None
-                                }
-                            }
-                        }
-
                         val alpha by animateFloatAsState(
                             targetValue = if (showLoadingState.value == ShowLoadingState.FadingOut) 0.0f else 1f,
                             animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
                             label = "loadingContentAlpha"
                         )
 
-                        if(showLoadingState.value == ShowLoadingState.LoadingShowDelay || showLoadingState.value == ShowLoadingState.LoadingShow){
+                        if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay || showLoadingState.value == ShowLoadingState.LoadingShowDelay || showLoadingState.value == ShowLoadingState.LoadingShow){
                             Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {}
                         }
 
-                        if(showLoadingState.value == ShowLoadingState.LoadingShow || showLoadingState.value == ShowLoadingState.FadingOut){
+                        if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay || showLoadingState.value == ShowLoadingState.LoadingShow || showLoadingState.value == ShowLoadingState.FadingOut){
                             Box(modifier = Modifier.alpha(alpha)) {
                                 loadingContent()
                             }
