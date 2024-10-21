@@ -5,10 +5,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -16,21 +12,13 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.fancymansion.core.common.const.ANIM_DURATION_HORIZONTAL_ENTER
+import com.fancymansion.core.common.const.ANIM_DURATION_HORIZONTAL_EXIT
+import com.fancymansion.core.common.const.ANIM_DURATION_VERTICAL_ENTER
+import com.fancymansion.core.common.const.ANIM_DURATION_VERTICAL_EXIT
 
 typealias EnterLambda = AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?
 typealias ExitLambda = AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?
-
-private const val ANIM_DURATION_VERTICAL_ENTER = 250
-private const val ANIM_DURATION_HORIZONTAL = 200
-private const val ANIM_DURATION_EXIT = 150
-private const val FADE_OUT_ALPHA = 0.8f
-private const val SCALE = 0.85f
-
-/**
- * Fade Animations
- */
-val fadeInEnter: EnterLambda = { fadeIn() }
-val fadeOutExit: ExitLambda = { fadeOut(targetAlpha = FADE_OUT_ALPHA) }
 
 /**
  * Vertical Animations
@@ -44,7 +32,7 @@ val slideUpEnter: EnterLambda = {
 val slideDownExit: ExitLambda = {
     slideOutOfContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Down,
-        animationSpec = tween(ANIM_DURATION_EXIT),
+        animationSpec = tween(ANIM_DURATION_VERTICAL_EXIT),
     )
 }
 
@@ -54,28 +42,28 @@ val slideDownExit: ExitLambda = {
 val slideLeftEnter: EnterLambda = {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Left,
-        animationSpec = tween(ANIM_DURATION_HORIZONTAL),
+        animationSpec = tween(ANIM_DURATION_HORIZONTAL_ENTER),
     )
 }
 
 val slideRightEnter: EnterLambda = {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Right,
-        animationSpec = tween(ANIM_DURATION_HORIZONTAL),
+        animationSpec = tween(ANIM_DURATION_HORIZONTAL_ENTER),
     )
 }
 
 val slideLeftExit: ExitLambda = {
     slideOutOfContainer(
         AnimatedContentTransitionScope.SlideDirection.Left,
-        animationSpec = tween(ANIM_DURATION_HORIZONTAL),
+        animationSpec = tween(ANIM_DURATION_HORIZONTAL_EXIT),
     )
 }
 
 val slideRightExit: ExitLambda = {
     slideOutOfContainer(
         AnimatedContentTransitionScope.SlideDirection.Right,
-        animationSpec = tween(ANIM_DURATION_HORIZONTAL),
+        animationSpec = tween(ANIM_DURATION_HORIZONTAL_EXIT),
     )
 }
 
@@ -84,22 +72,6 @@ val slideRightExit: ExitLambda = {
  * [Before : popEnterTransition] <= [Target : popExitTransition]
  * */
 object NavigateAnimation {
-    fun NavGraphBuilder.fadeScreenTransition(
-        navController: NavController,
-        route: String,
-        arguments: List<NamedNavArgument> = emptyList(),
-        deepLinks: List<NavDeepLink> = emptyList(),
-        content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
-    ) = composable(
-        route = route,
-        arguments = arguments,
-        deepLinks = deepLinks,
-        enterTransition = fadeInEnter,
-        exitTransition = fadeOutExit,
-        popEnterTransition = fadeInEnter,
-        popExitTransition = fadeOutExit,
-        content = content
-    )
 
     fun NavGraphBuilder.upScreenTransition(
         navController: NavController,
@@ -112,9 +84,9 @@ object NavigateAnimation {
         arguments = arguments,
         deepLinks = deepLinks,
         enterTransition = slideUpEnter,
-        exitTransition = fadeOutExit,
-        popEnterTransition = fadeInEnter,
-        popExitTransition = slideDownExit,
+        exitTransition = { ExitTransition.None },
+        popEnterTransition =  { EnterTransition.None },
+        popExitTransition =  slideDownExit,
         content = content
     )
 
@@ -129,9 +101,9 @@ object NavigateAnimation {
         arguments = arguments,
         deepLinks = deepLinks,
         enterTransition = slideLeftEnter,
-        exitTransition = fadeOutExit,
-        popEnterTransition = fadeInEnter,
-        popExitTransition = slideRightExit,
+        exitTransition = { ExitTransition.None },
+        popEnterTransition =  { EnterTransition.None },
+        popExitTransition =  slideRightExit,
         content = content
     )
 }

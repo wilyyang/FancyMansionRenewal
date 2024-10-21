@@ -35,7 +35,8 @@ interface ViewEvent
 interface ViewSideEffect
 
 sealed class LoadState {
-    object Idle : LoadState()
+    data object Init : LoadState()
+    data object Idle : LoadState()
     data class Loading(val message : String? = null) : LoadState()
     data class ErrorDialog(
         val title : StringValue? = null,
@@ -176,7 +177,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
      * _effect : Screen 에 전달할 이펙트
      */
     private val _uiState : MutableState<UiState> = mutableStateOf(initialState)
-    private val _loadState : MutableState<LoadState> = mutableStateOf(LoadState.Idle)
+    private val _loadState : MutableState<LoadState> = mutableStateOf(LoadState.Init)
     private val _event : MutableSharedFlow<Event> = MutableSharedFlow()
     private val _effect : Channel<Effect> = Channel()
 

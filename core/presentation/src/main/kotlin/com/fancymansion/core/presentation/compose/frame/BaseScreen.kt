@@ -39,6 +39,7 @@ import androidx.core.view.WindowCompat
 import com.fancymansion.core.common.const.ANIMATION_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
+import com.fancymansion.core.common.const.DELAY_SCREEN_ANIMATION_MS
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.dialog.AlarmDialog
@@ -197,7 +198,18 @@ fun BaseContent(
 ) {
 
     val showLoadingState = remember {
-        mutableStateOf( ShowLoadingState.ScreenAnimationDelay)
+        mutableStateOf(
+            if (loadState == LoadState.Init) ShowLoadingState.ScreenAnimationDelay
+            else {
+                when (loadState) {
+                    is LoadState.Loading -> {
+                        ShowLoadingState.LoadingShowDelay
+                    }
+
+                    else -> ShowLoadingState.None
+                }
+            }
+        )
     }
 
     LaunchedEffect(loadState) {
@@ -232,7 +244,7 @@ fun BaseContent(
                 showLoadingState.value = ShowLoadingState.None
             }
         }else if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay){
-            delay(150L)
+            delay(DELAY_SCREEN_ANIMATION_MS)
             showLoadingState.value = when(loadState){
                 is LoadState.Loading -> {
                     ShowLoadingState.LoadingShowDelay
