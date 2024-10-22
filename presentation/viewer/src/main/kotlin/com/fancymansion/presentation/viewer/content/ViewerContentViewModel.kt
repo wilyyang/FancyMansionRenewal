@@ -171,7 +171,7 @@ class ViewerContentViewModel @Inject constructor(
             }
         }
 
-        launchWithLoading(endLoadState = null) {
+        launchWithInit(endLoadState = null) {
 
             val bookTitle = savedStateHandle.get<String>(NAME_BOOK_TITLE)!!
             val episodeTitle = savedStateHandle.get<String>(NAME_EPISODE_TITLE)!!

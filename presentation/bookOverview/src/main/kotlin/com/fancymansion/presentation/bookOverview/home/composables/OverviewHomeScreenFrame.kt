@@ -68,7 +68,7 @@ fun OverviewHomeScreenFrame(
         description = OverviewHomeContract.NAME,
         statusBarColor = Color.Transparent,
         typePane = TypePane.MOBILE,
-        loadingContent = {
+        initContent = {
 
             OverviewHomeSkeletonScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -76,7 +76,6 @@ fun OverviewHomeScreenFrame(
                 bookCoverHeightDp = bookCoverHeightDp
             )
         },
-        isFadeOutLoading = true,
         isOverlayTopBar = true
     ) {
         OverviewHomeScreenContent(

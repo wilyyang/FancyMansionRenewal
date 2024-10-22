@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -38,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.fancymansion.core.common.const.ANIMATION_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_FADE_OUT_MS
-import com.fancymansion.core.common.const.DELAY_LOADING_SHOW_MS
 import com.fancymansion.core.common.const.DELAY_SCREEN_ANIMATION_MS
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.window.TypePane
@@ -71,8 +69,7 @@ fun BaseScreen(
 
     // ui state
     loadState : LoadState,
-    loadingContent: (@Composable () -> Unit)? = null,
-    isFadeOutLoading: Boolean = false,
+    initContent: (@Composable () -> Unit)? = null,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 )
@@ -93,7 +90,8 @@ fun BaseScreen(
         .padding(bottom = navigationBarPaddingDp)) {
 
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
                 .background(color = statusBarColor ?: Color.Transparent)
         )
@@ -118,8 +116,7 @@ fun BaseScreen(
                 topBarHeight = topBarHeight,
 
                 loadState = loadState,
-                loadingContent = loadingContent,
-                isFadeOutLoading = isFadeOutLoading,
+                initContent = initContent,
 
                 content = content
             )
@@ -128,23 +125,27 @@ fun BaseScreen(
 
     CommonPopupLayerProcess(
         loadState = loadState,
-        isLoadingContent = loadingContent != null
+        isExistInitContent = initContent != null
     )
 }
 
 @Composable
 fun CommonPopupLayerProcess(
     loadState : LoadState,
-    isLoadingContent : Boolean
+    isExistInitContent : Boolean
 ) {
     val context = LocalContext.current
     when(loadState){
-        is LoadState.Loading -> {
-            if(!isLoadingContent){
-                Loading(
-                    loadingMessage = loadState.message
-                )
+        is LoadState.Init -> {
+            if(!isExistInitContent){
+                Loading()
             }
+        }
+
+        is LoadState.Loading -> {
+            Loading(
+                loadingMessage = loadState.message
+            )
         }
         is LoadState.ErrorDialog -> {
             ErrorDialog(
@@ -173,12 +174,23 @@ fun CommonPopupLayerProcess(
     }
 }
 
-enum class ShowLoadingState {
+enum class InitShowState {
     ScreenAnimationDelay,
-    None,
-    LoadingShowDelay,
-    LoadingShow,
-    FadingOut
+    InitShow,
+    InitFadingOut,
+    None;
+
+    fun transState(loadState : LoadState) : InitShowState{
+        return when(this){
+            InitShow -> {
+                when(loadState){
+                    is LoadState.Init -> InitShow
+                    else -> InitFadingOut
+                }
+            }
+            else -> this
+        }
+    }
 }
 
 @Composable
@@ -191,67 +203,33 @@ fun BaseContent(
     topBarHeight: Dp = 0.dp,
 
     loadState : LoadState,
-    loadingContent: (@Composable () -> Unit)? = null,
-    isFadeOutLoading: Boolean = false,
+    initContent: (@Composable () -> Unit)? = null,
 
     content : @Composable (paddingValues : PaddingValues) -> Unit
 ) {
 
-    val showLoadingState = remember {
-        mutableStateOf(
-            if (loadState == LoadState.Init) ShowLoadingState.ScreenAnimationDelay
-            else {
-                when (loadState) {
-                    is LoadState.Loading -> {
-                        ShowLoadingState.LoadingShowDelay
-                    }
+    val initShowState =
+        remember { mutableStateOf( if (loadState is LoadState.Init) InitShowState.ScreenAnimationDelay else InitShowState.None ) }
 
-                    else -> ShowLoadingState.None
-                }
+    LaunchedEffect(initShowState.value) {
+        when (initShowState.value) {
+            InitShowState.ScreenAnimationDelay -> {
+                delay(DELAY_SCREEN_ANIMATION_MS)
+                initShowState.value = InitShowState.InitShow
             }
-        )
+            InitShowState.InitShow -> {
+                initShowState.value = initShowState.value.transState(loadState)
+            }
+            InitShowState.InitFadingOut -> {
+                delay(DELAY_LOADING_FADE_OUT_MS)
+                initShowState.value = InitShowState.None
+            }
+            else -> {}
+        }
     }
 
     LaunchedEffect(loadState) {
-        if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay){
-            return@LaunchedEffect
-        }
-        showLoadingState.value = when(loadState){
-            is LoadState.Loading -> {
-                ShowLoadingState.LoadingShowDelay
-            }
-            is LoadState.Idle -> {
-                if (showLoadingState.value == ShowLoadingState.LoadingShow && isFadeOutLoading
-                ) {
-                    ShowLoadingState.FadingOut
-                } else {
-                    ShowLoadingState.None
-                }
-            }
-            else -> ShowLoadingState.None
-        }
-    }
-
-    LaunchedEffect(showLoadingState.value) {
-        if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
-            delay(DELAY_LOADING_SHOW_MS)
-            if(showLoadingState.value == ShowLoadingState.LoadingShowDelay){
-                showLoadingState.value = ShowLoadingState.LoadingShow
-            }
-        }else if (showLoadingState.value == ShowLoadingState.FadingOut) {
-            delay(DELAY_LOADING_FADE_OUT_MS)
-            if(showLoadingState.value == ShowLoadingState.FadingOut){
-                showLoadingState.value = ShowLoadingState.None
-            }
-        }else if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay){
-            delay(DELAY_SCREEN_ANIMATION_MS)
-            showLoadingState.value = when(loadState){
-                is LoadState.Loading -> {
-                    ShowLoadingState.LoadingShowDelay
-                }
-                else -> ShowLoadingState.FadingOut
-            }
-        }
+        initShowState.value = initShowState.value.transState(loadState)
     }
 
     Scaffold(
@@ -270,24 +248,20 @@ fun BaseContent(
                 .fillMaxSize()) {
 
                 Box {
-                    if(showLoadingState.value != ShowLoadingState.ScreenAnimationDelay){
+                    if(initShowState.value != InitShowState.ScreenAnimationDelay){
                         content(it)
                     }
 
-                    if (loadingContent != null) {
+                    if (initContent != null) {
                         val alpha by animateFloatAsState(
-                            targetValue = if (showLoadingState.value == ShowLoadingState.FadingOut) 0.0f else 1f,
+                            targetValue = if (initShowState.value == InitShowState.InitFadingOut) 0.0f else 1f,
                             animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
-                            label = "loadingContentAlpha"
+                            label = "initContentAlpha"
                         )
 
-                        if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay || showLoadingState.value == ShowLoadingState.LoadingShowDelay || showLoadingState.value == ShowLoadingState.LoadingShow){
-                            Surface(modifier = Modifier.fillMaxSize(), color = Color.Transparent) {}
-                        }
-
-                        if(showLoadingState.value == ShowLoadingState.ScreenAnimationDelay || showLoadingState.value == ShowLoadingState.LoadingShow || showLoadingState.value == ShowLoadingState.FadingOut){
+                        if(initShowState.value != InitShowState.None){
                             Box(modifier = Modifier.alpha(alpha)) {
-                                loadingContent()
+                                initContent()
                             }
                         }
                     }

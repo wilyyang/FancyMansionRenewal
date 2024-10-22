@@ -50,7 +50,7 @@ class OverviewHomeViewModel @Inject constructor(
     }
 
     init {
-        launchWithLoading {
+        launchWithInit {
             val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
             val coverImageFile = if(bookInfo.introduce.coverList.isNotEmpty()){
                 useCaseLoadBook.loadCoverImage(episodeRef, bookInfo.introduce.coverList[0])

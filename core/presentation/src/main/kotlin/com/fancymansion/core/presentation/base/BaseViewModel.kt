@@ -325,9 +325,42 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
 
     /**
      * 작업 처리를 위한 블록
+     * - launchWithInit : 시작할 때 Init, 끝나면 Idle 상태
      * - launchWithLoading : 시작할 때 Loading, 끝나면 Idle 상태
      * - launchWithException : Loading 상태는 없지만 Exception 처리하기 위한 블록
      */
+    fun launchWithInit(
+        context : CoroutineContext = Dispatchers.IO,
+        start : CoroutineStart = CoroutineStart.DEFAULT,
+        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
+        endLoadState: LoadState? = LoadState.Idle,
+        block : suspend CoroutineScope.() -> Unit
+    ) : Job {
+        return scope.launch(context, start) {
+            withContext(Dispatchers.Main) {
+                _loadState.value = LoadState.Init
+                withContext(context = context) {
+                    withTimeout(delayTime) {
+                        block.invoke(this)
+                    }
+                }
+                endLoadState?.let {
+                    _loadState.value = endLoadState
+                }
+            }
+        }.apply {
+            invokeOnCompletion { cause : Throwable? ->
+                cause?.also { cancelException ->
+                    if(cancelException.cause != null){
+                        sendError(cancelException.cause!!)
+                    }else{
+                        sendError(cancelException)
+                    }
+                }
+            }
+        }
+    }
+
     fun launchWithLoading(
         context : CoroutineContext = Dispatchers.IO,
         start : CoroutineStart = CoroutineStart.DEFAULT,

@@ -200,10 +200,9 @@ fun ViewerContentScreenFrame(
             statusBarColor = MaterialTheme.colorScheme.surface,
             isStatusBarTextDark = !uiState.pageSetting.pageTheme.isDarkTheme,
             typePane = TypePane.MOBILE,
-            loadingContent = {
+            initContent = {
                 ViewerContentSkeletonScreen()
             },
-            isFadeOutLoading = true,
             isOverlayTopBar = true
         ) {
             ViewerContentScreenContent(

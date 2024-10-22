@@ -40,7 +40,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     }
 
     init {
-        launchWithLoading {
+        launchWithInit {
             useCaseMakeBook.makeSampleEpisode()
             val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
 

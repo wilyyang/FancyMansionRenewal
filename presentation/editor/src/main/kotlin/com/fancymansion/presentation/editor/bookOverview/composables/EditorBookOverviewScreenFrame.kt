@@ -47,10 +47,9 @@ fun EditorBookOverviewScreenFrame(
         description = EditorBookOverviewContract.NAME,
         statusBarColor = MaterialTheme.colorScheme.surface,
         typePane = TypePane.MOBILE,
-        loadingContent = {
+        initContent = {
             EditorBookOverviewSkeletonScreen()
         },
-        isFadeOutLoading = true,
         topBar = {
             FancyMansionTopBar(
                 typePane = TypePane.MOBILE,
