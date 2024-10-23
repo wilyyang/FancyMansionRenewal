@@ -1,6 +1,7 @@
 package com.fancymansion.core.presentation.compose.dialog
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,6 +82,11 @@ fun ErrorDialog(
                         .height(IntrinsicSize.Min)
                         .heightIn(min = 0.dp, max = height * 0.6f)
                         .clip(shape = MaterialTheme.shapes.medium)
+                        .border(
+                            0.5.dp,
+                            color = MaterialTheme.colorScheme.background,
+                            shape = MaterialTheme.shapes.medium
+                        )
                         .background(Color.White)
                     ) {
 

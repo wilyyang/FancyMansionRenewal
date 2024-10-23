@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -45,11 +43,29 @@ import com.fancymansion.core.presentation.compose.dialog.ErrorDialog
 import com.fancymansion.core.presentation.compose.dialog.Loading
 import kotlinx.coroutines.delay
 
+enum class InitShowState {
+    ScreenAnimationDelay,
+    InitShow,
+    InitFadingOut,
+    None;
+
+    fun transState(loadState : LoadState) : InitShowState{
+        return when(this){
+            InitShow -> {
+                when(loadState){
+                    is LoadState.Init -> InitShow
+                    else -> InitFadingOut
+                }
+            }
+            else -> this
+        }
+    }
+}
+
 @Composable
 fun BaseScreen(
     modifier : Modifier = Modifier,
     description : String = "BaseScreen",
-    containerColor : Color? = null,
     statusBarColor : Color? = null,
     isStatusBarTextDark : Boolean = true,
     typePane: TypePane,
@@ -71,7 +87,7 @@ fun BaseScreen(
     loadState : LoadState,
     initContent: (@Composable () -> Unit)? = null,
 
-    content : @Composable (paddingValues : PaddingValues) -> Unit
+    content : @Composable () -> Unit
 )
 {
     val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
@@ -84,6 +100,31 @@ fun BaseScreen(
                 .isAppearanceLightStatusBars = isStatusBarTextDark
         }
     }
+
+    val initShowState =
+        remember { mutableStateOf( if (loadState is LoadState.Init) InitShowState.ScreenAnimationDelay else InitShowState.None ) }
+
+    LaunchedEffect(initShowState.value) {
+        when (initShowState.value) {
+            InitShowState.ScreenAnimationDelay -> {
+                delay(DELAY_SCREEN_ANIMATION_MS)
+                initShowState.value = InitShowState.InitShow
+            }
+            InitShowState.InitShow -> {
+                initShowState.value = initShowState.value.transState(loadState)
+            }
+            InitShowState.InitFadingOut -> {
+                delay(DELAY_LOADING_FADE_OUT_MS)
+                initShowState.value = InitShowState.None
+            }
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(loadState) {
+        initShowState.value = initShowState.value.transState(loadState)
+    }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -108,14 +149,13 @@ fun BaseScreen(
                 modifier = modifier.semantics {
                     contentDescription = description
                     testTag = loadState.javaClass.simpleName
-                },
-                containerColor = containerColor,
+                }.background(color = MaterialTheme.colorScheme.surface),
 
                 isOverlayTopBar = isOverlayTopBar,
                 topBar = topBar,
                 topBarHeight = topBarHeight,
 
-                loadState = loadState,
+                initShowState = initShowState.value,
                 initContent = initContent,
 
                 content = content
@@ -123,10 +163,12 @@ fun BaseScreen(
         }
     }
 
-    CommonPopupLayerProcess(
-        loadState = loadState,
-        isExistInitContent = initContent != null
-    )
+    if(initShowState.value != InitShowState.ScreenAnimationDelay){
+        CommonPopupLayerProcess(
+            loadState = loadState,
+            isExistInitContent = initContent != null
+        )
+    }
 }
 
 @Composable
@@ -174,99 +216,48 @@ fun CommonPopupLayerProcess(
     }
 }
 
-enum class InitShowState {
-    ScreenAnimationDelay,
-    InitShow,
-    InitFadingOut,
-    None;
-
-    fun transState(loadState : LoadState) : InitShowState{
-        return when(this){
-            InitShow -> {
-                when(loadState){
-                    is LoadState.Init -> InitShow
-                    else -> InitFadingOut
-                }
-            }
-            else -> this
-        }
-    }
-}
-
 @Composable
 fun BaseContent(
     modifier : Modifier = Modifier,
-    containerColor : Color? = null,
 
     isOverlayTopBar : Boolean = false,
     topBar: @Composable (() -> Unit)? = null,
     topBarHeight: Dp = 0.dp,
 
-    loadState : LoadState,
+    initShowState : InitShowState,
     initContent: (@Composable () -> Unit)? = null,
 
-    content : @Composable (paddingValues : PaddingValues) -> Unit
+    content : @Composable () -> Unit
 ) {
 
-    val initShowState =
-        remember { mutableStateOf( if (loadState is LoadState.Init) InitShowState.ScreenAnimationDelay else InitShowState.None ) }
-
-    LaunchedEffect(initShowState.value) {
-        when (initShowState.value) {
-            InitShowState.ScreenAnimationDelay -> {
-                delay(DELAY_SCREEN_ANIMATION_MS)
-                initShowState.value = InitShowState.InitShow
-            }
-            InitShowState.InitShow -> {
-                initShowState.value = initShowState.value.transState(loadState)
-            }
-            InitShowState.InitFadingOut -> {
-                delay(DELAY_LOADING_FADE_OUT_MS)
-                initShowState.value = InitShowState.None
-            }
-            else -> {}
+    Box(modifier = modifier){
+        if(topBar != null){
+            topBar()
         }
-    }
 
-    LaunchedEffect(loadState) {
-        initShowState.value = initShowState.value.transState(loadState)
-    }
+        Column(modifier = Modifier
+            .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
+            .fillMaxSize()) {
 
-    Scaffold(
-        modifier = modifier,
-        containerColor = containerColor ?: MaterialTheme.colorScheme.background,
+            Box {
+                if(initShowState != InitShowState.ScreenAnimationDelay){
+                    content()
+                }
 
-        // top bar
-        topBar = {
-            if(topBar != null){
-                topBar()
-            }
-        },
-        content = {
-            Column(modifier = Modifier
-                .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
-                .fillMaxSize()) {
+                if (initContent != null) {
+                    val alpha by animateFloatAsState(
+                        targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
+                        animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
+                        label = "initContentAlpha"
+                    )
 
-                Box {
-                    if(initShowState.value != InitShowState.ScreenAnimationDelay){
-                        content(it)
-                    }
-
-                    if (initContent != null) {
-                        val alpha by animateFloatAsState(
-                            targetValue = if (initShowState.value == InitShowState.InitFadingOut) 0.0f else 1f,
-                            animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
-                            label = "initContentAlpha"
-                        )
-
-                        if(initShowState.value != InitShowState.None){
-                            Box(modifier = Modifier.alpha(alpha)) {
-                                initContent()
-                            }
+                    if(initShowState != InitShowState.None){
+                        Box(modifier = Modifier.alpha(alpha)) {
+                            initContent()
                         }
                     }
                 }
             }
         }
-    )
+    }
 }
