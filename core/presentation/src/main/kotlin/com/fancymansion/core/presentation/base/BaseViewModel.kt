@@ -301,6 +301,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
              * etc
              */
             is CommonEvent.CloseEvent -> {
+                setLoadStateIdle()
                 setCommonEffect{
                     CommonEffect.Navigation.NavigateBack
                 }
