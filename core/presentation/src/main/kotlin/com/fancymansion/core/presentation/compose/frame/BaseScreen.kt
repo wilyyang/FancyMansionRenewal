@@ -167,7 +167,7 @@ fun BaseScreen(
         }
     }
 
-    if(initShowState.value != InitShowState.ScreenAnimationDelay){
+    if(initShowState.value == InitShowState.None){
         CommonPopupLayerProcess(
             loadState = loadState
         )
