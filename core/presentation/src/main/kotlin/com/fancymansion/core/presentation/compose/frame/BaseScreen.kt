@@ -165,25 +165,17 @@ fun BaseScreen(
 
     if(initShowState.value != InitShowState.ScreenAnimationDelay){
         CommonPopupLayerProcess(
-            loadState = loadState,
-            isExistInitContent = initContent != null
+            loadState = loadState
         )
     }
 }
 
 @Composable
 fun CommonPopupLayerProcess(
-    loadState : LoadState,
-    isExistInitContent : Boolean
+    loadState : LoadState
 ) {
     val context = LocalContext.current
     when(loadState){
-        is LoadState.Init -> {
-            if(!isExistInitContent){
-                Loading()
-            }
-        }
-
         is LoadState.Loading -> {
             Loading(
                 loadingMessage = loadState.message
@@ -244,17 +236,22 @@ fun BaseContent(
                     content()
                 }
 
-                if (initContent != null) {
-                    val alpha by animateFloatAsState(
-                        targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
-                        animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
-                        label = "initContentAlpha"
-                    )
+                val alpha by animateFloatAsState(
+                    targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
+                    animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
+                    label = "initContentAlpha"
+                )
 
-                    if(initShowState != InitShowState.None){
+
+                if (initShowState != InitShowState.None) {
+                    if (initContent != null) {
                         Box(modifier = Modifier.alpha(alpha)) {
                             initContent()
                         }
+                    } else {
+                        Loading(
+                            delayMillis = DELAY_SCREEN_ANIMATION_MS
+                        )
                     }
                 }
             }
