@@ -1,8 +1,11 @@
 package com.fancymansion.core.presentation.compose.frame
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -238,30 +241,34 @@ fun BaseContent(
             topBar()
         }
 
-        Column(modifier = Modifier
+        Box(modifier = Modifier
             .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
             .fillMaxSize()) {
 
-            Box {
-                if(initShowState != InitShowState.ScreenAnimationDelay){
+            if(initShowState != InitShowState.ScreenAnimationDelay){
+                AnimatedVisibility(
+                    visible = initShowState == InitShowState.InitFadingOut || initShowState == InitShowState.None,
+                    enter = fadeIn(animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS)),
+                    exit = ExitTransition.None
+                ) {
                     content()
                 }
+            }
 
-                val alpha by animateFloatAsState(
-                    targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
-                    animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
-                    label = "initContentAlpha"
-                )
+            val alpha by animateFloatAsState(
+                targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
+                animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
+                label = "initContentAlpha"
+            )
 
 
-                /**
-                 * Init.2 initContent != null -> initContent
-                 * Status Bar를 차지하지 않음
-                 */
-                if (initShowState != InitShowState.None && initContent != null) {
-                    Box(modifier = Modifier.alpha(alpha)) {
-                        initContent()
-                    }
+            /**
+             * Init.2 initContent != null -> initContent
+             * Status Bar를 차지하지 않음
+             */
+            if (initShowState != InitShowState.None && initContent != null) {
+                Box(modifier = Modifier.alpha(alpha)) {
+                    initContent()
                 }
             }
         }
