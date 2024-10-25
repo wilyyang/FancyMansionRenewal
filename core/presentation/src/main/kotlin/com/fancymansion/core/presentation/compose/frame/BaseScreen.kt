@@ -36,6 +36,7 @@ import androidx.core.view.WindowCompat
 import com.fancymansion.core.common.const.ANIMATION_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_LOADING_FADE_OUT_MS
 import com.fancymansion.core.common.const.DELAY_SCREEN_ANIMATION_MS
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.dialog.AlarmDialog
@@ -168,6 +169,17 @@ fun BaseScreen(
             loadState = loadState
         )
     }
+
+    /**
+     * Init.1 initContent == null -> Loading
+     * Status Bar를 차지해야함
+     */
+    if (initShowState.value != InitShowState.None && initContent == null) {
+        Loading(
+            delayMillis = DELAY_SCREEN_ANIMATION_MS,
+            backgroundColor = Color.Yellow
+        )
+    }
 }
 
 @Composable
@@ -243,15 +255,13 @@ fun BaseContent(
                 )
 
 
-                if (initShowState != InitShowState.None) {
-                    if (initContent != null) {
-                        Box(modifier = Modifier.alpha(alpha)) {
-                            initContent()
-                        }
-                    } else {
-                        Loading(
-                            delayMillis = DELAY_SCREEN_ANIMATION_MS
-                        )
+                /**
+                 * Init.2 initContent != null -> initContent
+                 * Status Bar를 차지하지 않음
+                 */
+                if (initShowState != InitShowState.None && initContent != null) {
+                    Box(modifier = Modifier.alpha(alpha)) {
+                        initContent()
                     }
                 }
             }
