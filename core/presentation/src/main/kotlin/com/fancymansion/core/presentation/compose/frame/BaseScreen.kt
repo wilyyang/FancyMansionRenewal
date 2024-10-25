@@ -176,8 +176,7 @@ fun BaseScreen(
      */
     if (initShowState.value != InitShowState.None && initContent == null) {
         Loading(
-            delayMillis = DELAY_SCREEN_ANIMATION_MS,
-            backgroundColor = Color.Yellow
+            delayMillis = DELAY_SCREEN_ANIMATION_MS
         )
     }
 }
