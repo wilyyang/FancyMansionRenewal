@@ -142,6 +142,7 @@ fun BaseScreen(
         )
 
         SideDrawer(
+            sideDrawerTopPadding = if (statusBarColor != null && statusBarColor != Color.Transparent) 0.dp else statusBarPaddingDp,
             leftDrawerState = leftDrawerState,
             leftDrawerContent = leftDrawerContent,
             rightDrawerState = rightDrawerState,

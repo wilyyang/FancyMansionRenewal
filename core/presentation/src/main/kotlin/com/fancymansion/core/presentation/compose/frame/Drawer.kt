@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun SideDrawer(
+    sideDrawerTopPadding: Dp,
     leftDrawerState: DrawerState? = null,
     leftDrawerContent: (@Composable () -> Unit)? = null,
     rightDrawerState: DrawerState? = null,
@@ -43,7 +46,7 @@ fun SideDrawer(
                 }
             }
 
-            Box(Modifier.offset(x = leftDrawerOffset).fillMaxHeight().pointerInput(Unit){}) {
+            Box(Modifier.padding(top = sideDrawerTopPadding).offset(x = leftDrawerOffset).fillMaxHeight().pointerInput(Unit){}) {
                 leftDrawerContent()
             }
         }
@@ -59,7 +62,7 @@ fun SideDrawer(
                 }
             }
 
-            Box(Modifier.offset(x = rightDrawerOffset).fillMaxHeight().align(Alignment.CenterEnd).pointerInput(Unit){}) {
+            Box(Modifier.padding(top = sideDrawerTopPadding).offset(x = rightDrawerOffset).fillMaxHeight().align(Alignment.CenterEnd).pointerInput(Unit){}) {
                 rightDrawerContent()
             }
         }
@@ -75,7 +78,7 @@ fun SideDrawer(
                 }
             }
 
-            Box(Modifier.offset(y = bottomDrawerOffset).fillMaxWidth().align(Alignment.BottomCenter).pointerInput(Unit){}) {
+            Box(Modifier.padding(top = sideDrawerTopPadding).offset(y = bottomDrawerOffset).fillMaxWidth().align(Alignment.BottomCenter).pointerInput(Unit){}) {
                 bottomDrawerContent()
             }
         }
