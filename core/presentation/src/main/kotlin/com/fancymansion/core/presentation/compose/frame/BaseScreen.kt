@@ -130,19 +130,13 @@ fun BaseScreen(
     }
 
 
-    Column(modifier = Modifier
+    Box(modifier = Modifier
         .fillMaxSize()
         .padding(bottom = navigationBarPaddingDp)) {
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
-                .background(color = statusBarColor ?: Color.Transparent)
-        )
-
         SideDrawer(
-            sideDrawerTopPadding = if (statusBarColor != null && statusBarColor != Color.Transparent) 0.dp else statusBarPaddingDp,
+            contentTopPadding = if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp,
+            sideDrawerTopPadding = statusBarPaddingDp,
             leftDrawerState = leftDrawerState,
             leftDrawerContent = leftDrawerContent,
             rightDrawerState = rightDrawerState,
@@ -166,6 +160,13 @@ fun BaseScreen(
                 content = content
             )
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
+                .background(color = statusBarColor ?: Color.Transparent)
+        )
     }
 
     if(initShowState.value == InitShowState.None){
@@ -237,40 +238,38 @@ fun BaseContent(
     content : @Composable () -> Unit
 ) {
 
-    Box(modifier = modifier){
-        if(topBar != null){
-            topBar()
-        }
-
-        Box(modifier = Modifier
-            .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
-            .fillMaxSize()) {
-
-            if(initShowState != InitShowState.ScreenAnimationDelay){
-                AnimatedVisibility(
-                    visible = initShowState == InitShowState.InitFadingOut || initShowState == InitShowState.None,
-                    enter = fadeIn(animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS)),
-                    exit = ExitTransition.None
-                ) {
+    Box(modifier = modifier) {
+        if (initShowState != InitShowState.ScreenAnimationDelay) {
+            AnimatedVisibility(
+                visible = initShowState == InitShowState.InitFadingOut || initShowState == InitShowState.None,
+                enter = fadeIn(animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS)),
+                exit = ExitTransition.None
+            ) {
+                Box(modifier = Modifier
+                    .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
+                    .fillMaxSize()) {
                     content()
                 }
-            }
 
-            val alpha by animateFloatAsState(
-                targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
-                animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
-                label = "initContentAlpha"
-            )
-
-
-            /**
-             * Init.2 initContent != null -> initContent
-             * Status Bar를 차지하지 않음
-             */
-            if (initShowState != InitShowState.None && initContent != null) {
-                Box(modifier = Modifier.alpha(alpha)) {
-                    initContent()
+                if(topBar != null){
+                    topBar()
                 }
+            }
+        }
+
+        val alpha by animateFloatAsState(
+            targetValue = if (initShowState == InitShowState.InitFadingOut) 0.0f else 1f,
+            animationSpec = tween(durationMillis = ANIMATION_LOADING_FADE_OUT_MS),
+            label = "initContentAlpha"
+        )
+
+        /**
+         * Init.2 initContent != null -> initContent
+         * Status Bar를 차지하지 않음
+         */
+        if (initShowState != InitShowState.None && initContent != null) {
+            Box(modifier = Modifier.alpha(alpha)) {
+                initContent()
             }
         }
     }

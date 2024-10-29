@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SideDrawer(
+    contentTopPadding: Dp,
     sideDrawerTopPadding: Dp,
     leftDrawerState: DrawerState? = null,
     leftDrawerContent: (@Composable () -> Unit)? = null,
@@ -33,7 +34,9 @@ fun SideDrawer(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(modifier = Modifier.fillMaxSize()) {
-        content()
+        Box(modifier = Modifier.fillMaxSize().padding(top = contentTopPadding)){
+            content()
+        }
 
         // 왼쪽 Drawer
         if(leftDrawerState != null && leftDrawerContent != null){
