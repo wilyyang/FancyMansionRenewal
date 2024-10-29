@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -249,6 +249,9 @@ fun BaseContent(
                     .padding(top = if (isOverlayTopBar || topBar == null) 0.dp else topBarHeight)
                     .fillMaxSize()) {
                     content()
+                    if(initShowState != InitShowState.None){
+                        Box(modifier = Modifier.fillMaxSize().pointerInput(Unit){})
+                    }
                 }
 
                 if(topBar != null){
