@@ -137,6 +137,7 @@ fun BaseScreen(
         SideDrawer(
             contentTopPadding = if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp,
             sideDrawerTopPadding = statusBarPaddingDp,
+            drawerVisible = InitShowState.None == initShowState.value && loadState != LoadState.Close,
             leftDrawerState = leftDrawerState,
             leftDrawerContent = leftDrawerContent,
             rightDrawerState = rightDrawerState,

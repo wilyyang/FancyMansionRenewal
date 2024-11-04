@@ -37,6 +37,7 @@ interface ViewSideEffect
 sealed class LoadState {
     data object Init : LoadState()
     data object Idle : LoadState()
+    data object Close : LoadState()
     data class Loading(val message : String? = null) : LoadState()
     data class ErrorDialog(
         val title : StringValue? = null,
@@ -301,7 +302,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
              * etc
              */
             is CommonEvent.CloseEvent -> {
-                setLoadStateIdle()
+                setLoadState(LoadState.Close)
                 setCommonEffect{
                     CommonEffect.Navigation.NavigateBack
                 }

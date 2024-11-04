@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 fun SideDrawer(
     contentTopPadding: Dp,
     sideDrawerTopPadding: Dp,
+    drawerVisible : Boolean,
     leftDrawerState: DrawerState? = null,
     leftDrawerContent: (@Composable () -> Unit)? = null,
     rightDrawerState: DrawerState? = null,
@@ -39,7 +40,7 @@ fun SideDrawer(
         }
 
         // 왼쪽 Drawer
-        if(leftDrawerState != null && leftDrawerContent != null){
+        if(drawerVisible && leftDrawerState != null && leftDrawerContent != null){
             val leftDrawerOffset = animateDpAsState(if (leftDrawerState.isOpen) 0.dp else -screenWidth, label = "").value
 
             LaunchedEffect(leftDrawerState.isOpen) {
@@ -55,7 +56,7 @@ fun SideDrawer(
         }
 
         // 오른쪽 Drawer
-        if(rightDrawerState != null && rightDrawerContent != null){
+        if(drawerVisible && rightDrawerState != null && rightDrawerContent != null){
             val rightDrawerOffset = animateDpAsState(if (rightDrawerState.isOpen) 0.dp else screenWidth, label = "").value
 
             LaunchedEffect(rightDrawerState.isOpen) {
@@ -71,7 +72,7 @@ fun SideDrawer(
         }
 
         // 하단 Drawer
-        if(bottomDrawerState != null && bottomDrawerContent != null){
+        if(drawerVisible && bottomDrawerState != null && bottomDrawerContent != null){
             val bottomDrawerOffset = animateDpAsState(if (bottomDrawerState.isOpen) 0.dp else (screenHeight + 40.dp), label = "").value
 
             LaunchedEffect(bottomDrawerState.isOpen) {
