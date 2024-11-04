@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -20,6 +21,7 @@ import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
+import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -54,8 +56,15 @@ fun EditorBookOverviewScreenFrame(
             FancyMansionTopBar(
                 typePane = TypePane.MOBILE,
                 topBarColor = MaterialTheme.colorScheme.surface,
-                idRightIcon = com.fancymansion.core.presentation.R.drawable.ic_back,
+                idLeftIcon = com.fancymansion.core.presentation.R.drawable.ic_back,
+                onClickLeftIcon = {
+                    onCommonEventSent(CommonEvent.CloseEvent)
+                },
+                title = stringResource(id = R.string.topbar_editor_title_overview),
+                subTitle = stringResource(id = R.string.topbar_editor_sub_title),
+                sideRightText = stringResource(id = R.string.topbar_editor_side_save),
                 onClickRightIcon = {
+                    // TODO : TEMP CODE
                     onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
                 }
             )

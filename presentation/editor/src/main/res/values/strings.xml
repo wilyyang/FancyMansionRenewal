@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="topbar_editor_sub_title">에디터</string>
+    <string name="topbar_editor_title_overview">북 개요</string>
+    <string name="topbar_editor_side_save">저장</string>
 </resources>

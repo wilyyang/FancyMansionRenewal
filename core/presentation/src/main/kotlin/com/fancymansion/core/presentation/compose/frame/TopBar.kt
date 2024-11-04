@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,9 +44,11 @@ fun FancyMansionTopBar(
     titleImageVerticalPadding : Dp = 0.dp,
 
     idLeftIcon: Int? = null,
+    sideLeftText: String? = null,
     onClickLeftIcon: (() -> Unit) = { },
 
     idRightIcon: Int? = null,
+    sideRightText: String? = null,
     onClickRightIcon: (() -> Unit) = { },
 
     topBarColor : Color? = Color.Transparent,
@@ -53,10 +56,9 @@ fun FancyMansionTopBar(
     shadowElevation: Dp = 0.dp
 ) {
     val topBarHeight = if (typePane == TypePane.MOBILE) topBarDpMobile else topBarDpTablet
-    val topBarVerticalPadding = if (typePane == TypePane.MOBILE) 6.6.dp else 10.dp
-    val topBarHorizontalPadding = if (typePane == TypePane.MOBILE) 12.6.dp else 18.dp
-    val titleStyle = if (typePane == TypePane.MOBILE) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium
-    val subTitleStyle = if (typePane == TypePane.MOBILE) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyLarge
+    val topBarVerticalPadding = 4.dp
+    val titleStyle = MaterialTheme.typography.titleLarge
+    val subTitleStyle = MaterialTheme.typography.bodyLarge
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,14 +76,26 @@ fun FancyMansionTopBar(
             )
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = topBarHorizontalPadding)
-        ) {
-            idLeftIcon?.also {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if(sideLeftText != null) {
+                Box(modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .fillMaxHeight()
+                    .padding(vertical = topBarVerticalPadding)
+                    .padding(start = 12.dp)
+                    .clickSingle(
+                        onClick = onClickLeftIcon
+                    )){
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        text = sideLeftText,
+                        style = subTitleStyle
+                    )
+                }
+
+            }else if(idLeftIcon != null){
                 val leftIconInteractionSource = remember { MutableInteractionSource() }
-                Image(
+                Icon(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .fillMaxHeight()
@@ -94,9 +108,9 @@ fun FancyMansionTopBar(
                             interactionSource = leftIconInteractionSource,
                             pressScale = 0.9f
                         ),
-                    painter = painterResource(id = it),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillHeight
+                    painter = painterResource(id = idLeftIcon),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = "Left Icon"
                 )
             }
 
@@ -141,9 +155,24 @@ fun FancyMansionTopBar(
                 }
             }
 
-            idRightIcon?.also {
+            if(sideRightText != null) {
+                Box(modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .padding(vertical = topBarVerticalPadding)
+                    .padding(end = 12.dp)
+                    .clickSingle(
+                        onClick = onClickRightIcon
+                    )){
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        text = sideRightText,
+                        style = subTitleStyle
+                    )
+                }
+            }else if(idRightIcon != null){
                 val rightIconInteractionSource = remember { MutableInteractionSource() }
-                Image(
+                Icon(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .fillMaxHeight()
@@ -156,9 +185,9 @@ fun FancyMansionTopBar(
                             interactionSource = rightIconInteractionSource,
                             pressScale = 0.9f
                         ),
-                    painter = painterResource(id = it),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillHeight
+                    painter = painterResource(id = idRightIcon),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = "Right Icon"
                 )
             }
         }
