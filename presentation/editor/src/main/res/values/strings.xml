@@ -3,4 +3,13 @@
     <string name="topbar_editor_sub_title">에디터</string>
     <string name="topbar_editor_title_overview">북 개요</string>
     <string name="topbar_editor_side_save">저장</string>
+
+    <string name="edit_top_text_book_cover">커버 이미지</string>
+
+    <string name="edit_top_text_book_title">책 제목</string>
+    <string name="edit_top_text_book_introduce">작품 소개</string>
+    <string name="edit_top_text_book_keyword">키워드</string>
+
+    <string name="edit_top_text_book_title_hint">제목</string>
+    <string name="edit_top_text_book_introduce_hint">책 소개글을 작성해 주세요.</string>
 </resources>

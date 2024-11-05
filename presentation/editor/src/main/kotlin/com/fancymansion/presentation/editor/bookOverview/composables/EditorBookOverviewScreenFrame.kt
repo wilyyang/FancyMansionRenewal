@@ -66,7 +66,8 @@ fun EditorBookOverviewScreenFrame(
                 onClickRightIcon = {
                     // TODO : TEMP CODE
                     onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
-                }
+                },
+                shadowElevation = 1.dp
             )
         }
     ) {
