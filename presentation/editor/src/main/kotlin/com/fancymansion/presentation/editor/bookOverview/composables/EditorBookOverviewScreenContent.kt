@@ -3,7 +3,6 @@ package com.fancymansion.presentation.editor.bookOverview.composables
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +27,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -92,7 +90,7 @@ fun EditorBookOverviewScreenContent(
                                 modifier = Modifier.padding(
                                     vertical = EDIT_ITEM_VERTICAL_PADDING
                                 ),
-                                text = stringResource(id = R.string.edit_top_text_book_cover),
+                                text = stringResource(id = R.string.edit_overview_top_label_book_cover),
                                 style = topTextStyle
                             )
 
@@ -119,7 +117,7 @@ fun EditorBookOverviewScreenContent(
                                 modifier = Modifier.padding(
                                     vertical = EDIT_ITEM_VERTICAL_PADDING
                                 ),
-                                text = stringResource(id = R.string.edit_top_text_book_title),
+                                text = stringResource(id = R.string.edit_overview_top_label_book_title),
                                 style = topTextStyle
                             )
 
@@ -129,20 +127,33 @@ fun EditorBookOverviewScreenContent(
                                     .padding(
                                         vertical = EDIT_ITEM_VERTICAL_PADDING
                                     ), value = "",
-                                hint = stringResource(id = R.string.edit_top_text_book_title_hint)
+                                hint = stringResource(id = R.string.edit_overview_edit_hint_book_title)
                             ) {
 
                             }
 
                             Spacer(modifier = Modifier.height(15.dp))
 
-                            Text(
-                                modifier = Modifier.padding(
-                                    vertical = EDIT_ITEM_VERTICAL_PADDING
-                                ),
-                                text = stringResource(id = R.string.edit_top_text_book_keyword),
-                                style = topTextStyle
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .padding(
+                                        vertical = EDIT_ITEM_VERTICAL_PADDING
+                                    )
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    modifier = Modifier.align(Alignment.CenterStart),
+                                    text = stringResource(id = R.string.edit_overview_top_label_book_keyword),
+                                    style = topTextStyle
+                                )
+
+                                Text(
+                                    modifier = Modifier.align(Alignment.CenterEnd),
+                                    text = stringResource(id = R.string.edit_overview_top_edit_keyword),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+
 
                             LazyRow(
                                 modifier = Modifier
@@ -171,9 +182,78 @@ fun EditorBookOverviewScreenContent(
                                     )
                                 }
                                 item {
-                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Spacer(modifier = Modifier.width(15.dp))
                                 }
                             }
+
+                            Spacer(modifier = Modifier.height(15.dp))
+
+
+                            Box(
+                                modifier = Modifier
+                                    .padding(
+                                        vertical = EDIT_ITEM_VERTICAL_PADDING
+                                    )
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(
+                                        vertical = EDIT_ITEM_VERTICAL_PADDING
+                                    ),
+                                    text = stringResource(id = R.string.edit_overview_top_label_book_page),
+                                    style = topTextStyle
+                                )
+
+
+                                Text(
+                                    modifier = Modifier.align(Alignment.CenterEnd),
+                                    text = stringResource(id = R.string.edit_overview_top_edit_page),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+
+                            val density = LocalDensity.current
+                            listOf(
+                                "타이틀 1" to 1,
+                                "타이틀 2" to 2,
+                                "타이틀 3" to 3,
+                                "타이틀 4" to 4,
+                                "타이틀 5" to 5
+                            ).map { (title, page) ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(80.dp)
+                                        .borderLine(
+                                            density = density,
+                                            color = MaterialTheme.colorScheme.outline,
+                                            top = 0.5.dp,
+                                            bottom = 0.5.dp
+                                        ),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.fillMaxWidth(0.9f)) {
+                                        Text(
+                                            text = title,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+
+
+                                        Text(
+                                            text = "id : $page",
+                                            style = MaterialTheme.typography.labelMedium
+                                        )
+
+                                    }
+
+                                    Text(
+                                        modifier = Modifier,
+                                        text = stringResource(id = R.string.edit_overview_button_holder_page_edit),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                            }
+                            Text(modifier = Modifier.padding(12.dp), text = stringResource(id = R.string.edit_overview_button_page_more))
 
                             Spacer(modifier = Modifier.height(15.dp))
 
@@ -181,7 +261,7 @@ fun EditorBookOverviewScreenContent(
                                 modifier = Modifier.padding(
                                     vertical = EDIT_ITEM_VERTICAL_PADDING
                                 ),
-                                text = stringResource(id = R.string.edit_top_text_book_introduce),
+                                text = stringResource(id = R.string.edit_overview_top_label_book_introduce),
                                 style = topTextStyle
                             )
 
@@ -191,9 +271,9 @@ fun EditorBookOverviewScreenContent(
                                     .padding(
                                         vertical = EDIT_ITEM_VERTICAL_PADDING
                                     ), value = "",
-                                minLine = 20,
-                                maxLine = 20,
-                                hint = stringResource(id = R.string.edit_top_text_book_introduce_hint)
+                                minLine = 8,
+                                maxLine = 8,
+                                hint = stringResource(id = R.string.edit_overview_edit_hint_book_introduce)
                             ) {
 
                             }
@@ -228,11 +308,12 @@ fun EditorBookOverviewScreenContent(
                             )
                             .background(color = MaterialTheme.colorScheme.primary)
                             .clickSingle {
+                                onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
                             }
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.Center),
-                            text = "작성 완료",
+                            text = stringResource(id = R.string.edit_overview_button_overview_preview),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onPrimary
                         )

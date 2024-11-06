@@ -65,7 +65,6 @@ fun EditorBookOverviewScreenFrame(
                 sideRightText = stringResource(id = R.string.topbar_editor_side_save),
                 onClickRightIcon = {
                     // TODO : TEMP CODE
-                    onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
                 },
                 shadowElevation = 1.dp
             )
