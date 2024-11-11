@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.fancymansion.core.common.const.ImagePickState
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
@@ -67,6 +70,25 @@ fun EditorBookOverviewScreenContent(
                 )
             }
         } else {
+            val imageState : ImagePickState= if(uiState.bookCoverFile == null && uiState.galleryCoverImageUri == null){
+                ImagePickState.Empty
+            }else if(uiState.bookCoverFile != null){
+                ImagePickState.SavedImage(uiState.bookCoverFile)
+            }else{
+                ImagePickState.GalleryUri(uiState.galleryCoverImageUri!!)
+            }
+            val painter = when(imageState){
+                is ImagePickState.SavedImage ->{
+                    rememberAsyncImagePainter(imageState.file)
+                }
+                is ImagePickState.GalleryUri ->{
+                    rememberAsyncImagePainter(imageState.uri)
+                }
+                else -> {
+                    painterResource(id = R.drawable.ic_gallery_photo)
+                }
+            }
+
             Box(modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surface)){
@@ -95,33 +117,40 @@ fun EditorBookOverviewScreenContent(
                                 style = topTextStyle
                             )
 
-                            val painter = if(uiState.galleryCoverImageUri != null){
-                                rememberAsyncImagePainter(uiState.galleryCoverImageUri)
-                            }else if(uiState.bookCoverFile != null){
-                                rememberAsyncImagePainter(uiState.bookCoverFile)
-                            }else{
-                                painterResource(id = R.drawable.ic_gallery_photo)
-                            }
+                            Box(modifier = Modifier.size(74.dp)){
+                                Image(
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                        .fillMaxSize()
+                                        .clip(shape = MaterialTheme.shapes.small)
+                                        .border(
+                                            0.5.dp,
+                                            color = onSurfaceSub,
+                                            shape = MaterialTheme.shapes.medium
+                                        )
+                                        .clickSingle {
+                                            if (imageState == ImagePickState.Empty){
+                                                onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
+                                            }
+                                        },
+                                    painter = painter,
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = "Gallery"
+                                )
 
-                            Image(
-                                modifier = Modifier
-                                    .padding(
-                                        vertical = EDIT_ITEM_VERTICAL_PADDING
+                                if (imageState != ImagePickState.Empty) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .size(20.dp)
+                                            .clickSingle {
+                                                onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
+                                            },
+                                        painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_text_cancel),
+                                        contentDescription = "Delete"
                                     )
-                                    .clip(shape = MaterialTheme.shapes.small)
-                                    .border(
-                                        0.5.dp,
-                                        color = onSurfaceSub,
-                                        shape = MaterialTheme.shapes.medium
-                                    )
-                                    .size(64.dp)
-                                    .padding(10.dp)
-                                    .clickSingle {
-                                        onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
-                                    },
-                                painter = painter,
-                                contentDescription = "Gallery"
-                            )
+                                }
+                            }
 
                             Spacer(modifier = Modifier.height(15.dp))
 

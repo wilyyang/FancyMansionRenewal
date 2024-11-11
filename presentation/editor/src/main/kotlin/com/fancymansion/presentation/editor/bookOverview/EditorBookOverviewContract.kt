@@ -27,6 +27,7 @@ class EditorBookOverviewContract {
          */
         data object GalleryBookCoverPickerRequest : Event()
         class GalleryBookCoverPickerResult(val imageUri : Uri?) : Event()
+        data object CoverImageReset : Event()
     }
 
     sealed class Effect : ViewSideEffect {

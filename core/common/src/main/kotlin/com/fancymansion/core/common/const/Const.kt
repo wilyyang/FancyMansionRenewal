@@ -1,5 +1,8 @@
 package com.fancymansion.core.common.const
 
+import android.net.Uri
+import java.io.File
+
 const val MOBILE_BASE_SCREEN_HEIGHT_PX = 2340
 const val MOBILE_BASE_SCREEN_WIDTH_PX = 1080
 const val MOBILE_BASE_SCREEN_DPI = 450
@@ -25,6 +28,12 @@ enum class NetworkState{
     TYPE_MOBILE_DATA,
     TYPE_WIFI,
     TYPE_ETC
+}
+
+sealed class ImagePickState {
+    data object Empty : ImagePickState()
+    class SavedImage(val file: File) : ImagePickState()
+    class GalleryUri(val uri: Uri) : ImagePickState()
 }
 
 const val STATUS_SUCCESS               = 200

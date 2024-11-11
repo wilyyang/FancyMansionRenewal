@@ -50,7 +50,17 @@ class EditorBookOverviewViewModel @Inject constructor(
             is EditorBookOverviewContract.Event.GalleryBookCoverPickerResult -> {
                 setState {
                     copy(
+                        bookCoverFile = null,
                         galleryCoverImageUri = event.imageUri
+                    )
+                }
+            }
+
+            EditorBookOverviewContract.Event.CoverImageReset -> {
+                setState {
+                    copy(
+                        bookCoverFile = null,
+                        galleryCoverImageUri = null
                     )
                 }
             }
