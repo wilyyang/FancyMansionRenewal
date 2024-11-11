@@ -1,6 +1,11 @@
 package com.fancymansion.presentation.editor.bookOverview.composables
 
+import android.app.Activity
+import android.content.Intent
+import android.provider.MediaStore
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,10 +41,21 @@ fun EditorBookOverviewScreenFrame(
     onEventSent: (event: EditorBookOverviewContract.Event) -> Unit,
     onNavigationRequested: (EditorBookOverviewContract.Effect.Navigation) -> Unit
 ) {
+    val launcherGalleryBookCoverPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerResult(imageUri = result.data?.data))
+        }
+    }
+
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
             if(effect is EditorBookOverviewContract.Effect.Navigation){
                 onNavigationRequested(effect)
+            }else if(effect is EditorBookOverviewContract.Effect.GalleryBookCoverPickerEffect){
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                launcherGalleryBookCoverPicker.launch(intent)
             }
         }?.collect()
     }

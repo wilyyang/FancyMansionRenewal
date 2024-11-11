@@ -8,6 +8,7 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +37,23 @@ class EditorBookOverviewViewModel @Inject constructor(
                     )
                 }
             }
+
+            /**
+             * Gallery
+             */
+            EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest -> {
+                setEffect{
+                    EditorBookOverviewContract.Effect.GalleryBookCoverPickerEffect
+                }
+            }
+
+            is EditorBookOverviewContract.Event.GalleryBookCoverPickerResult -> {
+                setState {
+                    copy(
+                        galleryCoverImageUri = event.imageUri
+                    )
+                }
+            }
         }
     }
 
@@ -43,10 +61,16 @@ class EditorBookOverviewViewModel @Inject constructor(
         launchWithInit {
             useCaseMakeBook.makeSampleEpisode()
             val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
+            val bookCoverFile: File? =
+                if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
+                    episodeRef,
+                    bookInfo.introduce.coverList[0]
+                ) else null
 
             setState {
                 copy(
-                    bookInfo = bookInfo
+                    bookInfo = bookInfo,
+                    bookCoverFile = bookCoverFile
                 )
             }
         }

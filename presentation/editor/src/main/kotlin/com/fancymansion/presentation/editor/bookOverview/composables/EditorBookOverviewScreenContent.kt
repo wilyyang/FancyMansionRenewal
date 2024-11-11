@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
@@ -94,6 +95,14 @@ fun EditorBookOverviewScreenContent(
                                 style = topTextStyle
                             )
 
+                            val painter = if(uiState.galleryCoverImageUri != null){
+                                rememberAsyncImagePainter(uiState.galleryCoverImageUri)
+                            }else if(uiState.bookCoverFile != null){
+                                rememberAsyncImagePainter(uiState.bookCoverFile)
+                            }else{
+                                painterResource(id = R.drawable.ic_gallery_photo)
+                            }
+
                             Image(
                                 modifier = Modifier
                                     .padding(
@@ -106,8 +115,11 @@ fun EditorBookOverviewScreenContent(
                                         shape = MaterialTheme.shapes.medium
                                     )
                                     .size(64.dp)
-                                    .padding(10.dp),
-                                painter = painterResource(id = R.drawable.ic_gallery_photo),
+                                    .padding(10.dp)
+                                    .clickSingle {
+                                        onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
+                                    },
+                                painter = painter,
                                 contentDescription = "Gallery"
                             )
 
