@@ -1,5 +1,6 @@
 package com.fancymansion.data.repository
 
+import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
@@ -135,6 +136,37 @@ class BookLocalRepositoryImpl @Inject constructor(
         imageName: String
     ): File {
         return bookStorageSource.loadCoverImage(userId, mode, bookId, imageName)
+    }
+
+    override suspend fun deletePageImage(episodeRef: EpisodeRef, imageName: String): Boolean {
+        return bookStorageSource.deletePageImage(episodeRef, imageName)
+    }
+
+    override suspend fun deleteCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): Boolean {
+        return bookStorageSource.deleteCoverImage(userId, mode, bookId, imageName)
+    }
+
+    override suspend fun makePageImageFromUri(
+        episodeRef: EpisodeRef,
+        imageName: String,
+        uri: Uri
+    ): Boolean {
+        return bookStorageSource.makePageImageFromUri(episodeRef, imageName, uri)
+    }
+
+    override suspend fun makeCoverImageFromUri(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        uri: Uri
+    ): Boolean {
+        return bookStorageSource.makeCoverImageFromUri(userId, mode, bookId, imageName, uri)
     }
 
     override suspend fun makePageImageFromResource(

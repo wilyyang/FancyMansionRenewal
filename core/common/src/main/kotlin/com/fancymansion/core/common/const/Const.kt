@@ -30,10 +30,10 @@ enum class NetworkState{
     TYPE_ETC
 }
 
-sealed class ImagePickState {
-    data object Empty : ImagePickState()
-    class SavedImage(val file: File) : ImagePickState()
-    class GalleryUri(val uri: Uri) : ImagePickState()
+sealed class ImagePickType {
+    data object Empty : ImagePickType()
+    class SavedImage(val file: File) : ImagePickType()
+    class GalleryUri(val uri: Uri) : ImagePickType()
 }
 
 const val STATUS_SUCCESS               = 200

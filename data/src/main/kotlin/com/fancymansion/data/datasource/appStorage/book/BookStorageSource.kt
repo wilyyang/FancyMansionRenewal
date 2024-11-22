@@ -1,5 +1,6 @@
 package com.fancymansion.data.datasource.appStorage.book
 
+import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
@@ -60,6 +61,25 @@ interface BookStorageSource {
     suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String): File
 
     suspend fun loadCoverImage(userId: String, mode: ReadMode, bookId: String, imageName: String) : File
+
+    suspend fun deletePageImage(episodeRef: EpisodeRef, imageName: String): Boolean
+
+    suspend fun deleteCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): Boolean
+
+    suspend fun makePageImageFromUri(episodeRef: EpisodeRef, imageName: String, uri: Uri): Boolean
+
+    suspend fun makeCoverImageFromUri(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        uri: Uri
+    ): Boolean
 
     suspend fun makePageImageFromResource(episodeRef: EpisodeRef, imageName: String, resourceId: Int)
 

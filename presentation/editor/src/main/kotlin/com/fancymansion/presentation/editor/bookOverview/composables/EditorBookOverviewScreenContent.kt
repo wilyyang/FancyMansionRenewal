@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.fancymansion.core.common.const.ImagePickState
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
@@ -70,19 +70,12 @@ fun EditorBookOverviewScreenContent(
                 )
             }
         } else {
-            val imageState : ImagePickState= if(uiState.bookCoverFile == null && uiState.galleryCoverImageUri == null){
-                ImagePickState.Empty
-            }else if(uiState.bookCoverFile != null){
-                ImagePickState.SavedImage(uiState.bookCoverFile)
-            }else{
-                ImagePickState.GalleryUri(uiState.galleryCoverImageUri!!)
-            }
-            val painter = when(imageState){
-                is ImagePickState.SavedImage ->{
-                    rememberAsyncImagePainter(imageState.file)
+            val painter = when(uiState.imagePickType){
+                is ImagePickType.SavedImage ->{
+                    rememberAsyncImagePainter(uiState.imagePickType.file)
                 }
-                is ImagePickState.GalleryUri ->{
-                    rememberAsyncImagePainter(imageState.uri)
+                is ImagePickType.GalleryUri ->{
+                    rememberAsyncImagePainter(uiState.imagePickType.uri)
                 }
                 else -> {
                     painterResource(id = R.drawable.ic_gallery_photo)
@@ -129,16 +122,14 @@ fun EditorBookOverviewScreenContent(
                                             shape = MaterialTheme.shapes.medium
                                         )
                                         .clickSingle {
-                                            if (imageState == ImagePickState.Empty){
-                                                onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
-                                            }
+                                            onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
                                         },
                                     painter = painter,
                                     contentScale = ContentScale.Crop,
                                     contentDescription = "Gallery"
                                 )
 
-                                if (imageState != ImagePickState.Empty) {
+                                if (uiState.imagePickType != ImagePickType.Empty) {
                                     Icon(
                                         modifier = Modifier
                                             .align(Alignment.TopEnd)

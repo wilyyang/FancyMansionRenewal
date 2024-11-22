@@ -1,5 +1,6 @@
 package com.fancymansion.domain.interfaceRepository
 
+import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.book.ActionIdModel
@@ -47,6 +48,26 @@ interface BookLocalRepository {
     suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String) : File
     suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String) : File
     suspend fun loadCoverImage(userId: String, mode : ReadMode, bookId : String, imageName: String) : File
+
+
+    suspend fun deletePageImage(episodeRef: EpisodeRef, imageName: String): Boolean
+
+    suspend fun deleteCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): Boolean
+
+    suspend fun makePageImageFromUri(episodeRef: EpisodeRef, imageName: String, uri: Uri): Boolean
+
+    suspend fun makeCoverImageFromUri(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        uri: Uri
+    ): Boolean
 
     suspend fun makePageImageFromResource(
         episodeRef: EpisodeRef,

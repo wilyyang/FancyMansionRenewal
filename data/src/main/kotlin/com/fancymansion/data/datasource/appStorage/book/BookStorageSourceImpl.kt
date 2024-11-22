@@ -1,6 +1,7 @@
 package com.fancymansion.data.datasource.appStorage.book
 
 import android.content.Context
+import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.util.readModuleRawFile
@@ -134,6 +135,56 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         bookId: String,
         imageName: String
     ): File = root.coverFile(userId, mode, bookId, imageName)
+
+    override suspend fun deletePageImage(episodeRef: EpisodeRef, imageName: String): Boolean
+    = root.pageImageFile(episodeRef, imageName).delete()
+
+    override suspend fun deleteCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): Boolean = root.coverFile(userId, mode, bookId, imageName).delete()
+
+    override suspend fun makePageImageFromUri(
+        episodeRef: EpisodeRef,
+        imageName: String,
+        uri: Uri
+    ): Boolean {
+        return try {
+            val targetFile = root.pageImageFile(episodeRef, imageName)
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(targetFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun makeCoverImageFromUri(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        uri: Uri
+    ): Boolean {
+        return try {
+            val targetFile = root.coverFile(userId, mode, bookId, imageName)
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(targetFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 
     override suspend fun makePageImageFromResource(
         episodeRef: EpisodeRef,

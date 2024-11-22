@@ -2,11 +2,11 @@ package com.fancymansion.presentation.editor.bookOverview
 
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
-import java.io.File
 
 class EditorBookOverviewContract {
     companion object {
@@ -15,12 +15,12 @@ class EditorBookOverviewContract {
 
     data class State(
         val bookInfo : BookInfoModel? = null,
-        val bookCoverFile : File? = null,
-        val galleryCoverImageUri : Uri? = null
+        val imagePickType : ImagePickType = ImagePickType.Empty
     ) : ViewState
 
     sealed class Event : ViewEvent {
         data object BookOverviewButtonClicked : Event()
+        data object OverviewInfoSaveToFile : Event()
 
         /**
          * Gallery

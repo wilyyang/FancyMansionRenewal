@@ -3,11 +3,13 @@ package com.fancymansion.presentation.editor.bookOverview
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import java.io.File
 import javax.inject.Inject
 
@@ -38,6 +40,51 @@ class EditorBookOverviewViewModel @Inject constructor(
                 }
             }
 
+            EditorBookOverviewContract.Event.OverviewInfoSaveToFile -> {
+                launchWithLoading {
+                    delay(2000L)
+                    uiState.value.bookInfo?.let { book ->
+                        when(uiState.value.imagePickType){
+                            is ImagePickType.Empty -> {
+                                        val coverName = book.introduce.coverList.getOrNull(0)
+                                        if(coverName != null){
+                                            useCaseMakeBook.makeBookInfo(episodeRef, book.copy(
+                                                introduce = book.introduce.copy(
+                                                    coverList = listOf()
+                                                )
+                                            ))
+
+                                            useCaseMakeBook.deleteCoverImage(episodeRef, coverName)
+
+                                            val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
+                                    val bookCoverFile: File? =
+                                        if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
+                                            episodeRef,
+                                            bookInfo.introduce.coverList[0]
+                                        ) else null
+
+                                    setState {
+                                        copy(
+                                            bookInfo = bookInfo,
+                                            imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
+                                                bookCoverFile
+                                            ) else ImagePickType.Empty
+                                        )
+                                    }
+                                }
+
+                            }
+                            is ImagePickType.GalleryUri -> {
+
+                            }
+                            is ImagePickType.SavedImage -> {
+
+                            }
+                        }
+                    }
+                }
+            }
+
             /**
              * Gallery
              */
@@ -50,8 +97,9 @@ class EditorBookOverviewViewModel @Inject constructor(
             is EditorBookOverviewContract.Event.GalleryBookCoverPickerResult -> {
                 setState {
                     copy(
-                        bookCoverFile = null,
-                        galleryCoverImageUri = event.imageUri
+                        imagePickType =
+                        if (event.imageUri != null) ImagePickType.GalleryUri(event.imageUri)
+                        else ImagePickType.Empty
                     )
                 }
             }
@@ -59,8 +107,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             EditorBookOverviewContract.Event.CoverImageReset -> {
                 setState {
                     copy(
-                        bookCoverFile = null,
-                        galleryCoverImageUri = null
+                        imagePickType = ImagePickType.Empty
                     )
                 }
             }
@@ -80,7 +127,9 @@ class EditorBookOverviewViewModel @Inject constructor(
             setState {
                 copy(
                     bookInfo = bookInfo,
-                    bookCoverFile = bookCoverFile
+                    imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
+                        bookCoverFile
+                    ) else ImagePickType.Empty
                 )
             }
         }

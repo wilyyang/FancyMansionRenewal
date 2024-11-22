@@ -80,7 +80,7 @@ fun EditorBookOverviewScreenFrame(
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 sideRightText = stringResource(id = R.string.topbar_editor_side_save),
                 onClickRightIcon = {
-                    // TODO : TEMP CODE
+                    onEventSent(EditorBookOverviewContract.Event.OverviewInfoSaveToFile)
                 },
                 shadowElevation = 1.dp
             )
