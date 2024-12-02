@@ -19,4 +19,7 @@
 
     <string name="edit_overview_edit_hint_book_title">제목</string>
     <string name="edit_overview_edit_hint_book_introduce">책 소개글을 작성해 주세요.</string>
+
+    <string name="dialog_save_complete_book_info">책 기본 정보 저장을 완료했습니다.</string>
+    <string name="dialog_save_fail_book_info">책 기본 정보 저장에 실패했습니다. 다시 시도해주세요.</string>
 </resources>

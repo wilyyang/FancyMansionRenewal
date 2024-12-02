@@ -34,4 +34,7 @@
 
     <string name="logical_and">그리고</string>
     <string name="logical_or">또는</string>
+
+    <!-- Book File -->
+    <string name="book_file_save_result_title">저장 결과</string>
 </resources>

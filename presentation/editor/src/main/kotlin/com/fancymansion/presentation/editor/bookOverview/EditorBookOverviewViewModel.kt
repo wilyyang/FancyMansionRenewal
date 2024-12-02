@@ -5,11 +5,14 @@ import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.testEpisodeRef
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import java.io.File
 import javax.inject.Inject
 
@@ -41,47 +44,20 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             EditorBookOverviewContract.Event.OverviewInfoSaveToFile -> {
-                launchWithLoading {
-                    delay(2000L)
-                    uiState.value.bookInfo?.let { book ->
-                        when(uiState.value.imagePickType){
-                            is ImagePickType.Empty -> {
-                                        val coverName = book.introduce.coverList.getOrNull(0)
-                                        if(coverName != null){
-                                            useCaseMakeBook.makeBookInfo(episodeRef, book.copy(
-                                                introduce = book.introduce.copy(
-                                                    coverList = listOf()
-                                                )
-                                            ))
+                launchWithLoading(endLoadState = null) {
+                    val isComplete: Boolean =
+                        uiState.value.bookInfo?.let { book ->
+                            updateBookInfoAndReload(book, uiState.value.imagePickType)
+                        } ?: false
 
-                                            useCaseMakeBook.deleteCoverImage(episodeRef, coverName)
-
-                                            val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
-                                    val bookCoverFile: File? =
-                                        if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
-                                            episodeRef,
-                                            bookInfo.introduce.coverList[0]
-                                        ) else null
-
-                                    setState {
-                                        copy(
-                                            bookInfo = bookInfo,
-                                            imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
-                                                bookCoverFile
-                                            ) else ImagePickType.Empty
-                                        )
-                                    }
-                                }
-
-                            }
-                            is ImagePickType.GalleryUri -> {
-
-                            }
-                            is ImagePickType.SavedImage -> {
-
-                            }
-                        }
-                    }
+                    setLoadState(
+                        loadState = LoadState.AlarmDialog(
+                            title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
+                            message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_book_info else R.string.dialog_save_fail_book_info),
+                            confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                            onConfirm = ::setLoadStateIdle
+                        )
+                    )
                 }
             }
 
@@ -117,21 +93,51 @@ class EditorBookOverviewViewModel @Inject constructor(
     init {
         launchWithInit {
             useCaseMakeBook.makeSampleEpisode()
-            val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
-            val bookCoverFile: File? =
-                if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
-                    episodeRef,
-                    bookInfo.introduce.coverList[0]
-                ) else null
+            loadBookInfoFromFile()
+        }
+    }
 
-            setState {
-                copy(
-                    bookInfo = bookInfo,
-                    imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
-                        bookCoverFile
-                    ) else ImagePickType.Empty
-                )
+    private suspend fun updateBookInfoAndReload(book: BookInfoModel, pickType: ImagePickType) : Boolean{
+        val saveResult = updateBookCoverImage(book, pickType)
+        if(saveResult){
+            loadBookInfoFromFile()
+        }
+        return saveResult
+    }
+
+    private suspend fun updateBookCoverImage(
+        book: BookInfoModel,
+        pickType: ImagePickType
+    ): Boolean {
+        return when(pickType){
+            is ImagePickType.SavedImage -> true
+            else -> {
+                if (!useCaseMakeBook.removeBookCover(episodeRef, book)) {
+                    false
+                } else if (pickType is ImagePickType.GalleryUri) {
+                    useCaseMakeBook.createBookCover(episodeRef, book, pickType.uri)
+                }else {
+                    true
+                }
             }
+        }
+    }
+
+    private suspend fun loadBookInfoFromFile(){
+        val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
+        val bookCoverFile: File? =
+            if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
+                episodeRef,
+                bookInfo.introduce.coverList[0]
+            ) else null
+
+        setState {
+            copy(
+                bookInfo = bookInfo,
+                imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
+                    bookCoverFile
+                ) else ImagePickType.Empty
+            )
         }
     }
 }

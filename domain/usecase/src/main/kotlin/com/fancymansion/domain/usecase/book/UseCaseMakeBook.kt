@@ -2,6 +2,7 @@ package com.fancymansion.domain.usecase.book
 
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.baseBookCoverName
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
@@ -24,19 +25,32 @@ class UseCaseMakeBook @Inject constructor(
             bookLocalRepository.makePageImageFromUri(episodeRef, imageName, uri)
         }
 
-    suspend fun makeCoverImage(episodeRef: EpisodeRef, imageName: String, uri: Uri) =
-        withContext(dispatcher) {
-            bookLocalRepository.makeCoverImageFromUri(episodeRef.userId, episodeRef.mode, episodeRef.bookId, imageName, uri)
-        }
-
     suspend fun deletePageImage(episodeRef: EpisodeRef, imageName: String) =
         withContext(dispatcher) {
             bookLocalRepository.deletePageImage(episodeRef, imageName)
         }
 
-    suspend fun deleteCoverImage(episodeRef: EpisodeRef, imageName: String) =
+    suspend fun createBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel, uri: Uri) =
         withContext(dispatcher) {
-            bookLocalRepository.deleteCoverImage(episodeRef.userId, episodeRef.mode, episodeRef.bookId, imageName)
+            baseBookCoverName(episodeRef.bookId, 1).let { newBookCoverName ->
+                bookLocalRepository.makeBookInfo(
+                    episodeRef.userId, episodeRef.mode, episodeRef.bookId,
+                    bookInfo.copy(introduce = bookInfo.introduce.copy(coverList = listOf(newBookCoverName)))
+                ) && bookLocalRepository.makeCoverImageFromUri(
+                    episodeRef.userId, episodeRef.mode, episodeRef.bookId,
+                    newBookCoverName, uri
+                )
+            }
+        }
+
+    suspend fun removeBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel) =
+        withContext(dispatcher) {
+            bookInfo.introduce.coverList.getOrNull(0)?.let { coverImageName ->
+                bookLocalRepository.makeBookInfo(
+                    episodeRef.userId, episodeRef.mode, episodeRef.bookId,
+                    bookInfo.copy(introduce = bookInfo.introduce.copy(coverList = listOf()))
+                ) && bookLocalRepository.deleteCoverImage(episodeRef.userId, episodeRef.mode, episodeRef.bookId, coverImageName)
+            }?: true
         }
 
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef = testEpisodeRef) =
