@@ -23,6 +23,12 @@ class EditorBookOverviewContract {
         data object OverviewInfoSaveToFile : Event()
 
         /**
+         * Edit BookInfo
+         */
+        data class EditBookInfoTitle(val title : String) : Event()
+        data class EditBookInfoDescription(val description : String) : Event()
+
+        /**
          * Gallery
          */
         data object GalleryBookCoverPickerRequest : Event()

@@ -68,6 +68,29 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             /**
+             * Edit BookInfo
+             */
+            is EditorBookOverviewContract.Event.EditBookInfoTitle -> {
+                uiState.value.bookInfo?.let { book ->
+                    setState {
+                        copy(bookInfo = book.copy(introduce = book.introduce.copy(
+                            title = event.title
+                        )))
+                    }
+                }
+            }
+
+            is EditorBookOverviewContract.Event.EditBookInfoDescription -> {
+                uiState.value.bookInfo?.let { book ->
+                    setState {
+                        copy(bookInfo = book.copy(introduce = book.introduce.copy(
+                            description = event.description
+                        )))
+                    }
+                }
+            }
+
+            /**
              * Gallery
              */
             EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest -> {
@@ -112,7 +135,13 @@ class EditorBookOverviewViewModel @Inject constructor(
     }
 
     private suspend fun updateBookInfo(book: BookInfoModel, pickType: ImagePickType) : Boolean{
-        return updateBookCoverImage(book, pickType)
+        return updateBookInfoDetail(book) && updateBookCoverImage(book, pickType)
+    }
+
+    private suspend fun updateBookInfoDetail(
+        book: BookInfoModel
+    ): Boolean {
+        return useCaseMakeBook.makeBookInfo(episodeRef, book)
     }
 
     private suspend fun updateBookCoverImage(

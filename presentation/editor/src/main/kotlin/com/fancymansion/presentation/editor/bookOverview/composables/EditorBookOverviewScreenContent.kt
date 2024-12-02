@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -84,7 +85,7 @@ fun EditorBookOverviewScreenContent(
 
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface)){
+                .background(color = MaterialTheme.colorScheme.surface).imePadding()){
 
                 LazyColumn(
                     modifier = Modifier
@@ -158,10 +159,11 @@ fun EditorBookOverviewScreenContent(
                                     .fillMaxWidth()
                                     .padding(
                                         vertical = EDIT_ITEM_VERTICAL_PADDING
-                                    ), value = "",
+                                    ),
+                                value = uiState.bookInfo.introduce.title,
                                 hint = stringResource(id = R.string.edit_overview_edit_hint_book_title)
                             ) {
-
+                                onEventSent(EditorBookOverviewContract.Event.EditBookInfoTitle(title = it))
                             }
 
                             Spacer(modifier = Modifier.height(15.dp))
@@ -302,12 +304,12 @@ fun EditorBookOverviewScreenContent(
                                     .fillMaxWidth()
                                     .padding(
                                         vertical = EDIT_ITEM_VERTICAL_PADDING
-                                    ), value = "",
+                                    ), value = uiState.bookInfo.introduce.description,
                                 minLine = 8,
                                 maxLine = 8,
                                 hint = stringResource(id = R.string.edit_overview_edit_hint_book_introduce)
                             ) {
-
+                                onEventSent(EditorBookOverviewContract.Event.EditBookInfoDescription(description = it))
                             }
                         }
                     }
