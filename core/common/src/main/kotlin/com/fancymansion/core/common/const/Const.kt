@@ -32,8 +32,32 @@ enum class NetworkState{
 
 sealed class ImagePickType {
     data object Empty : ImagePickType()
-    class SavedImage(val file: File) : ImagePickType()
-    class GalleryUri(val uri: Uri) : ImagePickType()
+    class SavedImage(val file: File) : ImagePickType(){
+        override fun equals(other: Any?): Boolean {
+            return other is SavedImage && file.path == other.file.path
+        }
+
+        override fun hashCode(): Int {
+            return file.path.hashCode()
+        }
+
+        override fun toString(): String {
+            return "SavedImage(file=${file.path})"
+        }
+    }
+    class GalleryUri(val uri: Uri) : ImagePickType(){
+        override fun equals(other: Any?): Boolean {
+            return other is GalleryUri && uri.path.orEmpty() == other.uri.path.orEmpty()
+        }
+
+        override fun hashCode(): Int {
+            return uri.path.orEmpty().hashCode()
+        }
+
+        override fun toString(): String {
+            return "GalleryUri(uri=${uri.path})"
+        }
+    }
 }
 
 const val STATUS_SUCCESS               = 200

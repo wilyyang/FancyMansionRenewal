@@ -31,15 +31,20 @@ class EditorBookOverviewViewModel @Inject constructor(
         )
     }
 
+    private lateinit var savedBookInfo : BookInfoModel
+    private lateinit var savedPickType: ImagePickType
+
     override fun setInitialState() = EditorBookOverviewContract.State()
 
     override fun handleEvents(event: EditorBookOverviewContract.Event) {
         when (event) {
             EditorBookOverviewContract.Event.BookOverviewButtonClicked -> {
-                setEffect {
-                    EditorBookOverviewContract.Effect.Navigation.NavigateOverviewScreen(
-                        episodeRef = episodeRef
-                    )
+                checkBookInfoEdited{
+                    setEffect {
+                        EditorBookOverviewContract.Effect.Navigation.NavigateOverviewScreen(
+                            episodeRef = episodeRef
+                        )
+                    }
                 }
             }
 
@@ -54,6 +59,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                         loadState = LoadState.AlarmDialog(
                             title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
                             message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_book_info else R.string.dialog_save_fail_book_info),
+                            dismissText = null,
                             confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
                             onConfirm = ::setLoadStateIdle
                         )
@@ -98,11 +104,15 @@ class EditorBookOverviewViewModel @Inject constructor(
     }
 
     private suspend fun updateBookInfoAndReload(book: BookInfoModel, pickType: ImagePickType) : Boolean{
-        val saveResult = updateBookCoverImage(book, pickType)
+        val saveResult = updateBookInfo(book, pickType)
         if(saveResult){
             loadBookInfoFromFile()
         }
         return saveResult
+    }
+
+    private suspend fun updateBookInfo(book: BookInfoModel, pickType: ImagePickType) : Boolean{
+        return updateBookCoverImage(book, pickType)
     }
 
     private suspend fun updateBookCoverImage(
@@ -131,6 +141,11 @@ class EditorBookOverviewViewModel @Inject constructor(
                 bookInfo.introduce.coverList[0]
             ) else null
 
+        savedBookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
+        savedPickType = if (bookCoverFile != null) ImagePickType.SavedImage(
+            bookCoverFile
+        ) else ImagePickType.Empty
+
         setState {
             copy(
                 bookInfo = bookInfo,
@@ -138,6 +153,37 @@ class EditorBookOverviewViewModel @Inject constructor(
                     bookCoverFile
                 ) else ImagePickType.Empty
             )
+        }
+    }
+
+    private fun checkBookInfoEdited(onCheckComplete : () -> Unit){
+        if (savedBookInfo != uiState.value.bookInfo || savedPickType != uiState.value.imagePickType) {
+            setLoadState(
+                loadState = LoadState.AlarmDialog(
+                    title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
+                    message = StringValue.StringResource(R.string.dialog_save_edited_book_info),
+                    confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                    onConfirm = {
+                        //수정 중인 정보 파일 저장
+                        launchWithLoading {
+                            updateBookInfoAndReload(uiState.value.bookInfo!!, uiState.value.imagePickType)
+                            setLoadStateIdle()
+                            onCheckComplete()
+                        }
+                    },
+                    dismissText = StringValue.StringResource(com.fancymansion.core.common.R.string.cancel),
+                    onDismiss = {
+                        //수정 중인 정보 삭제
+                        launchWithLoading {
+                            loadBookInfoFromFile()
+                            setLoadStateIdle()
+                            onCheckComplete()
+                        }
+                    }
+                )
+            )
+        }else{
+            onCheckComplete()
         }
     }
 }

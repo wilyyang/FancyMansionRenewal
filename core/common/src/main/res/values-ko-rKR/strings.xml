@@ -37,4 +37,5 @@
 
     <!-- Book File -->
     <string name="book_file_save_result_title">저장 결과</string>
+    <string name="book_file_edited_info_title">수정중</string>
 </resources>
