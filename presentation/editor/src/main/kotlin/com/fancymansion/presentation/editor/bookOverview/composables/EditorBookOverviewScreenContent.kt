@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -36,7 +36,9 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
+import com.fancymansion.core.presentation.compose.modifier.addFocusCleaner
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.modifier.customImePadding
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
@@ -51,7 +53,8 @@ fun EditorBookOverviewScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorBookOverviewContract.State,
     onEventSent: (event: EditorBookOverviewContract.Event) -> Unit,
-    onCommonEventSent: (event: CommonEvent) -> Unit
+    onCommonEventSent: (event: CommonEvent) -> Unit,
+    focusManager : FocusManager
 ) {
     val topTextStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
     uiState.bookInfo?.let { bookInfo ->
@@ -85,11 +88,10 @@ fun EditorBookOverviewScreenContent(
 
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface).imePadding()){
+                .background(color = MaterialTheme.colorScheme.surface)){
 
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize().customImePadding().addFocusCleaner(focusManager)
                 ) {
 
                     item {
@@ -123,6 +125,7 @@ fun EditorBookOverviewScreenContent(
                                             shape = MaterialTheme.shapes.medium
                                         )
                                         .clickSingle {
+                                            focusManager.clearFocus()
                                             onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
                                         },
                                     painter = painter,
@@ -136,6 +139,7 @@ fun EditorBookOverviewScreenContent(
                                             .align(Alignment.TopEnd)
                                             .size(20.dp)
                                             .clickSingle {
+                                                focusManager.clearFocus()
                                                 onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
                                             },
                                         painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_text_cancel),
@@ -342,6 +346,7 @@ fun EditorBookOverviewScreenContent(
                             )
                             .background(color = MaterialTheme.colorScheme.primary)
                             .clickSingle {
+                                focusManager.clearFocus()
                                 onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
                             }
                     ) {

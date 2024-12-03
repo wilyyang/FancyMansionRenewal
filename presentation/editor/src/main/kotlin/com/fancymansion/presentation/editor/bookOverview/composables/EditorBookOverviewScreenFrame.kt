@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -59,7 +60,7 @@ fun EditorBookOverviewScreenFrame(
             }
         }?.collect()
     }
-
+    val focusManager = LocalFocusManager.current
     BaseScreen(
         loadState = loadState,
         description = EditorBookOverviewContract.NAME,
@@ -80,6 +81,7 @@ fun EditorBookOverviewScreenFrame(
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 sideRightText = stringResource(id = R.string.topbar_editor_side_save),
                 onClickRightIcon = {
+                    focusManager.clearFocus()
                     onEventSent(EditorBookOverviewContract.Event.OverviewInfoSaveToFile)
                 },
                 shadowElevation = 1.dp
@@ -90,7 +92,8 @@ fun EditorBookOverviewScreenFrame(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onEventSent = onEventSent,
-            onCommonEventSent = onCommonEventSent
+            onCommonEventSent = onCommonEventSent,
+            focusManager = focusManager
         )
     }
 
