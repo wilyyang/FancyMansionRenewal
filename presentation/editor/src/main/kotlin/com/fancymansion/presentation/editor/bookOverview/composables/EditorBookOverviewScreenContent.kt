@@ -165,7 +165,8 @@ fun EditorBookOverviewScreenContent(
                                         vertical = EDIT_ITEM_VERTICAL_PADDING
                                     ),
                                 value = uiState.bookInfo.introduce.title,
-                                hint = stringResource(id = R.string.edit_overview_edit_hint_book_title)
+                                hint = stringResource(id = R.string.edit_overview_edit_hint_book_title),
+                                isCancelable = true
                             ) {
                                 onEventSent(EditorBookOverviewContract.Event.EditBookInfoTitle(title = it))
                             }
@@ -310,7 +311,6 @@ fun EditorBookOverviewScreenContent(
                                         vertical = EDIT_ITEM_VERTICAL_PADDING
                                     ), value = uiState.bookInfo.introduce.description,
                                 minLine = 8,
-                                maxLine = 8,
                                 hint = stringResource(id = R.string.edit_overview_edit_hint_book_introduce)
                             ) {
                                 onEventSent(EditorBookOverviewContract.Event.EditBookInfoDescription(description = it))

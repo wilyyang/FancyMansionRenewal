@@ -45,7 +45,7 @@ fun RoundedTextField(
     modifier : Modifier = Modifier,
     @androidx.annotation.IntRange(from = 1)
     minLine : Int = 1,
-    maxLine : Int = 1,
+    maxLine : Int = Int.MAX_VALUE,
 
     value : String,
     textStyle : TextStyle = MaterialTheme.typography.bodyLarge,
@@ -61,6 +61,7 @@ fun RoundedTextField(
     borderShape : Shape = MaterialTheme.shapes.small,
     textPadding : Dp = 13.5.dp,
 
+    isCancelable : Boolean = false,
     isEnabled : Boolean = true,
     onValueChange : (String) -> Unit,
 ) {
@@ -139,7 +140,7 @@ fun RoundedTextField(
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
             )
 
-        }else if(value.isNotEmpty()){
+        }else if(isCancelable && value.isNotEmpty()){
             Image(
                 modifier = Modifier.padding(start = 6.dp, end = 3.dp).height(textStyle.lineHeight.value.dp + textPadding/2).clickSingle {
                     focusRequester.requestFocus()
