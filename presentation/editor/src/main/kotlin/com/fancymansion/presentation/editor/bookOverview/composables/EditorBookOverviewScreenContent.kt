@@ -249,7 +249,11 @@ fun EditorBookOverviewScreenContent(
 
 
                                 Text(
-                                    modifier = Modifier.align(Alignment.CenterEnd),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .clickSingle {
+                                            onEventSent(EditorBookOverviewContract.Event.EditorPageListEditModeClicked)
+                                        },
                                     text = stringResource(id = R.string.edit_overview_top_edit_page),
                                     style = MaterialTheme.typography.labelLarge
                                 )
@@ -284,13 +288,21 @@ fun EditorBookOverviewScreenContent(
                                     }
 
                                     Text(
-                                        modifier = Modifier,
+                                        modifier = Modifier.clickSingle {
+                                            onEventSent(EditorBookOverviewContract.Event.EditorPageContentButtonClicked(it.id))
+                                        },
                                         text = stringResource(id = R.string.edit_overview_button_holder_page_edit),
                                         style = MaterialTheme.typography.labelLarge
                                     )
                                 }
                             }
-                            Text(modifier = Modifier.padding(12.dp), text = stringResource(id = R.string.edit_overview_button_page_more))
+                            Text(modifier = Modifier
+                                .padding(12.dp)
+                                .clickSingle {
+                                    onEventSent(EditorBookOverviewContract.Event.EditorPageListClicked)
+                                },
+                                text = stringResource(id = R.string.edit_overview_button_page_more)
+                            )
 
                             Spacer(modifier = Modifier.height(15.dp))
 

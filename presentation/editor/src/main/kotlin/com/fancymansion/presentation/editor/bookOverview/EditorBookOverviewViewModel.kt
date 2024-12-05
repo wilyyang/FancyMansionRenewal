@@ -91,6 +91,45 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             /**
+             * Navigate Editor Page
+             */
+            is EditorBookOverviewContract.Event.EditorPageContentButtonClicked -> {
+                checkBookInfoEdited{
+                    setEffect {
+                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageContentScreen(
+                            episodeRef = episodeRef,
+                            bookTitle = uiState.value.bookInfo!!.introduce.title,
+                            pageId = event.pageId
+                        )
+                    }
+                }
+            }
+
+            EditorBookOverviewContract.Event.EditorPageListClicked -> {
+                checkBookInfoEdited{
+                    setEffect {
+                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorListScreen(
+                            episodeRef = episodeRef,
+                            bookTitle = uiState.value.bookInfo!!.introduce.title,
+                            isEditMode = false
+                        )
+                    }
+                }
+            }
+
+            EditorBookOverviewContract.Event.EditorPageListEditModeClicked -> {
+                checkBookInfoEdited{
+                    setEffect {
+                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorListScreen(
+                            episodeRef = episodeRef,
+                            bookTitle = uiState.value.bookInfo!!.introduce.title,
+                            isEditMode = true
+                        )
+                    }
+                }
+            }
+
+            /**
              * Gallery
              */
             EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest -> {

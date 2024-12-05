@@ -32,6 +32,13 @@ class EditorBookOverviewContract {
         data class EditBookInfoDescription(val description : String) : Event()
 
         /**
+         * Navigate Editor Page
+         */
+        data class EditorPageContentButtonClicked(val pageId: Long) : Event()
+        data object EditorPageListClicked : Event()
+        data object EditorPageListEditModeClicked : Event()
+
+        /**
          * Gallery
          */
         data object GalleryBookCoverPickerRequest : Event()
@@ -46,6 +53,9 @@ class EditorBookOverviewContract {
          */
         data object GalleryBookCoverPickerEffect : Effect()
         sealed class Navigation : Effect(){
+            data class NavigateEditorPageContentScreen(val episodeRef: EpisodeRef, val bookTitle: String, val pageId: Long) : Navigation()
+            data class NavigateEditorListScreen(val episodeRef: EpisodeRef, val bookTitle: String, val isEditMode : Boolean) : Navigation()
+
             data class NavigateOverviewScreen(val episodeRef: EpisodeRef) : Navigation()
         }
     }
