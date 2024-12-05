@@ -91,7 +91,10 @@ fun EditorBookOverviewScreenContent(
                 .background(color = MaterialTheme.colorScheme.surface)){
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize().customImePadding().addFocusCleaner(focusManager)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .customImePadding()
+                        .addFocusCleaner(focusManager)
                 ) {
 
                     item {
@@ -253,13 +256,7 @@ fun EditorBookOverviewScreenContent(
                             }
 
                             val density = LocalDensity.current
-                            listOf(
-                                "타이틀 1" to 1,
-                                "타이틀 2" to 2,
-                                "타이틀 3" to 3,
-                                "타이틀 4" to 4,
-                                "타이틀 5" to 5
-                            ).map { (title, page) ->
+                            uiState.pageBriefList.take(5).forEach {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -274,13 +271,13 @@ fun EditorBookOverviewScreenContent(
                                 ) {
                                     Column(modifier = Modifier.fillMaxWidth(0.9f)) {
                                         Text(
-                                            text = title,
+                                            text = it.title,
                                             style = MaterialTheme.typography.bodySmall
                                         )
 
 
                                         Text(
-                                            text = "id : $page",
+                                            text = "page : ${it.id}",
                                             style = MaterialTheme.typography.labelMedium
                                         )
 

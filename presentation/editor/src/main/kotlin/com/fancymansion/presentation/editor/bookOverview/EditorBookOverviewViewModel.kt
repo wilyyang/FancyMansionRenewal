@@ -175,9 +175,12 @@ class EditorBookOverviewViewModel @Inject constructor(
             bookCoverFile
         ) else ImagePickType.Empty
 
+        val pageBriefList = useCaseLoadBook.loadLogic(episodeRef).logics.map { PageBrief(id = it.pageId, title = it.title) }
+
         setState {
             copy(
                 bookInfo = bookInfo,
+                pageBriefList = pageBriefList,
                 imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
                     bookCoverFile
                 ) else ImagePickType.Empty

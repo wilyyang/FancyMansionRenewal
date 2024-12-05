@@ -8,6 +8,8 @@ import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
 
+data class PageBrief(val id : Long, val title : String)
+
 class EditorBookOverviewContract {
     companion object {
         const val NAME = "editor_book_overview"
@@ -15,6 +17,7 @@ class EditorBookOverviewContract {
 
     data class State(
         val bookInfo : BookInfoModel? = null,
+        val pageBriefList : List<PageBrief> = emptyList(),
         val imagePickType : ImagePickType = ImagePickType.Empty
     ) : ViewState
 
