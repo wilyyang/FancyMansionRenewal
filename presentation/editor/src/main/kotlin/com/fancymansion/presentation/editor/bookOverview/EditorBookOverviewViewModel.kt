@@ -1,5 +1,7 @@
 package com.fancymansion.presentation.editor.bookOverview
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
@@ -9,6 +11,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.presentation.editor.R
@@ -20,7 +23,8 @@ import javax.inject.Inject
 class EditorBookOverviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
-    private val useCaseMakeBook: UseCaseMakeBook
+    private val useCaseMakeBook: UseCaseMakeBook,
+    private val useCaseGetTotalKeyword : UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
     private var episodeRef : EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -30,6 +34,8 @@ class EditorBookOverviewViewModel @Inject constructor(
             get<String>(ArgName.NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId } ?: testEpisodeRef.episodeId
         )
     }
+
+    val keywordStates : SnapshotStateList<KeywordState> = mutableStateListOf<KeywordState>()
 
     private lateinit var savedBookInfo : BookInfoModel
     private lateinit var savedPickType: ImagePickType
@@ -161,6 +167,9 @@ class EditorBookOverviewViewModel @Inject constructor(
     init {
         launchWithInit {
             useCaseMakeBook.makeSampleEpisode()
+            useCaseGetTotalKeyword().forEach {
+                keywordStates.add(KeywordState(it, false))
+            }
             loadBookInfoFromFile()
         }
     }
@@ -215,6 +224,15 @@ class EditorBookOverviewViewModel @Inject constructor(
         ) else ImagePickType.Empty
 
         val pageBriefList = useCaseLoadBook.loadLogic(episodeRef).logics.map { PageBrief(id = it.pageId, title = it.title) }
+
+        keywordStates.forEach { it.selected = false }
+        bookInfo.introduce.keywordList.forEach { bookKeyword ->
+            keywordStates.firstOrNull { keywordState ->
+                bookKeyword.id == keywordState.keyword.id
+            }?.let {
+                it.selected = true
+            }
+        }
 
         setState {
             copy(

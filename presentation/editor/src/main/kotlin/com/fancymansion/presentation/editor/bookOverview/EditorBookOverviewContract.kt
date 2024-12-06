@@ -7,8 +7,10 @@ import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.KeywordModel
 
 data class PageBrief(val id : Long, val title : String)
+data class KeywordState(val keyword: KeywordModel, var selected: Boolean)
 
 class EditorBookOverviewContract {
     companion object {

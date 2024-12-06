@@ -41,6 +41,7 @@ fun EditorBookOverviewScreenDestination(
 
     EditorBookOverviewScreenFrame(
         uiState = viewModel.uiState.value,
+        keywordStates = viewModel.keywordStates,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
         onCommonEventSent = onCommonEventSent,
