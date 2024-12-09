@@ -11,6 +11,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -24,20 +25,23 @@ class EditorBookOverviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
-    private val useCaseGetTotalKeyword : UseCaseGetTotalKeyword
+    private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
-    private var episodeRef : EpisodeRef = savedStateHandle.run {
+    private var episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
-            get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId } ?: testEpisodeRef.userId,
+            get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId }
+                ?: testEpisodeRef.userId,
             testEpisodeRef.mode, //get<ReadMode>(NAME_READ_MODE)
-            get<String>(ArgName.NAME_BOOK_ID)?.ifBlank { testEpisodeRef.bookId } ?: testEpisodeRef.bookId,
-            get<String>(ArgName.NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId } ?: testEpisodeRef.episodeId
+            get<String>(ArgName.NAME_BOOK_ID)?.ifBlank { testEpisodeRef.bookId }
+                ?: testEpisodeRef.bookId,
+            get<String>(ArgName.NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId }
+                ?: testEpisodeRef.episodeId
         )
     }
 
-    val keywordStates : SnapshotStateList<KeywordState> = mutableStateListOf<KeywordState>()
+    val keywordStates: SnapshotStateList<KeywordState> = mutableStateListOf<KeywordState>()
 
-    private lateinit var savedBookInfo : BookInfoModel
+    private lateinit var savedBookInfo: BookInfoModel
     private lateinit var savedPickType: ImagePickType
 
     override fun setInitialState() = EditorBookOverviewContract.State()
@@ -45,7 +49,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     override fun handleEvents(event: EditorBookOverviewContract.Event) {
         when (event) {
             EditorBookOverviewContract.Event.BookOverviewButtonClicked -> {
-                checkBookInfoEdited{
+                checkBookInfoEdited {
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateOverviewScreen(
                             episodeRef = episodeRef
@@ -58,7 +62,13 @@ class EditorBookOverviewViewModel @Inject constructor(
                 launchWithLoading(endLoadState = null) {
                     val isComplete: Boolean =
                         uiState.value.bookInfo?.let { book ->
-                            updateBookInfoAndReload(book, uiState.value.imagePickType)
+                            val newKeywordList =
+                                keywordStates.filter { it.selected.value }.map { it.keyword }
+                            updateBookInfoAndReload(
+                                book,
+                                uiState.value.imagePickType,
+                                newKeywordList
+                            )
                         } ?: false
 
                     setLoadState(
@@ -79,9 +89,13 @@ class EditorBookOverviewViewModel @Inject constructor(
             is EditorBookOverviewContract.Event.EditBookInfoTitle -> {
                 uiState.value.bookInfo?.let { book ->
                     setState {
-                        copy(bookInfo = book.copy(introduce = book.introduce.copy(
-                            title = event.title
-                        )))
+                        copy(
+                            bookInfo = book.copy(
+                                introduce = book.introduce.copy(
+                                    title = event.title
+                                )
+                            )
+                        )
                     }
                 }
             }
@@ -89,18 +103,29 @@ class EditorBookOverviewViewModel @Inject constructor(
             is EditorBookOverviewContract.Event.EditBookInfoDescription -> {
                 uiState.value.bookInfo?.let { book ->
                     setState {
-                        copy(bookInfo = book.copy(introduce = book.introduce.copy(
-                            description = event.description
-                        )))
+                        copy(
+                            bookInfo = book.copy(
+                                introduce = book.introduce.copy(
+                                    description = event.description
+                                )
+                            )
+                        )
                     }
                 }
+            }
+
+            is EditorBookOverviewContract.Event.EditBookInfoKeywordState -> {
+                keywordStates.firstOrNull { it.keyword.id == event.keywordId }
+                    ?.let { keywordState ->
+                        keywordState.selected.value = event.requestSelect
+                    }
             }
 
             /**
              * Navigate Editor Page
              */
             is EditorBookOverviewContract.Event.EditorPageContentButtonClicked -> {
-                checkBookInfoEdited{
+                checkBookInfoEdited {
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageContentScreen(
                             episodeRef = episodeRef,
@@ -112,7 +137,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             EditorBookOverviewContract.Event.EditorPageListClicked -> {
-                checkBookInfoEdited{
+                checkBookInfoEdited {
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorListScreen(
                             episodeRef = episodeRef,
@@ -124,7 +149,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             EditorBookOverviewContract.Event.EditorPageListEditModeClicked -> {
-                checkBookInfoEdited{
+                checkBookInfoEdited {
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorListScreen(
                             episodeRef = episodeRef,
@@ -139,7 +164,7 @@ class EditorBookOverviewViewModel @Inject constructor(
              * Gallery
              */
             EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest -> {
-                setEffect{
+                setEffect {
                     EditorBookOverviewContract.Effect.GalleryBookCoverPickerEffect
                 }
             }
@@ -168,49 +193,64 @@ class EditorBookOverviewViewModel @Inject constructor(
         launchWithInit {
             useCaseMakeBook.makeSampleEpisode()
             useCaseGetTotalKeyword().forEach {
-                keywordStates.add(KeywordState(it, false))
+                keywordStates.add(createKeywordState(it, false))
             }
             loadBookInfoFromFile()
         }
     }
 
-    private suspend fun updateBookInfoAndReload(book: BookInfoModel, pickType: ImagePickType) : Boolean{
-        val saveResult = updateBookInfo(book, pickType)
-        if(saveResult){
+    private suspend fun updateBookInfoAndReload(
+        book: BookInfoModel,
+        pickType: ImagePickType,
+        newKeywordList: List<KeywordModel>
+    ): Boolean {
+        val saveResult = updateBookInfo(book, pickType, newKeywordList)
+        if (saveResult) {
             loadBookInfoFromFile()
         }
         return saveResult
     }
 
-    private suspend fun updateBookInfo(book: BookInfoModel, pickType: ImagePickType) : Boolean{
-        return updateBookInfoDetail(book) && updateBookCoverImage(book, pickType)
+    private suspend fun updateBookInfo(
+        book: BookInfoModel,
+        pickType: ImagePickType,
+        newKeywordList: List<KeywordModel>
+    ): Boolean {
+        return updateBookInfoDetail(book, newKeywordList) && updateBookCoverImage(book, pickType)
     }
 
     private suspend fun updateBookInfoDetail(
-        book: BookInfoModel
+        book: BookInfoModel,
+        newKeywordList: List<KeywordModel>
     ): Boolean {
-        return useCaseMakeBook.makeBookInfo(episodeRef, book)
+        return useCaseMakeBook.makeBookInfo(
+            episodeRef, book.copy(
+                introduce = book.introduce.copy(
+                    keywordList = newKeywordList
+                )
+            )
+        )
     }
 
     private suspend fun updateBookCoverImage(
         book: BookInfoModel,
         pickType: ImagePickType
     ): Boolean {
-        return when(pickType){
+        return when (pickType) {
             is ImagePickType.SavedImage -> true
             else -> {
                 if (!useCaseMakeBook.removeBookCover(episodeRef, book)) {
                     false
                 } else if (pickType is ImagePickType.GalleryUri) {
                     useCaseMakeBook.createBookCover(episodeRef, book, pickType.uri)
-                }else {
+                } else {
                     true
                 }
             }
         }
     }
 
-    private suspend fun loadBookInfoFromFile(){
+    private suspend fun loadBookInfoFromFile() {
         val bookInfo = useCaseLoadBook.loadBookInfo(episodeRef)
         val bookCoverFile: File? =
             if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
@@ -223,14 +263,19 @@ class EditorBookOverviewViewModel @Inject constructor(
             bookCoverFile
         ) else ImagePickType.Empty
 
-        val pageBriefList = useCaseLoadBook.loadLogic(episodeRef).logics.map { PageBrief(id = it.pageId, title = it.title) }
+        val pageBriefList = useCaseLoadBook.loadLogic(episodeRef).logics.map {
+            PageBrief(
+                id = it.pageId,
+                title = it.title
+            )
+        }
 
-        keywordStates.forEach { it.selected = false }
+        keywordStates.forEach { it.selected.value = false }
         bookInfo.introduce.keywordList.forEach { bookKeyword ->
             keywordStates.firstOrNull { keywordState ->
                 bookKeyword.id == keywordState.keyword.id
             }?.let {
-                it.selected = true
+                it.selected.value = true
             }
         }
 
@@ -245,8 +290,12 @@ class EditorBookOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun checkBookInfoEdited(onCheckComplete : () -> Unit){
-        if (savedBookInfo != uiState.value.bookInfo || savedPickType != uiState.value.imagePickType) {
+    private fun checkBookInfoEdited(onCheckComplete: () -> Unit) {
+        val newKeywordList = keywordStates.filter { it.selected.value }.map { it.keyword }
+        if (savedBookInfo != uiState.value.bookInfo
+            || savedPickType != uiState.value.imagePickType
+            || newKeywordList != uiState.value.bookInfo!!.introduce.keywordList
+        ) {
             setLoadState(
                 loadState = LoadState.AlarmDialog(
                     title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
@@ -255,7 +304,11 @@ class EditorBookOverviewViewModel @Inject constructor(
                     onConfirm = {
                         //수정 중인 정보 파일 저장
                         launchWithLoading {
-                            updateBookInfoAndReload(uiState.value.bookInfo!!, uiState.value.imagePickType)
+                            updateBookInfoAndReload(
+                                uiState.value.bookInfo!!,
+                                uiState.value.imagePickType,
+                                newKeywordList
+                            )
                             setLoadStateIdle()
                             onCheckComplete()
                         }
@@ -271,7 +324,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                     }
                 )
             )
-        }else{
+        } else {
             onCheckComplete()
         }
     }

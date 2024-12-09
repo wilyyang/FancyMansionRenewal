@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +45,7 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
+import com.fancymansion.presentation.editor.bookOverview.KeywordState
 
 val EDIT_ITEM_VERTICAL_PADDING = 5.dp
 val EDIT_ITEM_HORIZONTAL_PADDING = 10.dp
@@ -52,8 +54,10 @@ val EDIT_ITEM_HORIZONTAL_PADDING = 10.dp
 fun EditorBookOverviewScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorBookOverviewContract.State,
+    keywordStates : SnapshotStateList<KeywordState>,
     onEventSent: (event: EditorBookOverviewContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
+    onOpenEditKeywords: () -> Unit,
     focusManager : FocusManager
 ) {
     val topTextStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
@@ -191,7 +195,9 @@ fun EditorBookOverviewScreenContent(
                                 )
 
                                 Text(
-                                    modifier = Modifier.align(Alignment.CenterEnd),
+                                    modifier = Modifier.align(Alignment.CenterEnd).clickSingle {
+                                        onOpenEditKeywords()
+                                    },
                                     text = stringResource(id = R.string.edit_overview_top_edit_keyword),
                                     style = MaterialTheme.typography.labelLarge
                                 )
@@ -207,7 +213,7 @@ fun EditorBookOverviewScreenContent(
 //                            item {
 //                                Spacer(modifier = Modifier.width(startPadding))
 //                            }
-                                items(bookInfo.introduce.keywordList) { keyword ->
+                                items(keywordStates.filter { it.selected.value }) { keywordState ->
                                     Text(
                                         modifier = Modifier
                                             .padding(end = 2.dp)
@@ -219,7 +225,7 @@ fun EditorBookOverviewScreenContent(
                                                 shape = MaterialTheme.shapes.extraSmall
                                             )
                                             .padding(horizontal = 7.dp, vertical = 5.dp),
-                                        text = "#${keyword.name}",
+                                        text = "#${keywordState.keyword.name}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.Black
                                     )

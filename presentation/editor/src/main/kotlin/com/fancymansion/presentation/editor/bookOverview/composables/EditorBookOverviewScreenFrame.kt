@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -26,7 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -41,12 +45,14 @@ import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -79,6 +85,7 @@ fun EditorBookOverviewScreenFrame(
     }
     val focusManager = LocalFocusManager.current
     val bottomDrawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
+    val coroutineScope = rememberCoroutineScope()
     BaseScreen(
         loadState = loadState,
         description = EditorBookOverviewContract.NAME,
@@ -107,40 +114,67 @@ fun EditorBookOverviewScreenFrame(
         },
         bottomDrawerState = bottomDrawerState,
         bottomDrawerContent = {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-                .background(color = MaterialTheme.colorScheme.primaryContainer)) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .clickSingle {
+                    coroutineScope.launch {
+                        bottomDrawerState.close()
+                    }
+                }) {
 
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    keywordStates.forEach { keywordState ->
-                        Chip(
-                            text = keywordState.keyword.name,
-                            isSelected = keywordState.selected,
-                            onClick = {  }
-                        )
+                LazyColumn(modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f)
+                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                    .clickSingle { }) {
+
+                    item {
+                        FlowRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            keywordStates.forEach { keywordState ->
+                                Chip(
+                                    keywordState = keywordState,
+                                    onClick = { id, request ->
+                                        onEventSent(EditorBookOverviewContract.Event.EditBookInfoKeywordState(id, request))
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
+
             }
         }
     ) {
         EditorBookOverviewScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
+            keywordStates = keywordStates,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent,
+            onOpenEditKeywords = {
+                coroutineScope.launch {
+                    bottomDrawerState.open()
+                }
+            },
             focusManager = focusManager
         )
     }
 
     BackHandler {
-        onCommonEventSent(CommonEvent.CloseEvent)
+        if(bottomDrawerState.currentValue == DrawerValue.Open){
+            coroutineScope.launch {
+                bottomDrawerState.close()
+            }
+        }else{
+            onCommonEventSent(CommonEvent.CloseEvent)
+        }
     }
 }
 
@@ -151,52 +185,35 @@ fun EditorBookOverviewSkeletonScreen() {
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surface),
     ) {
-        FadeInOutSkeleton(modifier = Modifier.padding(vertical = 20.dp, horizontal = 16.dp).height(30.dp).fillMaxWidth(0.8f))
+        FadeInOutSkeleton(modifier = Modifier
+            .padding(vertical = 20.dp, horizontal = 16.dp)
+            .height(30.dp)
+            .fillMaxWidth(0.8f))
 
-        FadeInOutSkeleton(modifier = Modifier.height(200.dp).fillMaxWidth(), shape = RectangleShape)
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun FlowRowChips(
-    keywords: List<String>,
-    selectedKeywords: MutableList<String>,
-    onChipClick: (String) -> Unit
-) {
-    FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        keywords.forEach { keyword ->
-            Chip(
-                text = keyword,
-                isSelected = selectedKeywords.contains(keyword),
-                onClick = { onChipClick(keyword) }
-            )
-        }
+        FadeInOutSkeleton(modifier = Modifier
+            .height(200.dp)
+            .fillMaxWidth(), shape = RectangleShape)
     }
 }
 
 @Composable
-fun Chip(text: String, isSelected: Boolean, onClick: () -> Unit) {
+fun Chip(keywordState : KeywordState, onClick: (Long, Boolean) -> Unit) {
     Column(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .clip(shape = RoundedCornerShape(16.dp))
             .wrapContentSize()
-            .background(color = if (isSelected) Color(0xFF6200EE) else Color.LightGray)
+            .background(color = if (keywordState.selected.value) Color(0xFF6200EE) else Color.LightGray)
     ) {
         Text(
-            text = text,
+            text = keywordState.keyword.name,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .clickable { onClick() },
+                .clickable {
+                    onClick(keywordState.keyword.id, !keywordState.selected.value)
+                },
             style = MaterialTheme.typography.bodyLarge,
-            color = if (isSelected) Color.White else Color.Black
+            color = if (keywordState.selected.value) Color.White else Color.Black
         )
     }
 }

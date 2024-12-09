@@ -1,6 +1,8 @@
 package com.fancymansion.presentation.editor.bookOverview
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
@@ -10,7 +12,10 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 
 data class PageBrief(val id : Long, val title : String)
-data class KeywordState(val keyword: KeywordModel, var selected: Boolean)
+data class KeywordState(val keyword: KeywordModel, val selected: MutableState<Boolean>)
+fun createKeywordState(keyword: KeywordModel, isSelected: Boolean): KeywordState {
+    return KeywordState(keyword = keyword, selected = mutableStateOf(isSelected))
+}
 
 class EditorBookOverviewContract {
     companion object {
@@ -32,6 +37,7 @@ class EditorBookOverviewContract {
          */
         data class EditBookInfoTitle(val title : String) : Event()
         data class EditBookInfoDescription(val description : String) : Event()
+        data class EditBookInfoKeywordState(val keywordId: Long, val requestSelect: Boolean) : Event()
 
         /**
          * Navigate Editor Page
