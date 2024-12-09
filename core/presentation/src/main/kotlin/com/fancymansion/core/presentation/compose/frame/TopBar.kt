@@ -1,6 +1,7 @@
 package com.fancymansion.core.presentation.compose.frame
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -83,9 +86,12 @@ fun FancyMansionTopBar(
                     .fillMaxHeight()
                     .padding(vertical = topBarVerticalPadding)
                     .padding(start = 12.dp)
+                    .clip(shape = MaterialTheme.shapes.medium)
                     .clickSingle(
-                        onClick = onClickLeftIcon
-                    )){
+                        onClick = onClickLeftIcon,
+                        indication = LocalIndication.current
+                    )
+                    .padding(horizontal = 8.dp)){
                     Text(
                         modifier = Modifier.align(Alignment.CenterStart),
                         text = sideLeftText,
@@ -161,9 +167,12 @@ fun FancyMansionTopBar(
                     .fillMaxHeight()
                     .padding(vertical = topBarVerticalPadding)
                     .padding(end = 12.dp)
+                    .clip(shape = MaterialTheme.shapes.medium)
                     .clickSingle(
-                        onClick = onClickRightIcon
-                    )){
+                        onClick = onClickRightIcon,
+                        indication = LocalIndication.current
+                    )
+                    .padding(horizontal = 8.dp)){
                     Text(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         text = sideRightText,
