@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -59,6 +58,13 @@ fun EditorBookOverviewScreenContent(
             }
         } else {
 
+            val commonPartModifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.surface)
+                .padding(
+                    horizontal = EDIT_ITEM_HORIZONTAL_PADDING,
+                    vertical = 15.dp
+                )
 
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -73,6 +79,7 @@ fun EditorBookOverviewScreenContent(
 
                     item {
                         EditOverviewTopInfo(
+                            modifier = commonPartModifier,
                             imagePickType = uiState.imagePickType,
                             title = uiState.bookInfo.introduce.title,
                             onClickGalleryCoverPick = {
@@ -91,21 +98,31 @@ fun EditorBookOverviewScreenContent(
 
                     item{
                         EditOverviewKeyword(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.surface),
                             keywordStates = keywordStates,
-                            onOpenEditKeywords = onOpenEditKeywords
+                            onOpenEditKeywords = {
+                                focusManager.clearFocus()
+                                onOpenEditKeywords()
+                            }
                         )
                     }
 
                     item{
                         EditOverviewPageList(
+                            modifier = commonPartModifier,
                             pageBriefList = uiState.pageBriefList,
                             onPageListMoreClicked = {
+                                focusManager.clearFocus()
                                 onEventSent(EditorBookOverviewContract.Event.EditorPageListClicked)
                             },
                             onPageListEditModeClicked = {
+                                focusManager.clearFocus()
                                 onEventSent(EditorBookOverviewContract.Event.EditorPageListEditModeClicked)
                             },
                             onPageContentButtonClicked = {
+                                focusManager.clearFocus()
                                 onEventSent(
                                     EditorBookOverviewContract.Event.EditorPageContentButtonClicked(
                                         it
@@ -117,6 +134,7 @@ fun EditorBookOverviewScreenContent(
 
                     item{
                         EditOverviewDescription(
+                            modifier = commonPartModifier,
                             description = uiState.bookInfo.introduce.description,
                             updateBookInfoDescription = {
                                 onEventSent(EditorBookOverviewContract.Event.EditBookInfoDescription(description = it))

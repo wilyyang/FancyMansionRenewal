@@ -45,6 +45,7 @@ val EDIT_ITEM_HORIZONTAL_PADDING = 10.dp
 
 @Composable
 fun EditOverviewTopInfo(
+    modifier : Modifier = Modifier,
     imagePickType: ImagePickType,
     title: String,
     onClickGalleryCoverPick: () -> Unit,
@@ -63,15 +64,7 @@ fun EditOverviewTopInfo(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.surface)
-            .padding(
-                horizontal = EDIT_ITEM_HORIZONTAL_PADDING,
-                vertical = 15.dp
-            )
-    ) {
+    Column(modifier = modifier) {
 
         CommonEditInfoTitle(
             title = stringResource(id = R.string.edit_overview_top_label_book_cover)
@@ -136,14 +129,11 @@ fun EditOverviewTopInfo(
 
 @Composable
 fun EditOverviewKeyword(
+    modifier : Modifier = Modifier,
     keywordStates : List<KeywordState>,
     onOpenEditKeywords: () -> Unit
 ){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.surface)
-    ) {
+    Column(modifier = modifier) {
         Box(
             modifier = Modifier
                 .padding(
@@ -208,20 +198,13 @@ fun EditOverviewKeyword(
 
 @Composable
 fun EditOverviewPageList(
+    modifier : Modifier = Modifier,
     pageBriefList : List<PageBrief>,
     onPageListMoreClicked: () -> Unit,
     onPageListEditModeClicked: () -> Unit,
     onPageContentButtonClicked: (Long) -> Unit
 ){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.surface)
-            .padding(
-                horizontal = EDIT_ITEM_HORIZONTAL_PADDING,
-                vertical = 15.dp
-            )
-    ) {
+    Column(modifier = modifier) {
         Box(
             modifier = Modifier
                 .padding(
@@ -296,18 +279,11 @@ fun EditOverviewPageList(
 
 @Composable
 fun EditOverviewDescription(
+    modifier : Modifier = Modifier,
     description : String,
     updateBookInfoDescription: (String) -> Unit
 ){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.surface)
-            .padding(
-                horizontal = EDIT_ITEM_HORIZONTAL_PADDING,
-                vertical = 15.dp
-            )
-    ) {
+    Column(modifier = modifier) {
         CommonEditInfoTitle(
             title = stringResource(id = R.string.edit_overview_top_label_book_introduce)
         )
