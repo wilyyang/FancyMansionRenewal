@@ -44,6 +44,7 @@ import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
 import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.shape.RoundedHorizontalCornerShape
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.viewer.R
 import com.fancymansion.presentation.viewer.content.composables.SettingCategory
 import com.fancymansion.presentation.viewer.content.composables.SettingItem
@@ -164,7 +165,7 @@ fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit)
 
         Text(
             text = stringResource(id = R.string.viewer_setting_theme),
-            modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+            modifier = Modifier.padding(vertical = Paddings.Compact.vertical, horizontal = Paddings.Compact.horizontal),
             style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground)
         )
 
@@ -177,7 +178,7 @@ fun SettingPageTheme(currentTheme: PageTheme, onClickTheme: (PageTheme) -> Unit)
                     color = MaterialTheme.colorScheme.outline,
                     bottom = 1.dp
                 )
-                .padding(vertical = 5.dp, horizontal = 10.dp),
+                .padding(vertical = Paddings.Compact.vertical, horizontal = Paddings.Compact.horizontal),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -220,7 +221,7 @@ fun SettingCategoryList(category: SettingCategory, settingValues: List<SettingUi
         .background(color = MaterialTheme.colorScheme.background)) {
         Text(
             text = stringResource(id = category.categoryName),
-            modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+            modifier = Modifier.padding(vertical = Paddings.Compact.vertical, horizontal = Paddings.Compact.horizontal),
             style = MaterialTheme.typography.labelMedium.copy(color = MaterialTheme.colorScheme.onBackground)
         )
         category.items.forEachIndexed { index, item ->
@@ -240,7 +241,7 @@ fun SettingItemRow(item: SettingItem, value: SettingUiValue) {
                 color = MaterialTheme.colorScheme.outline,
                 bottom = 1.dp
             )
-            .padding(vertical = 5.dp, horizontal = 10.dp),
+            .padding(vertical = Paddings.Compact.vertical, horizontal = Paddings.Compact.horizontal),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

@@ -163,10 +163,10 @@ fun EditorBookOverviewScreenContent(
 
                     Box(
                         modifier = Modifier
-                            .padding(vertical = 10.dp, horizontal = 8.dp)
+                            .padding(vertical = 11.dp, horizontal = 14.dp)
                             .fillMaxSize()
                             .clip(
-                                shape = MaterialTheme.shapes.extraSmall
+                                shape = MaterialTheme.shapes.small
                             )
                             .background(color = MaterialTheme.colorScheme.primary)
                             .clickSingle {
@@ -177,7 +177,7 @@ fun EditorBookOverviewScreenContent(
                         Text(
                             modifier = Modifier.align(Alignment.Center),
                             text = stringResource(id = R.string.edit_overview_button_overview_preview),
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     }

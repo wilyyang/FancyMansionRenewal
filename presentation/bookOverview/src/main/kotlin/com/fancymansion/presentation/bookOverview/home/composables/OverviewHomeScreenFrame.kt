@@ -33,6 +33,7 @@ import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -116,7 +117,7 @@ fun OverviewHomeSkeletonScreen(
                 .fillMaxWidth()
                 .clip(detailPanelShape)
                 .background(color = MaterialTheme.colorScheme.surface)
-                .padding(detailPanelCornerHeight.dp)
+                .padding(vertical = detailPanelCornerHeight.dp, horizontal = Paddings.Basic.horizontal)
         ) {
             FadeInOutSkeleton(Modifier.padding(vertical = 10.dp).height(20.dp).width(100.dp))
 

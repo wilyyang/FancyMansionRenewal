@@ -119,7 +119,7 @@ fun ViewerContentScreenPageContent(
         items(selectors) { selector ->
             Row(
                 modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 15.dp)
+                    .padding(vertical = 10.dp, horizontal = setting.pageContentSetting.textMarginHorizontal.dpSize.dp + 4.dp)
                     .fillMaxWidth()
                     .clip(
                         shape = MaterialTheme.shapes.small

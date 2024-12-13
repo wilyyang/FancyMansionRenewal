@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceInactive
 import com.fancymansion.core.presentation.compose.theme.typography.TypeStyles
 import com.fancymansion.domain.model.book.BookInfoModel
@@ -90,7 +91,6 @@ fun OverviewScreenDetailTabPager(
     }
 
     val pageVerticalPadding = 20.dp
-    val pageHorizontalPadding = 15.dp
     BoxWithConstraints {
         LazyColumn(
             modifier = modifier
@@ -110,14 +110,14 @@ fun OverviewScreenDetailTabPager(
                             .heightIn(min = maxHeight)
                             .padding(
                                 vertical = pageVerticalPadding,
-                                horizontal = pageHorizontalPadding
+                                horizontal = Paddings.Basic.horizontal
                             ), bookInfo = bookInfo)
                         1 -> InfoContent(modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = maxHeight)
                             .padding(
                                 vertical = pageVerticalPadding,
-                                horizontal = pageHorizontalPadding
+                                horizontal = Paddings.Basic.horizontal
                             ), bookInfo = bookInfo)
                     }
                 }

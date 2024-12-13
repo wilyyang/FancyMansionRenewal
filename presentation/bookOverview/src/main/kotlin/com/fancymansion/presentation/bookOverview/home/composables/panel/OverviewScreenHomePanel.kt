@@ -37,6 +37,7 @@ import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.scaleOnPress
 import com.fancymansion.core.presentation.compose.shape.RoundedRectangleShape
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.typography.TypeStyles
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
@@ -194,9 +195,6 @@ fun OverviewScreenHomePanel(
                     ){}
                 }
             }
-            val startPadding = 14.dp
-            val endPadding = 12.dp
-            val verticalPadding = 6.dp
 
             item {
                 Column(
@@ -204,8 +202,11 @@ fun OverviewScreenHomePanel(
                 ) {
                     Column(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = startPadding, end = endPadding)
-                        .padding(vertical = verticalPadding)) {
+                        .padding(
+                            horizontal = Paddings.Basic.horizontal,
+                            vertical = Paddings.Basic.vertical
+                        )
+                    ) {
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -239,11 +240,11 @@ fun OverviewScreenHomePanel(
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = verticalPadding),
+                            .padding(top = Paddings.Basic.vertical),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         item {
-                            Spacer(modifier = Modifier.width(startPadding))
+                            Spacer(modifier = Modifier.width(Paddings.Basic.start))
                         }
                         items(bookInfo.introduce.keywordList) { keyword ->
                             Text(
@@ -268,12 +269,12 @@ fun OverviewScreenHomePanel(
                     }
 
                     HorizontalDivider(modifier = Modifier
-                        .padding(top = 16.dp, start = startPadding, end = endPadding)
+                        .padding(top = 16.dp, start = Paddings.Basic.start, end = Paddings.Basic.end)
                         .height(0.3.dp), color = MaterialTheme.colorScheme.outline)
 
                     Text(
                         modifier = Modifier
-                            .padding(top = 18.dp, start = startPadding, end = endPadding)
+                            .padding(top = 18.dp, start = Paddings.Basic.start, end = Paddings.Basic.end)
                             .width(130.dp)
                             .clip(shape = RoundedRectangleShape())
                             .background(
@@ -290,8 +291,8 @@ fun OverviewScreenHomePanel(
                     Column(
                         modifier = Modifier.padding(
                             top = 25.dp,
-                            start = startPadding,
-                            end = endPadding
+                            start = Paddings.Basic.start,
+                            end = Paddings.Basic.end
                         )
                     ) {
                         Text(
