@@ -1,13 +1,14 @@
 package com.fancymansion.presentation.editor.bookOverview.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,28 +30,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
 import com.fancymansion.presentation.editor.bookOverview.PageBrief
 
-val EDIT_ITEM_VERTICAL_PADDING = 5.dp
-val EDIT_ITEM_HORIZONTAL_PADDING = 10.dp
+val itemMarginHeight = 15.dp
 
 @Composable
-fun EditOverviewTopInfo(
+fun EditOverviewCoverImage(
     modifier : Modifier = Modifier,
     imagePickType: ImagePickType,
-    title: String,
     onClickGalleryCoverPick: () -> Unit,
-    onClickCoverImageReset: () -> Unit,
-    updateBookInfoTitle: (String) -> Unit
+    onClickCoverImageReset: () -> Unit
 ){
     val painter = when(imagePickType){
         is ImagePickType.SavedImage ->{
@@ -66,20 +67,22 @@ fun EditOverviewTopInfo(
 
     Column(modifier = modifier) {
 
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+
         CommonEditInfoTitle(
             title = stringResource(id = R.string.edit_overview_top_label_book_cover)
         )
 
-        Box(modifier = Modifier.size(74.dp)) {
+        Box{
             Image(
                 modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxSize()
+                    .padding(top = 10.dp, bottom = 10.dp, end = 10.dp)
+                    .size(72.dp)
                     .clip(shape = MaterialTheme.shapes.small)
                     .border(
                         0.5.dp,
                         color = onSurfaceSub,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.small
                     )
                     .clickSingle {
                         onClickGalleryCoverPick()
@@ -93,7 +96,7 @@ fun EditOverviewTopInfo(
                 Icon(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(20.dp)
+                        .size(25.dp)
                         .clickSingle {
                             onClickCoverImageReset()
                         },
@@ -103,8 +106,17 @@ fun EditOverviewTopInfo(
             }
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(5.dp))
+    }
+}
 
+@Composable
+fun EditOverviewTitle(
+    modifier : Modifier = Modifier,
+    title: String,
+    updateBookInfoTitle: (String) -> Unit
+){
+    Column(modifier = modifier) {
         CommonEditInfoTitle(
             title = stringResource(id = R.string.edit_overview_top_label_book_title)
         )
@@ -113,7 +125,7 @@ fun EditOverviewTopInfo(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = EDIT_ITEM_VERTICAL_PADDING
+                    vertical = Paddings.Basic.vertical
                 ),
             value = title,
             maxLine = 2,
@@ -123,10 +135,11 @@ fun EditOverviewTopInfo(
             updateBookInfoTitle(it)
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(itemMarginHeight))
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditOverviewKeyword(
     modifier : Modifier = Modifier,
@@ -136,10 +149,7 @@ fun EditOverviewKeyword(
     Column(modifier = modifier) {
         Box(
             modifier = Modifier
-                .padding(
-                    vertical = EDIT_ITEM_VERTICAL_PADDING,
-                    horizontal = EDIT_ITEM_HORIZONTAL_PADDING
-                )
+                .padding(vertical = Paddings.Basic.vertical)
                 .fillMaxWidth()
         ) {
             CommonEditInfoTitle(
@@ -153,23 +163,16 @@ fun EditOverviewKeyword(
                         onOpenEditKeywords()
                     },
                 text = stringResource(id = R.string.edit_overview_top_edit_keyword),
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
             )
         }
 
-
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = EDIT_ITEM_VERTICAL_PADDING),
-            verticalAlignment = Alignment.CenterVertically
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
-
-            item {
-                Spacer(modifier = Modifier.width(EDIT_ITEM_HORIZONTAL_PADDING))
-            }
-
-            items(keywordStates.filter { it.selected.value }) { keywordState ->
+            keywordStates.filter { it.selected.value }.forEach { keywordState ->
                 Text(
                     modifier = Modifier
                         .padding(end = 2.dp)
@@ -186,13 +189,9 @@ fun EditOverviewKeyword(
                     color = Color.Black
                 )
             }
-
-            item {
-                Spacer(modifier = Modifier.width(EDIT_ITEM_HORIZONTAL_PADDING))
-            }
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(itemMarginHeight))
     }
 }
 
@@ -207,9 +206,7 @@ fun EditOverviewPageList(
     Column(modifier = modifier) {
         Box(
             modifier = Modifier
-                .padding(
-                    vertical = EDIT_ITEM_VERTICAL_PADDING
-                )
+                .padding(vertical = Paddings.Basic.vertical)
                 .fillMaxWidth()
         ) {
             CommonEditInfoTitle(
@@ -222,48 +219,18 @@ fun EditOverviewPageList(
                     .clickSingle {
                         onPageListEditModeClicked()
                     },
-                text = stringResource(id = R.string.edit_overview_top_edit_page),
-                style = MaterialTheme.typography.labelLarge
+                text = stringResource(id = R.string.edit_overview_top_edit_keyword),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
             )
         }
 
-        val density = LocalDensity.current
         pageBriefList.take(5).forEach {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .borderLine(
-                        density = density,
-                        color = MaterialTheme.colorScheme.outline,
-                        top = 0.5.dp,
-                        bottom = 0.5.dp
-                    ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.fillMaxWidth(0.9f)) {
-                    Text(
-                        text = it.title,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-
-                    Text(
-                        text = "page : ${it.id}",
-                        style = MaterialTheme.typography.labelMedium
-                    )
-
-                }
-
-                Text(
-                    modifier = Modifier.clickSingle {
-                        onPageContentButtonClicked(it.id)
-                    },
-                    text = stringResource(id = R.string.edit_overview_button_holder_page_edit),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
+            PageBriefHolder(
+                pageBrief = it,
+                onPageContentButtonClicked = onPageContentButtonClicked
+            )
         }
+
         Text(
             modifier = Modifier
                 .padding(12.dp)
@@ -273,7 +240,46 @@ fun EditOverviewPageList(
             text = stringResource(id = R.string.edit_overview_button_page_more)
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+    }
+}
+
+@Composable
+fun PageBriefHolder(
+    pageBrief: PageBrief,
+    onPageContentButtonClicked : (Long) -> Unit
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .borderLine(
+                density = LocalDensity.current,
+                color = MaterialTheme.colorScheme.outline,
+                top = 0.5.dp,
+                bottom = 0.5.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.fillMaxWidth(0.9f)) {
+            Text(
+                text = pageBrief.title,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Text(
+                text = "page : ${pageBrief.id}",
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+
+        Text(
+            modifier = Modifier.clickSingle {
+                onPageContentButtonClicked(pageBrief.id)
+            },
+            text = stringResource(id = R.string.edit_overview_button_holder_page_edit),
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }
 
@@ -292,7 +298,7 @@ fun EditOverviewDescription(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = EDIT_ITEM_VERTICAL_PADDING
+                    vertical = Paddings.Basic.vertical
                 ), value = description,
             minLine = 15,
             maxLine = 15,
@@ -305,13 +311,13 @@ fun EditOverviewDescription(
 
 @Composable
 fun CommonEditInfoTitle(
+    modifier: Modifier = Modifier,
+    verticalPadding : Dp = Paddings.Basic.vertical,
     title: String,
     style : TextStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
 ){
     Text(
-        modifier = Modifier.padding(
-            vertical = EDIT_ITEM_VERTICAL_PADDING
-        ),
+        modifier = modifier.padding(vertical = verticalPadding),
         text = title,
         style = style
     )

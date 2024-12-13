@@ -26,6 +26,7 @@ import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.customImePadding
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
@@ -61,10 +62,7 @@ fun EditorBookOverviewScreenContent(
             val commonPartModifier = Modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.surface)
-                .padding(
-                    horizontal = EDIT_ITEM_HORIZONTAL_PADDING,
-                    vertical = 15.dp
-                )
+                .padding(horizontal = Paddings.Basic.horizontal)
 
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -78,10 +76,9 @@ fun EditorBookOverviewScreenContent(
                 ) {
 
                     item {
-                        EditOverviewTopInfo(
+                        EditOverviewCoverImage(
                             modifier = commonPartModifier,
                             imagePickType = uiState.imagePickType,
-                            title = uiState.bookInfo.introduce.title,
                             onClickGalleryCoverPick = {
                                 focusManager.clearFocus()
                                 onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
@@ -89,7 +86,14 @@ fun EditorBookOverviewScreenContent(
                             onClickCoverImageReset = {
                                 focusManager.clearFocus()
                                 onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
-                            },
+                            }
+                        )
+                    }
+
+                    item {
+                        EditOverviewTitle(
+                            modifier = commonPartModifier,
+                            title = uiState.bookInfo.introduce.title,
                             updateBookInfoTitle = {
                                 onEventSent(EditorBookOverviewContract.Event.EditBookInfoTitle(title = it))
                             }
@@ -98,9 +102,7 @@ fun EditorBookOverviewScreenContent(
 
                     item{
                         EditOverviewKeyword(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = MaterialTheme.colorScheme.surface),
+                            modifier = commonPartModifier,
                             keywordStates = keywordStates,
                             onOpenEditKeywords = {
                                 focusManager.clearFocus()
