@@ -14,9 +14,11 @@
     <string name="edit_overview_top_edit_page">편집</string>
 
     <string name="edit_overview_button_holder_page_edit">수정</string>
-    <string name="edit_overview_button_page_more">총 %d페이지</string>
+    <string name="edit_overview_button_page_more">총 %d 페이지</string>
     <string name="edit_overview_button_overview_preview">미리보기</string>
 
+
+    <string name="edit_overview_page_holder_page_number">페이지 넘버 : %d</string>
     <string name="edit_overview_page_holder_selector_count">선택지 %d개</string>
 
     <string name="edit_overview_edit_hint_book_title">제목</string>

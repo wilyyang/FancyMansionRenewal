@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +42,7 @@ import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
+import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
@@ -260,7 +262,7 @@ fun EditOverviewPageList(
                 Text(
                     text = stringResource(id = R.string.edit_overview_button_page_more, pageBriefList.size),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
@@ -286,7 +288,7 @@ fun PageBriefHolder(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(85.dp)
             .clickSingle(
                 indication = LocalIndication.current
             ) {
@@ -303,7 +305,7 @@ fun PageBriefHolder(
             ){
                 Box(
                     modifier = Modifier
-                        .clip(shape = MaterialTheme.shapes.extraSmall)
+                        .clip(shape = RoundedCornerShape(2.dp))
                         .background(
                             color = when (pageBrief.type) {
                                 PageType.START -> ColorSet.cyan_1ecdcd
@@ -311,7 +313,7 @@ fun PageBriefHolder(
                                 else -> ColorSet.blue_1e9eff
                             }
                         )
-                        .padding(horizontal = 5.dp, vertical = 3.dp)
+                        .padding(horizontal = 3.dp, vertical = 1.dp)
 
                 ) {
                     Text(
@@ -324,7 +326,7 @@ fun PageBriefHolder(
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
                     text = pageBrief.title,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
@@ -332,12 +334,13 @@ fun PageBriefHolder(
             }
 
 
-            Spacer(modifier = Modifier.height(3.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "page : ${pageBrief.id}",
+                text = stringResource(id = R.string.edit_overview_page_holder_page_number, pageBrief.id),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Spacer(modifier = Modifier.height(3.dp))
         }
 
         Text(
@@ -347,13 +350,13 @@ fun PageBriefHolder(
                 .padding(0.5.dp)
                 .border(
                     width = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = onSurfaceSub,
                     shape = MaterialTheme.shapes.large
                 )
                 .padding(horizontal = 6.dp, vertical = 4.dp),
             text = stringResource(id = R.string.edit_overview_page_holder_selector_count, pageBrief.selectorCount),
             style = MaterialTheme.typography.labelMedium,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
