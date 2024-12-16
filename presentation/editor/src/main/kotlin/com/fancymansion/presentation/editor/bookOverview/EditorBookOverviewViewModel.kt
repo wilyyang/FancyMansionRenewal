@@ -266,7 +266,9 @@ class EditorBookOverviewViewModel @Inject constructor(
         val pageBriefList = useCaseLoadBook.loadLogic(episodeRef).logics.map {
             PageBrief(
                 id = it.pageId,
-                title = it.title
+                title = it.title,
+                type = it.type,
+                selectorCount = it.selectors.size
             )
         }
 

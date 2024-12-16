@@ -113,7 +113,9 @@ fun EditorBookOverviewScreenContent(
 
                     item{
                         EditOverviewPageList(
-                            modifier = commonPartModifier,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.surface),
                             pageBriefList = uiState.pageBriefList,
                             onPageListMoreClicked = {
                                 focusManager.clearFocus()

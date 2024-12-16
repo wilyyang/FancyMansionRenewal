@@ -5,13 +5,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 
-data class PageBrief(val id : Long, val title : String)
+data class PageBrief(val id : Long, val title : String, val type: PageType, val selectorCount : Int)
 data class KeywordState(val keyword: KeywordModel, val selected: MutableState<Boolean>)
 fun createKeywordState(keyword: KeywordModel, isSelected: Boolean): KeywordState {
     return KeywordState(keyword = keyword, selected = mutableStateOf(isSelected))

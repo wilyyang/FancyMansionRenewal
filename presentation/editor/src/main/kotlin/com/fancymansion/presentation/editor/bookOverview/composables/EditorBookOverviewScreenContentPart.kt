@@ -1,7 +1,10 @@
 package com.fancymansion.presentation.editor.bookOverview.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,34 +16,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
-import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
-import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
 import com.fancymansion.presentation.editor.bookOverview.PageBrief
 
@@ -191,7 +193,7 @@ fun EditOverviewKeyword(
             }
         }
 
-        Spacer(modifier = Modifier.height(itemMarginHeight))
+        Spacer(modifier = Modifier.height(itemMarginHeight * 2))
     }
 }
 
@@ -206,7 +208,7 @@ fun EditOverviewPageList(
     Column(modifier = modifier) {
         Box(
             modifier = Modifier
-                .padding(vertical = Paddings.Basic.vertical)
+                .padding(vertical = Paddings.Basic.vertical, horizontal = Paddings.Basic.horizontal)
                 .fillMaxWidth()
         ) {
             CommonEditInfoTitle(
@@ -219,28 +221,60 @@ fun EditOverviewPageList(
                     .clickSingle {
                         onPageListEditModeClicked()
                     },
-                text = stringResource(id = R.string.edit_overview_top_edit_keyword),
+                text = stringResource(id = R.string.edit_overview_top_edit_page),
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
             )
         }
 
-        pageBriefList.take(5).forEach {
+        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+        val limitedList = pageBriefList.take(5)
+        limitedList.forEachIndexed { index, pageBrief ->
             PageBriefHolder(
-                pageBrief = it,
+                pageBrief = pageBrief,
                 onPageContentButtonClicked = onPageContentButtonClicked
             )
+
+            if (index < limitedList.size - 1) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    thickness = 0.3.dp,
+                    color = onSurfaceSub
+                )
+            }
         }
 
-        Text(
-            modifier = Modifier
-                .padding(12.dp)
-                .clickSingle {
-                    onPageListMoreClicked()
-                },
-            text = stringResource(id = R.string.edit_overview_button_page_more)
-        )
+        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .clickSingle(
+                indication = LocalIndication.current
+            ) {
+                onPageListMoreClicked()
+            }
+            .padding(vertical = 13.dp)) {
 
-        Spacer(modifier = Modifier.height(itemMarginHeight))
+            Row(modifier = Modifier.align(Alignment.Center), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(id = R.string.edit_overview_button_page_more, pageBriefList.size),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Icon(
+                    modifier = Modifier.height(25.dp),
+                    painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_right_w300),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = "More"
+                )
+            }
+        }
+
+
+        Spacer(modifier = Modifier.height(itemMarginHeight * 2))
     }
 }
 
@@ -249,36 +283,77 @@ fun PageBriefHolder(
     pageBrief: PageBrief,
     onPageContentButtonClicked : (Long) -> Unit
 ){
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .borderLine(
-                density = LocalDensity.current,
-                color = MaterialTheme.colorScheme.outline,
-                top = 0.5.dp,
-                bottom = 0.5.dp
-            ),
-        verticalAlignment = Alignment.CenterVertically
+            .clickSingle(
+                indication = LocalIndication.current
+            ) {
+                onPageContentButtonClicked(pageBrief.id)
+            }
+            .padding(horizontal = 18.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth(0.9f)) {
-            Text(
-                text = pageBrief.title,
-                style = MaterialTheme.typography.bodySmall
-            )
+        Column(modifier = Modifier
+            .align(Alignment.CenterStart)
+            .fillMaxWidth(0.75f)) {
 
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Box(
+                    modifier = Modifier
+                        .clip(shape = MaterialTheme.shapes.extraSmall)
+                        .background(
+                            color = when (pageBrief.type) {
+                                PageType.START -> ColorSet.cyan_1ecdcd
+                                PageType.ENDING -> ColorSet.navy_324155
+                                else -> ColorSet.blue_1e9eff
+                            }
+                        )
+                        .padding(horizontal = 5.dp, vertical = 3.dp)
+
+                ) {
+                    Text(
+                        text = stringResource(id = pageBrief.type.localizedName.resId),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = ColorSet.white_ffffff
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.padding(start = 5.dp),
+                    text = pageBrief.title,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+            }
+
+
+            Spacer(modifier = Modifier.height(3.dp))
             Text(
                 text = "page : ${pageBrief.id}",
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
         Text(
-            modifier = Modifier.clickSingle {
-                onPageContentButtonClicked(pageBrief.id)
-            },
-            text = stringResource(id = R.string.edit_overview_button_holder_page_edit),
-            style = MaterialTheme.typography.labelLarge
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clip(shape = MaterialTheme.shapes.large)
+                .padding(0.5.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = MaterialTheme.shapes.large
+                )
+                .padding(horizontal = 6.dp, vertical = 4.dp),
+            text = stringResource(id = R.string.edit_overview_page_holder_selector_count, pageBrief.selectorCount),
+            style = MaterialTheme.typography.labelMedium,
+            color = Color.Black
         )
     }
 }
