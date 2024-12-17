@@ -48,12 +48,9 @@ import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
-import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.Paddings
-import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
-import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
@@ -62,7 +59,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditorBookOverviewScreenFrame(
     uiState: EditorBookOverviewContract.State,
@@ -122,42 +118,12 @@ fun EditorBookOverviewScreenFrame(
         },
         bottomDrawerState = bottomDrawerState,
         bottomDrawerContent = {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .clickSingle {
-                    coroutineScope.launch {
-                        bottomDrawerState.close()
-                    }
-                }) {
-
-                LazyColumn(modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
-                    .background(color = MaterialTheme.colorScheme.primaryContainer)
-                    .clickSingle { }) {
-
-                    item {
-                        FlowRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            keywordStates.forEach { keywordState ->
-                                Chip(
-                                    keywordState = keywordState,
-                                    onClick = { id, request ->
-                                        onEventSent(EditorBookOverviewContract.Event.EditBookInfoKeywordState(id, request))
-                                    }
-                                )
-                            }
-                        }
-                    }
+            BottomKeywordsDialog(
+                keywordStates = keywordStates,
+                onClickChip = { id, request ->
+                    onEventSent(EditorBookOverviewContract.Event.EditBookInfoKeywordState(id, request))
                 }
-
-            }
+            )
         }
     ) {
         EditorBookOverviewScreenContent(
@@ -281,6 +247,45 @@ fun EditorBookOverviewSkeletonScreen() {
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
+            }
+        }
+    }
+}
+
+const val detailPanelCornerHeight = 12
+val detailPanelShape = RoundedCornerShape(topStart = detailPanelCornerHeight.dp, topEnd = detailPanelCornerHeight.dp)
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun BottomKeywordsDialog(
+    keywordStates: List<KeywordState>,
+    onClickChip: (Long, Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)
+            .clip(detailPanelShape)
+            .background(MaterialTheme.colorScheme.surface)
+            .clickSingle { }
+    ) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+            item {
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    keywordStates.forEach { keywordState ->
+                        Chip(
+                            keywordState = keywordState,
+                            onClick = onClickChip
+                        )
+                    }
+                }
             }
         }
     }
