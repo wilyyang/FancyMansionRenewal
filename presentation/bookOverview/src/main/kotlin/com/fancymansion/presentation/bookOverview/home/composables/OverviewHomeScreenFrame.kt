@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,7 +63,14 @@ fun OverviewHomeScreenFrame(
     val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
     val screenSize = LocalConfiguration.current
     val bookCoverHeightDp = remember { screenSize.screenWidthDp * 0.72f }
-    val bookBottomInfoHeightDp = remember { screenSize.screenHeightDp - bookCoverHeightDp + detailPanelCornerHeight }
+
+    /**
+     * 플립에서 높이 다르게 나오는 문제 수정
+     */
+    val metrics = LocalContext.current.resources.displayMetrics
+    val screenHeightDp = metrics.heightPixels / LocalDensity.current.density
+
+    val bookBottomInfoHeightDp = remember { screenHeightDp  - bookCoverHeightDp + detailPanelCornerHeight}
 
     BaseScreen(
         loadState = loadState,
