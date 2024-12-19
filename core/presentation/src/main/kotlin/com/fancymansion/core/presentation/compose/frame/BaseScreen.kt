@@ -81,10 +81,13 @@ fun BaseScreen(
 
     // drawer
     leftDrawerState: DrawerState? = null,
+    leftDrawerBackground: (@Composable () -> Unit)? = null,
     leftDrawerContent: (@Composable () -> Unit)? = null,
     rightDrawerState: DrawerState? = null,
+    rightDrawerBackground: (@Composable () -> Unit)? = null,
     rightDrawerContent: (@Composable () -> Unit)? = null,
     bottomDrawerState: DrawerState? = null,
+    bottomDrawerBackground: (@Composable () -> Unit)? = null,
     bottomDrawerContent: (@Composable () -> Unit)? = null,
 
     // ui state
@@ -134,40 +137,52 @@ fun BaseScreen(
         .fillMaxSize()
         .padding(bottom = navigationBarPaddingDp)) {
 
-        SideDrawer(
-            contentTopPadding = if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp,
-            sideDrawerTopPadding = statusBarPaddingDp,
-            drawerVisible = InitShowState.None == initShowState.value && loadState != LoadState.Close,
-            leftDrawerState = leftDrawerState,
-            leftDrawerContent = leftDrawerContent,
-            rightDrawerState = rightDrawerState,
-            rightDrawerContent = rightDrawerContent,
-            bottomDrawerState = bottomDrawerState,
-            bottomDrawerContent = bottomDrawerContent
-        ){
-            BaseContent(
-                modifier = modifier.semantics {
-                    contentDescription = description
-                    testTag = loadState.javaClass.simpleName
-                }.background(color = MaterialTheme.colorScheme.surface),
+        Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
+            ) {
+                BaseContent(
+                    modifier = modifier
+                        .semantics {
+                            contentDescription = description
+                            testTag = loadState.javaClass.simpleName
+                        }
+                        .background(color = MaterialTheme.colorScheme.surface),
 
-                isOverlayTopBar = isOverlayTopBar,
-                topBar = topBar,
-                topBarHeight = topBarHeight,
+                    isOverlayTopBar = isOverlayTopBar,
+                    topBar = topBar,
+                    topBarHeight = topBarHeight,
 
-                initShowState = initShowState.value,
-                initContent = initContent,
+                    initShowState = initShowState.value,
+                    initContent = initContent,
 
-                content = content
+                    content = content
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
+                    .background(color = statusBarColor ?: Color.Transparent)
+            )
+
+            SideDrawer(
+                sideDrawerTopPadding = statusBarPaddingDp,
+                drawerVisible = InitShowState.None == initShowState.value && loadState != LoadState.Close,
+                leftDrawerState = leftDrawerState,
+                leftDrawerBackground = leftDrawerBackground,
+                leftDrawerContent = leftDrawerContent,
+                rightDrawerState = rightDrawerState,
+                rightDrawerBackground = rightDrawerBackground,
+                rightDrawerContent = rightDrawerContent,
+                bottomDrawerState = bottomDrawerState,
+                bottomDrawerBackground = bottomDrawerBackground,
+                bottomDrawerContent = bottomDrawerContent
             )
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
-                .background(color = statusBarColor ?: Color.Transparent)
-        )
     }
 
     if(initShowState.value == InitShowState.None){
