@@ -7,7 +7,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +21,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -36,6 +36,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -117,6 +118,17 @@ fun EditorBookOverviewScreenFrame(
             )
         },
         bottomDrawerState = bottomDrawerState,
+        bottomDrawerBackground = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Black.copy(alpha = 0.5f))
+                    .clickSingle {
+                        coroutineScope.launch {
+                            bottomDrawerState.close()
+                        }
+                    })
+        },
         bottomDrawerContent = {
             BottomKeywordsDialog(
                 keywordStates = keywordStates,
@@ -261,54 +273,80 @@ fun BottomKeywordsDialog(
     keywordStates: List<KeywordState>,
     onClickChip: (Long, Boolean) -> Unit
 ) {
-    Column(
+    val categoryKeywords = keywordStates.groupBy { it.keyword.category }.toList()
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.5f)
+            .fillMaxHeight(0.6f)
             .clip(detailPanelShape)
             .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = Paddings.Basic.horizontal)
+            .padding(top = 10.dp)
             .clickSingle { }
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-
             item {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    keywordStates.forEach { keywordState ->
-                        Chip(
-                            keywordState = keywordState,
-                            onClick = onClickChip
-                        )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+            items(categoryKeywords){
+                Column {
+                    CommonEditInfoTitle(
+                        modifier = Modifier
+                            .padding(vertical = Paddings.Basic.vertical)
+                            .fillMaxWidth(),
+                        title = it.first
+                    )
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        it.second.forEach { keywordState ->
+                            Chip(
+                                keywordState = keywordState,
+                                onClick = onClickChip
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
+
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+            }
         }
+
+        Box(modifier = Modifier.align(Alignment.TopCenter).fillMaxWidth().height(30.dp).background(
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    MaterialTheme.colorScheme.surface,
+                    Color.Transparent
+                )
+            )
+        ))
     }
 }
 
 @Composable
 fun Chip(keywordState : KeywordState, onClick: (Long, Boolean) -> Unit) {
-    Column(
+    Text(
         modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 4.dp)
-            .clip(shape = RoundedCornerShape(16.dp))
-            .wrapContentSize()
-            .background(color = if (keywordState.selected.value) Color(0xFF6200EE) else Color.LightGray)
-    ) {
-        Text(
-            text = keywordState.keyword.name,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .clickable {
-                    onClick(keywordState.keyword.id, !keywordState.selected.value)
-                },
-            style = MaterialTheme.typography.bodyLarge,
-            color = if (keywordState.selected.value) Color.White else Color.Black
-        )
-    }
+            .padding(end = 2.dp)
+            .clip(shape = MaterialTheme.shapes.small)
+            .border(
+                width = 0.5.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = MaterialTheme.shapes.small
+            )
+            .background(color = if (keywordState.selected.value) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.background)
+            .clickSingle {
+                onClick(keywordState.keyword.id, !keywordState.selected.value)
+            }
+            .padding(horizontal = 7.dp, vertical = 5.dp),
+        text = "#${keywordState.keyword.name}",
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface
+    )
 }
