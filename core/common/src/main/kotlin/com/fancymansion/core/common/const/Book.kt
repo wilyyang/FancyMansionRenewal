@@ -128,7 +128,7 @@ enum class ReadMode {
 /**
  * Logic
  */
-
+const val LOGIC_ID_NOT_ASSIGNED = 0L
 const val ROUTE_PAGE_ID_NOT_ASSIGNED = -4000L
 const val ACTION_ID_NOT_ASSIGNED = 0L
 

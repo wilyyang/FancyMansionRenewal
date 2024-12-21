@@ -63,7 +63,7 @@ class EditorBookOverviewContract {
         data object GalleryBookCoverPickerEffect : Effect()
         sealed class Navigation : Effect(){
             data class NavigateEditorPageContentScreen(val episodeRef: EpisodeRef, val bookTitle: String, val pageId: Long) : Navigation()
-            data class NavigateEditorListScreen(val episodeRef: EpisodeRef, val bookTitle: String, val isEditMode : Boolean) : Navigation()
+            data class NavigateEditorPageListScreen(val episodeRef: EpisodeRef, val bookTitle: String, val isEditMode : Boolean) : Navigation()
 
             data class NavigateOverviewScreen(val episodeRef: EpisodeRef) : Navigation()
         }

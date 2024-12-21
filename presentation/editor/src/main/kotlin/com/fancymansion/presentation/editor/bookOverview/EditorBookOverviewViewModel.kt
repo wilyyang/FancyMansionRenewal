@@ -139,7 +139,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             EditorBookOverviewContract.Event.EditorPageListClicked -> {
                 checkBookInfoEdited {
                     setEffect {
-                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorListScreen(
+                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen(
                             episodeRef = episodeRef,
                             bookTitle = uiState.value.bookInfo!!.introduce.title,
                             isEditMode = false
@@ -151,7 +151,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             EditorBookOverviewContract.Event.EditorPageListEditModeClicked -> {
                 checkBookInfoEdited {
                     setEffect {
-                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorListScreen(
+                        EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen(
                             episodeRef = episodeRef,
                             bookTitle = uiState.value.bookInfo!!.introduce.title,
                             isEditMode = true
