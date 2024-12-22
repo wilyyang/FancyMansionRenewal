@@ -1,8 +1,13 @@
 package com.fancymansion.presentation.editor.pageList
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
+import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
+import com.fancymansion.core.common.const.ArgName.NAME_IS_PAGE_LIST_EDIT_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
@@ -27,6 +32,8 @@ class EditorPageListViewModel @Inject constructor(
         )
     }
 
+    val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
+
     override fun setInitialState() = EditorPageListContract.State()
 
     override fun handleEvents(event: EditorPageListContract.Event) {
@@ -41,10 +48,19 @@ class EditorPageListViewModel @Inject constructor(
 
     init {
         launchWithInit {
+            val title = savedStateHandle.get<String>(NAME_BOOK_TITLE)!!
+            val isEditMode = savedStateHandle.get<Boolean>(NAME_IS_PAGE_LIST_EDIT_MODE)!!
             val logic = useCaseLoadBook.loadLogic(episodeRef)
+
+            logic.logics.forEach { pageLogic ->
+                pageLogicStates.add(PageLogicState(pageLogic = pageLogic, selected = mutableStateOf(false)))
+            }
+
             setState {
                 copy(
-                    logic = logic
+                    title = title,
+                    logic = logic,
+                    isEditMode = isEditMode
                 )
             }
         }

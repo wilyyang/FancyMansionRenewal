@@ -10,6 +10,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,11 +31,13 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.pageList.EditorPageListContract
+import com.fancymansion.presentation.editor.pageList.PageLogicState
 
 @Composable
 fun EditorPageListScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorPageListContract.State,
+    pageLogicStates : SnapshotStateList<PageLogicState>,
     onEventSent: (event: EditorPageListContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -90,9 +93,9 @@ fun EditorPageListScreenContent(
 
                     HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
 
-                    uiState.logic.logics.forEachIndexed { index, pageLogic ->
+                    pageLogicStates.forEachIndexed { index, state ->
                         PageHolder(
-                            pageLogic = pageLogic,
+                            pageLogic = state.pageLogic,
                             onPageContentButtonClicked = {
                                 /**
                                  * TODO

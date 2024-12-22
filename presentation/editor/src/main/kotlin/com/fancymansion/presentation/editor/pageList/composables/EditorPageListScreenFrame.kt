@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.pageList.EditorPageListContract
+import com.fancymansion.presentation.editor.pageList.PageLogicState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun EditorPageListScreenFrame(
     uiState: EditorPageListContract.State,
+    pageLogicStates : SnapshotStateList<PageLogicState>,
     loadState: LoadState,
     effectFlow: SharedFlow<EditorPageListContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
@@ -62,7 +65,7 @@ fun EditorPageListScreenFrame(
                 onClickLeftIcon = {
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
-                title = stringResource(id = R.string.topbar_editor_title_page_list),
+                title = uiState.title,
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 sideRightText = stringResource(id = R.string.topbar_editor_side_save),
                 onClickRightIcon = {
@@ -77,6 +80,7 @@ fun EditorPageListScreenFrame(
         EditorPageListScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
+            pageLogicStates = pageLogicStates,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent
         )
@@ -98,7 +102,7 @@ fun EditorPageListSkeletonScreen() {
             FancyMansionTopBar(
                 typePane = TypePane.MOBILE,
                 topBarColor = MaterialTheme.colorScheme.surface,
-                title = stringResource(id = R.string.topbar_editor_title_page_list),
+                title = "",
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 shadowElevation = 1.dp
             )

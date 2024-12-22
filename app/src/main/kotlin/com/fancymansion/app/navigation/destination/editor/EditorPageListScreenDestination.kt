@@ -40,6 +40,7 @@ fun EditorPageListScreenDestination(
 
     EditorPageListScreenFrame(
         uiState = viewModel.uiState.value,
+        pageLogicStates = viewModel.pageLogicStates,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
         onCommonEventSent = onCommonEventSent,
