@@ -38,7 +38,7 @@ fun EditorPageListScreenContent(
     onEventSent: (event: EditorPageListContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
-    if (uiState.logic.id != LOGIC_ID_NOT_ASSIGNED || uiState.logic.logics.isEmpty()) {
+    if (uiState.logic.id == LOGIC_ID_NOT_ASSIGNED || uiState.logic.logics.isEmpty()) {
         Box(
             modifier = modifier
                 .background(color = MaterialTheme.colorScheme.surface)

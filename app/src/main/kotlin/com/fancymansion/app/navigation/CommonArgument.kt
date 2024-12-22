@@ -35,4 +35,9 @@ object NavArgument{
         type = NavType.StringType
         defaultValue = ""
     }
+
+    val argIsPageListEditMode = navArgument(ArgName.NAME_IS_PAGE_LIST_EDIT_MODE){
+        type = NavType.BoolType
+        defaultValue = false
+    }
 }

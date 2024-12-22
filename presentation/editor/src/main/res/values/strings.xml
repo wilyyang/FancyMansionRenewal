@@ -4,7 +4,7 @@
     <string name="topbar_editor_title_overview">북 개요</string>
     <string name="topbar_editor_side_save">저장</string>
 
-    <string name="topbar_editor_title_page_list">페이지 편집</string>
+    <string name="topbar_editor_title_page_list">페이지 목록 편집</string>
 
     <string name="edit_overview_top_label_book_cover">커버 이미지</string>
     <string name="edit_overview_top_label_book_title">책 제목</string>
