@@ -29,4 +29,16 @@
     <string name="dialog_save_fail_book_info">책 기본 정보 저장에 실패했습니다. 다시 시도해주세요.</string>
 
     <string name="dialog_save_edited_book_info">수정중인 책 정보가 있습니다. 수정중인 내용을 저장할까요?</string>
+
+    <string name="edit_page_list_header_page_number">페이지 총 %d개</string>
+
+    <string name="edit_page_list_header_item_mode_edit">편집</string>
+    <string name="edit_page_list_header_item_mode_complete">완료</string>
+
+    <string name="edit_page_list_header_item_order_id">번호순</string>
+    <string name="edit_page_list_header_item_order_name">이름순</string>
+
+    <string name="edit_page_list_header_item_edit_total">전체</string>
+    <string name="edit_page_list_header_item_edit_cancel">해제</string>
+    <string name="edit_page_list_header_item_edit_delete">삭제</string>
 </resources>

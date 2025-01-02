@@ -43,6 +43,14 @@ class EditorPageListViewModel @Inject constructor(
                  * TODO
                  */
             }
+
+            EditorPageListContract.Event.PageListModeChangeButtonClicked -> {
+                setState {
+                    copy(
+                        isEditMode = !isEditMode
+                    )
+                }
+            }
         }
     }
 

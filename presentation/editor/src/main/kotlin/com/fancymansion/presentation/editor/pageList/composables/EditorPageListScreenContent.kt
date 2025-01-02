@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -71,31 +73,79 @@ fun EditorPageListScreenContent(
                 ) {
                     Box(
                         modifier = Modifier
-                            .padding(vertical = Paddings.Basic.vertical, horizontal = Paddings.Basic.horizontal)
+                            .padding(
+                                vertical = Paddings.Basic.vertical,
+                                horizontal = Paddings.Basic.horizontal
+                            )
                             .fillMaxWidth()
                     ) {
                         CommonEditInfoTitle(
-                            title = stringResource(id = R.string.edit_overview_top_label_book_page)
+                            title = stringResource(id = R.string.edit_page_list_header_page_number, pageLogicStates.size)
                         )
 
-                        Text(
+                        Row(
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-                                .clickSingle {
-                                    /**
-                                     * TODO
-                                     */
-                                },
-                            text = stringResource(id = R.string.edit_overview_top_edit_page),
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
-                        )
+                        ) {
+
+                            if(uiState.isEditMode){
+                                Text(
+                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_edit_total),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_edit_cancel),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_edit_delete),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+                                Text(
+                                    modifier = Modifier.clickSingle {
+                                        onEventSent(EditorPageListContract.Event.PageListModeChangeButtonClicked)
+                                    },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_mode_complete),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+
+                            }else{
+                                Text(
+                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_order_id),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_order_name),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+                                Text(
+                                    modifier = Modifier.clickSingle {
+                                        onEventSent(EditorPageListContract.Event.PageListModeChangeButtonClicked)
+                                    },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_mode_edit),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+                            }
+                        }
                     }
 
                     HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
 
                     pageLogicStates.forEachIndexed { index, state ->
                         PageHolder(
-                            pageLogic = state.pageLogic,
+                            isEditMode = uiState.isEditMode,
+                            state = state,
                             onPageContentButtonClicked = {
                                 /**
                                  * TODO
@@ -122,7 +172,8 @@ fun EditorPageListScreenContent(
 
 @Composable
 fun PageHolder(
-    pageLogic: PageLogicModel,
+    isEditMode : Boolean,
+    state: PageLogicState,
     onPageContentButtonClicked : (Long) -> Unit
 ){
     Box(
@@ -132,7 +183,7 @@ fun PageHolder(
             .clickSingle(
                 indication = LocalIndication.current
             ) {
-                onPageContentButtonClicked(pageLogic.pageId)
+                onPageContentButtonClicked(state.pageLogic.pageId)
             }
             .padding(horizontal = 18.dp)
     ) {
@@ -147,7 +198,7 @@ fun PageHolder(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(2.dp))
                         .background(
-                            color = when (pageLogic.type) {
+                            color = when (state.pageLogic.type) {
                                 PageType.START -> ColorSet.cyan_1ecdcd
                                 PageType.ENDING -> ColorSet.navy_324155
                                 else -> ColorSet.blue_1e9eff
@@ -157,7 +208,7 @@ fun PageHolder(
 
                 ) {
                     Text(
-                        text = stringResource(id = pageLogic.type.localizedName.resId),
+                        text = stringResource(id = state.pageLogic.type.localizedName.resId),
                         style = MaterialTheme.typography.labelMedium,
                         color = ColorSet.white_ffffff
                     )
@@ -165,7 +216,7 @@ fun PageHolder(
 
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
-                    text = pageLogic.title,
+                    text = state.pageLogic.title,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
@@ -176,27 +227,46 @@ fun PageHolder(
 
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = stringResource(id = R.string.edit_overview_page_holder_page_number, pageLogic.pageId),
+                text = stringResource(id = R.string.edit_overview_page_holder_page_number, state.pageLogic.pageId),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(3.dp))
         }
 
-        Text(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .clip(shape = MaterialTheme.shapes.large)
-                .padding(0.5.dp)
-                .border(
-                    width = 0.5.dp,
-                    color = onSurfaceSub,
-                    shape = MaterialTheme.shapes.large
+        Box(
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ){
+            if(isEditMode){
+                Box(modifier = Modifier
+                    .clip(shape = CircleShape)
+                    .padding(0.5.dp)
+                    .border(
+                        width = 0.5.dp,
+                        color = onSurfaceSub,
+                        shape = CircleShape
+                    )
+                    .padding(4.dp)){
+
+                    Box(modifier = Modifier.clip(shape = CircleShape).background(color = if(state.selected.value) onSurfaceSub else Color.Transparent))
+                }
+
+            }else{
+                Text(
+                    modifier = Modifier
+                        .clip(shape = MaterialTheme.shapes.large)
+                        .padding(0.5.dp)
+                        .border(
+                            width = 0.5.dp,
+                            color = onSurfaceSub,
+                            shape = MaterialTheme.shapes.large
+                        )
+                        .padding(horizontal = 6.dp, vertical = 4.dp),
+                    text = stringResource(id = R.string.edit_overview_page_holder_selector_count, state.pageLogic.selectors.size),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                .padding(horizontal = 6.dp, vertical = 4.dp),
-            text = stringResource(id = R.string.edit_overview_page_holder_selector_count, pageLogic.selectors.size),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            }
+        }
     }
 }

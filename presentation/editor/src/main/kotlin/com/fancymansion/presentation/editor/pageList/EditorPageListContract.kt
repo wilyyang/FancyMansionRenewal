@@ -23,6 +23,8 @@ class EditorPageListContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
+        data object PageListModeChangeButtonClicked : Event()
+
         data class EditorPageContentButtonClicked(val pageId : Long) : Event()
     }
 
