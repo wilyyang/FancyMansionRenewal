@@ -25,7 +25,8 @@ class EditorPageListContract {
     sealed class Event : ViewEvent {
         data object PageListModeChangeButtonClicked : Event()
 
-        data class EditorPageContentButtonClicked(val pageId : Long) : Event()
+        data class PageHolderNavigateClicked(val pageId : Long) : Event()
+        data class PageHolderSelectClicked(val pageId : Long) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

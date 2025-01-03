@@ -3,8 +3,10 @@ package com.fancymansion.presentation.editor.pageList.composables
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
+import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
@@ -90,19 +94,25 @@ fun EditorPageListScreenContent(
 
                             if(uiState.isEditMode){
                                 Text(
-                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickSingle { },
                                     text = stringResource(id = R.string.edit_page_list_header_item_edit_total),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
 
                                 Text(
-                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickSingle { },
                                     text = stringResource(id = R.string.edit_page_list_header_item_edit_cancel),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
 
                                 Text(
-                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickSingle { },
                                     text = stringResource(id = R.string.edit_page_list_header_item_edit_delete),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
@@ -118,13 +128,17 @@ fun EditorPageListScreenContent(
 
                             }else{
                                 Text(
-                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickSingle { },
                                     text = stringResource(id = R.string.edit_page_list_header_item_order_id),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
 
                                 Text(
-                                    modifier = Modifier.padding(end = 12.dp).clickSingle { },
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickSingle { },
                                     text = stringResource(id = R.string.edit_page_list_header_item_order_name),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
@@ -141,30 +155,26 @@ fun EditorPageListScreenContent(
                     }
 
                     HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+                }
+            }
 
-                    pageLogicStates.forEachIndexed { index, state ->
-                        PageHolder(
-                            isEditMode = uiState.isEditMode,
-                            state = state,
-                            onPageContentButtonClicked = {
-                                /**
-                                 * TODO
-                                 */
-                            }
-                        )
-
-                        if (index < uiState.logic.logics.size - 1) {
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                thickness = 0.3.dp,
-                                color = onSurfaceSub
-                            )
+            itemsIndexed(pageLogicStates){ index, state ->
+                PageHolder(
+                    modifier = Modifier,
+                    isEditMode = uiState.isEditMode,
+                    state = state,
+                    onPageContentButtonClicked = {
+                        if(uiState.isEditMode){
+                            onEventSent(EditorPageListContract.Event.PageHolderSelectClicked(it))
+                        }else{
+                            onEventSent(EditorPageListContract.Event.PageHolderNavigateClicked(it))
                         }
                     }
-                    Spacer(modifier = Modifier.height(itemMarginHeight * 2))
-                }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(itemMarginHeight * 2))
             }
         }
     }
@@ -172,20 +182,21 @@ fun EditorPageListScreenContent(
 
 @Composable
 fun PageHolder(
+    modifier: Modifier = Modifier,
     isEditMode : Boolean,
     state: PageLogicState,
     onPageContentButtonClicked : (Long) -> Unit
 ){
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(85.dp)
-            .clickSingle(
-                indication = LocalIndication.current
-            ) {
+            .clickable {
                 onPageContentButtonClicked(state.pageLogic.pageId)
             }
-            .padding(horizontal = 18.dp)
+            .padding(horizontal = 8.dp)
+            .borderLine(density = LocalDensity.current, color = onSurfaceSub, bottom = 0.3.dp)
+            .padding(horizontal = 10.dp)
     ) {
         Column(modifier = Modifier
             .align(Alignment.CenterStart)
@@ -248,7 +259,12 @@ fun PageHolder(
                     )
                     .padding(4.dp)){
 
-                    Box(modifier = Modifier.clip(shape = CircleShape).background(color = if(state.selected.value) onSurfaceSub else Color.Transparent))
+                    Box(
+                        modifier = Modifier
+                            .size(13.dp)
+                            .clip(shape = CircleShape)
+                            .background(color = if (state.selected.value) onSurfaceSub else Color.Transparent)
+                    )
                 }
 
             }else{

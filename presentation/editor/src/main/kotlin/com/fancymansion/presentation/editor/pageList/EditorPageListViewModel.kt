@@ -38,17 +38,22 @@ class EditorPageListViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorPageListContract.Event) {
         when (event) {
-            is EditorPageListContract.Event.EditorPageContentButtonClicked -> {
-                /**
-                 * TODO
-                 */
-            }
-
             EditorPageListContract.Event.PageListModeChangeButtonClicked -> {
                 setState {
                     copy(
                         isEditMode = !isEditMode
                     )
+                }
+            }
+
+            is EditorPageListContract.Event.PageHolderNavigateClicked -> {
+                // TODO
+            }
+            is EditorPageListContract.Event.PageHolderSelectClicked -> {
+                pageLogicStates.firstOrNull {
+                    it.pageLogic.pageId == event.pageId
+                }?.let {
+                    it.selected.value = !it.selected.value
                 }
             }
         }
