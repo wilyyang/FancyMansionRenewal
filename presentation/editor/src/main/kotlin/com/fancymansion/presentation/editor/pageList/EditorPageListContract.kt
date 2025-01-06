@@ -24,6 +24,7 @@ class EditorPageListContract {
 
     sealed class Event : ViewEvent {
         data object PageListModeChangeButtonClicked : Event()
+        data class MoveHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
 
         data class PageHolderNavigateClicked(val pageId : Long) : Event()
         data class PageHolderSelectClicked(val pageId : Long) : Event()

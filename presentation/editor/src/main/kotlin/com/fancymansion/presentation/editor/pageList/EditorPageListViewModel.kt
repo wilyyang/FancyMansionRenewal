@@ -46,6 +46,13 @@ class EditorPageListViewModel @Inject constructor(
                 }
             }
 
+            is EditorPageListContract.Event.MoveHolderPosition -> {
+                pageLogicStates.apply {
+                    val item = removeAt(event.fromIndex)
+                    add(event.toIndex, item)
+                }
+            }
+
             is EditorPageListContract.Event.PageHolderNavigateClicked -> {
                 // TODO
             }

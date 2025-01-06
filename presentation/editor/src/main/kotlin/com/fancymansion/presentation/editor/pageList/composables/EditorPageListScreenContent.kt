@@ -1,18 +1,28 @@
 package com.fancymansion.presentation.editor.pageList.composables
 
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +37,14 @@ import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.modifier.dragContainer
+import com.fancymansion.core.presentation.compose.modifier.draggableItems
+import com.fancymansion.core.presentation.compose.modifier.rememberDragDropState
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
-import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.common.itemMarginHeight
@@ -63,10 +75,25 @@ fun EditorPageListScreenContent(
             )
         }
     } else {
+        // Page Holder 의 드래그 이동
+        val list by remember { derivedStateOf { pageLogicStates.toList() } }
+        val draggableItems by remember { derivedStateOf { list.size } }
+        val listState = rememberLazyListState()
+
+        val dragDropState = rememberDragDropState(
+            lazyListState = listState,
+            draggableItemsNum = draggableItems,
+            onMove = { fromIndex, toIndex ->
+                onEventSent(EditorPageListContract.Event.MoveHolderPosition(fromIndex, toIndex))
+            }
+        )
+
         LazyColumn(
             modifier = Modifier
+                .dragContainer(dragDropState)
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface)
+                .background(color = MaterialTheme.colorScheme.surface),
+            state = listState
         ) {
 
             item{
@@ -158,9 +185,9 @@ fun EditorPageListScreenContent(
                 }
             }
 
-            itemsIndexed(pageLogicStates){ index, state ->
+            draggableItems(items = list, dragDropState = dragDropState) { modifier, state ->
                 PageHolder(
-                    modifier = Modifier,
+                    modifier = modifier,
                     isEditMode = uiState.isEditMode,
                     state = state,
                     onPageContentButtonClicked = {
@@ -191,11 +218,12 @@ fun PageHolder(
         modifier = modifier
             .fillMaxWidth()
             .height(85.dp)
+            .background(color = MaterialTheme.colorScheme.surface)
             .clickable {
                 onPageContentButtonClicked(state.pageLogic.pageId)
             }
             .padding(horizontal = 8.dp)
-            .borderLine(density = LocalDensity.current, color = onSurfaceSub, bottom = 0.3.dp)
+            .borderLine(density = LocalDensity.current, color = onSurfaceSub, top = 0.3.dp, bottom = 0.3.dp)
             .padding(horizontal = 10.dp)
     ) {
         Column(modifier = Modifier
