@@ -76,13 +76,11 @@ fun EditorPageListScreenContent(
         }
     } else {
         // Page Holder 의 드래그 이동
-        val list by remember { derivedStateOf { pageLogicStates.toList() } }
-        val draggableItems by remember { derivedStateOf { list.size } }
         val listState = rememberLazyListState()
 
         val dragDropState = rememberDragDropState(
             lazyListState = listState,
-            draggableItemsNum = draggableItems,
+            draggableItemsSize = pageLogicStates.size,
             onMove = { fromIndex, toIndex ->
                 onEventSent(EditorPageListContract.Event.MoveHolderPosition(fromIndex, toIndex))
             }
@@ -185,7 +183,7 @@ fun EditorPageListScreenContent(
                 }
             }
 
-            draggableItems(items = list, dragDropState = dragDropState) { modifier, state ->
+            draggableItems(items = pageLogicStates, dragDropState = dragDropState) { modifier, state ->
                 PageHolder(
                     modifier = modifier,
                     isEditMode = uiState.isEditMode,
