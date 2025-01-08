@@ -56,6 +56,8 @@ interface BookStorageSource {
 
     suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageData
 
+    suspend fun deletePage(episodeRef: EpisodeRef, pageId: Long): Boolean
+
     suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String) : File
 
     suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String): File

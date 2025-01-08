@@ -45,6 +45,7 @@ interface BookLocalRepository {
     suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel
     suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageModel): Boolean
     suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel
+    suspend fun deletePage(episodeRef: EpisodeRef, pageId: Long): Boolean
     suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String) : File
     suspend fun loadEpisodeThumbnail(episodeRef: EpisodeRef, imageName: String) : File
     suspend fun loadCoverImage(userId: String, mode : ReadMode, bookId : String, imageName: String) : File

@@ -13,15 +13,21 @@ import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
+import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class EditorPageListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val useCaseLoadBook: UseCaseLoadBook
+    private val useCaseLoadBook: UseCaseLoadBook,
+    private val useCaseMakeBook: UseCaseMakeBook
 ) : BaseViewModel<EditorPageListContract.State, EditorPageListContract.Event, EditorPageListContract.Effect>() {
+
+    private lateinit var logics : List<PageLogicModel>
+    val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
 
     private var episodeRef : EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -32,12 +38,20 @@ class EditorPageListViewModel @Inject constructor(
         )
     }
 
-    val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
-
     override fun setInitialState() = EditorPageListContract.State()
 
     override fun handleEvents(event: EditorPageListContract.Event) {
         when (event) {
+            EditorPageListContract.Event.PageListSaveToFile -> {
+                launchWithLoading {
+                    useCaseMakeBook.saveEditedPageList(
+                        episodeRef = episodeRef,
+                        editedPageList = pageLogicStates.map { it.pageLogic })
+
+                    updateLogicAndStateList()
+                }
+            }
+
             EditorPageListContract.Event.PageListModeChangeButtonClicked -> {
                 setState {
                     copy(
@@ -70,19 +84,26 @@ class EditorPageListViewModel @Inject constructor(
         launchWithInit {
             val title = savedStateHandle.get<String>(NAME_BOOK_TITLE)!!
             val isEditMode = savedStateHandle.get<Boolean>(NAME_IS_PAGE_LIST_EDIT_MODE)!!
-            val logic = useCaseLoadBook.loadLogic(episodeRef)
 
-            logic.logics.forEach { pageLogic ->
-                pageLogicStates.add(PageLogicState(pageLogic = pageLogic, selected = mutableStateOf(false)))
-            }
-
+            updateLogicAndStateList()
             setState {
                 copy(
                     title = title,
-                    logic = logic,
                     isEditMode = isEditMode
                 )
             }
+        }
+    }
+
+    private suspend fun updateLogicAndStateList(){
+        logics = useCaseLoadBook.loadLogic(episodeRef).logics
+
+        // 기존 유저 선택 항목 반영
+        val selectedPageIds = pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId }.toSet()
+        pageLogicStates.clear()
+        logics.forEach { pageLogic ->
+            val isSelected = pageLogic.pageId in selectedPageIds
+            pageLogicStates.add(PageLogicState(pageLogic = pageLogic, selected = mutableStateOf(isSelected)))
         }
     }
 }

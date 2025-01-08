@@ -7,6 +7,7 @@ import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.PageLogicModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -40,6 +41,25 @@ class UseCaseMakeBook @Inject constructor(
                     episodeRef.userId, episodeRef.mode, episodeRef.bookId,
                     newBookCoverName, uri
                 )
+            }
+        }
+
+    suspend fun saveEditedPageList(episodeRef: EpisodeRef, editedPageList: List<PageLogicModel>) =
+        withContext(dispatcher) {
+            val originLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef)
+
+            // Delete PageContent
+            val editedPageIds = editedPageList.map { it.pageId }.toSet()
+            val pagesToDelete = originLogic.logics.filter { it.pageId !in editedPageIds }
+            pagesToDelete.forEach { page ->
+                bookLocalRepository.deletePage(episodeRef = episodeRef, pageId = page.pageId)
+            }
+
+            // Update with the new logic
+            originLogic.copy(
+                logics = editedPageList
+            ).let { updatedLogic ->
+                bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = updatedLogic)
             }
         }
 

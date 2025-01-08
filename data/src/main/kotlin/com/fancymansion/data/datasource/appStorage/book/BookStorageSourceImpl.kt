@@ -123,6 +123,9 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     override suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageData =
         root.pageFile(episodeRef, pageId).readJson(PageData::class.java) as PageData
 
+    override suspend fun deletePage(episodeRef: EpisodeRef, pageId: Long): Boolean =
+        root.pageFile(episodeRef, pageId).delete()
+
     override suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File =
         root.pageImageFile(episodeRef, imageName)
 

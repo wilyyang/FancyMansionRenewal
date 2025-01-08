@@ -121,6 +121,10 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.loadPage(episodeRef, pageId).asModel()
     }
 
+    override suspend fun deletePage(episodeRef: EpisodeRef, pageId: Long): Boolean {
+        return bookStorageSource.deletePage(episodeRef, pageId)
+    }
+
     override suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File {
         return bookStorageSource.loadPageImage(episodeRef, imageName)
     }

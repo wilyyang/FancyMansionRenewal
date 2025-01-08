@@ -69,9 +69,7 @@ fun EditorPageListScreenFrame(
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 sideRightText = stringResource(id = R.string.topbar_editor_side_save),
                 onClickRightIcon = {
-                    /**
-                     * TODO
-                     */
+                    onEventSent(EditorPageListContract.Event.PageListSaveToFile)
                 },
                 shadowElevation = 1.dp
             )
