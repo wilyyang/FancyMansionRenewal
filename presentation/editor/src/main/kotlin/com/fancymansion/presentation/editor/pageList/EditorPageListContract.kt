@@ -23,10 +23,11 @@ class EditorPageListContract {
         data object PageListSaveToFile : Event()
 
         data object PageListModeChangeButtonClicked : Event()
-        data class MoveHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
 
+        // Holder Event
         data class PageHolderNavigateClicked(val pageId : Long) : Event()
         data class PageHolderSelectClicked(val pageId : Long) : Event()
+        data class MoveHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

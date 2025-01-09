@@ -60,21 +60,23 @@ class EditorPageListViewModel @Inject constructor(
                 }
             }
 
-            is EditorPageListContract.Event.MoveHolderPosition -> {
-                pageLogicStates.apply {
-                    val item = removeAt(event.fromIndex)
-                    add(event.toIndex, item)
-                }
-            }
-
+            // Holder Event
             is EditorPageListContract.Event.PageHolderNavigateClicked -> {
                 // TODO
             }
+
             is EditorPageListContract.Event.PageHolderSelectClicked -> {
                 pageLogicStates.firstOrNull {
                     it.pageLogic.pageId == event.pageId
                 }?.let {
                     it.selected.value = !it.selected.value
+                }
+            }
+
+            is EditorPageListContract.Event.MoveHolderPosition -> {
+                pageLogicStates.apply {
+                    val item = removeAt(event.fromIndex)
+                    add(event.toIndex, item)
                 }
             }
         }
