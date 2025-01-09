@@ -20,9 +20,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +29,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.common.const.LOGIC_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -50,6 +46,7 @@ import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTit
 import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.pageList.EditorPageListContract
 import com.fancymansion.presentation.editor.pageList.PageLogicState
+import com.fancymansion.presentation.editor.pageList.PageSortOrder
 
 @Composable
 fun EditorPageListScreenContent(
@@ -59,7 +56,7 @@ fun EditorPageListScreenContent(
     onEventSent: (event: EditorPageListContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
-    if (pageLogicStates.isEmpty()) {
+    if (!uiState.isInitSuccess) {
         Box(
             modifier = modifier
                 .background(color = MaterialTheme.colorScheme.surface)
@@ -121,7 +118,9 @@ fun EditorPageListScreenContent(
                                 Text(
                                     modifier = Modifier
                                         .padding(end = 12.dp)
-                                        .clickSingle { },
+                                        .clickSingle {
+                                            onEventSent(EditorPageListContract.Event.SelectAllHolders)
+                                        },
                                     text = stringResource(id = R.string.edit_page_list_header_item_edit_total),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
@@ -129,7 +128,9 @@ fun EditorPageListScreenContent(
                                 Text(
                                     modifier = Modifier
                                         .padding(end = 12.dp)
-                                        .clickSingle { },
+                                        .clickSingle {
+                                            onEventSent(EditorPageListContract.Event.DeselectAllHolders)
+                                        },
                                     text = stringResource(id = R.string.edit_page_list_header_item_edit_cancel),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
@@ -137,7 +138,19 @@ fun EditorPageListScreenContent(
                                 Text(
                                     modifier = Modifier
                                         .padding(end = 12.dp)
-                                        .clickSingle { },
+                                        .clickSingle {
+                                            onEventSent(EditorPageListContract.Event.AddPageButtonClicked)
+                                        },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_edit_add),
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                                )
+
+                                Text(
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickSingle {
+                                            onEventSent(EditorPageListContract.Event.DeleteSelectedHolders)
+                                        },
                                     text = stringResource(id = R.string.edit_page_list_header_item_edit_delete),
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
@@ -155,16 +168,28 @@ fun EditorPageListScreenContent(
                                 Text(
                                     modifier = Modifier
                                         .padding(end = 12.dp)
-                                        .clickSingle { },
-                                    text = stringResource(id = R.string.edit_page_list_header_item_order_id),
+                                        .clickSingle {
+                                            if(uiState.pageSortOrder != PageSortOrder.LAST_EDITED){
+                                                onEventSent(EditorPageListContract.Event.PageSortOrderLastEdited)
+                                            }
+                                        },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_order_edit),
+                                    color = if (uiState.pageSortOrder == PageSortOrder.LAST_EDITED) MaterialTheme.colorScheme.primary
+                                            else MaterialTheme.colorScheme.onSurfaceVariant,
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
 
                                 Text(
                                     modifier = Modifier
                                         .padding(end = 12.dp)
-                                        .clickSingle { },
-                                    text = stringResource(id = R.string.edit_page_list_header_item_order_name),
+                                        .clickSingle {
+                                            if(uiState.pageSortOrder != PageSortOrder.TITLE_ASCENDING){
+                                                onEventSent(EditorPageListContract.Event.PageSortOrderTitleAscending)
+                                            }
+                                        },
+                                    text = stringResource(id = R.string.edit_page_list_header_item_order_title_ascending),
+                                    color = if (uiState.pageSortOrder == PageSortOrder.TITLE_ASCENDING) MaterialTheme.colorScheme.primary
+                                            else MaterialTheme.colorScheme.onSurfaceVariant,
                                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                                 )
 
@@ -221,7 +246,12 @@ fun PageHolder(
                 onPageContentButtonClicked(state.pageLogic.pageId)
             }
             .padding(horizontal = 8.dp)
-            .borderLine(density = LocalDensity.current, color = onSurfaceSub, top = 0.3.dp, bottom = 0.3.dp)
+            .borderLine(
+                density = LocalDensity.current,
+                color = onSurfaceSub,
+                top = 0.3.dp,
+                bottom = 0.3.dp
+            )
             .padding(horizontal = 10.dp)
     ) {
         Column(modifier = Modifier

@@ -35,10 +35,13 @@
     <string name="edit_page_list_header_item_mode_edit">편집</string>
     <string name="edit_page_list_header_item_mode_complete">완료</string>
 
-    <string name="edit_page_list_header_item_order_id">번호순</string>
-    <string name="edit_page_list_header_item_order_name">이름순</string>
+    <string name="edit_page_list_header_item_order_edit">편집순</string>
+    <string name="edit_page_list_header_item_order_title_ascending">제목순</string>
 
     <string name="edit_page_list_header_item_edit_total">전체</string>
     <string name="edit_page_list_header_item_edit_cancel">해제</string>
+    <string name="edit_page_list_header_item_edit_add">추가</string>
     <string name="edit_page_list_header_item_edit_delete">삭제</string>
+
+    <string name="edit_page_list_new_page_title_default">새로운 페이지</string>
 </resources>
