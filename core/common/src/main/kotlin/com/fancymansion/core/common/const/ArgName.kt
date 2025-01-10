@@ -7,6 +7,7 @@ object ArgName{
     const val NAME_EPISODE_ID = "NAME_EPISODE_ID"
     const val NAME_BOOK_TITLE = "NAME_BOOK_TITLE"
     const val NAME_EPISODE_TITLE = "NAME_EPISODE_TITLE"
+    const val NAME_PAGE_ID = "NAME_PAGE_ID"
 
     const val NAME_IS_PAGE_LIST_EDIT_MODE = "NAME_IS_PAGE_LIST_EDIT_MODE"
 }

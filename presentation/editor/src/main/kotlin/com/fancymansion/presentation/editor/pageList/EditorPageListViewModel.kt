@@ -132,7 +132,13 @@ class EditorPageListViewModel @Inject constructor(
 
             // Holder Event
             is EditorPageListContract.Event.PageHolderNavigateClicked -> {
-                // TODO
+                setEffect {
+                    EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen(
+                        episodeRef = episodeRef,
+                        bookTitle = uiState.value.title,
+                        pageId = event.pageId
+                    )
+                }
             }
 
             is EditorPageListContract.Event.PageHolderSelectClicked -> {

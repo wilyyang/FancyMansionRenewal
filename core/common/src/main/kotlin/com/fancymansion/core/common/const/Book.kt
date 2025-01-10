@@ -7,7 +7,7 @@ val testBookTitle = "배트의 어드벤처"
 val testEpisodeTitle = "1화"
 val testEpisodeRef = EpisodeRef(
     userId = "test_user_id",
-    mode = ReadMode.READ,
+    mode = ReadMode.EDIT,
     bookId = "test_book_id",
     episodeId = "test_book_id_0"
 )
@@ -131,6 +131,7 @@ enum class ReadMode {
 const val LOGIC_ID_NOT_ASSIGNED = 0L
 const val ROUTE_PAGE_ID_NOT_ASSIGNED = -4000L
 const val ACTION_ID_NOT_ASSIGNED = 0L
+const val PAGE_ID_NOT_ASSIGNED = -1L
 
 enum class PageType(
     val localizedName: StringValue.StringResource

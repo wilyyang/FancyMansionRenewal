@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
+import com.fancymansion.app.navigation.navigateViewerContentScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.editor.pageList.EditorPageListContract
@@ -52,9 +53,13 @@ fun EditorPageListScreenDestination(
 fun handleNavigationRequest(effect: EditorPageListContract.Effect, navController: NavController) {
     when (effect) {
         is EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen -> {
-            /**
-             * TODO
-             */
+            // 임시
+            navController.navigateViewerContentScreen(
+                episodeRef = effect.episodeRef,
+                bookTitle = effect.bookTitle,
+                episodeTitle = "",
+                pageId = effect.pageId
+            )
         }
         else -> {}
     }

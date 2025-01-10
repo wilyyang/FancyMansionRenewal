@@ -3,6 +3,7 @@ package com.fancymansion.app.navigation
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.fancymansion.core.common.const.ArgName
+import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
 
 object NavArgument{
@@ -39,5 +40,10 @@ object NavArgument{
     val argIsPageListEditMode = navArgument(ArgName.NAME_IS_PAGE_LIST_EDIT_MODE){
         type = NavType.BoolType
         defaultValue = false
+    }
+
+    val argPageId = navArgument(ArgName.NAME_PAGE_ID){
+        type = NavType.LongType
+        defaultValue = PAGE_ID_NOT_ASSIGNED
     }
 }

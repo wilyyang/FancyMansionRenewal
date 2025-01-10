@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_TITLE
+import com.fancymansion.core.common.const.ArgName.NAME_PAGE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.resource.StringValue
@@ -186,7 +187,12 @@ class ViewerContentViewModel @Inject constructor(
 
             when(episodeRef.mode){
                 ReadMode.EDIT -> {
-                    initializeAndLoadStartPage()
+                    val receivedId = savedStateHandle.get<Long>(NAME_PAGE_ID)
+                    if(receivedId != null && receivedId != PAGE_ID_NOT_ASSIGNED){
+                        initializeAndLoadTestPage(receivedId)
+                    }else{
+                        initializeAndLoadStartPage()
+                    }
                     setLoadStateIdle()
                 }
 
@@ -216,6 +222,14 @@ class ViewerContentViewModel @Inject constructor(
     private suspend fun initializeAndLoadStartPage(){
         useCaseBookLogic.resetEpisodeData(episodeRef)
         logic.logics.first { it.type == PageType.START }.pageId.let { pageId ->
+            useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId)
+            loadPageContent(pageId)
+        }
+    }
+
+    private suspend fun initializeAndLoadTestPage(receivedId : Long){
+        useCaseBookLogic.resetEpisodeData(episodeRef)
+        logic.logics.first { it.pageId == receivedId }.pageId.let { pageId ->
             useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId)
             loadPageContent(pageId)
         }
