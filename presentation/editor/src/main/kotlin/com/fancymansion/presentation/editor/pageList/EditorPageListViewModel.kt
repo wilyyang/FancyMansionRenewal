@@ -12,8 +12,10 @@ import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -48,11 +50,7 @@ class EditorPageListViewModel @Inject constructor(
         when (event) {
             EditorPageListContract.Event.PageListSaveToFile -> {
                 launchWithLoading {
-                    useCaseMakeBook.saveEditedPageList(
-                        episodeRef = episodeRef,
-                        editedPageList = pageLogicStates.map { it.pageLogic })
-
-                    updateLogicAndStateList()
+                    saveEditedPageListAndReload()
                 }
             }
 
@@ -132,12 +130,14 @@ class EditorPageListViewModel @Inject constructor(
 
             // Holder Event
             is EditorPageListContract.Event.PageHolderNavigateClicked -> {
-                setEffect {
-                    EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen(
-                        episodeRef = episodeRef,
-                        bookTitle = uiState.value.title,
-                        pageId = event.pageId
-                    )
+                checkPageListEdited {
+                    setEffect {
+                        EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen(
+                            episodeRef = episodeRef,
+                            bookTitle = uiState.value.title,
+                            pageId = event.pageId
+                        )
+                    }
                 }
             }
 
@@ -174,15 +174,60 @@ class EditorPageListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateLogicAndStateList(){
+    private suspend fun saveEditedPageListAndReload(resetSelect : Boolean = false){
+        useCaseMakeBook.saveEditedPageList(
+            episodeRef = episodeRef,
+            editedPageList = pageLogicStates.map { it.pageLogic })
+
+        updateLogicAndStateList(resetSelect = resetSelect)
+    }
+
+    private suspend fun updateLogicAndStateList(resetSelect : Boolean = false){
         logics = useCaseLoadBook.loadLogic(episodeRef).logics
 
         // 기존 유저 선택 항목 반영
         val selectedPageIds = pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId }.toSet()
         pageLogicStates.clear()
         logics.forEachIndexed { index, pageState ->
-            val isSelected = pageState.pageId in selectedPageIds
-            pageLogicStates.add(PageLogicState(editIndex = index, pageLogic = pageState, selected = mutableStateOf(isSelected)))
+            val selected = if (resetSelect) false else { pageState.pageId in selectedPageIds }
+            pageLogicStates.add(
+                PageLogicState(
+                    editIndex = index, pageLogic = pageState,
+                    selected = mutableStateOf(selected)
+                )
+            )
+        }
+    }
+
+    private fun checkPageListEdited(onCheckComplete: () -> Unit) {
+        val editedLogics = pageLogicStates.map { it.pageLogic }
+        if (editedLogics != logics) {
+            setLoadState(
+                loadState = LoadState.AlarmDialog(
+                    title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
+                    message = StringValue.StringResource(R.string.dialog_save_edited_book_info),
+                    confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                    onConfirm = {
+                        //수정 중인 정보 파일 저장
+                        launchWithLoading {
+                            saveEditedPageListAndReload(resetSelect = true)
+                            setLoadStateIdle()
+                            onCheckComplete()
+                        }
+                    },
+                    dismissText = StringValue.StringResource(com.fancymansion.core.common.R.string.cancel),
+                    onDismiss = {
+                        //수정 중인 정보 삭제
+                        launchWithLoading {
+                            updateLogicAndStateList(resetSelect = true)
+                            setLoadStateIdle()
+                            onCheckComplete()
+                        }
+                    }
+                )
+            )
+        } else {
+            onCheckComplete()
         }
     }
 }

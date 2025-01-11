@@ -18,6 +18,7 @@ import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDes
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
@@ -37,7 +38,9 @@ fun AppScreenConfiguration(typePane : TypePane, density: Float) {
 
 @Composable
 fun AppNavigation(typePane : TypePane) {
-    val navController = rememberNavController()
+    val navController = rememberNavController().apply {
+        logNavigationChanges()
+    }
 
     NavHost(
         navController = navController,
@@ -79,6 +82,14 @@ fun AppNavigation(typePane : TypePane) {
         ) {
             EditorPageListScreenDestination(navController = navController, typePane = typePane)
         }
+    }
+}
+
+fun NavController.logNavigationChanges() {
+    this.addOnDestinationChangedListener { _, destination, arguments ->
+        val route = destination.route
+        val args = arguments?.keySet()?.filter { it.startsWith("NAME") }?.joinToString { "${arguments[it]}" } ?: "empty"
+        Logger.print("<Navigate> $route : $args", tag = Logger.BASIC_TAG_NAME)
     }
 }
 
