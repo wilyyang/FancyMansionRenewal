@@ -63,6 +63,47 @@ object Logger {
         saveLogHandler?.saveLogWithLaunch(message = message, type = type, tag = tag)
     }
 
+    fun print(message: String, value: Any, tag: String, type: Int = Log.INFO) {
+        val log: String = buildString {
+            // 클래스 이름 추가
+            append("$message ${value::class.simpleName} : ")
+
+            // 속성 탐색
+            value::class.members
+                .filterIsInstance<kotlin.reflect.KProperty1<Any, *>>()
+                .forEach { property ->
+                    // 속성 이름
+                    append("${property.name}= ")
+
+                    // 속성 값
+                    val propertyValue = try {
+                        property.get(value)
+                    } catch (e: Exception) {
+                        "Error"
+                    }
+
+                    when (propertyValue) {
+                        // 기본 자료형은 값 출력
+                        is Boolean, is String, is Int, is Long, is Double, is Float -> {
+                            append(propertyValue)
+                        }
+                        // 나머지는 클래스 이름 출력
+                        is Any -> {
+                            append(propertyValue::class.simpleName)
+                        }
+                        else -> {
+                            append("null")
+                        }
+                    }
+                    append(", ")
+                }
+        }.removeSuffix(", ")
+
+        // 로그 출력 및 로그 저장
+        Log.println(type, tag, log)
+        saveLogHandler?.saveLogWithLaunch(message = log, type = type, tag = tag)
+    }
+
     private fun changeMessage(message: String) : String {
         val msgBuilder = StringBuilder()
             .append(Thread.currentThread().stackTrace[4].methodName).append("()").append(" : ")

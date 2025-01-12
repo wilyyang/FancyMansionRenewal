@@ -28,4 +28,5 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation(kotlin("reflect"))
 }

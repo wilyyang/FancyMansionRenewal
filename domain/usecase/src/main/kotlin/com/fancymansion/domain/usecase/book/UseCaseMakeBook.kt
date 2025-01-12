@@ -45,15 +45,18 @@ class UseCaseMakeBook @Inject constructor(
             }
         }
 
-    suspend fun saveEditedPageList(episodeRef: EpisodeRef, editedPageList: List<PageLogicModel>) =
+    suspend fun saveEditedPageList(episodeRef: EpisodeRef, editedPageList: List<PageLogicModel>, deleteIds : Set<Long>) =
         withContext(dispatcher) {
             val originLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef)
-            val originIds = originLogic.logics.map { it.pageId }.toSet()
+            val (originDeleteIds, originRemainingIds) = originLogic.logics.map { it.pageId }.toSet().partition { it in deleteIds }
 
-            val editedPageIds = editedPageList.map { it.pageId }.toSet()
+            // Delete PageContent
+            originDeleteIds.forEach { pageId ->
+                bookLocalRepository.deletePage(episodeRef = episodeRef, pageId = pageId)
+            }
 
             // Add PageContent
-            val pagesToAdd = editedPageList.filter { it.pageId !in originIds }
+            val pagesToAdd = editedPageList.filter { it.pageId !in originRemainingIds }
             pagesToAdd.forEach { page ->
                 bookLocalRepository.makePage(
                     episodeRef = episodeRef, pageId = page.pageId,
@@ -63,12 +66,6 @@ class UseCaseMakeBook @Inject constructor(
                         sources = listOf()
                     )
                 )
-            }
-
-            // Delete PageContent
-            val pagesToDelete = originLogic.logics.filter { it.pageId !in editedPageIds }
-            pagesToDelete.forEach { page ->
-                bookLocalRepository.deletePage(episodeRef = episodeRef, pageId = page.pageId)
             }
 
             // Update with the new logic

@@ -87,8 +87,8 @@ fun AppNavigation(typePane : TypePane) {
 
 fun NavController.logNavigationChanges() {
     this.addOnDestinationChangedListener { _, destination, arguments ->
-        val route = destination.route
-        val args = arguments?.keySet()?.filter { it.startsWith("NAME") }?.joinToString { "${arguments[it]}" } ?: "empty"
+        val route = destination.route?.substringBefore("/")
+        val args = arguments?.keySet()?.filter { it.startsWith("NAME") }?.joinToString { "$it= ${arguments[it]}" } ?: "empty"
         Logger.print("<Navigate> $route : $args", tag = Logger.BASIC_TAG_NAME)
     }
 }

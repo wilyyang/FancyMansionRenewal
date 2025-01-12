@@ -34,6 +34,7 @@ class EditorPageListViewModel @Inject constructor(
 
     private lateinit var logics : List<PageLogicModel>
     val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
+    val totalDeletePageIds : MutableSet<Long> = mutableSetOf()
 
     private var episodeRef : EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -125,6 +126,7 @@ class EditorPageListViewModel @Inject constructor(
             }
 
             EditorPageListContract.Event.DeleteSelectedHolders -> {
+                totalDeletePageIds.addAll( pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId })
                 pageLogicStates.removeIf { it.selected.value }
             }
 
@@ -177,8 +179,10 @@ class EditorPageListViewModel @Inject constructor(
     private suspend fun saveEditedPageListAndReload(resetSelect : Boolean = false){
         useCaseMakeBook.saveEditedPageList(
             episodeRef = episodeRef,
-            editedPageList = pageLogicStates.map { it.pageLogic })
-
+            editedPageList = pageLogicStates.map { it.pageLogic },
+            deleteIds = totalDeletePageIds
+        )
+        totalDeletePageIds.clear()
         updateLogicAndStateList(resetSelect = resetSelect)
     }
 

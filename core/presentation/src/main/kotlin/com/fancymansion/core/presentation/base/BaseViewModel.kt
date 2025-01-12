@@ -201,14 +201,14 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     private fun subscribeToEvents() {
         scope.launch {
             _commonEvent.collect {
-                Logger.print(message = "<Event> ${it::class.simpleName}", tag = Logger.BASIC_TAG_NAME)
+                Logger.print(message = "<CommonEvent> ", value = it, tag = Logger.BASIC_TAG_NAME)
                 handleCommonEvents(it)
             }
         }
 
         scope.launch {
             _event.collect {
-                Logger.print(message = "<Event> ${it::class.simpleName}", tag = Logger.BASIC_TAG_NAME)
+                Logger.print(message = "<Event> ", value = it, tag = Logger.BASIC_TAG_NAME)
                 handleEvents(it)
             }
         }
@@ -240,13 +240,13 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
 
     protected fun setEffect(builder : () -> Effect) {
         val effectValue = builder()
-        Logger.print(message = "<Effect> ${effectValue::class.simpleName}", tag = Logger.BASIC_TAG_NAME)
+        Logger.print(message = "<Effect> ", value = effectValue, tag = Logger.BASIC_TAG_NAME)
         scope.launch { _effect.send(effectValue) }
     }
 
     protected fun setCommonEffect(builder : () -> CommonEffect) {
         val effectValue = builder()
-        Logger.print(message = "<Effect> ${effectValue::class.simpleName}", tag = Logger.BASIC_TAG_NAME)
+        Logger.print(message = "<CommonEffect> ", value = effectValue, tag = Logger.BASIC_TAG_NAME)
         scope.launch { _commonEffect.send(effectValue) }
     }
 
