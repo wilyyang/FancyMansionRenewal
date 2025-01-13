@@ -2,6 +2,7 @@ package com.fancymansion.domain.usecase.book
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
+import com.fancymansion.core.common.throwable.exception.LoadPageException
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -27,7 +28,15 @@ class UseCaseLoadBook @Inject constructor(
 
     suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel =
         withContext(dispatcher) {
-            bookLocalRepository.loadPage(episodeRef, pageId)
+            try {
+                bookLocalRepository.loadPage(episodeRef, pageId)
+            } catch (e: Exception) {
+                throw LoadPageException(
+                    message = "Failed to load page because ${e.cause}. page id = $pageId, book id = ${episodeRef.bookId}",
+                    episodeRef = episodeRef,
+                    pageId = pageId
+                )
+            }
         }
 
     suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File =

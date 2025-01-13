@@ -10,11 +10,13 @@ import com.fancymansion.core.common.const.ArgName.NAME_PAGE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.resource.StringValue
+import com.fancymansion.core.common.throwable.exception.LoadPageException
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.PageSettingModel
+import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
@@ -49,7 +51,14 @@ class ViewerContentViewModel @Inject constructor(
         when (event) {
             is ViewerContentContract.Event.OnConfirmMoveSavePageDialog -> {
                 launchWithLoading {
-                    loadPageContent(event.pageId)
+                    loadPageContent(event.pageId).let { (pageWrapper, selectors) ->
+                        setState {
+                            copy(
+                                pageWrapper = pageWrapper,
+                                selectors = selectors
+                            )
+                        }
+                    }
                 }
             }
 
@@ -223,7 +232,14 @@ class ViewerContentViewModel @Inject constructor(
         useCaseBookLogic.resetEpisodeData(episodeRef)
         logic.logics.first { it.type == PageType.START }.pageId.let { pageId ->
             useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId)
-            loadPageContent(pageId)
+            loadPageContent(pageId).let { (pageWrapper, selectors) ->
+                setState {
+                    copy(
+                        pageWrapper = pageWrapper,
+                        selectors = selectors
+                    )
+                }
+            }
         }
     }
 
@@ -231,13 +247,18 @@ class ViewerContentViewModel @Inject constructor(
         useCaseBookLogic.resetEpisodeData(episodeRef)
         logic.logics.first { it.pageId == receivedId }.pageId.let { pageId ->
             useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId)
-            loadPageContent(pageId)
+            loadPageContent(pageId).let { (pageWrapper, selectors) ->
+                setState {
+                    copy(
+                        pageWrapper = pageWrapper,
+                        selectors = selectors
+                    )
+                }
+            }
         }
     }
 
     private suspend fun handleSelectorClick(pageId : Long, selectorId : Long) {
-        useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId, selectorId = selectorId)
-
         val nextPageId = useCaseBookLogic.getNextRoutePageId(
             episodeRef,
             routes = logic.logics
@@ -246,12 +267,20 @@ class ViewerContentViewModel @Inject constructor(
                 .first { it.selectorId == selectorId }
                 .routes
         )
+        val (pageWrapper, selectors) = loadPageContent(nextPageId)
+        useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId, selectorId = selectorId)
         useCaseBookLogic.incrementActionCount(episodeRef, pageId = nextPageId)
         useCaseBookLogic.updateReadingProgressPageId(episodeRef, nextPageId)
-        loadPageContent(nextPageId)
+
+        setState {
+            copy(
+                pageWrapper = pageWrapper,
+                selectors = selectors
+            )
+        }
     }
 
-    private suspend fun loadPageContent(pageId : Long){
+    private suspend fun loadPageContent(pageId : Long) : Pair<PageWrapper, List<SelectorModel>>{
         val page = useCaseLoadBook.loadPage(episodeRef, pageId = pageId)
         val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef, logic = logic, pageId = pageId)
 
@@ -263,12 +292,7 @@ class ViewerContentViewModel @Inject constructor(
             }
         } ?: createPageWrapper(page)
 
-        setState {
-            copy(
-                pageWrapper = pageWrapper,
-                selectors = selectors
-            )
-        }
+        return Pair(pageWrapper, selectors)
     }
 
     private suspend fun createPageWrapper(page : PageModel) : PageWrapper {
@@ -287,5 +311,16 @@ class ViewerContentViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    override fun showErrorResult(
+        throwable: Throwable,
+        defaultConfirm: () -> Unit,
+        defaultDismiss: () -> Unit
+    ) {
+        when(throwable){
+            is LoadPageException -> setLoadState(LoadState.ErrorDialog(message = throwable.message, dismissText = null))
+            else -> super.showErrorResult(throwable, defaultConfirm, defaultDismiss)
+        }
     }
 }

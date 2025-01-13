@@ -15,6 +15,7 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
@@ -32,6 +33,7 @@ class EditorPageListViewModel @Inject constructor(
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorPageListContract.State, EditorPageListContract.Event, EditorPageListContract.Effect>() {
 
+    private var isFirstResumeComplete : Boolean = false
     private lateinit var logics : List<PageLogicModel>
     val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
     val totalDeletePageIds : MutableSet<Long> = mutableSetOf()
@@ -157,6 +159,26 @@ class EditorPageListViewModel @Inject constructor(
                     add(event.toIndex, item)
                 }
             }
+        }
+    }
+
+    override fun handleCommonEvents(event: CommonEvent) {
+        when(event){
+            is CommonEvent.OnResume -> {
+                if(isFirstResumeComplete){
+                    launchWithLoading {
+                        updateLogicAndStateList()
+                    }
+                }else{
+                    isFirstResumeComplete = true
+                }
+            }
+            is CommonEvent.CloseEvent -> {
+                checkPageListEdited {
+                    super.handleCommonEvents(CommonEvent.CloseEvent)
+                }
+            }
+            else -> super.handleCommonEvents(event)
         }
     }
 

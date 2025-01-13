@@ -9,6 +9,7 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
@@ -27,6 +28,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
+    private var isFirstResumeComplete : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
             get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId }
@@ -186,6 +188,24 @@ class EditorBookOverviewViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    override fun handleCommonEvents(event: CommonEvent) {
+        when(event){
+            is CommonEvent.OnResume -> {
+                if(isFirstResumeComplete){
+                    launchWithLoading {
+                        useCaseGetTotalKeyword().forEach {
+                            keywordStates.add(createKeywordState(it, false))
+                        }
+                        loadBookInfoFromFile()
+                    }
+                }else{
+                    isFirstResumeComplete = true
+                }
+            }
+            else -> super.handleCommonEvents(event)
         }
     }
 

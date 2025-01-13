@@ -29,6 +29,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,6 +43,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
@@ -72,6 +76,21 @@ fun EditorBookOverviewScreenFrame(
     onEventSent: (event: EditorBookOverviewContract.Event) -> Unit,
     onNavigationRequested: (EditorBookOverviewContract.Effect.Navigation) -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val lifecycle = lifecycleOwner.lifecycle
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onCommonEventSent(CommonEvent.OnResume)
+            }
+        }
+
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
+    }
+
     val launcherGalleryBookCoverPicker = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->

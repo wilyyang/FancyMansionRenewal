@@ -1,6 +1,7 @@
 package com.fancymansion.test.fake.bookStorage
 
 import android.content.Context
+import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.util.readModuleRawFile
@@ -94,6 +95,10 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
     override suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageData =
         pageMap["${episodeRef.userId} ${episodeRef.mode.name} ${episodeRef.bookId} ${episodeRef.episodeId} $pageId"]!!
 
+    override suspend fun deletePage(episodeRef: EpisodeRef, pageId: Long): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun loadPageImage(episodeRef: EpisodeRef, imageName: String): File =
         root.pageImageFile(episodeRef, imageName)
 
@@ -106,6 +111,37 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         bookId: String,
         imageName: String
     ): File = root.coverFile(userId, mode, bookId, imageName)
+
+    override suspend fun deletePageImage(episodeRef: EpisodeRef, imageName: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteCoverImage(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun makePageImageFromUri(
+        episodeRef: EpisodeRef,
+        imageName: String,
+        uri: Uri
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun makeCoverImageFromUri(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        imageName: String,
+        uri: Uri
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun makePageImageFromResource(
         episodeRef: EpisodeRef,
