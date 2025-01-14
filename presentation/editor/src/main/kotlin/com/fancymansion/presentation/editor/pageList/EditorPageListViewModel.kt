@@ -36,7 +36,7 @@ class EditorPageListViewModel @Inject constructor(
     private var isFirstResumeComplete : Boolean = false
     private lateinit var logics : List<PageLogicModel>
     val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
-    val totalDeletePageIds : MutableSet<Long> = mutableSetOf()
+    private val totalDeletePageIds : MutableSet<Long> = mutableSetOf()
 
     private var episodeRef : EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -65,6 +65,7 @@ class EditorPageListViewModel @Inject constructor(
                     }
                 }else{
                     // 편집 시작 전 작업 : 편집순 정렬로 할당
+                    pageLogicStates.sortBy { it.editIndex }
                     setState {
                         copy(
                             pageSortOrder = PageSortOrder.LAST_EDITED
@@ -199,9 +200,15 @@ class EditorPageListViewModel @Inject constructor(
     }
 
     private suspend fun saveEditedPageListAndReload(resetSelect : Boolean = false){
+        if (uiState.value.pageSortOrder == PageSortOrder.LAST_EDITED){
+            pageLogicStates.forEachIndexed { index, pageState ->
+                pageState.editIndex = index
+            }
+        }
+        val editedPageList = pageLogicStates.sortedBy { it.editIndex }.map { it.pageLogic }
         useCaseMakeBook.saveEditedPageList(
             episodeRef = episodeRef,
-            editedPageList = pageLogicStates.map { it.pageLogic },
+            editedPageList = editedPageList,
             deleteIds = totalDeletePageIds
         )
         totalDeletePageIds.clear()
@@ -223,10 +230,24 @@ class EditorPageListViewModel @Inject constructor(
                 )
             )
         }
+        setState {
+            copy(
+                pageSortOrder = PageSortOrder.LAST_EDITED
+            )
+        }
     }
 
     private fun checkPageListEdited(onCheckComplete: () -> Unit) {
-        val editedLogics = pageLogicStates.map { it.pageLogic }
+        // 편집 중인 목록 저장
+        if (uiState.value.pageSortOrder == PageSortOrder.LAST_EDITED){
+            pageLogicStates.forEachIndexed { index, pageState ->
+                pageState.editIndex = index
+            }
+        }
+
+        // 정렬 순서와 상관 없이 편집순 목록 변환
+        val editedLogics = pageLogicStates.sortedBy { it.editIndex }.map { it.pageLogic }
+
         if (editedLogics != logics) {
             setLoadState(
                 loadState = LoadState.AlarmDialog(
