@@ -27,153 +27,54 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditorPageListViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorPageListContract.State, EditorPageListContract.Event, EditorPageListContract.Effect>() {
 
-    private var isFirstResumeComplete : Boolean = false
-    private lateinit var logics : List<PageLogicModel>
-    val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf<PageLogicState>()
-    private val totalDeletePageIds : MutableSet<Long> = mutableSetOf()
+    private var isFirstResumeComplete = false
+    private lateinit var logics: List<PageLogicModel>
+    val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf()
+    private val totalDeletePageIds: MutableSet<Long> = mutableSetOf()
 
-    private var episodeRef : EpisodeRef = savedStateHandle.run {
+    private val episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
-            get<String>(NAME_USER_ID)!!,
-            get<ReadMode>(NAME_READ_MODE)!!,
-            get<String>(NAME_BOOK_ID)!!,
-            get<String>(NAME_EPISODE_ID)!!
+            requireNotNull(get<String>(NAME_USER_ID)),
+            requireNotNull(get<ReadMode>(NAME_READ_MODE)),
+            requireNotNull(get<String>(NAME_BOOK_ID)),
+            requireNotNull(get<String>(NAME_EPISODE_ID))
         )
+    }
+
+    init {
+        initializeState()
     }
 
     override fun setInitialState() = EditorPageListContract.State()
 
     override fun handleEvents(event: EditorPageListContract.Event) {
         when (event) {
-            EditorPageListContract.Event.PageListSaveToFile -> {
-                launchWithLoading {
-                    saveEditedPageListAndReload()
-                }
-            }
-
-            EditorPageListContract.Event.PageListModeChangeButtonClicked -> {
-                if(uiState.value.isEditMode){
-                    // 편집 완료 전 작업 : 모두 선택 해제
-                    pageLogicStates.forEach {
-                        it.selected.value = false
-                    }
-                }else{
-                    // 편집 시작 전 작업 : 편집순 정렬로 할당
-                    pageLogicStates.sortBy { it.editIndex }
-                    setState {
-                        copy(
-                            pageSortOrder = PageSortOrder.LAST_EDITED
-                        )
-                    }
-                }
-
-                setState {
-                    copy(
-                        isEditMode = !isEditMode
-                    )
-                }
-            }
-
+            EditorPageListContract.Event.PageListSaveToFile -> handlePageListSaveToFile()
+            EditorPageListContract.Event.PageListModeChangeButtonClicked -> toggleEditMode()
             // Sort Order
-            EditorPageListContract.Event.PageSortOrderLastEdited -> {
-                launchWithLoading {
-                    pageLogicStates.sortBy { it.editIndex }
-                    setState {
-                        copy(
-                            pageSortOrder = PageSortOrder.LAST_EDITED
-                        )
-                    }
-                }
-            }
-
-            EditorPageListContract.Event.PageSortOrderTitleAscending -> {
-                launchWithLoading {
-                    pageLogicStates.forEachIndexed { index, pageState ->
-                        pageState.editIndex = index
-                    }
-                    pageLogicStates.sortBy { it.pageLogic.title }
-                    setState {
-                        copy(
-                            pageSortOrder = PageSortOrder.TITLE_ASCENDING
-                        )
-                    }
-                }
-            }
-
-            // Select Header
-            EditorPageListContract.Event.SelectAllHolders -> {
-                pageLogicStates.forEach {
-                    it.selected.value = true
-                }
-            }
-
-            EditorPageListContract.Event.DeselectAllHolders -> {
-                pageLogicStates.forEach {
-                    it.selected.value = false
-                }
-            }
-
-            EditorPageListContract.Event.AddPageButtonClicked -> {
-                launchWithLoading {
-                    val editedIndex = pageLogicStates.size
-                    val pageId = BookIDManager.generateId(pageLogicStates.map { it.pageLogic.pageId })
-                    val title = useCaseGetResource.string(R.string.edit_page_list_new_page_title_default)
-                    pageLogicStates.add(PageLogicState(editedIndex, PageLogicModel(pageId = pageId, title = title), mutableStateOf(false)))
-                }
-            }
-
-            EditorPageListContract.Event.DeleteSelectedHolders -> {
-                totalDeletePageIds.addAll( pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId })
-                pageLogicStates.removeIf { it.selected.value }
-            }
-
+            EditorPageListContract.Event.PageSortOrderLastEdited -> sortPagesByLastEdited()
+            EditorPageListContract.Event.PageSortOrderTitleAscending -> sortPagesByTitleAscending()
+            // Edit Header
+            EditorPageListContract.Event.SelectAllHolders -> selectAllHolders()
+            EditorPageListContract.Event.DeselectAllHolders -> deselectAllHolders()
+            EditorPageListContract.Event.AddPageButtonClicked -> addNewPage()
+            EditorPageListContract.Event.DeleteSelectedHolders -> deleteSelectedPages()
             // Holder Event
-            is EditorPageListContract.Event.PageHolderNavigateClicked -> {
-                checkPageListEdited {
-                    setEffect {
-                        EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen(
-                            episodeRef = episodeRef,
-                            bookTitle = uiState.value.title,
-                            pageId = event.pageId
-                        )
-                    }
-                }
-            }
-
-            is EditorPageListContract.Event.PageHolderSelectClicked -> {
-                pageLogicStates.firstOrNull {
-                    it.pageLogic.pageId == event.pageId
-                }?.let {
-                    it.selected.value = !it.selected.value
-                }
-            }
-
-            is EditorPageListContract.Event.MoveHolderPosition -> {
-                pageLogicStates.apply {
-                    val item = removeAt(event.fromIndex)
-                    add(event.toIndex, item)
-                }
-            }
+            is EditorPageListContract.Event.PageHolderNavigateClicked -> navigateToPageContent(event.pageId)
+            is EditorPageListContract.Event.PageHolderSelectClicked -> togglePageSelection(event.pageId)
+            is EditorPageListContract.Event.MoveHolderPosition -> movePage(event.fromIndex, event.toIndex)
         }
     }
 
     override fun handleCommonEvents(event: CommonEvent) {
         when(event){
-            is CommonEvent.OnResume -> {
-                if(isFirstResumeComplete){
-                    launchWithLoading {
-                        updateLogicAndStateList()
-                    }
-                }else{
-                    isFirstResumeComplete = true
-                }
-            }
+            is CommonEvent.OnResume -> handleOnResume()
             is CommonEvent.CloseEvent -> {
                 checkPageListEdited {
                     super.handleCommonEvents(CommonEvent.CloseEvent)
@@ -183,10 +84,10 @@ class EditorPageListViewModel @Inject constructor(
         }
     }
 
-    init {
+    private fun initializeState() {
         launchWithInit {
-            val title = savedStateHandle.get<String>(NAME_BOOK_TITLE)!!
-            val isEditMode = savedStateHandle.get<Boolean>(NAME_IS_PAGE_LIST_EDIT_MODE)!!
+            val title = requireNotNull(savedStateHandle.get<String>(NAME_BOOK_TITLE))
+            val isEditMode = requireNotNull(savedStateHandle.get<Boolean>(NAME_IS_PAGE_LIST_EDIT_MODE))
 
             updateLogicAndStateList()
             setState {
@@ -199,11 +100,98 @@ class EditorPageListViewModel @Inject constructor(
         }
     }
 
+    private fun handlePageListSaveToFile() = launchWithLoading {
+        saveEditedPageListAndReload()
+    }
+
+    private fun toggleEditMode() {
+        if (uiState.value.isEditMode) {
+            deselectAllHolders()
+        } else {
+            pageLogicStates.sortBy { it.editIndex }
+            setState { copy(pageSortOrder = PageSortOrder.LAST_EDITED) }
+        }
+        setState { copy(isEditMode = !isEditMode) }
+    }
+
+    // Sort Order
+    private fun sortPagesByLastEdited() = launchWithLoading {
+        pageLogicStates.sortBy { it.editIndex }
+        setState { copy(pageSortOrder = PageSortOrder.LAST_EDITED) }
+    }
+
+    private fun sortPagesByTitleAscending() = launchWithLoading {
+        updatePageListEditIndex()
+        pageLogicStates.sortBy { it.pageLogic.title }
+        setState { copy(pageSortOrder = PageSortOrder.TITLE_ASCENDING) }
+    }
+
+    // Edit Header
+    private fun selectAllHolders() {
+        pageLogicStates.forEach { it.selected.value = true }
+    }
+
+    private fun deselectAllHolders() {
+        pageLogicStates.forEach { it.selected.value = false }
+    }
+
+    private fun addNewPage() = launchWithLoading {
+        val editedIndex = pageLogicStates.size
+        val pageId = BookIDManager.generateId(pageLogicStates.map { it.pageLogic.pageId })
+        val title = useCaseGetResource.string(R.string.edit_page_list_new_page_title_default)
+        pageLogicStates.add(PageLogicState(editedIndex, PageLogicModel(pageId = pageId, title = title), mutableStateOf(false)))
+    }
+
+    private fun deleteSelectedPages() {
+        totalDeletePageIds.addAll(pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId })
+        pageLogicStates.removeIf { it.selected.value }
+    }
+
+    // Holder Event
+    private fun navigateToPageContent(pageId: Long) {
+        checkPageListEdited {
+            setEffect {
+                EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.title,
+                    pageId = pageId
+                )
+            }
+        }
+    }
+
+    private fun togglePageSelection(pageId: Long) {
+        pageLogicStates.firstOrNull { it.pageLogic.pageId == pageId }?.let {
+            it.selected.value = !it.selected.value
+        }
+    }
+
+    private fun movePage(fromIndex: Int, toIndex: Int) {
+        pageLogicStates.apply {
+            val item = removeAt(fromIndex)
+            add(toIndex, item)
+        }
+    }
+
+    // CommonEvent
+    private fun handleOnResume() {
+        if (isFirstResumeComplete) {
+            launchWithLoading { updateLogicAndStateList() }
+        } else {
+            isFirstResumeComplete = true
+        }
+    }
+
+    // Common Function
+    private fun updatePageListEditIndex(){
+        pageLogicStates.forEachIndexed { index, pageState ->
+            pageState.editIndex = index
+        }
+    }
+
     private suspend fun saveEditedPageListAndReload(resetSelect : Boolean = false){
         if (uiState.value.pageSortOrder == PageSortOrder.LAST_EDITED){
-            pageLogicStates.forEachIndexed { index, pageState ->
-                pageState.editIndex = index
-            }
+            updatePageListEditIndex()
         }
         val editedPageList = pageLogicStates.sortedBy { it.editIndex }.map { it.pageLogic }
         useCaseMakeBook.saveEditedPageList(
@@ -222,7 +210,7 @@ class EditorPageListViewModel @Inject constructor(
         val selectedPageIds = pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId }.toSet()
         pageLogicStates.clear()
         logics.forEachIndexed { index, pageState ->
-            val selected = if (resetSelect) false else { pageState.pageId in selectedPageIds }
+            val selected = !resetSelect && pageState.pageId in selectedPageIds
             pageLogicStates.add(
                 PageLogicState(
                     editIndex = index, pageLogic = pageState,
@@ -240,9 +228,7 @@ class EditorPageListViewModel @Inject constructor(
     private fun checkPageListEdited(onCheckComplete: () -> Unit) {
         // 편집 중인 목록 저장
         if (uiState.value.pageSortOrder == PageSortOrder.LAST_EDITED){
-            pageLogicStates.forEachIndexed { index, pageState ->
-                pageState.editIndex = index
-            }
+            updatePageListEditIndex()
         }
 
         // 정렬 순서와 상관 없이 편집순 목록 변환
@@ -250,7 +236,7 @@ class EditorPageListViewModel @Inject constructor(
 
         if (editedLogics != logics) {
             setLoadState(
-                loadState = LoadState.AlarmDialog(
+                LoadState.AlarmDialog(
                     title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
                     message = StringValue.StringResource(R.string.dialog_save_edited_book_info),
                     confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),

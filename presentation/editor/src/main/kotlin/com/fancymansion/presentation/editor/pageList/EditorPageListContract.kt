@@ -35,7 +35,7 @@ class EditorPageListContract {
         data object PageSortOrderLastEdited : Event()
         data object PageSortOrderTitleAscending : Event()
 
-        // Select Header
+        // Edit Header
         data object SelectAllHolders : Event()
         data object DeselectAllHolders : Event()
         data object AddPageButtonClicked : Event()
