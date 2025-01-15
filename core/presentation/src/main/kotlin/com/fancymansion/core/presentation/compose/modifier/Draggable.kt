@@ -157,7 +157,7 @@ fun Modifier.dragContainer(dragDropState: DragDropState): Modifier {
 inline fun <T : Any> LazyListScope.draggableItems(
     items: List<T>,
     dragDropState: DragDropState,
-    crossinline content: @Composable (Modifier, T) -> Unit,
+    crossinline content: @Composable (Modifier, Int, T) -> Unit,
 ) {
     itemsIndexed(
         items = items,
@@ -175,6 +175,6 @@ inline fun <T : Any> LazyListScope.draggableItems(
                 easing = LinearOutSlowInEasing
             ))
         }
-        content(modifier, item)
+        content(modifier, index, item)
     }
 }
