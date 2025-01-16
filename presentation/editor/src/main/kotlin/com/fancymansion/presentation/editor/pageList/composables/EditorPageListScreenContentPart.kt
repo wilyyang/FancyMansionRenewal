@@ -50,6 +50,7 @@ fun PageListHeader(
     onAddPageButtonClicked : () -> Unit,
     onDeleteSelectedHolders : () -> Unit
 ){
+    val itemPaddingEnd = 12.dp
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -71,7 +72,7 @@ fun PageListHeader(
             if(isEditMode){
                 Text(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = itemPaddingEnd)
                         .clickSingle {
                             onSelectAllHolders()
                         },
@@ -81,7 +82,7 @@ fun PageListHeader(
 
                 Text(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = itemPaddingEnd)
                         .clickSingle {
                             onDeselectAllHolders()
                         },
@@ -91,7 +92,7 @@ fun PageListHeader(
 
                 Text(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = itemPaddingEnd)
                         .clickSingle {
                             onAddPageButtonClicked()
                         },
@@ -101,7 +102,7 @@ fun PageListHeader(
 
                 Text(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = itemPaddingEnd)
                         .clickSingle {
                             onDeleteSelectedHolders()
                         },
@@ -121,7 +122,7 @@ fun PageListHeader(
             }else{
                 Text(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = itemPaddingEnd)
                         .clickSingle {
                             onPageSortOrderLastEdited()
                         },
@@ -133,7 +134,7 @@ fun PageListHeader(
 
                 Text(
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = itemPaddingEnd)
                         .clickSingle {
                             onPageSortOrderTitleAscending()
                         },
@@ -174,7 +175,6 @@ fun PageHolder(
             .borderLine(
                 density = LocalDensity.current,
                 color = onSurfaceSub,
-                top = 0.3.dp,
                 bottom = 0.3.dp
             )
             .padding(horizontal = 10.dp)

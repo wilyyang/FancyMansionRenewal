@@ -196,6 +196,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             is CommonEvent.OnResume -> {
                 if(isFirstResumeComplete){
                     launchWithLoading {
+                        keywordStates.clear()
                         useCaseGetTotalKeyword().forEach {
                             keywordStates.add(createKeywordState(it, false))
                         }

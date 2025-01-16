@@ -76,7 +76,11 @@ class EditorPageListViewModel @Inject constructor(
         when(event){
             is CommonEvent.OnResume -> handleOnResume()
             is CommonEvent.CloseEvent -> {
-                checkPageListEdited {
+                if(uiState.value.isInitSuccess){
+                    checkPageListEdited {
+                        super.handleCommonEvents(CommonEvent.CloseEvent)
+                    }
+                }else{
                     super.handleCommonEvents(CommonEvent.CloseEvent)
                 }
             }
@@ -100,8 +104,17 @@ class EditorPageListViewModel @Inject constructor(
         }
     }
 
-    private fun handlePageListSaveToFile() = launchWithLoading {
-        saveEditedPageListAndReload()
+    private fun handlePageListSaveToFile() = launchWithLoading(endLoadState = null) {
+        val isComplete = saveEditedPageListAndReload()
+        setLoadState(
+            loadState = LoadState.AlarmDialog(
+                title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
+                message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_book_info else R.string.dialog_save_fail_book_info),
+                dismissText = null,
+                confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                onConfirm = ::setLoadStateIdle
+            )
+        )
     }
 
     private fun toggleEditMode() {
@@ -189,18 +202,19 @@ class EditorPageListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveEditedPageListAndReload(resetSelect : Boolean = false){
+    private suspend fun saveEditedPageListAndReload(resetSelect : Boolean = false) : Boolean{
         if (uiState.value.pageSortOrder == PageSortOrder.LAST_EDITED){
             updatePageListEditIndex()
         }
         val editedPageList = pageLogicStates.sortedBy { it.editIndex }.map { it.pageLogic }
-        useCaseMakeBook.saveEditedPageList(
+        val result = useCaseMakeBook.saveEditedPageList(
             episodeRef = episodeRef,
             editedPageList = editedPageList,
             deleteIds = totalDeletePageIds
         )
         totalDeletePageIds.clear()
         updateLogicAndStateList(resetSelect = resetSelect)
+        return result
     }
 
     private suspend fun updateLogicAndStateList(resetSelect : Boolean = false){

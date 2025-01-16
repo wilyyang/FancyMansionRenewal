@@ -102,7 +102,7 @@ fun EditorPageListScreenContent(
                 state = listState
             ) {
 
-                draggableItems(items = pageLogicStates, dragDropState = dragDropState) { modifier, index, state ->
+                draggableItems(items = pageLogicStates, dragDropState = dragDropState) { modifier, _, state ->
                     PageHolder(
                         modifier = modifier,
                         isEditMode = uiState.isEditMode,
