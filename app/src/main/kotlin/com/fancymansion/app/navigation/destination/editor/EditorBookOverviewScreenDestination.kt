@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
+import com.fancymansion.app.navigation.navigateEditorPageContentScreen
 import com.fancymansion.app.navigation.navigateEditorPageListScreen
 import com.fancymansion.app.navigation.navigateOverviewScreen
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -59,6 +60,15 @@ fun handleNavigationRequest(effect: EditorBookOverviewContract.Effect, navContro
 
         is EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen -> {
             navController.navigateEditorPageListScreen(effect.episodeRef, effect.bookTitle, effect.isEditMode)
+        }
+
+        is EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageContentScreen -> {
+            navController.navigateEditorPageContentScreen(
+                episodeRef = effect.episodeRef,
+                bookTitle = effect.bookTitle,
+                episodeTitle = "",
+                pageId = effect.pageId
+            )
         }
 
         else -> {}

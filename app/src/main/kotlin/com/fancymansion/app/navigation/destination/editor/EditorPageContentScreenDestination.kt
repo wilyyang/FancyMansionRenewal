@@ -5,23 +5,21 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
-import com.fancymansion.app.navigation.navigateEditorPageContentScreen
-import com.fancymansion.app.navigation.navigateViewerContentScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
-import com.fancymansion.presentation.editor.pageList.EditorPageListContract
-import com.fancymansion.presentation.editor.pageList.EditorPageListViewModel
-import com.fancymansion.presentation.editor.pageList.composables.EditorPageListScreenFrame
+import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
+import com.fancymansion.presentation.editor.pageContent.EditorPageContentViewModel
+import com.fancymansion.presentation.editor.pageContent.composables.EditorPageContentScreenFrame
 
 @Composable
-fun EditorPageListScreenDestination(
+fun EditorPageContentScreenDestination(
     navController: NavController,
     typePane : TypePane
 ) {
-    val viewModel: EditorPageListViewModel = hiltViewModel()
+    val viewModel: EditorPageContentViewModel = hiltViewModel()
 
     val onEventSent =  remember {
-        { event : EditorPageListContract.Event ->
+        { event : EditorPageContentContract.Event ->
             viewModel.setEvent(event)
         }
     }
@@ -32,17 +30,16 @@ fun EditorPageListScreenDestination(
         }
     }
 
-    val onNavigationRequested : (EditorPageListContract.Effect.Navigation) -> Unit =  remember {
-        { effect : EditorPageListContract.Effect.Navigation ->
+    val onNavigationRequested : (EditorPageContentContract.Effect.Navigation) -> Unit =  remember {
+        { effect : EditorPageContentContract.Effect.Navigation ->
             handleNavigationRequest(effect, navController)
         }
     }
 
     HandleCommonEffect(navController = navController, commonEffectFlow = viewModel.commonEffect, onCommonEventSent = onCommonEventSent)
 
-    EditorPageListScreenFrame(
+    EditorPageContentScreenFrame(
         uiState = viewModel.uiState.value,
-        pageLogicStates = viewModel.pageLogicStates,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
         onCommonEventSent = onCommonEventSent,
@@ -51,16 +48,8 @@ fun EditorPageListScreenDestination(
     )
 }
 
-fun handleNavigationRequest(effect: EditorPageListContract.Effect, navController: NavController) {
+fun handleNavigationRequest(effect: EditorPageContentContract.Effect, navController: NavController) {
     when (effect) {
-        is EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen -> {
-            navController.navigateEditorPageContentScreen(
-                episodeRef = effect.episodeRef,
-                bookTitle = effect.bookTitle,
-                episodeTitle = "",
-                pageId = effect.pageId
-            )
-        }
         else -> {}
     }
 }
