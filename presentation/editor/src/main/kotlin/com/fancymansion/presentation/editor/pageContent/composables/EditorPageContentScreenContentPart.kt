@@ -39,7 +39,7 @@ fun PageContentHeader(
             )
     ) {
         CommonEditInfoTitle(
-            title = stringResource(id = R.string.edit_page_content_header_block_number, contentBlockSize)
+            title = stringResource(id = R.string.edit_page_content_header_source_number, contentBlockSize)
         )
 
         Row(
@@ -61,7 +61,7 @@ fun PageContentHeader(
                     .clickSingle {
                         onAddContentBlockClicked()
                     },
-                text = stringResource(id = R.string.edit_page_content_header_item_add_content_block),
+                text = stringResource(id = R.string.edit_page_content_header_item_add_content_source),
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
             )
         }

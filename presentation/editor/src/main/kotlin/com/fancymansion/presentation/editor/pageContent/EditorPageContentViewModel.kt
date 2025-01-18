@@ -8,6 +8,10 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.SelectorModel
+import com.fancymansion.domain.model.book.SourceModel
+import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
@@ -20,10 +24,12 @@ class EditorPageContentViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
+    private val useCaseBookLogic: UseCaseBookLogic,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorPageContentContract.State, EditorPageContentContract.Event, EditorPageContentContract.Effect>() {
 
     private var isFirstResumeComplete = false
+    private lateinit var selectors: List<SelectorModel>
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -77,6 +83,31 @@ class EditorPageContentViewModel @Inject constructor(
     }
 
     // CommonEvent
+    private suspend fun loadPageContent(pageId : Long) : Pair<PageWrapper, List<SelectorModel>>{
+        val pageWrapper = createPageWrapper(useCaseLoadBook.loadPage(episodeRef, pageId = pageId))
+        val selectors = useCaseLoadBook.loadLogic(episodeRef).logics.firstOrNull { it.pageId == pageId }?.selectors
+
+        return if(selectors != null) Pair(pageWrapper, selectors) else Pair(pageWrapper, listOf())
+    }
+
+    private suspend fun createPageWrapper(page : PageModel) : PageWrapper {
+        return PageWrapper(
+            id = page.id,
+            title = page.title,
+            sources = page.sources.map {
+                when (it) {
+                    is SourceModel.TextModel -> {
+                        SourceWrapper.TextWrapper(it.description)
+                    }
+
+                    is SourceModel.ImageModel -> {
+                        SourceWrapper.ImageWrapper(useCaseLoadBook.loadPageImage(episodeRef, it.imageName))
+                    }
+                }
+            }
+        )
+    }
+
     private fun handleOnResume() {
         if (isFirstResumeComplete) {
             launchWithLoading {
