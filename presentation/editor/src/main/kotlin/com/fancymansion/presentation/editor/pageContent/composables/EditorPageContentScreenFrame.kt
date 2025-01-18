@@ -15,6 +15,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -68,6 +69,7 @@ fun EditorPageContentScreenFrame(
         }?.collect()
     }
 
+    val focusManager = LocalFocusManager.current
     BaseScreen(
         loadState = loadState,
         description = EditorPageContentContract.NAME,
@@ -98,7 +100,8 @@ fun EditorPageContentScreenFrame(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onEventSent = onEventSent,
-            onCommonEventSent = onCommonEventSent
+            onCommonEventSent = onCommonEventSent,
+            focusManager = focusManager
         )
     }
 
