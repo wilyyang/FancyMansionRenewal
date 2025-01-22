@@ -1,5 +1,7 @@
 package com.fancymansion.presentation.editor.pageContent
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
@@ -8,8 +10,6 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
-import com.fancymansion.domain.model.book.PageModel
-import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
@@ -29,7 +29,7 @@ class EditorPageContentViewModel @Inject constructor(
 ) : BaseViewModel<EditorPageContentContract.State, EditorPageContentContract.Event, EditorPageContentContract.Effect>() {
 
     private var isFirstResumeComplete = false
-    private lateinit var selectors: List<SelectorModel>
+    val contentSourceStates: SnapshotStateList<SourceWrapper> = mutableStateListOf()
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -70,42 +70,45 @@ class EditorPageContentViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
-            val title = requireNotNull(savedStateHandle.get<String>(ArgName.NAME_BOOK_TITLE))
-
-            // TODO : Load Page Content
+            val pageId = requireNotNull(savedStateHandle.get<Long>(ArgName.NAME_PAGE_ID))
+            loadPageContent(pageId)
             setState {
                 copy(
-                    isInitSuccess = true,
-                    title = title
+                    isInitSuccess = true
                 )
             }
         }
     }
 
     // CommonEvent
-    private suspend fun loadPageContent(pageId : Long) : Pair<PageWrapper, List<SelectorModel>>{
-        val pageWrapper = createPageWrapper(useCaseLoadBook.loadPage(episodeRef, pageId = pageId))
-        val selectors = useCaseLoadBook.loadLogic(episodeRef).logics.firstOrNull { it.pageId == pageId }?.selectors
-
-        return if(selectors != null) Pair(pageWrapper, selectors) else Pair(pageWrapper, listOf())
+    private suspend fun loadPageContent(pageId : Long) {
+        val selectors = useCaseLoadBook.loadLogic(episodeRef).logics.firstOrNull { it.pageId == pageId }?.selectors?:listOf()
+        useCaseLoadBook.loadPage(episodeRef, pageId = pageId).let { page ->
+            setState {
+                copy(
+                    title = page.title,
+                    selectors = selectors
+                )
+            }
+            contentSourceStates.clear()
+            convertSourcesToWrapper(page.sources).forEach { wrapper ->
+                contentSourceStates.add(wrapper)
+            }
+        }
     }
 
-    private suspend fun createPageWrapper(page : PageModel) : PageWrapper {
-        return PageWrapper(
-            id = page.id,
-            title = page.title,
-            sources = page.sources.map {
-                when (it) {
-                    is SourceModel.TextModel -> {
-                        SourceWrapper.TextWrapper(it.description)
-                    }
+    private suspend fun convertSourcesToWrapper(sources : List<SourceModel>) : List<SourceWrapper> {
+        return sources.map { source ->
+            when (source) {
+                is SourceModel.TextModel -> {
+                    SourceWrapper.TextWrapper(0, source.description)
+                }
 
-                    is SourceModel.ImageModel -> {
-                        SourceWrapper.ImageWrapper(useCaseLoadBook.loadPageImage(episodeRef, it.imageName))
-                    }
+                is SourceModel.ImageModel -> {
+                    SourceWrapper.ImageWrapper(0, useCaseLoadBook.loadPageImage(episodeRef, source.imageName))
                 }
             }
-        )
+        }
     }
 
     private fun handleOnResume() {

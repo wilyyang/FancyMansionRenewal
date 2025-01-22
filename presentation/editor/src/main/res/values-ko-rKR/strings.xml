@@ -51,4 +51,9 @@
     <string name="edit_page_content_header_item_add_content_source">내용 추가</string>
 
     <string name="edit_page_content_button_page_preview">미리보기</string>
+
+    <string name="edit_page_content_top_label_page_title">페이지 제목</string>
+    <string name="edit_page_content_edit_hint_page_title">제목</string>
+
+    <string name="edit_page_content_top_label_page_content">페이지 내용</string>
 </resources>

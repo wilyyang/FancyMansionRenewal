@@ -40,6 +40,7 @@ fun EditorPageContentScreenDestination(
 
     EditorPageContentScreenFrame(
         uiState = viewModel.uiState.value,
+        contentSourceStates = viewModel.contentSourceStates,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
         onCommonEventSent = onCommonEventSent,

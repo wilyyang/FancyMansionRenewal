@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -33,6 +34,7 @@ import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
+import com.fancymansion.presentation.editor.pageContent.SourceWrapper
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -40,6 +42,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun EditorPageContentScreenFrame(
     uiState: EditorPageContentContract.State,
+    contentSourceStates: SnapshotStateList<SourceWrapper>,
     loadState: LoadState,
     effectFlow: SharedFlow<EditorPageContentContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
@@ -99,6 +102,7 @@ fun EditorPageContentScreenFrame(
         EditorPageContentScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
+            contentSourceStates = contentSourceStates,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent,
             focusManager = focusManager
