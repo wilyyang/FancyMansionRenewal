@@ -29,6 +29,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
     private var isFirstResumeComplete : Boolean = false
+    private var isResumeGalleryPick : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
             get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId }
@@ -172,6 +173,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             is EditorBookOverviewContract.Event.GalleryBookCoverPickerResult -> {
+                isResumeGalleryPick = true
                 setState {
                     copy(
                         imagePickType =
@@ -194,12 +196,13 @@ class EditorBookOverviewViewModel @Inject constructor(
     override fun handleCommonEvents(event: CommonEvent) {
         when(event){
             is CommonEvent.OnResume -> {
+                if(isResumeGalleryPick){
+                    isResumeGalleryPick = false
+                    return
+                }
+
                 if(isFirstResumeComplete){
                     launchWithLoading {
-                        keywordStates.clear()
-                        useCaseGetTotalKeyword().forEach {
-                            keywordStates.add(createKeywordState(it, false))
-                        }
                         loadBookInfoFromFile()
                     }
                 }else{
@@ -293,12 +296,18 @@ class EditorBookOverviewViewModel @Inject constructor(
             )
         }
 
-        keywordStates.forEach { it.selected.value = false }
-        bookInfo.introduce.keywordList.forEach { bookKeyword ->
-            keywordStates.firstOrNull { keywordState ->
-                bookKeyword.id == keywordState.keyword.id
-            }?.let {
-                it.selected.value = true
+        val loadKeywords = useCaseGetTotalKeyword()
+        val loadSelectedKeywords = bookInfo.introduce.keywordList
+        val modifiedSelectedKeywords = keywordStates.filter { it.selected.value }.map { it.keyword }
+
+        if(keywordStates.size != loadKeywords.size || loadSelectedKeywords != modifiedSelectedKeywords){
+            keywordStates.apply {
+                clear()
+                addAll(loadKeywords.map { createKeywordState(it, false) })
+            }
+
+            loadSelectedKeywords.forEach { bookKeyword ->
+                keywordStates.find { it.keyword.id == bookKeyword.id }?.selected?.value = true
             }
         }
 
