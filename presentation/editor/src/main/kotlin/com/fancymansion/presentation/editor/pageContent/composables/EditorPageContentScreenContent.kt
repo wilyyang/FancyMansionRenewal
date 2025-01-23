@@ -66,7 +66,7 @@ fun EditorPageContentScreenContent(
             lazyListState = listState,
             draggableItemsSize = contentSourceStates.size,
             onMove = { fromIndex, toIndex ->
-                // TODO Move Source Position
+                onEventSent(EditorPageContentContract.Event.MoveSourcePosition(fromIndex = fromIndex, toIndex = toIndex))
             }
         )
 
@@ -97,9 +97,9 @@ fun EditorPageContentScreenContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = Paddings.Basic.vertical),
-                            title = uiState.title,
+                            title = uiState.pageTitle,
                             updateBookInfoTitle = {
-                                /*TODO*/
+                                onEventSent(EditorPageContentContract.Event.EditPageContentTitle(title = it))
                             }
                         )
                     }
@@ -114,16 +114,16 @@ fun EditorPageContentScreenContent(
                         when(state){
                             is SourceWrapper.TextWrapper -> {
                                 EditPageSourceText(
+                                    modifier = modifier,
                                     text = state.description,
-                                    onClickText =  { /* TODO */ },
-                                    onClickTextDelete = { /* TODO */ }
+                                    onClickText =  { /* TODO */ }
                                 )
                             }
                             is SourceWrapper.ImageWrapper -> {
                                 EditPageSourceImage(
-                                    imagePickType = ImagePickType.SavedImage(state.imageFile),
-                                    onClickGalleryImagePick = { /* TODO */ },
-                                    onClickImageDelete = { /* TODO */ }
+                                    modifier = modifier,
+                                    imagePickType = state.imagePickType,
+                                    onClickGalleryImagePick = { /* TODO */ }
                                 )
                             }
                         }

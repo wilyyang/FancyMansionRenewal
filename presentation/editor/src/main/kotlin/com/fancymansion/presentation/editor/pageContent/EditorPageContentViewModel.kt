@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -48,7 +49,19 @@ class EditorPageContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorPageContentContract.Event) {
         when (event) {
-            else -> {}
+            is EditorPageContentContract.Event.EditPageContentTitle -> {
+                setState {
+                    copy(
+                        pageTitle = event.title
+                    )
+                }
+            }
+            is EditorPageContentContract.Event.MoveSourcePosition -> {
+                contentSourceStates.apply {
+                    val item = removeAt(event.fromIndex)
+                    add(event.toIndex, item)
+                }
+            }
         }
     }
 
@@ -71,9 +84,11 @@ class EditorPageContentViewModel @Inject constructor(
     private fun initializeState() {
         launchWithInit {
             val pageId = requireNotNull(savedStateHandle.get<Long>(ArgName.NAME_PAGE_ID))
+            val bookTitle = requireNotNull(savedStateHandle.get<String>(ArgName.NAME_BOOK_TITLE))
             loadPageContent(pageId)
             setState {
                 copy(
+                    bookTitle = bookTitle,
                     isInitSuccess = true
                 )
             }
@@ -86,7 +101,7 @@ class EditorPageContentViewModel @Inject constructor(
         useCaseLoadBook.loadPage(episodeRef, pageId = pageId).let { page ->
             setState {
                 copy(
-                    title = page.title,
+                    pageTitle = page.title,
                     selectors = selectors
                 )
             }
@@ -105,7 +120,14 @@ class EditorPageContentViewModel @Inject constructor(
                 }
 
                 is SourceModel.ImageModel -> {
-                    SourceWrapper.ImageWrapper(0, useCaseLoadBook.loadPageImage(episodeRef, source.imageName))
+                    SourceWrapper.ImageWrapper(0,
+                        ImagePickType.SavedImage(
+                            useCaseLoadBook.loadPageImage(
+                                episodeRef,
+                                source.imageName
+                            )
+                        )
+                    )
                 }
             }
         }

@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
@@ -115,50 +116,37 @@ fun EditPageTitle(
 fun EditPageSourceText(
     modifier : Modifier = Modifier,
     text: String,
-    onClickText: () -> Unit,
-    onClickTextDelete: () -> Unit
+    onClickText: () -> Unit
 ){
-    Box(modifier = modifier){
-        Text(
-            modifier = Modifier
-                .padding(top = 10.dp, bottom = 10.dp, end = 10.dp)
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = MaterialTheme.shapes.small
-                )
-                .padding(0.5.dp)
-                .clip(
-                    shape = MaterialTheme.shapes.small
-                )
-                .background(MaterialTheme.colorScheme.surface)
-                .clickSingle {
-                    onClickText()
-                }
-                .padding(13.5.dp),
-            text = text
-        )
-
-        Icon(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(25.dp)
-                .clickSingle {
-                    onClickTextDelete()
-                },
-            painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_text_cancel),
-            contentDescription = "Delete"
-        )
-    }
+    Text(
+        modifier = modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = MaterialTheme.shapes.small
+            )
+            .padding(0.5.dp)
+            .clip(
+                shape = MaterialTheme.shapes.small
+            )
+            .background(MaterialTheme.colorScheme.surface)
+            .clickSingle {
+                onClickText()
+            }
+            .padding(13.5.dp),
+        text = text,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis
+    )
 }
 
 @Composable
 fun EditPageSourceImage(
     modifier : Modifier = Modifier,
     imagePickType: ImagePickType,
-    onClickGalleryImagePick: () -> Unit,
-    onClickImageDelete: () -> Unit
+    onClickGalleryImagePick: () -> Unit
 ){
     val painter = when(imagePickType){
         is ImagePickType.SavedImage ->{
@@ -172,34 +160,21 @@ fun EditPageSourceImage(
         }
     }
 
-    Box(modifier = modifier){
-        Image(
-            modifier = Modifier
-                .padding(top = 10.dp, bottom = 10.dp, end = 10.dp)
-                .size(72.dp)
-                .clip(shape = MaterialTheme.shapes.small)
-                .border(
-                    0.5.dp,
-                    color = onSurfaceSub,
-                    shape = MaterialTheme.shapes.small
-                )
-                .clickSingle {
-                    onClickGalleryImagePick()
-                },
-            painter = painter,
-            contentScale = ContentScale.Crop,
-            contentDescription = "Gallery"
-        )
-
-        Icon(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(25.dp)
-                .clickSingle {
-                    onClickImageDelete()
-                },
-            painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_text_cancel),
-            contentDescription = "Delete"
-        )
-    }
+    Image(
+        modifier = modifier
+            .padding(vertical = 10.dp)
+            .size(72.dp)
+            .clip(shape = MaterialTheme.shapes.small)
+            .border(
+                0.5.dp,
+                color = onSurfaceSub,
+                shape = MaterialTheme.shapes.small
+            )
+            .clickSingle {
+                onClickGalleryImagePick()
+            },
+        painter = painter,
+        contentScale = ContentScale.Crop,
+        contentDescription = "Gallery"
+    )
 }
