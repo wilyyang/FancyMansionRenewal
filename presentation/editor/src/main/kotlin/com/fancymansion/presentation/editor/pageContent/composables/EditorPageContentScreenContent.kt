@@ -34,6 +34,10 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
 import com.fancymansion.presentation.editor.pageContent.SourceWrapper
+import com.fancymansion.presentation.editor.pageContent.composables.part.EditPageSourceImage
+import com.fancymansion.presentation.editor.pageContent.composables.part.EditPageSourceText
+import com.fancymansion.presentation.editor.pageContent.composables.part.EditPageTitle
+import com.fancymansion.presentation.editor.pageContent.composables.part.PageContentHeader
 
 @Composable
 fun EditorPageContentScreenContent(
@@ -109,20 +113,24 @@ fun EditorPageContentScreenContent(
                         )
                     }
 
-                    draggableItems(items = contentSourceStates, dragDropState = dragDropState) { modifier, _, state ->
+                    draggableItems(items = contentSourceStates, dragDropState = dragDropState) { modifier, index, state ->
                         when(state){
                             is SourceWrapper.TextWrapper -> {
                                 EditPageSourceText(
                                     modifier = modifier,
                                     text = state.description,
-                                    onClickText =  { /* TODO */ }
+                                    onClickText =  {
+                                        onEventSent(EditorPageContentContract.Event.OnClickSourceText(index))
+                                    }
                                 )
                             }
                             is SourceWrapper.ImageWrapper -> {
                                 EditPageSourceImage(
                                     modifier = modifier,
                                     imagePickType = state.imagePickType,
-                                    onClickGalleryImagePick = { /* TODO */ }
+                                    onClickGalleryImagePick = {
+                                        onEventSent(EditorPageContentContract.Event.OnClickSourceImage(index))
+                                    }
                                 )
                             }
                         }

@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.editor.pageContent.composables
+package com.fancymansion.presentation.editor.pageContent.composables.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

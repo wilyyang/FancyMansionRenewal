@@ -21,10 +21,16 @@ class EditorPageContentContract {
     sealed class Event : ViewEvent {
         data class EditPageContentTitle(val title : String) : Event()
         data class MoveSourcePosition(val fromIndex: Int, val toIndex: Int) : Event()
+
+        data class OnClickSourceText(val sourceIndex: Int) : Event()
+        data class OnClickSourceImage(val sourceIndex: Int) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect()
+
+        data class ShowSourceTextEffect(val sourceIndex: Int, val source: SourceWrapper) : Effect()
+        data class ShowSourceImageEffect(val sourceIndex: Int, val source: SourceWrapper) : Effect()
     }
 }
 

@@ -62,6 +62,32 @@ class EditorPageContentViewModel @Inject constructor(
                     add(event.toIndex, item)
                 }
             }
+
+            is EditorPageContentContract.Event.OnClickSourceText -> {
+                contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
+                    if (source is SourceWrapper.TextWrapper) {
+                        setEffect {
+                            EditorPageContentContract.Effect.ShowSourceTextEffect(
+                                event.sourceIndex,
+                                source
+                            )
+                        }
+                    }
+                }
+            }
+
+            is EditorPageContentContract.Event.OnClickSourceImage -> {
+                contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
+                    if (source is SourceWrapper.ImageWrapper) {
+                        setEffect {
+                            EditorPageContentContract.Effect.ShowSourceImageEffect(
+                                event.sourceIndex,
+                                source
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
