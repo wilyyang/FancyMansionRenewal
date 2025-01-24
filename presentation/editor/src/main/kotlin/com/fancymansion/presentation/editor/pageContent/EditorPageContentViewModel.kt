@@ -116,11 +116,11 @@ class EditorPageContentViewModel @Inject constructor(
         return sources.map { source ->
             when (source) {
                 is SourceModel.TextModel -> {
-                    SourceWrapper.TextWrapper(0, source.description)
+                    SourceWrapper.TextWrapper(source.description)
                 }
 
                 is SourceModel.ImageModel -> {
-                    SourceWrapper.ImageWrapper(0,
+                    SourceWrapper.ImageWrapper(
                         ImagePickType.SavedImage(
                             useCaseLoadBook.loadPageImage(
                                 episodeRef,

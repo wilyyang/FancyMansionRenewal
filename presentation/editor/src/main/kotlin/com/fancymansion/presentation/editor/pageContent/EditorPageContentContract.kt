@@ -28,7 +28,7 @@ class EditorPageContentContract {
     }
 }
 
-sealed class SourceWrapper(open var editIndex : Int) {
-    data class TextWrapper(override var editIndex : Int, val description: String) : SourceWrapper(editIndex)
-    data class ImageWrapper(override var editIndex : Int, val imagePickType: ImagePickType) : SourceWrapper(editIndex)
+sealed class SourceWrapper {
+    data class TextWrapper(val description: String) : SourceWrapper()
+    data class ImageWrapper(val imagePickType: ImagePickType) : SourceWrapper()
 }
