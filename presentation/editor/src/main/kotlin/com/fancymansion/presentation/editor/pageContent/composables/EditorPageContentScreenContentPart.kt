@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,9 +38,9 @@ import com.fancymansion.presentation.editor.common.itemMarginHeight
 @Composable
 fun PageContentHeader(
     modifier: Modifier = Modifier,
-    contentBlockSize : Int,
+    contentSourceSize : Int,
     onShowSelectorList : () -> Unit,
-    onAddContentBlockClicked : () -> Unit
+    onAddContentSourceClicked : () -> Unit
 ){
     val itemPaddingEnd = 12.dp
     Box(
@@ -54,7 +53,7 @@ fun PageContentHeader(
             )
     ) {
         CommonEditInfoTitle(
-            title = stringResource(id = R.string.edit_page_content_header_source_number, contentBlockSize)
+            title = stringResource(id = R.string.edit_page_content_header_source_size, contentSourceSize)
         )
 
         Row(
@@ -74,7 +73,7 @@ fun PageContentHeader(
             Text(
                 modifier = Modifier
                     .clickSingle {
-                        onAddContentBlockClicked()
+                        onAddContentSourceClicked()
                     },
                 text = stringResource(id = R.string.edit_page_content_header_item_add_content_source),
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)

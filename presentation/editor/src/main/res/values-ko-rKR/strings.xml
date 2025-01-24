@@ -45,7 +45,7 @@
 
     <string name="edit_page_list_new_page_title_default">새로운 페이지</string>
 
-    <string name="edit_page_content_header_source_number">내용 총 %d개</string>
+    <string name="edit_page_content_header_source_size">내용 총 %d개</string>
 
     <string name="edit_page_content_header_item_show_selector">선택지</string>
     <string name="edit_page_content_header_item_add_content_source">내용 추가</string>

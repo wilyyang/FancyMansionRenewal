@@ -21,7 +21,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
@@ -78,9 +77,9 @@ fun EditorPageContentScreenContent(
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 PageContentHeader(
-                    contentBlockSize = contentSourceStates.size,
+                    contentSourceSize = contentSourceStates.size,
                     onShowSelectorList = { /*TODO*/ },
-                    onAddContentBlockClicked = { /*TODO*/ }
+                    onAddContentSourceClicked = { /*TODO*/ }
                 )
 
                 LazyColumn(
