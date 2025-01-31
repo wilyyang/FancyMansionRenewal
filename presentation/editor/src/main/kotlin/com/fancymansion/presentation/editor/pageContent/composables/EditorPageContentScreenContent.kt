@@ -118,7 +118,7 @@ fun EditorPageContentScreenContent(
                             is SourceWrapper.TextWrapper -> {
                                 EditPageSourceText(
                                     modifier = modifier,
-                                    text = state.description,
+                                    text = state.description.value,
                                     onClickText =  {
                                         onEventSent(EditorPageContentContract.Event.OnClickSourceText(index))
                                     }

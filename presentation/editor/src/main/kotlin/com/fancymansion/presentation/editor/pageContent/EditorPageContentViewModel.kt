@@ -1,6 +1,7 @@
 package com.fancymansion.presentation.editor.pageContent
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
@@ -88,6 +89,40 @@ class EditorPageContentViewModel @Inject constructor(
                     }
                 }
             }
+
+            is EditorPageContentContract.Event.OnClickDeleteSource -> {
+                contentSourceStates.removeAt(event.sourceIndex)
+            }
+
+            is EditorPageContentContract.Event.EditSourceText -> {
+                contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
+                    (source as SourceWrapper.TextWrapper).description.value = event.text
+                }
+            }
+
+            is EditorPageContentContract.Event.EditSourceImage -> {
+                setEffect {
+                    EditorPageContentContract.Effect.GallerySourceImagePickerEffect
+                }
+            }
+
+            is EditorPageContentContract.Event.GalleryPickerResult -> {
+                contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
+                    if(source is SourceWrapper.ImageWrapper){
+                        val newImageSource = SourceWrapper.ImageWrapper(
+                            if (event.imageUri != null) ImagePickType.GalleryUri(event.imageUri)
+                            else ImagePickType.Empty
+                        )
+
+                        contentSourceStates.add(event.sourceIndex, newImageSource)
+                        contentSourceStates.removeAt(event.sourceIndex + 1)
+
+                        setEffect {
+                            EditorPageContentContract.Effect.UpdateSourceImage(event.sourceIndex, newImageSource)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -142,7 +177,7 @@ class EditorPageContentViewModel @Inject constructor(
         return sources.map { source ->
             when (source) {
                 is SourceModel.TextModel -> {
-                    SourceWrapper.TextWrapper(source.description)
+                    SourceWrapper.TextWrapper(mutableStateOf(source.description))
                 }
 
                 is SourceModel.ImageModel -> {

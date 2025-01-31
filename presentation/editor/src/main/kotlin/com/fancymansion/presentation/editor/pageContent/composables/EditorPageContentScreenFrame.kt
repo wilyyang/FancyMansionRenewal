@@ -1,6 +1,11 @@
 package com.fancymansion.presentation.editor.pageContent.composables
 
+import android.app.Activity
+import android.content.Intent
+import android.provider.MediaStore
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,25 +86,34 @@ fun EditorPageContentScreenFrame(
     val bottomDrawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
     val coroutineScope = rememberCoroutineScope()
 
-    var bottomDialogType by remember {
-        mutableStateOf("text")
+    var bottomDialogIndex : Int by remember {
+        mutableIntStateOf(-1)
     }
     var bottomDialogSource : SourceWrapper by remember {
-        mutableStateOf(SourceWrapper.TextWrapper(""))
+        mutableStateOf(SourceWrapper.TextWrapper(mutableStateOf("")))
+    }
+
+    val launcherGalleryPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            onEventSent(EditorPageContentContract.Event.GalleryPickerResult(sourceIndex = bottomDialogIndex, imageUri = result.data?.data))
+
+        }
     }
 
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
             when(effect){
                 is EditorPageContentContract.Effect.ShowSourceTextEffect -> {
-                    bottomDialogType = "text"
+                    bottomDialogIndex = effect.sourceIndex
                     bottomDialogSource = effect.source
                     coroutineScope.launch {
                         bottomDrawerState.open()
                     }
                 }
                 is EditorPageContentContract.Effect.ShowSourceImageEffect -> {
-                    bottomDialogType = "image"
+                    bottomDialogIndex = effect.sourceIndex
                     bottomDialogSource = effect.source
                     coroutineScope.launch {
                         bottomDrawerState.open()
@@ -106,6 +121,16 @@ fun EditorPageContentScreenFrame(
                 }
                 is EditorPageContentContract.Effect.Navigation -> {
                     onNavigationRequested(effect)
+                }
+
+                EditorPageContentContract.Effect.GallerySourceImagePickerEffect -> {
+                    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    launcherGalleryPicker.launch(intent)
+                }
+
+                is EditorPageContentContract.Effect.UpdateSourceImage -> {
+                    bottomDialogIndex = effect.sourceIndex
+                    bottomDialogSource = effect.source
                 }
             }
         }?.collect()
@@ -150,10 +175,20 @@ fun EditorPageContentScreenFrame(
         },
         bottomDrawerContent = {
             CommonEditPageContentBottomDialog(
-                bottomDialogType = bottomDialogType,
                 source = bottomDialogSource,
-                updateSourceText = {},
-                onClickImagePick = {}
+                onClickDeleteSource = {
+                    coroutineScope.launch {
+                        bottomDrawerState.close()
+                    }
+                    onEventSent(EditorPageContentContract.Event.OnClickDeleteSource(bottomDialogIndex))
+                },
+                updateSourceText = {
+                    onEventSent(EditorPageContentContract.Event.EditSourceText(bottomDialogIndex, it))
+                },
+                onClickImagePick = {
+                    onEventSent(EditorPageContentContract.Event.EditSourceImage(bottomDialogIndex))
+
+                }
             )
         }
     ) {
@@ -168,7 +203,13 @@ fun EditorPageContentScreenFrame(
     }
 
     BackHandler {
-        onCommonEventSent(CommonEvent.CloseEvent)
+        if(bottomDrawerState.currentValue == DrawerValue.Open){
+            coroutineScope.launch {
+                bottomDrawerState.close()
+            }
+        }else{
+            onCommonEventSent(CommonEvent.CloseEvent)
+        }
     }
 }
 

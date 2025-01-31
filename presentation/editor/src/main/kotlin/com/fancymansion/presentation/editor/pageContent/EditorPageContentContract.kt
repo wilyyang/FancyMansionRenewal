@@ -1,5 +1,7 @@
 package com.fancymansion.presentation.editor.pageContent
 
+import android.net.Uri
+import androidx.compose.runtime.MutableState
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
@@ -24,6 +26,13 @@ class EditorPageContentContract {
 
         data class OnClickSourceText(val sourceIndex: Int) : Event()
         data class OnClickSourceImage(val sourceIndex: Int) : Event()
+
+        data class OnClickDeleteSource(val sourceIndex: Int) : Event()
+
+        data class EditSourceText(val sourceIndex: Int, val text : String) : Event()
+        data class EditSourceImage(val sourceIndex: Int) : Event()
+
+        class GalleryPickerResult(val sourceIndex: Int, val imageUri : Uri?) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
@@ -31,10 +40,13 @@ class EditorPageContentContract {
 
         data class ShowSourceTextEffect(val sourceIndex: Int, val source: SourceWrapper) : Effect()
         data class ShowSourceImageEffect(val sourceIndex: Int, val source: SourceWrapper) : Effect()
+
+        data object GallerySourceImagePickerEffect : Effect()
+        data class UpdateSourceImage(val sourceIndex: Int, val source: SourceWrapper) : Effect()
     }
 }
 
 sealed class SourceWrapper {
-    data class TextWrapper(val description: String) : SourceWrapper()
+    data class TextWrapper(val description: MutableState<String>) : SourceWrapper()
     data class ImageWrapper(val imagePickType: ImagePickType) : SourceWrapper()
 }
