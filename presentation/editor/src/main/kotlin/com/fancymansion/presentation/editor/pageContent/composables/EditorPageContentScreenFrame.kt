@@ -52,6 +52,7 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
 import com.fancymansion.presentation.editor.pageContent.SourceWrapper
 import com.fancymansion.presentation.editor.pageContent.composables.part.CommonEditPageContentBottomDialog
+import com.fancymansion.presentation.editor.pageContent.composables.part.SelectSourceDialog
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -102,9 +103,17 @@ fun EditorPageContentScreenFrame(
         }
     }
 
+    var isShowSourceDialog by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
             when(effect){
+                EditorPageContentContract.Effect.ShowAddSourceDialogEffect -> {
+                    isShowSourceDialog = true
+                }
+
                 is EditorPageContentContract.Effect.ShowSourceTextEffect -> {
                     bottomDialogIndex = effect.sourceIndex
                     bottomDialogSource = effect.source
@@ -169,6 +178,7 @@ fun EditorPageContentScreenFrame(
                     .background(color = Color.Black.copy(alpha = 0.5f))
                     .clickSingle {
                         coroutineScope.launch {
+                            focusManager.clearFocus()
                             bottomDrawerState.close()
                         }
                     })
@@ -177,6 +187,7 @@ fun EditorPageContentScreenFrame(
             CommonEditPageContentBottomDialog(
                 source = bottomDialogSource,
                 onClickDeleteSource = {
+                    focusManager.clearFocus()
                     coroutineScope.launch {
                         bottomDrawerState.close()
                     }
@@ -202,11 +213,29 @@ fun EditorPageContentScreenFrame(
         )
     }
 
+    if(isShowSourceDialog){
+        SelectSourceDialog(
+            onTextSelected = {
+                onEventSent(EditorPageContentContract.Event.AddTextSourceEvent)
+                isShowSourceDialog = false
+            },
+            onImageSelected = {
+                onEventSent(EditorPageContentContract.Event.AddImageSourceEvent)
+                isShowSourceDialog = false
+            },
+            onCanceled = {
+                isShowSourceDialog = false
+            }
+        )
+    }
+
     BackHandler {
         if(bottomDrawerState.currentValue == DrawerValue.Open){
             coroutineScope.launch {
                 bottomDrawerState.close()
             }
+        }else if(isShowSourceDialog){
+            isShowSourceDialog = false
         }else{
             onCommonEventSent(CommonEvent.CloseEvent)
         }

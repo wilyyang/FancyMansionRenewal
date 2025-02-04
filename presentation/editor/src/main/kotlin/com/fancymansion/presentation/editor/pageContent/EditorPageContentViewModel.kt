@@ -64,6 +64,34 @@ class EditorPageContentViewModel @Inject constructor(
                 }
             }
 
+            EditorPageContentContract.Event.OnClickAddSource -> {
+                setEffect { EditorPageContentContract.Effect.ShowAddSourceDialogEffect }
+            }
+
+            EditorPageContentContract.Event.AddTextSourceEvent -> {
+                contentSourceStates.add(SourceWrapper.TextWrapper(mutableStateOf("")))
+
+                val lastIndex = contentSourceStates.size - 1
+                setEffect {
+                    EditorPageContentContract.Effect.ShowSourceTextEffect(
+                        lastIndex,
+                        contentSourceStates[lastIndex]
+                    )
+                }
+            }
+
+            EditorPageContentContract.Event.AddImageSourceEvent -> {
+                contentSourceStates.add(SourceWrapper.ImageWrapper(ImagePickType.Empty))
+
+                val lastIndex = contentSourceStates.size - 1
+                setEffect {
+                    EditorPageContentContract.Effect.ShowSourceImageEffect(
+                        lastIndex,
+                        contentSourceStates[lastIndex]
+                    )
+                }
+            }
+
             is EditorPageContentContract.Event.OnClickSourceText -> {
                 contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
                     if (source is SourceWrapper.TextWrapper) {

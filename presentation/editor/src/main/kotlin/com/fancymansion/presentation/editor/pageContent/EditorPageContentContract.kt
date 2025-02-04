@@ -24,6 +24,11 @@ class EditorPageContentContract {
         data class EditPageContentTitle(val title : String) : Event()
         data class MoveSourcePosition(val fromIndex: Int, val toIndex: Int) : Event()
 
+        data object OnClickAddSource : Event()
+
+        data object AddTextSourceEvent : Event()
+        data object AddImageSourceEvent : Event()
+
         data class OnClickSourceText(val sourceIndex: Int) : Event()
         data class OnClickSourceImage(val sourceIndex: Int) : Event()
 
@@ -37,6 +42,8 @@ class EditorPageContentContract {
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect()
+
+        data object ShowAddSourceDialogEffect : Effect()
 
         data class ShowSourceTextEffect(val sourceIndex: Int, val source: SourceWrapper) : Effect()
         data class ShowSourceImageEffect(val sourceIndex: Int, val source: SourceWrapper) : Effect()

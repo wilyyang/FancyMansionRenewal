@@ -62,4 +62,8 @@
 
     <string name="edit_page_content_edit_source_text_hint">내용 텍스트</string>
     <string name="edit_page_content_edit_source_delete">삭제</string>
+
+    <string name="edit_page_content_add_source_dialog">추가할 내용의 타입을 선택해 주세요.</string>
+    <string name="edit_page_content_add_source_dialog_button_text">텍스트</string>
+    <string name="edit_page_content_add_source_dialog_button_image">이미지</string>
 </resources>

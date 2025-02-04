@@ -83,7 +83,9 @@ fun EditorPageContentScreenContent(
                 PageContentHeader(
                     contentSourceSize = contentSourceStates.size,
                     onShowSelectorList = { /*TODO*/ },
-                    onAddContentSourceClicked = { /*TODO*/ }
+                    onAddContentSourceClicked = {
+                        onEventSent(EditorPageContentContract.Event.OnClickAddSource)
+                    }
                 )
 
                 LazyColumn(

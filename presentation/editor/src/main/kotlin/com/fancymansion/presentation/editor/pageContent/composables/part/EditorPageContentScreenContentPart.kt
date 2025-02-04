@@ -169,6 +169,7 @@ fun EditPageSourceImage(
                 color = onSurfaceSub,
                 shape = MaterialTheme.shapes.small
             )
+            .background(color = MaterialTheme.colorScheme.surface)
             .clickSingle {
                 onClickGalleryImagePick()
             },
