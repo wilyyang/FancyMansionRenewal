@@ -21,6 +21,8 @@ class EditorPageContentContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
+        data object OnClickSavePageToFile : Event()
+
         data class EditPageContentTitle(val title : String) : Event()
         data class MoveSourcePosition(val fromIndex: Int, val toIndex: Int) : Event()
 

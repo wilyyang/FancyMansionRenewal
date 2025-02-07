@@ -66,4 +66,7 @@
     <string name="edit_page_content_add_source_dialog">추가할 내용의 타입을 선택해 주세요.</string>
     <string name="edit_page_content_add_source_dialog_button_text">텍스트</string>
     <string name="edit_page_content_add_source_dialog_button_image">이미지</string>
+
+    <string name="dialog_save_complete_page">수정한 페이지 저장을 완료했습니다.</string>
+    <string name="dialog_save_fail_page">페이지 저장에 실패했습니다. 다시 시도해주세요.</string>
 </resources>

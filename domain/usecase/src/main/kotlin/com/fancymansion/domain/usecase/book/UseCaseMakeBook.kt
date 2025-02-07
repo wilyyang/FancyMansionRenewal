@@ -22,6 +22,12 @@ class UseCaseMakeBook @Inject constructor(
             bookLocalRepository.makeBookInfo(userId = episodeRef.userId, mode = episodeRef.mode, bookId = episodeRef.bookId, bookInfo = bookInfo)
         }
 
+    suspend fun updatePageContent(episodeRef: EpisodeRef, pageId: Long, page: PageModel) =
+        withContext(dispatcher) {
+            bookLocalRepository.deletePage(episodeRef, pageId)
+            bookLocalRepository.makePage(episodeRef, pageId, page)
+        }
+
     suspend fun makePageImage(episodeRef: EpisodeRef, imageName: String, uri: Uri) =
         withContext(dispatcher) {
             bookLocalRepository.makePageImageFromUri(episodeRef, imageName, uri)

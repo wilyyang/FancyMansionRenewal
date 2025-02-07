@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.editor.pageContent
 
+import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -12,6 +13,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
@@ -31,6 +33,7 @@ class EditorPageContentViewModel @Inject constructor(
 ) : BaseViewModel<EditorPageContentContract.State, EditorPageContentContract.Event, EditorPageContentContract.Effect>() {
 
     private var isFirstResumeComplete = false
+    private lateinit var originPage : PageModel
     val contentSourceStates: SnapshotStateList<SourceWrapper> = mutableStateListOf()
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
@@ -50,6 +53,8 @@ class EditorPageContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorPageContentContract.Event) {
         when (event) {
+            EditorPageContentContract.Event.OnClickSavePageToFile -> handlePageContentSaveToFile()
+
             is EditorPageContentContract.Event.EditPageContentTitle -> {
                 setState {
                     copy(
@@ -184,10 +189,42 @@ class EditorPageContentViewModel @Inject constructor(
         }
     }
 
+    private fun handlePageContentSaveToFile() = launchWithLoading(endLoadState = null) {
+        val isComplete = saveEditedPageContentAndReload()
+        setLoadState(
+            loadState = LoadState.AlarmDialog(
+                title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
+                message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_page else R.string.dialog_save_fail_page),
+                dismissText = null,
+                confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                onConfirm = ::setLoadStateIdle
+            )
+        )
+    }
+
+
     // CommonEvent
+    private suspend fun saveEditedPageContentAndReload() : Boolean{
+//        useCaseMakeBook.makePageImage(episodeRef, "lalal", Uri.EMPTY)
+//        useCaseMakeBook.updatePageContent(episodeRef, originPage.id, originPage)
+//
+//        val editedPageList = pageLogicStates.sortedBy { it.editIndex }.map { it.pageLogic }
+//        val result = useCaseMakeBook.saveEditedPageList(
+//            episodeRef = episodeRef,
+//            editedPageList = editedPageList,
+//            deleteIds = totalDeletePageIds
+//        )
+//        totalDeletePageIds.clear()
+//        updateLogicAndStateList(resetSelect = resetSelect)
+//        return result
+
+        return false
+    }
+
     private suspend fun loadPageContent(pageId : Long) {
         val selectors = useCaseLoadBook.loadLogic(episodeRef).logics.firstOrNull { it.pageId == pageId }?.selectors?:listOf()
         useCaseLoadBook.loadPage(episodeRef, pageId = pageId).let { page ->
+            originPage = page
             setState {
                 copy(
                     pageTitle = page.title,

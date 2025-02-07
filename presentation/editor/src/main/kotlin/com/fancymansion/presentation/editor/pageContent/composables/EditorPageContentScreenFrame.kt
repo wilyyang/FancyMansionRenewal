@@ -111,10 +111,12 @@ fun EditorPageContentScreenFrame(
         effectFlow?.onEach { effect ->
             when(effect){
                 EditorPageContentContract.Effect.ShowAddSourceDialogEffect -> {
+                    focusManager.clearFocus()
                     isShowSourceDialog = true
                 }
 
                 is EditorPageContentContract.Effect.ShowSourceTextEffect -> {
+                    focusManager.clearFocus()
                     bottomDialogIndex = effect.sourceIndex
                     bottomDialogSource = effect.source
                     coroutineScope.launch {
@@ -122,6 +124,7 @@ fun EditorPageContentScreenFrame(
                     }
                 }
                 is EditorPageContentContract.Effect.ShowSourceImageEffect -> {
+                    focusManager.clearFocus()
                     bottomDialogIndex = effect.sourceIndex
                     bottomDialogSource = effect.source
                     coroutineScope.launch {
@@ -165,7 +168,8 @@ fun EditorPageContentScreenFrame(
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
-                    // TODO : Save Page Content Event
+                    focusManager.clearFocus()
+                    onEventSent(EditorPageContentContract.Event.OnClickSavePageToFile)
                 },
                 shadowElevation = 1.dp
             )
