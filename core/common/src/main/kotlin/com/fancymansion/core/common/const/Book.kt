@@ -2,6 +2,8 @@ package com.fancymansion.core.common.const
 
 import com.fancymansion.core.common.resource.StringValue
 
+const val imageFileNamePrefix = "_page_img_"
+
 fun baseBookCoverName(id: String, number: Int) = "cover_${id}_$number"
 val testBookTitle = "배트의 어드벤처"
 val testEpisodeTitle = "1화"

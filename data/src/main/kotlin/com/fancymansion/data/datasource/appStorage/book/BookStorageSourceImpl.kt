@@ -269,4 +269,8 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         val resourceName = "base_page_$pageId"
         return context.resources.getIdentifier(resourceName, "raw", context.packageName)
     }
+
+    override suspend fun getPageImageFiles(episodeRef: EpisodeRef) : Array<File> {
+        return root.mediaFile(episodeRef).listFiles()?: emptyArray()
+    }
 }

@@ -100,4 +100,6 @@ interface BookStorageSource {
     )
 
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef) : Boolean
+
+    suspend fun getPageImageFiles(episodeRef: EpisodeRef): Array<File>
 }

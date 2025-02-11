@@ -1,6 +1,5 @@
 package com.fancymansion.presentation.editor.pageContent
 
-import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -9,6 +8,7 @@ import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -205,20 +205,44 @@ class EditorPageContentViewModel @Inject constructor(
 
     // CommonEvent
     private suspend fun saveEditedPageContentAndReload() : Boolean{
-//        useCaseMakeBook.makePageImage(episodeRef, "lalal", Uri.EMPTY)
-//        useCaseMakeBook.updatePageContent(episodeRef, originPage.id, originPage)
-//
-//        val editedPageList = pageLogicStates.sortedBy { it.editIndex }.map { it.pageLogic }
-//        val result = useCaseMakeBook.saveEditedPageList(
-//            episodeRef = episodeRef,
-//            editedPageList = editedPageList,
-//            deleteIds = totalDeletePageIds
-//        )
-//        totalDeletePageIds.clear()
-//        updateLogicAndStateList(resetSelect = resetSelect)
-//        return result
+        val result = saveEditedPageContent()
+        loadPageContent(originPage.id)
+        return result
+    }
 
-        return false
+    private suspend fun saveEditedPageContent() : Boolean{
+        // Uri 이미지 저장 및 List 변환
+        val newSourceList = contentSourceStates.mapNotNull {
+            when(it){
+                is SourceWrapper.TextWrapper -> SourceModel.TextModel(it.description.value)
+                is SourceWrapper.ImageWrapper -> {
+                    when(it.imagePickType){
+                        is ImagePickType.Empty -> null
+                        is ImagePickType.GalleryUri -> {
+                            val newImageName = useCaseMakeBook.makePageImage(episodeRef, originPage.id, it.imagePickType.uri)
+                            Logger.e("WILLY >> newImageName : $newImageName")
+                            SourceModel.ImageModel(imageName = newImageName)
+                        }
+                        is ImagePickType.SavedImage -> {
+                            SourceModel.ImageModel(imageName = it.imagePickType.file.name)
+                        }
+                    }
+                }
+            }
+        }
+        // 안쓰는 이미지 삭제
+        originPage.sources.filterIsInstance<SourceModel.ImageModel>().forEach {
+            if(it !in newSourceList){
+                useCaseMakeBook.deletePageImage(episodeRef, it.imageName)
+            }
+        }
+
+        // Page 파일로 변환
+        val newPage = originPage.copy(
+            title = uiState.value.pageTitle,
+            sources = newSourceList
+        )
+        return useCaseMakeBook.updatePageContent(episodeRef, originPage.id, newPage)
     }
 
     private suspend fun loadPageContent(pageId : Long) {

@@ -3,6 +3,7 @@ package com.fancymansion.domain.usecase.book
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.baseBookCoverName
+import com.fancymansion.core.common.const.imageFileNamePrefix
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
@@ -26,6 +27,23 @@ class UseCaseMakeBook @Inject constructor(
         withContext(dispatcher) {
             bookLocalRepository.deletePage(episodeRef, pageId)
             bookLocalRepository.makePage(episodeRef, pageId, page)
+        }
+
+    suspend fun makePageImage(episodeRef: EpisodeRef, pageId: Long, uri: Uri) : String =
+        withContext(dispatcher) {
+            val nextImageNumber = (bookLocalRepository.getPageImageFiles(episodeRef)
+                .filter { it.name.startsWith("$pageId") }
+                .map {
+                    val start = it.name.lastIndexOf("_") + 1
+                    val end = it.name.lastIndexOf(".")
+                    it.name.substring(start, end).toIntOrNull() ?: 0
+                }.sorted().last()) + 1
+
+            val fileExtension = uri.path?.substringAfterLast('.', "")
+            val nextImageName = "${pageId}$imageFileNamePrefix$nextImageNumber.$fileExtension"
+
+            makePageImage(episodeRef, nextImageName, uri)
+            nextImageName
         }
 
     suspend fun makePageImage(episodeRef: EpisodeRef, imageName: String, uri: Uri) =

@@ -210,4 +210,8 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         val resourceName = "base_page_$pageId"
         return context.resources.getIdentifier(resourceName, "raw", context.packageName)
     }
+
+    override suspend fun getPageImageFiles(episodeRef: EpisodeRef): Array<File> {
+        TODO("Not yet implemented")
+    }
 }
