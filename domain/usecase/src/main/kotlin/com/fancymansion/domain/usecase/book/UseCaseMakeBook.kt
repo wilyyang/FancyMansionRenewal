@@ -1,20 +1,24 @@
 package com.fancymansion.domain.usecase.book
 
+import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.baseBookCoverName
 import com.fancymansion.core.common.const.imageFileNamePrefix
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
+import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UseCaseMakeBook @Inject constructor(
+    @ApplicationContext private val context : Context,
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
@@ -31,15 +35,14 @@ class UseCaseMakeBook @Inject constructor(
 
     suspend fun makePageImage(episodeRef: EpisodeRef, pageId: Long, uri: Uri) : String =
         withContext(dispatcher) {
-            val nextImageNumber = (bookLocalRepository.getPageImageFiles(episodeRef)
-                .filter { it.name.startsWith("$pageId") }
-                .map {
+            val nextImageNumber = (bookLocalRepository.getPageImageFiles(episodeRef, pageId)
+                .maxOfOrNull {
                     val start = it.name.lastIndexOf("_") + 1
                     val end = it.name.lastIndexOf(".")
                     it.name.substring(start, end).toIntOrNull() ?: 0
-                }.sorted().last()) + 1
+                } ?: 0) + 1
 
-            val fileExtension = uri.path?.substringAfterLast('.', "")
+            val fileExtension = context.getFileExtension(uri)?:""
             val nextImageName = "${pageId}$imageFileNamePrefix$nextImageNumber.$fileExtension"
 
             makePageImage(episodeRef, nextImageName, uri)
@@ -58,7 +61,8 @@ class UseCaseMakeBook @Inject constructor(
 
     suspend fun createBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel, uri: Uri) =
         withContext(dispatcher) {
-            baseBookCoverName(episodeRef.bookId, 1).let { newBookCoverName ->
+            val fileExtension = context.getFileExtension(uri)?:""
+            baseBookCoverName(episodeRef.bookId, 1, fileExtension).let { newBookCoverName ->
                 bookLocalRepository.makeBookInfo(
                     episodeRef.userId, episodeRef.mode, episodeRef.bookId,
                     bookInfo.copy(introduce = bookInfo.introduce.copy(coverList = listOf(newBookCoverName)))

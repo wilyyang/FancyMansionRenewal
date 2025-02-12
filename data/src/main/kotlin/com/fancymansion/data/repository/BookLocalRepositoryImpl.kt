@@ -203,8 +203,8 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.makeSampleEpisode(episodeRef)
     }
 
-    override suspend fun getPageImageFiles(episodeRef: EpisodeRef): Array<File> {
-        return bookStorageSource.getPageImageFiles(episodeRef)
+    override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File> {
+        return bookStorageSource.getPageImageFiles(episodeRef, pageId)
     }
 
     /**

@@ -211,7 +211,7 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         return context.resources.getIdentifier(resourceName, "raw", context.packageName)
     }
 
-    override suspend fun getPageImageFiles(episodeRef: EpisodeRef): Array<File> {
+    override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File> {
         TODO("Not yet implemented")
     }
 }

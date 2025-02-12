@@ -220,7 +220,6 @@ class EditorPageContentViewModel @Inject constructor(
                         is ImagePickType.Empty -> null
                         is ImagePickType.GalleryUri -> {
                             val newImageName = useCaseMakeBook.makePageImage(episodeRef, originPage.id, it.imagePickType.uri)
-                            Logger.e("WILLY >> newImageName : $newImageName")
                             SourceModel.ImageModel(imageName = newImageName)
                         }
                         is ImagePickType.SavedImage -> {

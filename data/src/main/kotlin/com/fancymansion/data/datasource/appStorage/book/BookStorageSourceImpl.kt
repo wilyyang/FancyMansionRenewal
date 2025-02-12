@@ -270,7 +270,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         return context.resources.getIdentifier(resourceName, "raw", context.packageName)
     }
 
-    override suspend fun getPageImageFiles(episodeRef: EpisodeRef) : Array<File> {
-        return root.mediaFile(episodeRef).listFiles()?: emptyArray()
+    override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long) : List<File> {
+        return root.mediaFile(episodeRef).listFiles()?.asList()?.filter { it.name.startsWith("$pageId") }?:listOf()
     }
 }

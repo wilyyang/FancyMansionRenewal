@@ -91,7 +91,7 @@ interface BookLocalRepository {
     )
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean
 
-    suspend fun getPageImageFiles(episodeRef: EpisodeRef): Array<File>
+    suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File>
 
     /**
      * ActionCount
