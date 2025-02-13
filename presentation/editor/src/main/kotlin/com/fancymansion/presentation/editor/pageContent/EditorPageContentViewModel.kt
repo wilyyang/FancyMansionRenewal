@@ -285,7 +285,7 @@ class EditorPageContentViewModel @Inject constructor(
     private fun handleOnResume() {
         if (isFirstResumeComplete) {
             launchWithLoading {
-                // TODO : Load Page Content
+                loadPageContent(originPage.id)
             }
         } else {
             isFirstResumeComplete = true
@@ -294,8 +294,23 @@ class EditorPageContentViewModel @Inject constructor(
 
     private fun checkPageContentEdited(onCheckComplete: () -> Unit) {
 
-        val result = false // TODO : Page Content Edit Check
-        if (result) {
+        val stateNotEmpty = contentSourceStates.filterNot { it is SourceWrapper.ImageWrapper && it.imagePickType is ImagePickType.Empty }
+        val isEdited = originPage.title != uiState.value.pageTitle ||
+                originPage.sources.withIndex().any { (index, sourceModel) ->
+                    val wrapper = stateNotEmpty.getOrNull(index)
+                    when {
+                        sourceModel is SourceModel.TextModel && wrapper is SourceWrapper.TextWrapper ->
+                            sourceModel.description != wrapper.description.value
+
+                        sourceModel is SourceModel.ImageModel && wrapper is SourceWrapper.ImageWrapper &&
+                                wrapper.imagePickType is ImagePickType.SavedImage ->
+                            sourceModel.imageName != wrapper.imagePickType.file.name
+
+                        else -> true
+                    }
+                }
+
+        if (isEdited) {
             setLoadState(
                 LoadState.AlarmDialog(
                     title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
@@ -304,7 +319,7 @@ class EditorPageContentViewModel @Inject constructor(
                     onConfirm = {
                         //수정 중인 정보 파일 저장
                         launchWithLoading {
-                            // TODO : Save Page Content
+                            saveEditedPageContentAndReload()
                             setLoadStateIdle()
                             onCheckComplete()
                         }
@@ -313,7 +328,7 @@ class EditorPageContentViewModel @Inject constructor(
                     onDismiss = {
                         //수정 중인 정보 삭제
                         launchWithLoading {
-                            // TODO : Update Page Content
+                            loadPageContent(originPage.id)
                             setLoadStateIdle()
                             onCheckComplete()
                         }
