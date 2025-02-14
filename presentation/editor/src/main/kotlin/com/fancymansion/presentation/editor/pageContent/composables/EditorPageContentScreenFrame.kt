@@ -110,6 +110,10 @@ fun EditorPageContentScreenFrame(
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
             when(effect){
+                is EditorPageContentContract.Effect.Navigation -> {
+                    onNavigationRequested(effect)
+                }
+
                 EditorPageContentContract.Effect.ShowAddSourceDialogEffect -> {
                     focusManager.clearFocus()
                     isShowSourceDialog = true

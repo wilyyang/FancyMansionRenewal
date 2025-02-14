@@ -54,6 +54,17 @@ class EditorPageContentViewModel @Inject constructor(
         when (event) {
             EditorPageContentContract.Event.OnClickSavePageToFile -> handlePageContentSaveToFile()
 
+            EditorPageContentContract.Event.ReadPagePreviewClicked -> {
+                setEffect {
+                    EditorPageContentContract.Effect.Navigation.NavigateViewerContentScreen(
+                        episodeRef = episodeRef,
+                        bookTitle = uiState.value.bookTitle,
+                        episodeTitle = "",
+                        pageId = originPage.id
+                    )
+                }
+            }
+
             is EditorPageContentContract.Event.EditPageContentTitle -> {
                 setState {
                     copy(

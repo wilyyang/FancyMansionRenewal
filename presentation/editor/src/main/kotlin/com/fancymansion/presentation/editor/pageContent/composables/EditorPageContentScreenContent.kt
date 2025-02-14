@@ -167,7 +167,7 @@ fun EditorPageContentScreenContent(
                         .background(color = MaterialTheme.colorScheme.primary)
                         .clickSingle {
                             focusManager.clearFocus()
-                            // TODO
+                            onEventSent(EditorPageContentContract.Event.ReadPagePreviewClicked)
                         }
                 ) {
                     Text(
