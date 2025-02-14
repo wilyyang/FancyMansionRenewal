@@ -86,6 +86,10 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
     override suspend fun loadLogic(episodeRef: EpisodeRef): LogicData =
         logicMap["${episodeRef.userId} ${episodeRef.mode.name} ${episodeRef.bookId} ${episodeRef.episodeId}"]!!
 
+    override suspend fun deleteLogic(episodeRef: EpisodeRef): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageData): Boolean {
         pageMap["${episodeRef.userId} ${episodeRef.mode.name} ${episodeRef.bookId} ${episodeRef.episodeId} $pageId"] =
             page

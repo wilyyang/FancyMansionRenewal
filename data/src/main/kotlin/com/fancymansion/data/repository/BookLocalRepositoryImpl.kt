@@ -113,6 +113,10 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.loadLogic(episodeRef).asModel()
     }
 
+    override suspend fun deleteLogic(episodeRef: EpisodeRef): Boolean {
+        return bookStorageSource.deleteLogic(episodeRef)
+    }
+
     override suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageModel): Boolean {
         return bookStorageSource.makePage(episodeRef, pageId, page.asData())
     }

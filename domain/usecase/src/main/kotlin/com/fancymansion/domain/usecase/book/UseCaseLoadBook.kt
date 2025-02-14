@@ -6,6 +6,7 @@ import com.fancymansion.core.common.throwable.exception.LoadPageException
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -24,6 +25,11 @@ class UseCaseLoadBook @Inject constructor(
     suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel =
         withContext(dispatcher) {
             bookLocalRepository.loadLogic(episodeRef)
+        }
+
+    suspend fun loadPageLogic(episodeRef: EpisodeRef, pageId: Long): PageLogicModel? =
+        withContext(dispatcher) {
+            bookLocalRepository.loadLogic(episodeRef).logics.firstOrNull { it.pageId == pageId }
         }
 
     suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel =

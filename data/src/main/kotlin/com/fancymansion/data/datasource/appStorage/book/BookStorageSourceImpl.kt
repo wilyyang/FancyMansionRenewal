@@ -117,6 +117,9 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     override suspend fun loadLogic(episodeRef: EpisodeRef): LogicData =
         root.logicFile(episodeRef).readJson(LogicData::class.java) as LogicData
 
+    override suspend fun deleteLogic(episodeRef: EpisodeRef): Boolean =
+        root.logicFile(episodeRef).delete()
+
     override suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageData): Boolean =
         root.pageFile(episodeRef, pageId).writeJson(page)
 

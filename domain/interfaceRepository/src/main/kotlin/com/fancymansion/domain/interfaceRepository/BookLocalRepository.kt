@@ -43,6 +43,7 @@ interface BookLocalRepository {
 
     suspend fun makeLogic(episodeRef: EpisodeRef, logic: LogicModel): Boolean
     suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel
+    suspend fun deleteLogic(episodeRef: EpisodeRef): Boolean
     suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageModel): Boolean
     suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageModel
     suspend fun deletePage(episodeRef: EpisodeRef, pageId: Long): Boolean

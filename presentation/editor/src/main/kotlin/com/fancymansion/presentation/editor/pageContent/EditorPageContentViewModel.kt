@@ -8,7 +8,6 @@ import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -211,6 +210,16 @@ class EditorPageContentViewModel @Inject constructor(
     }
 
     private suspend fun saveEditedPageContent() : Boolean{
+        // PageLogic 에 Title 반영
+        val logicResult = if (uiState.value.pageTitle != originPage.title) {
+            val editedPageLogic = uiState.value.pageLogic.copy(
+                title = uiState.value.pageTitle
+            )
+            useCaseMakeBook.updateBookPageLogic(episodeRef, editedPageLogic)
+        } else {
+            true
+        }
+
         // Uri 이미지 저장 및 List 변환
         val newSourceList = contentSourceStates.mapNotNull {
             when(it){
@@ -241,17 +250,17 @@ class EditorPageContentViewModel @Inject constructor(
             title = uiState.value.pageTitle,
             sources = newSourceList
         )
-        return useCaseMakeBook.updatePageContent(episodeRef, originPage.id, newPage)
+        return logicResult && useCaseMakeBook.updatePageContent(episodeRef, originPage.id, newPage)
     }
 
     private suspend fun loadPageContent(pageId : Long) {
-        val selectors = useCaseLoadBook.loadLogic(episodeRef).logics.firstOrNull { it.pageId == pageId }?.selectors?:listOf()
+        val pageLogic = useCaseLoadBook.loadPageLogic(episodeRef, pageId)!!
         useCaseLoadBook.loadPage(episodeRef, pageId = pageId).let { page ->
             originPage = page
             setState {
                 copy(
                     pageTitle = page.title,
-                    selectors = selectors
+                    pageLogic = pageLogic
                 )
             }
             contentSourceStates.clear()
@@ -295,7 +304,7 @@ class EditorPageContentViewModel @Inject constructor(
     private fun checkPageContentEdited(onCheckComplete: () -> Unit) {
 
         val stateNotEmpty = contentSourceStates.filterNot { it is SourceWrapper.ImageWrapper && it.imagePickType is ImagePickType.Empty }
-        val isEdited = originPage.title != uiState.value.pageTitle ||
+        val isEdited = originPage.title != uiState.value.pageTitle || originPage.sources.size != stateNotEmpty.size ||
                 originPage.sources.withIndex().any { (index, sourceModel) ->
                     val wrapper = stateNotEmpty.getOrNull(index)
                     when {

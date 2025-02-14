@@ -52,6 +52,8 @@ interface BookStorageSource {
 
     suspend fun loadLogic(episodeRef: EpisodeRef): LogicData
 
+    suspend fun deleteLogic(episodeRef: EpisodeRef): Boolean
+
     suspend fun makePage(episodeRef: EpisodeRef, pageId: Long, page: PageData): Boolean
 
     suspend fun loadPage(episodeRef: EpisodeRef, pageId: Long): PageData

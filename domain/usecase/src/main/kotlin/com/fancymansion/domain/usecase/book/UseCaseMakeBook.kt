@@ -10,6 +10,7 @@ import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,6 +32,18 @@ class UseCaseMakeBook @Inject constructor(
         withContext(dispatcher) {
             bookLocalRepository.deletePage(episodeRef, pageId)
             bookLocalRepository.makePage(episodeRef, pageId, page)
+        }
+
+    suspend fun makeBookLogic(episodeRef: EpisodeRef, logic: LogicModel) : Boolean =
+        withContext(dispatcher) {
+            bookLocalRepository.deleteLogic(episodeRef) && bookLocalRepository.makeLogic(episodeRef, logic)
+        }
+
+    suspend fun updateBookPageLogic(episodeRef: EpisodeRef, pageLogic: PageLogicModel) : Boolean =
+        withContext(dispatcher) {
+            val logic = bookLocalRepository.loadLogic(episodeRef)
+            val modified = logic.copy(logics = logic.logics.map { if (it.pageId == pageLogic.pageId) pageLogic else it })
+            makeBookLogic(episodeRef, modified)
         }
 
     suspend fun makePageImage(episodeRef: EpisodeRef, pageId: Long, uri: Uri) : String =

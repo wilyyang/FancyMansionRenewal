@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
+import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.SelectorModel
 
 class EditorPageContentContract {
@@ -17,7 +18,7 @@ class EditorPageContentContract {
         val isInitSuccess : Boolean = false,
         val bookTitle : String = "",
         val pageTitle : String = "",
-        val selectors: List<SelectorModel> = listOf()
+        val pageLogic: PageLogicModel = PageLogicModel(pageId = -1, title = "")
     ) : ViewState
 
     sealed class Event : ViewEvent {
