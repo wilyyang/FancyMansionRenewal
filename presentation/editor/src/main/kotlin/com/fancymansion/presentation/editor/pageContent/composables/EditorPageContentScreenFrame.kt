@@ -135,9 +135,6 @@ fun EditorPageContentScreenFrame(
                         bottomDrawerState.open()
                     }
                 }
-                is EditorPageContentContract.Effect.Navigation -> {
-                    onNavigationRequested(effect)
-                }
 
                 EditorPageContentContract.Effect.GallerySourceImagePickerEffect -> {
                     val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
