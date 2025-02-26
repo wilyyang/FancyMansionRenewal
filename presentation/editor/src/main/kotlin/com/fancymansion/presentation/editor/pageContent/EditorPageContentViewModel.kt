@@ -74,6 +74,15 @@ class EditorPageContentViewModel @Inject constructor(
                     )
                 }
             }
+
+            is EditorPageContentContract.Event.OnSelectPageType -> {
+                setState {
+                    copy(
+                        pageType = event.pageType
+                    )
+                }
+            }
+
             is EditorPageContentContract.Event.MoveSourcePosition -> {
                 contentSourceStates.apply {
                     val item = removeAt(event.fromIndex)

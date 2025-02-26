@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -18,6 +19,7 @@ class EditorPageContentContract {
         val isInitSuccess : Boolean = false,
         val bookTitle : String = "",
         val pageTitle : String = "",
+        val pageType: PageType = PageType.NORMAL,
         val pageLogic: PageLogicModel = PageLogicModel(pageId = -1, title = "")
     ) : ViewState
 
@@ -26,6 +28,7 @@ class EditorPageContentContract {
         data object ReadPagePreviewClicked : Event()
 
         data class EditPageContentTitle(val title : String) : Event()
+        data class OnSelectPageType(val pageType: PageType) : Event()
         data class MoveSourcePosition(val fromIndex: Int, val toIndex: Int) : Event()
 
         data object OnClickAddSource : Event()

@@ -55,6 +55,8 @@
     <string name="edit_page_content_top_label_page_title">페이지 제목</string>
     <string name="edit_page_content_edit_hint_page_title">제목</string>
 
+    <string name="edit_page_content_top_label_page_type">페이지 타입</string>
+
     <string name="edit_page_content_top_label_page_content">페이지 내용</string>
 
     <string name="edit_page_content_edit_source_text">텍스트 수정</string>

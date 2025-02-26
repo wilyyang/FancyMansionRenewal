@@ -32,12 +32,14 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
+import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
 import com.fancymansion.presentation.editor.pageContent.SourceWrapper
 import com.fancymansion.presentation.editor.pageContent.composables.part.EditPageSourceImage
 import com.fancymansion.presentation.editor.pageContent.composables.part.EditPageSourceText
 import com.fancymansion.presentation.editor.pageContent.composables.part.EditPageTitle
 import com.fancymansion.presentation.editor.pageContent.composables.part.PageContentHeader
+import com.fancymansion.presentation.editor.pageContent.composables.part.PageTypeDropdown
 
 @Composable
 fun EditorPageContentScreenContent(
@@ -107,6 +109,20 @@ fun EditorPageContentScreenContent(
                                 onEventSent(EditorPageContentContract.Event.EditPageContentTitle(title = it))
                             }
                         )
+                    }
+
+                    item {
+                        Column(modifier = modifier) {
+                            CommonEditInfoTitle(
+                                title = stringResource(id = R.string.edit_page_content_top_label_page_type)
+                            )
+
+                            PageTypeDropdown(selectedType = uiState.pageType){
+                                onEventSent(EditorPageContentContract.Event.OnSelectPageType(it))
+                            }
+
+                            Spacer(modifier = Modifier.height(itemMarginHeight))
+                        }
                     }
 
                     item {
