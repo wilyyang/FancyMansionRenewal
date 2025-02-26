@@ -31,7 +31,7 @@ class EditorPageContentViewModel @Inject constructor(
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorPageContentContract.State, EditorPageContentContract.Event, EditorPageContentContract.Effect>() {
 
-    private var isFirstResumeComplete = false
+    private var isUpdateResume = false
     private lateinit var originPage : PageModel
     val contentSourceStates: SnapshotStateList<SourceWrapper> = mutableStateListOf()
 
@@ -305,12 +305,11 @@ class EditorPageContentViewModel @Inject constructor(
     }
 
     private fun handleOnResume() {
-        if (isFirstResumeComplete) {
+        if (isUpdateResume) {
+            isUpdateResume = false
             launchWithLoading {
                 loadPageContent(originPage.id)
             }
-        } else {
-            isFirstResumeComplete = true
         }
     }
 

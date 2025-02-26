@@ -28,8 +28,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
-    private var isFirstResumeComplete : Boolean = false
-    private var isResumeGalleryPick : Boolean = false
+    private var isUpdateResume : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
             get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId }
@@ -129,6 +128,7 @@ class EditorBookOverviewViewModel @Inject constructor(
              */
             is EditorBookOverviewContract.Event.EditorPageContentButtonClicked -> {
                 checkBookInfoEdited {
+                    isUpdateResume = true
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageContentScreen(
                             episodeRef = episodeRef,
@@ -141,6 +141,7 @@ class EditorBookOverviewViewModel @Inject constructor(
 
             EditorBookOverviewContract.Event.EditorPageListClicked -> {
                 checkBookInfoEdited {
+                    isUpdateResume = true
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen(
                             episodeRef = episodeRef,
@@ -153,6 +154,7 @@ class EditorBookOverviewViewModel @Inject constructor(
 
             EditorBookOverviewContract.Event.EditorPageListEditModeClicked -> {
                 checkBookInfoEdited {
+                    isUpdateResume = true
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen(
                             episodeRef = episodeRef,
@@ -173,7 +175,6 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             is EditorBookOverviewContract.Event.GalleryBookCoverPickerResult -> {
-                isResumeGalleryPick = true
                 setState {
                     copy(
                         imagePickType =
@@ -196,17 +197,11 @@ class EditorBookOverviewViewModel @Inject constructor(
     override fun handleCommonEvents(event: CommonEvent) {
         when(event){
             is CommonEvent.OnResume -> {
-                if(isResumeGalleryPick){
-                    isResumeGalleryPick = false
-                    return
-                }
-
-                if(isFirstResumeComplete){
+                if(isUpdateResume){
+                    isUpdateResume = false
                     launchWithLoading {
                         loadBookInfoFromFile()
                     }
-                }else{
-                    isFirstResumeComplete = true
                 }
             }
             else -> super.handleCommonEvents(event)

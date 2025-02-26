@@ -33,7 +33,7 @@ class EditorPageListViewModel @Inject constructor(
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorPageListContract.State, EditorPageListContract.Event, EditorPageListContract.Effect>() {
 
-    private var isFirstResumeComplete = false
+    private var isUpdateResume = false
     private lateinit var logics: List<PageLogicModel>
     val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf()
     private val totalDeletePageIds: MutableSet<Long> = mutableSetOf()
@@ -163,6 +163,7 @@ class EditorPageListViewModel @Inject constructor(
     // Holder Event
     private fun navigateToPageContent(pageId: Long) {
         checkPageListEdited {
+            isUpdateResume = true
             setEffect {
                 EditorPageListContract.Effect.Navigation.NavigateEditorPageContentScreen(
                     episodeRef = episodeRef,
@@ -188,10 +189,9 @@ class EditorPageListViewModel @Inject constructor(
 
     // CommonEvent
     private fun handleOnResume() {
-        if (isFirstResumeComplete) {
+        if (isUpdateResume) {
+            isUpdateResume = false
             launchWithLoading { updateLogicAndStateList() }
-        } else {
-            isFirstResumeComplete = true
         }
     }
 
