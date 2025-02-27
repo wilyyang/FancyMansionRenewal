@@ -3,7 +3,6 @@ package com.fancymansion.presentation.editor.pageContent.composables.part
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,31 +11,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.PopupProperties
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
+import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
@@ -191,69 +184,27 @@ fun EditPageSourceImage(
 }
 
 @Composable
-fun PageTypeDropdown(
+fun EditPageType(
+    modifier : Modifier = Modifier,
     selectedType: PageType,
     onItemSelected: (PageType) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier.padding(
-            vertical = Paddings.Basic.vertical
-        )
-    ) {
-        Text(
-            text = stringResource(id = selectedType.localizedName.resId),
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = MaterialTheme.shapes.small
-                )
-                .padding(0.5.dp)
-                .clip(
-                    shape = MaterialTheme.shapes.small
-                )
-                .clickable { expanded = true }
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal)
+){
+    val context = LocalContext.current
+    Column(modifier = modifier) {
+        CommonEditInfoTitle(
+            title = stringResource(id = R.string.edit_page_content_top_label_page_type)
         )
 
-        // 드롭다운 메뉴
-        DropdownMenu(
-            expanded = expanded,
-            offset = DpOffset(x = 0.dp, y = (-30).dp),
-            onDismissRequest = { expanded = false },
-            properties = PopupProperties(focusable = true),
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp,
-            shadowElevation = 0.dp,
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = MaterialTheme.shapes.small
-                )
-                .padding(0.5.dp)
-                .clip(
-                    shape = MaterialTheme.shapes.small
-                )
-                .background(color = MaterialTheme.colorScheme.surface),
-        ) {
-            PageType.entries.forEach { type ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = stringResource(id = type.localizedName.resId),
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = if (type == selectedType) FontWeight.Bold else FontWeight.Normal)
-                        )
-                    },
-                    onClick = {
-                        onItemSelected(type)
-                        expanded = false
-                    }
-                )
-            }
+        EnumDropdown(
+            modifier = Modifier.width(100.dp).padding(vertical = Paddings.Basic.vertical),
+            options = PageType.entries.toTypedArray(),
+            selectedOption = selectedType,
+            getDisplayName = {
+                context.getString(it.localizedName.resId)
+            }) {
+            onItemSelected(it)
         }
+
+        Spacer(modifier = Modifier.height(itemMarginHeight))
     }
 }

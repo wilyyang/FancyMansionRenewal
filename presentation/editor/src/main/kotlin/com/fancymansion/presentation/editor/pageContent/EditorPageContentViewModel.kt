@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -76,10 +77,36 @@ class EditorPageContentViewModel @Inject constructor(
             }
 
             is EditorPageContentContract.Event.OnSelectPageType -> {
-                setState {
-                    copy(
-                        pageType = event.pageType
-                    )
+                if(uiState.value.pageType == PageType.START){
+                    setLoadState(LoadState.AlarmDialog(
+                        title = "타입 수정",
+                        message = "시작 페이지는 다른 페이지에서 바꿀 수 있습니다. 다른 페이지로 이동하여 변경해주세요.",
+                        onConfirm = {
+                            setLoadStateIdle()
+                        },
+                        dismissText = null
+                    ))
+
+                }else if (event.pageType == PageType.START){
+                    setLoadState(LoadState.AlarmDialog(
+                        title = "타입 수정",
+                        message = "시작 페이지로 바꾸면 이전 시작 페이지는 일반 페이지가 됩니다. 계속하시겠습니까?",
+                        onConfirm = {
+                            setState {
+                                copy(
+                                    pageType = event.pageType
+                                )
+                            }
+                            setLoadStateIdle()
+                        },
+                        dismissText = null
+                    ))
+                }else{
+                    setState {
+                        copy(
+                            pageType = event.pageType
+                        )
+                    }
                 }
             }
 
@@ -282,6 +309,7 @@ class EditorPageContentViewModel @Inject constructor(
             setState {
                 copy(
                     pageTitle = page.title,
+                    pageType = pageLogic.type,
                     pageLogic = pageLogic
                 )
             }
