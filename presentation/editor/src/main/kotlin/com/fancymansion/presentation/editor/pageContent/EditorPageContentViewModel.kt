@@ -34,6 +34,7 @@ class EditorPageContentViewModel @Inject constructor(
 
     private var isUpdateResume = false
     private lateinit var originPage : PageModel
+    private lateinit var originPageType : PageType
     val contentSourceStates: SnapshotStateList<SourceWrapper> = mutableStateListOf()
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
@@ -77,10 +78,10 @@ class EditorPageContentViewModel @Inject constructor(
             }
 
             is EditorPageContentContract.Event.OnSelectPageType -> {
-                if(uiState.value.pageType == PageType.START){
+                if(originPageType == PageType.START){
                     setLoadState(LoadState.AlarmDialog(
-                        title = "타입 수정",
-                        message = "시작 페이지는 다른 페이지에서 바꿀 수 있습니다. 다른 페이지로 이동하여 변경해주세요.",
+                        title = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_title),
+                        message = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_text_start_not_edit),
                         onConfirm = {
                             setLoadStateIdle()
                         },
@@ -89,8 +90,8 @@ class EditorPageContentViewModel @Inject constructor(
 
                 }else if (event.pageType == PageType.START){
                     setLoadState(LoadState.AlarmDialog(
-                        title = "타입 수정",
-                        message = "시작 페이지로 바꾸면 이전 시작 페이지는 일반 페이지가 됩니다. 계속하시겠습니까?",
+                        title = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_title),
+                        message = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_text_change_to_start),
                         onConfirm = {
                             setState {
                                 copy(
@@ -259,9 +260,10 @@ class EditorPageContentViewModel @Inject constructor(
     }
 
     private suspend fun saveEditedPageContent() : Boolean{
-        // PageLogic 에 Title 반영
-        val logicResult = if (uiState.value.pageTitle != originPage.title) {
+        // PageLogic 에 Type, Title 반영
+        val logicResult = if (uiState.value.pageType != originPageType || uiState.value.pageTitle != originPage.title) {
             val editedPageLogic = uiState.value.pageLogic.copy(
+                type = uiState.value.pageType,
                 title = uiState.value.pageTitle
             )
             useCaseMakeBook.updateBookPageLogic(episodeRef, editedPageLogic)
@@ -304,6 +306,7 @@ class EditorPageContentViewModel @Inject constructor(
 
     private suspend fun loadPageContent(pageId : Long) {
         val pageLogic = useCaseLoadBook.loadPageLogic(episodeRef, pageId)!!
+        originPageType = pageLogic.type
         useCaseLoadBook.loadPage(episodeRef, pageId = pageId).let { page ->
             originPage = page
             setState {
@@ -353,7 +356,7 @@ class EditorPageContentViewModel @Inject constructor(
     private fun checkPageContentEdited(onCheckComplete: () -> Unit) {
 
         val stateNotEmpty = contentSourceStates.filterNot { it is SourceWrapper.ImageWrapper && it.imagePickType is ImagePickType.Empty }
-        val isEdited = originPage.title != uiState.value.pageTitle || originPage.sources.size != stateNotEmpty.size ||
+        val isEdited = originPageType != uiState.value.pageType || originPage.title != uiState.value.pageTitle || originPage.sources.size != stateNotEmpty.size ||
                 originPage.sources.withIndex().any { (index, sourceModel) ->
                     val wrapper = stateNotEmpty.getOrNull(index)
                     when {

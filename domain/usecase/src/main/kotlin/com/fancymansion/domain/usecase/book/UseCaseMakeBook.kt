@@ -3,6 +3,7 @@ package com.fancymansion.domain.usecase.book
 import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.baseBookCoverName
 import com.fancymansion.core.common.const.imageFileNamePrefix
 import com.fancymansion.core.common.const.testEpisodeRef
@@ -41,7 +42,17 @@ class UseCaseMakeBook @Inject constructor(
 
     suspend fun updateBookPageLogic(episodeRef: EpisodeRef, pageLogic: PageLogicModel) : Boolean =
         withContext(dispatcher) {
-            val logic = bookLocalRepository.loadLogic(episodeRef)
+            var logic = bookLocalRepository.loadLogic(episodeRef)
+
+            // Start Page 변경
+            if(pageLogic.type == PageType.START){
+                var startPageLogic = logic.logics.firstOrNull{it.type == PageType.START}!!
+                if(pageLogic.pageId != startPageLogic.pageId){
+                    startPageLogic = startPageLogic.copy(type = PageType.NORMAL)
+                    logic = logic.copy(logics = logic.logics.map { if (it.pageId == startPageLogic.pageId) startPageLogic else it })
+                }
+            }
+
             val modified = logic.copy(logics = logic.logics.map { if (it.pageId == pageLogic.pageId) pageLogic else it })
             makeBookLogic(episodeRef, modified)
         }
