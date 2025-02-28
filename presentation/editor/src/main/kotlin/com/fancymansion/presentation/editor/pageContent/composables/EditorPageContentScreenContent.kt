@@ -83,7 +83,10 @@ fun EditorPageContentScreenContent(
             ) {
                 PageContentHeader(
                     contentSourceSize = contentSourceStates.size,
-                    onShowSelectorList = { /*TODO*/ },
+                    selectorSize = uiState.pageLogic.selectors.size,
+                    onShowSelectorList = {
+                        onEventSent(EditorPageContentContract.Event.OnClickSelectorList)
+                    },
                     onAddContentSourceClicked = {
                         onEventSent(EditorPageContentContract.Event.OnClickAddSource)
                     }

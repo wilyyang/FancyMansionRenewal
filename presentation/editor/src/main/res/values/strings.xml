@@ -48,7 +48,7 @@
 
     <string name="edit_page_content_header_source_size">내용 총 %d개</string>
 
-    <string name="edit_page_content_header_item_show_selector">선택지</string>
+    <string name="edit_page_content_header_item_show_selector">선택지 목록 (%d개)</string>
     <string name="edit_page_content_header_item_add_content_source">내용 추가</string>
 
     <string name="edit_page_content_button_page_preview">미리보기</string>

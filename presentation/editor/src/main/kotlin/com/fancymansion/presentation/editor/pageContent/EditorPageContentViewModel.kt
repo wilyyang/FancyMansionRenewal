@@ -146,6 +146,17 @@ class EditorPageContentViewModel @Inject constructor(
                 }
             }
 
+            is EditorPageContentContract.Event.OnClickSelectorList -> {
+                setEffect {
+                    EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen(
+                        episodeRef = episodeRef,
+                        bookTitle = uiState.value.bookTitle,
+                        episodeTitle = "",
+                        pageId = originPage.id
+                    )
+                }
+            }
+
             is EditorPageContentContract.Event.OnClickSourceText -> {
                 contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
                     if (source is SourceWrapper.TextWrapper) {

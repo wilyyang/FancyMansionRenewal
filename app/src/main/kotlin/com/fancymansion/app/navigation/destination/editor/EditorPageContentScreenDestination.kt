@@ -55,6 +55,9 @@ fun handleNavigationRequest(effect: EditorPageContentContract.Effect, navControl
         is EditorPageContentContract.Effect.Navigation.NavigateViewerContentScreen -> {
             navController.navigateViewerContentScreen(effect.episodeRef, effect.bookTitle, effect.episodeTitle, effect.pageId)
         }
+        is EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen -> {
+            // TODO
+        }
         else -> {}
     }
 }

@@ -31,6 +31,7 @@ class EditorPageContentContract {
         data class OnSelectPageType(val pageType: PageType) : Event()
         data class MoveSourcePosition(val fromIndex: Int, val toIndex: Int) : Event()
 
+        data object OnClickSelectorList : Event()
         data object OnClickAddSource : Event()
 
         data object AddTextSourceEvent : Event()
@@ -49,6 +50,7 @@ class EditorPageContentContract {
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect() {
+            data class NavigateSelectorListScreen(val episodeRef: EpisodeRef, val bookTitle: String, val episodeTitle: String, val pageId: Long) : Navigation()
             data class NavigateViewerContentScreen(val episodeRef: EpisodeRef, val bookTitle: String, val episodeTitle: String, val pageId: Long) : Navigation()
         }
 

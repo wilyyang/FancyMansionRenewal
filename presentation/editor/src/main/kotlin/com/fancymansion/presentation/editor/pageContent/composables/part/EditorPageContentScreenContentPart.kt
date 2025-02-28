@@ -43,6 +43,7 @@ import com.fancymansion.presentation.editor.common.itemMarginHeight
 fun PageContentHeader(
     modifier: Modifier = Modifier,
     contentSourceSize : Int,
+    selectorSize : Int,
     onShowSelectorList : () -> Unit,
     onAddContentSourceClicked : () -> Unit
 ){
@@ -70,8 +71,8 @@ fun PageContentHeader(
                     .clickSingle {
                         onShowSelectorList()
                     },
-                text = stringResource(id = R.string.edit_page_content_header_item_show_selector),
-                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                text = stringResource(id = R.string.edit_page_content_header_item_show_selector, selectorSize),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
             )
 
             Text(
