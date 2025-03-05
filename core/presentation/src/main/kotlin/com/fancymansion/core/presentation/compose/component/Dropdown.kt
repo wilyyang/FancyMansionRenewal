@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,7 @@ fun <T : Enum<T>> EnumDropdown(
     dropdownOffset: DpOffset = DpOffset(x = 0.dp, y = 0.dp),
     dropdownBackgroundColor: Color = MaterialTheme.colorScheme.surface,
 
+    onClickDropdownTitle: () -> Unit = {},
     getDisplayName: (T) -> String,
     onItemSelected: (T) -> Unit
 ) {
@@ -66,7 +68,10 @@ fun <T : Enum<T>> EnumDropdown(
                 )
                 .padding(0.5.dp)
                 .clip(borderShape)
-                .clickable { expanded = true }
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null){
+                    onClickDropdownTitle()
+                    expanded = true
+                }
                 .padding(horizontal = textHorizontalPadding, vertical = textVerticalPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {

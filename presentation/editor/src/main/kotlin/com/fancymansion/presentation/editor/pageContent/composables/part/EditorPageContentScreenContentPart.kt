@@ -141,7 +141,7 @@ fun EditPageSourceText(
             }
             .padding(13.5.dp),
         text = text,
-        maxLines = 3,
+        maxLines = 4,
         overflow = TextOverflow.Ellipsis
     )
 }
@@ -188,6 +188,7 @@ fun EditPageSourceImage(
 fun EditPageType(
     modifier : Modifier = Modifier,
     selectedType: PageType,
+    onClickDropdownTitle: () -> Unit,
     onItemSelected: (PageType) -> Unit
 ){
     val context = LocalContext.current
@@ -200,6 +201,7 @@ fun EditPageType(
             modifier = Modifier.width(100.dp).padding(vertical = Paddings.Basic.vertical),
             options = PageType.entries.toTypedArray(),
             selectedOption = selectedType,
+            onClickDropdownTitle = onClickDropdownTitle,
             getDisplayName = {
                 context.getString(it.localizedName.resId)
             }) {

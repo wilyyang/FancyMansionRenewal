@@ -97,15 +97,14 @@ fun EditorPageContentScreenContent(
                         .dragContainer(dragDropState)
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = Paddings.Basic.horizontal),
+                        .padding(horizontal = Paddings.Basic.horizontal)
+                        .padding(top = Paddings.Basic.vertical),
                     state = listState
                 ) {
 
                     item {
                         EditPageTitle(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Paddings.Basic.vertical),
+                            modifier = Modifier.fillMaxWidth(),
                             title = uiState.pageTitle,
                             updateBookInfoTitle = {
                                 onEventSent(EditorPageContentContract.Event.EditPageContentTitle(title = it))
@@ -115,10 +114,11 @@ fun EditorPageContentScreenContent(
 
                     item {
                         EditPageType(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Paddings.Basic.vertical),
+                            modifier = Modifier.fillMaxWidth(),
                             selectedType = uiState.pageType,
+                            onClickDropdownTitle = {
+                                focusManager.clearFocus()
+                            },
                             onItemSelected = {
                                 onEventSent(EditorPageContentContract.Event.OnSelectPageType(it))
                             }
@@ -127,6 +127,7 @@ fun EditorPageContentScreenContent(
 
                     item {
                         CommonEditInfoTitle(
+                            modifier = Modifier.padding(top = Paddings.Basic.vertical),
                             title = stringResource(id = R.string.edit_page_content_top_label_page_content)
                         )
                     }
@@ -188,7 +189,7 @@ fun EditorPageContentScreenContent(
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
-                        text = stringResource(id = com.fancymansion.presentation.editor.R.string.edit_page_content_button_page_preview),
+                        text = stringResource(id = R.string.edit_page_content_button_page_preview),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
