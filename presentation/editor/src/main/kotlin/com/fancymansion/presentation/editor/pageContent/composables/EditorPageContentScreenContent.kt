@@ -97,14 +97,14 @@ fun EditorPageContentScreenContent(
                         .dragContainer(dragDropState)
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = Paddings.Basic.horizontal)
-                        .padding(top = Paddings.Basic.vertical),
+                        .padding(horizontal = Paddings.Basic.horizontal),
                     state = listState
                 ) {
 
                     item {
                         EditPageTitle(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(top = Paddings.Basic.vertical),
                             title = uiState.pageTitle,
                             updateBookInfoTitle = {
                                 onEventSent(EditorPageContentContract.Event.EditPageContentTitle(title = it))

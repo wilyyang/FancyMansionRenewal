@@ -9,15 +9,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,11 +30,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -49,6 +54,7 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
 import com.fancymansion.presentation.editor.pageContent.SourceWrapper
 import com.fancymansion.presentation.editor.pageContent.composables.part.CommonEditPageContentBottomDialog
@@ -249,34 +255,125 @@ fun EditorPageContentScreenFrame(
 
 @Composable
 fun EditorPageContentSkeletonScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.surface),
-    ) {
-        FancyMansionTopBar(
-            typePane = TypePane.MOBILE,
-            topBarColor = MaterialTheme.colorScheme.surface,
-            title = "",
-            subTitle = stringResource(id = R.string.topbar_editor_sub_title),
-            shadowElevation = 1.dp
-        )
-
-        Row(
+    Box {
+        Column(
             modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.surface),
+        ) {
+            FancyMansionTopBar(
+                typePane = TypePane.MOBILE,
+                topBarColor = MaterialTheme.colorScheme.surface,
+                title = "",
+                subTitle = stringResource(id = R.string.topbar_editor_sub_title),
+                shadowElevation = 1.dp
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .borderLine(density = LocalDensity.current, color = onSurfaceSub, bottom = 0.3.dp)
+                    .padding(
+                        vertical = Paddings.Basic.vertical,
+                        horizontal = Paddings.Basic.horizontal
+                    )
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = Paddings.Basic.vertical),
+                    text = "",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+                )
+
+                FadeInOutSkeleton(
+                    modifier = Modifier
+                        .padding(vertical = Paddings.Basic.vertical)
+                        .height(18.dp)
+                        .width(90.dp)
+                )
+
+                FadeInOutSkeleton(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(vertical = Paddings.Basic.vertical)
+                        .height(18.dp)
+                        .width(120.dp)
+                )
+            }
+
+
+            Column(modifier = Modifier.padding(horizontal = Paddings.Basic.horizontal)){
+                Spacer(modifier = Modifier.height(Paddings.Basic.vertical))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .height(20.dp)
+                    .width(80.dp))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .height(40.dp)
+                    .fillMaxWidth())
+
+                Spacer(modifier = Modifier.height(itemMarginHeight))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .height(20.dp)
+                    .width(80.dp))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .height(40.dp)
+                    .width(160.dp))
+
+                Spacer(modifier = Modifier.height(itemMarginHeight))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .height(20.dp)
+                    .width(80.dp))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(top = 10.dp, bottom = 10.dp, end = 10.dp)
+                    .size(72.dp)
+                    .clip(shape = MaterialTheme.shapes.small))
+
+                FadeInOutSkeleton(modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .height(100.dp)
+                    .fillMaxWidth())
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
                 .fillMaxWidth()
-                .borderLine(density = LocalDensity.current, color = onSurfaceSub, bottom = 0.3.dp)
-                .padding(
-                    vertical = Paddings.Basic.vertical,
-                    horizontal = Paddings.Basic.horizontal
+                .height(80.dp)
+                .background(MaterialTheme.colorScheme.surface)
+                .borderLine(
+                    density = LocalDensity.current,
+                    color = MaterialTheme.colorScheme.outline,
+                    top = 1.dp
                 )
         ) {
-            FadeInOutSkeleton(
+
+            Box(
                 modifier = Modifier
-                    .padding(vertical = Paddings.Basic.vertical)
-                    .height(18.dp)
-                    .width(100.dp)
-            )
+                    .padding(vertical = 11.dp, horizontal = 14.dp)
+                    .fillMaxSize()
+                    .clip(
+                        shape = MaterialTheme.shapes.small
+                    )
+                    .background(color = MaterialTheme.colorScheme.background)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(id = R.string.edit_overview_button_overview_preview),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     }
 }
