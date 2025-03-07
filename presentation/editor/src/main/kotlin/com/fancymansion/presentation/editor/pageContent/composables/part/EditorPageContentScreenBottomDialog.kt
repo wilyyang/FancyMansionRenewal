@@ -89,7 +89,7 @@ fun SelectSourceDialog(
                             color = MaterialTheme.colorScheme.background,
                             shape = MaterialTheme.shapes.medium
                         )
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Text(
                             modifier = Modifier
