@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.editor.pageContent
 
+import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -15,10 +16,8 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.book.SourceModel
-import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
-import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,9 +26,7 @@ import javax.inject.Inject
 class EditorPageContentViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
-    private val useCaseMakeBook: UseCaseMakeBook,
-    private val useCaseBookLogic: UseCaseBookLogic,
-    private val useCaseGetResource: UseCaseGetResource
+    private val useCaseMakeBook: UseCaseMakeBook
 ) : BaseViewModel<EditorPageContentContract.State, EditorPageContentContract.Event, EditorPageContentContract.Effect>() {
 
     private var isUpdateResume = false
@@ -55,19 +52,7 @@ class EditorPageContentViewModel @Inject constructor(
     override fun handleEvents(event: EditorPageContentContract.Event) {
         when (event) {
             EditorPageContentContract.Event.OnClickSavePageToFile -> handlePageContentSaveToFile()
-
-            EditorPageContentContract.Event.ReadPagePreviewClicked -> {
-                checkPageContentEdited {
-                    setEffect {
-                        EditorPageContentContract.Effect.Navigation.NavigateViewerContentScreen(
-                            episodeRef = episodeRef,
-                            bookTitle = uiState.value.bookTitle,
-                            episodeTitle = "",
-                            pageId = originPage.id
-                        )
-                    }
-                }
-            }
+            EditorPageContentContract.Event.ReadPagePreviewClicked -> handleReadPagePreview()
 
             is EditorPageContentContract.Event.EditPageContentTitle -> {
                 setState {
@@ -77,39 +62,7 @@ class EditorPageContentViewModel @Inject constructor(
                 }
             }
 
-            is EditorPageContentContract.Event.OnSelectPageType -> {
-                if(originPageType == PageType.START){
-                    setLoadState(LoadState.AlarmDialog(
-                        title = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_title),
-                        message = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_text_start_not_edit),
-                        onConfirm = {
-                            setLoadStateIdle()
-                        },
-                        dismissText = null
-                    ))
-
-                }else if (event.pageType == PageType.START){
-                    setLoadState(LoadState.AlarmDialog(
-                        title = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_title),
-                        message = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_text_change_to_start),
-                        onConfirm = {
-                            setState {
-                                copy(
-                                    pageType = event.pageType
-                                )
-                            }
-                            setLoadStateIdle()
-                        },
-                        dismissText = null
-                    ))
-                }else{
-                    setState {
-                        copy(
-                            pageType = event.pageType
-                        )
-                    }
-                }
-            }
+            is EditorPageContentContract.Event.OnSelectPageType -> handleSelectPageType(event.pageType)
 
             is EditorPageContentContract.Event.MoveSourcePosition -> {
                 contentSourceStates.apply {
@@ -118,6 +71,11 @@ class EditorPageContentViewModel @Inject constructor(
                 }
             }
 
+            is EditorPageContentContract.Event.OnClickSelectorList -> handleMoveSelectorList()
+
+            /**
+             * Edit Source
+             */
             EditorPageContentContract.Event.OnClickAddSource -> {
                 setEffect { EditorPageContentContract.Effect.ShowAddSourceDialogEffect }
             }
@@ -142,17 +100,6 @@ class EditorPageContentViewModel @Inject constructor(
                     EditorPageContentContract.Effect.ShowSourceImageEffect(
                         lastIndex,
                         contentSourceStates[lastIndex]
-                    )
-                }
-            }
-
-            is EditorPageContentContract.Event.OnClickSelectorList -> {
-                setEffect {
-                    EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen(
-                        episodeRef = episodeRef,
-                        bookTitle = uiState.value.bookTitle,
-                        episodeTitle = "",
-                        pageId = originPage.id
                     )
                 }
             }
@@ -199,23 +146,7 @@ class EditorPageContentViewModel @Inject constructor(
                 }
             }
 
-            is EditorPageContentContract.Event.GalleryPickerResult -> {
-                contentSourceStates.getOrNull(event.sourceIndex)?.let { source ->
-                    if(source is SourceWrapper.ImageWrapper){
-                        val newImageSource = SourceWrapper.ImageWrapper(
-                            if (event.imageUri != null) ImagePickType.GalleryUri(event.imageUri)
-                            else ImagePickType.Empty
-                        )
-
-                        contentSourceStates.add(event.sourceIndex, newImageSource)
-                        contentSourceStates.removeAt(event.sourceIndex + 1)
-
-                        setEffect {
-                            EditorPageContentContract.Effect.UpdateSourceImage(event.sourceIndex, newImageSource)
-                        }
-                    }
-                }
-            }
+            is EditorPageContentContract.Event.GalleryPickerResult -> handleGalleryPickerResult(event.sourceIndex, event.imageUri)
         }
     }
 
@@ -262,6 +193,81 @@ class EditorPageContentViewModel @Inject constructor(
         )
     }
 
+    private fun handleMoveSelectorList() {
+        setEffect {
+            EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen(
+                episodeRef = episodeRef,
+                bookTitle = uiState.value.bookTitle,
+                episodeTitle = "",
+                pageId = originPage.id
+            )
+        }
+    }
+
+    private fun handleReadPagePreview() {
+        checkPageContentEdited {
+            setEffect {
+                EditorPageContentContract.Effect.Navigation.NavigateViewerContentScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.bookTitle,
+                    episodeTitle = "",
+                    pageId = originPage.id
+                )
+            }
+        }
+    }
+
+    private fun handleSelectPageType(selectPageType: PageType){
+        if(originPageType == PageType.START){
+            setLoadState(LoadState.AlarmDialog(
+                title = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_title),
+                message = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_text_start_not_edit),
+                onConfirm = {
+                    setLoadStateIdle()
+                },
+                dismissText = null
+            ))
+
+        }else if (selectPageType == PageType.START){
+            setLoadState(LoadState.AlarmDialog(
+                title = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_title),
+                message = StringValue.StringResource(R.string.edit_page_content_page_type_dialog_text_change_to_start),
+                onConfirm = {
+                    setState {
+                        copy(
+                            pageType = selectPageType
+                        )
+                    }
+                    setLoadStateIdle()
+                },
+                dismissText = null
+            ))
+        }else{
+            setState {
+                copy(
+                    pageType = selectPageType
+                )
+            }
+        }
+    }
+
+    private fun handleGalleryPickerResult(sourceIndex : Int, imageUri : Uri?){
+        contentSourceStates.getOrNull(sourceIndex)?.let { source ->
+            if(source is SourceWrapper.ImageWrapper){
+                val newImageSource = SourceWrapper.ImageWrapper(
+                    if (imageUri != null) ImagePickType.GalleryUri(imageUri)
+                    else ImagePickType.Empty
+                )
+
+                contentSourceStates.add(sourceIndex, newImageSource)
+                contentSourceStates.removeAt(sourceIndex + 1)
+
+                setEffect {
+                    EditorPageContentContract.Effect.UpdateSourceImage(sourceIndex, newImageSource)
+                }
+            }
+        }
+    }
 
     // CommonEvent
     private suspend fun saveEditedPageContentAndReload() : Boolean{
