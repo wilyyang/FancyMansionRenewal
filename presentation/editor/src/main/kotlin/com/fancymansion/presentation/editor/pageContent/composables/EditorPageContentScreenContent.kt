@@ -132,25 +132,27 @@ fun EditorPageContentScreenContent(
                         )
                     }
 
-                    draggableItems(items = contentSourceStates, dragDropState = dragDropState) { modifier, index, state ->
-                        when(state){
-                            is SourceWrapper.TextWrapper -> {
-                                EditPageSourceText(
-                                    modifier = modifier,
-                                    text = state.description.value,
-                                    onClickText =  {
-                                        onEventSent(EditorPageContentContract.Event.OnClickSourceText(index))
-                                    }
-                                )
-                            }
-                            is SourceWrapper.ImageWrapper -> {
-                                EditPageSourceImage(
-                                    modifier = modifier,
-                                    imagePickType = state.imagePickType,
-                                    onClickGalleryImagePick = {
-                                        onEventSent(EditorPageContentContract.Event.OnClickSourceImage(index))
-                                    }
-                                )
+                    if(contentSourceStates.isNotEmpty()){
+                        draggableItems(items = contentSourceStates, dragDropState = dragDropState) { modifier, index, state ->
+                            when(state){
+                                is SourceWrapper.TextWrapper -> {
+                                    EditPageSourceText(
+                                        modifier = modifier,
+                                        text = state.description.value,
+                                        onClickText =  {
+                                            onEventSent(EditorPageContentContract.Event.OnClickSourceText(index))
+                                        }
+                                    )
+                                }
+                                is SourceWrapper.ImageWrapper -> {
+                                    EditPageSourceImage(
+                                        modifier = modifier,
+                                        imagePickType = state.imagePickType,
+                                        onClickGalleryImagePick = {
+                                            onEventSent(EditorPageContentContract.Event.OnClickSourceImage(index))
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

@@ -102,19 +102,21 @@ fun EditorPageListScreenContent(
                 state = listState
             ) {
 
-                draggableItems(items = pageLogicStates, dragDropState = dragDropState) { modifier, _, state ->
-                    PageHolder(
-                        modifier = modifier,
-                        isEditMode = uiState.isEditMode,
-                        state = state,
-                        onPageContentButtonClicked = {
-                            if(uiState.isEditMode){
-                                onEventSent(EditorPageListContract.Event.PageHolderSelectClicked(it))
-                            }else{
-                                onEventSent(EditorPageListContract.Event.PageHolderNavigateClicked(it))
+                if(pageLogicStates.isNotEmpty()){
+                    draggableItems(items = pageLogicStates, dragDropState = dragDropState) { modifier, _, state ->
+                        PageHolder(
+                            modifier = modifier,
+                            isEditMode = uiState.isEditMode,
+                            state = state,
+                            onPageContentButtonClicked = {
+                                if(uiState.isEditMode){
+                                    onEventSent(EditorPageListContract.Event.PageHolderSelectClicked(it))
+                                }else{
+                                    onEventSent(EditorPageListContract.Event.PageHolderNavigateClicked(it))
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
 
                 item {
