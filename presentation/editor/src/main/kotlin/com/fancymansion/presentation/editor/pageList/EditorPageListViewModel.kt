@@ -23,6 +23,7 @@ import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -222,16 +223,18 @@ class EditorPageListViewModel @Inject constructor(
 
         // 기존 유저 선택 항목 반영
         val selectedPageIds = pageLogicStates.filter { it.selected.value }.map { it.pageLogic.pageId }.toSet()
-        pageLogicStates.clear()
-        logics.forEachIndexed { index, pageState ->
+
+        val newPageLogicStates = logics.mapIndexed { index, pageState ->
             val selected = !resetSelect && pageState.pageId in selectedPageIds
-            pageLogicStates.add(
-                PageLogicState(
-                    editIndex = index, pageLogic = pageState,
-                    selected = mutableStateOf(selected)
-                )
+            PageLogicState(
+                editIndex = index, pageLogic = pageState,
+                selected = mutableStateOf(selected)
             )
         }
+
+        pageLogicStates.clear()
+        delay(50)
+        pageLogicStates.addAll(newPageLogicStates)
         setState {
             copy(
                 pageSortOrder = PageSortOrder.LAST_EDITED

@@ -20,6 +20,7 @@ import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -333,10 +334,11 @@ class EditorPageContentViewModel @Inject constructor(
                     pageLogic = pageLogic
                 )
             }
+
+            val newSourceStates = convertSourcesToWrapper(page.sources)
             contentSourceStates.clear()
-            convertSourcesToWrapper(page.sources).forEach { wrapper ->
-                contentSourceStates.add(wrapper)
-            }
+            delay(50)
+            contentSourceStates.addAll(newSourceStates)
         }
     }
 
