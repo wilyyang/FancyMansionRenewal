@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
@@ -33,7 +34,7 @@ class EditorPageContentViewModel @Inject constructor(
     private var isUpdateResume = false
     private lateinit var originPage : PageModel
     private lateinit var originPageType : PageType
-    val contentSourceStates: SnapshotStateList<SourceWrapper> = mutableStateListOf()
+    var contentSourceStates: SnapshotStateList<SourceWrapper> = mutableStateListOf()
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -335,10 +336,8 @@ class EditorPageContentViewModel @Inject constructor(
                 )
             }
 
-            val newSourceStates = convertSourcesToWrapper(page.sources)
-            contentSourceStates.clear()
-            delay(50)
-            contentSourceStates.addAll(newSourceStates)
+            val newSourceStates = convertSourcesToWrapper(page.sources).toMutableStateList()
+            contentSourceStates = newSourceStates
         }
     }
 

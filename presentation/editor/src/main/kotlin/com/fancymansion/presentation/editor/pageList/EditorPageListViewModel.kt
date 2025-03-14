@@ -3,6 +3,7 @@ package com.fancymansion.presentation.editor.pageList
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
@@ -36,7 +37,7 @@ class EditorPageListViewModel @Inject constructor(
 
     private var isUpdateResume = false
     private lateinit var logics: List<PageLogicModel>
-    val pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf()
+    var pageLogicStates: SnapshotStateList<PageLogicState> = mutableStateListOf()
     private val totalDeletePageIds: MutableSet<Long> = mutableSetOf()
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
@@ -230,11 +231,9 @@ class EditorPageListViewModel @Inject constructor(
                 editIndex = index, pageLogic = pageState,
                 selected = mutableStateOf(selected)
             )
-        }
+        }.toMutableStateList()
 
-        pageLogicStates.clear()
-        delay(50)
-        pageLogicStates.addAll(newPageLogicStates)
+        pageLogicStates = newPageLogicStates
         setState {
             copy(
                 pageSortOrder = PageSortOrder.LAST_EDITED

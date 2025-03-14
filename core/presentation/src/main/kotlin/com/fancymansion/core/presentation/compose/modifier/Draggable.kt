@@ -159,22 +159,26 @@ inline fun <T : Any> LazyListScope.draggableItems(
     dragDropState: DragDropState,
     crossinline content: @Composable (Modifier, Int, T) -> Unit,
 ) {
-    itemsIndexed(
-        items = items,
-        contentType = { index, _ -> DraggableItem(index = index) })
-    { index, item ->
-        val modifier = if (dragDropState.draggingItemIndex == index) {
-            Modifier
-                .zIndex(1f)
-                .graphicsLayer {
-                    translationY = dragDropState.draggingOffsetY
-                }
-        } else {
-            Modifier.animateItem(placementSpec = tween(
-                durationMillis = 500,
-                easing = LinearOutSlowInEasing
-            ))
+    if (items.isNotEmpty()) {
+        itemsIndexed(
+            items = items,
+            contentType = { index, _ -> DraggableItem(index = index) })
+        { index, item ->
+            val safeItem = items.getOrNull(index) ?: return@itemsIndexed
+            val isDragging = dragDropState.draggingItemIndex?.takeIf { it in items.indices } == index
+            val modifier = if (isDragging) {
+                Modifier
+                    .zIndex(1f)
+                    .graphicsLayer {
+                        translationY = dragDropState.draggingOffsetY
+                    }
+            } else {
+                Modifier.animateItem(placementSpec = tween(
+                    durationMillis = 500,
+                    easing = LinearOutSlowInEasing
+                ))
+            }
+            content(modifier, index, safeItem)
         }
-        content(modifier, index, item)
     }
 }
