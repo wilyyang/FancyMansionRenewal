@@ -1,8 +1,8 @@
 [versions]
 # block version
-compileSdk = "34"
+compileSdk = "35"
 minSdk = "24"
-targetSdk = "34"
+targetSdk = "35"
 kotlinCompilerExtensionVersion = "1.5.14"
 
 # plugin version
