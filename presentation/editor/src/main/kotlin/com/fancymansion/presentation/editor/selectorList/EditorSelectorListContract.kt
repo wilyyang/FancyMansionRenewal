@@ -21,7 +21,8 @@ class EditorSelectorListContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
-        val title : String = "",
+        val bookTitle : String = "",
+        val pageTitle : String = "",
         val isEditMode : Boolean = false,
         val selectorSortOrder: SelectorSortOrder = SelectorSortOrder.LAST_EDITED
     ) : ViewState

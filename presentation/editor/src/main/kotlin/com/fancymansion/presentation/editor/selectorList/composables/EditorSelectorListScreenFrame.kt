@@ -90,7 +90,7 @@ fun EditorPageListScreenFrame(
                 onClickLeftIcon = {
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
-                title = uiState.title,
+                title = uiState.bookTitle,
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {

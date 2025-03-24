@@ -14,6 +14,7 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.SelectorModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -126,6 +127,20 @@ class UseCaseMakeBook @Inject constructor(
             ).let { updatedLogic ->
                 bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = updatedLogic)
             }
+        }
+
+    suspend fun saveEditedSelectorList(episodeRef: EpisodeRef, pageId: Long, editedSelectorList: List<SelectorModel>) =
+        withContext(dispatcher) {
+            val newLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef).let { originLogic ->
+                originLogic.logics.first { it.pageId == pageId }.let { originPageLogic ->
+                    originPageLogic.copy(selectors = editedSelectorList).let { newPageLogic ->
+                        originLogic.copy(
+                            logics = originLogic.logics.map { if (it.pageId == pageId) newPageLogic else it }
+                        )
+                    }
+                }
+            }
+            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
         }
 
     suspend fun removeBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel) =
