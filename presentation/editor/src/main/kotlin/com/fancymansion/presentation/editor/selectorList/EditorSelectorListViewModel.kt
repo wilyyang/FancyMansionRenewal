@@ -38,7 +38,6 @@ class EditorSelectorListViewModel @Inject constructor(
     private var isUpdateResume = false
     private lateinit var selectors: List<SelectorModel>
     val selectorStates: SnapshotStateList<SelectorState> = mutableStateListOf()
-    private val totalDeleteSelectorIds: MutableSet<Long> = mutableSetOf()
     private val pageId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_PAGE_ID)) }
     private lateinit var pageLogic: PageLogicModel
 
@@ -70,8 +69,8 @@ class EditorSelectorListViewModel @Inject constructor(
             EditorSelectorListContract.Event.AddSelectorButtonClicked -> addNewSelector()
             EditorSelectorListContract.Event.DeleteSelectedHolders -> deleteSelectedSelectors()
             // Holder Event
-            is EditorSelectorListContract.Event.SelectorHolderNavigateClicked -> navigateToSelectorContent(event.selectorId)
-            is EditorSelectorListContract.Event.SelectorHolderSelectClicked -> toggleSelectorSelection(event.selectorId)
+            is EditorSelectorListContract.Event.SelectorHolderNavigateClicked -> navigateToSelectorContent(selectorId = event.selectorId)
+            is EditorSelectorListContract.Event.SelectorHolderSelectClicked -> toggleSelectorSelection(selectorId = event.selectorId)
             is EditorSelectorListContract.Event.MoveHolderPosition -> moveSelector(event.fromIndex, event.toIndex)
         }
     }
@@ -110,9 +109,6 @@ class EditorSelectorListViewModel @Inject constructor(
     }
 
     private fun handleSelectorListSaveToFile() = launchWithLoading(endLoadState = null) {
-        /**
-         * TODO
-         */
         val isComplete = saveEditedSelectorListAndReload()
         setLoadState(
             loadState = LoadState.AlarmDialog(
@@ -158,20 +154,17 @@ class EditorSelectorListViewModel @Inject constructor(
 
     private fun addNewSelector() = launchWithLoading {
         val editedIndex = selectorStates.size
-        val pageId = BookIDManager.generateId(selectorStates.map { it.selector.pageId })
-        // TODO EditorSelectorList
-        val selectorId = 0L
-        val title = useCaseGetResource.string(R.string.edit_page_list_new_page_title_default)
-        selectorStates.add(SelectorState(editedIndex, SelectorModel(pageId = pageId, selectorId = selectorId, text = title), mutableStateOf(false)))
+        val selectorId = BookIDManager.generateId(selectorStates.map { it.selector.selectorId })
+        val text = useCaseGetResource.string(R.string.edit_selector_list_new_selector_text_default)
+        selectorStates.add(SelectorState(editedIndex, SelectorModel(pageId = pageId, selectorId = selectorId, text = text), mutableStateOf(false)))
     }
 
     private fun deleteSelectedSelectors() {
-        totalDeleteSelectorIds.addAll(selectorStates.filter { it.selected.value }.map { it.selector.pageId })
         selectorStates.removeIf { it.selected.value }
     }
 
     // Holder Event
-    private fun navigateToSelectorContent(pageId: Long) {
+    private fun navigateToSelectorContent(selectorId: Long) {
         checkSelectorListEdited {
             isUpdateResume = true
             setEffect {
@@ -179,14 +172,14 @@ class EditorSelectorListViewModel @Inject constructor(
                     episodeRef = episodeRef,
                     bookTitle = uiState.value.bookTitle,
                     pageId = pageId,
-                    selectorId = 0L // TODO EditorSelectorList
+                    selectorId = selectorId
                 )
             }
         }
     }
 
-    private fun toggleSelectorSelection(pageId: Long) {
-        selectorStates.firstOrNull { it.selector.pageId == pageId }?.let {
+    private fun toggleSelectorSelection(selectorId: Long) {
+        selectorStates.firstOrNull { it.selector.selectorId == selectorId }?.let {
             it.selected.value = !it.selected.value
         }
     }
@@ -218,10 +211,11 @@ class EditorSelectorListViewModel @Inject constructor(
             updateSelectorListEditIndex()
         }
         val editedSelectorList = selectorStates.sortedBy { it.editIndex }.map { it.selector }
-
-        // TODO EditorSelectorList
-        val result = true
-        totalDeleteSelectorIds.clear()
+        val result = useCaseMakeBook.saveEditedSelectorList(
+            episodeRef = episodeRef,
+            pageId = pageId,
+            editedSelectorList = editedSelectorList
+        )
         updateSelectorsAndStateList(resetSelect = resetSelect)
         return result
     }
@@ -256,9 +250,9 @@ class EditorSelectorListViewModel @Inject constructor(
         }
 
         // 정렬 순서와 상관 없이 편집순 목록 변환
-        val editedLogics = selectorStates.sortedBy { it.editIndex }.map { it.selector }
+        val editedSelectors = selectorStates.sortedBy { it.editIndex }.map { it.selector }
 
-        if (editedLogics != selectors) {
+        if (editedSelectors != selectors) {
             setLoadState(
                 LoadState.AlarmDialog(
                     title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
