@@ -15,6 +15,7 @@ import com.fancymansion.app.navigation.destination.bookOverview.OverviewHomeScre
 import com.fancymansion.app.navigation.destination.editor.EditorBookOverviewScreenDestination
 import com.fancymansion.app.navigation.destination.editor.EditorPageContentScreenDestination
 import com.fancymansion.app.navigation.destination.editor.EditorPageListScreenDestination
+import com.fancymansion.app.navigation.destination.editor.EditorSelectorListScreenDestination
 import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
@@ -25,6 +26,7 @@ import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.pageContent.EditorPageContentContract
 import com.fancymansion.presentation.editor.pageList.EditorPageListContract
+import com.fancymansion.presentation.editor.selectorList.EditorSelectorListContract
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -95,6 +97,15 @@ fun AppNavigation(typePane : TypePane) {
         ) {
             EditorPageContentScreenDestination(navController = navController, typePane = typePane)
         }
+
+        upScreenTransition(
+            route = "${EditorSelectorListContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}/{${ArgName.NAME_BOOK_TITLE}}/{${ArgName.NAME_PAGE_ID}}/{${ArgName.NAME_IS_SELECTOR_LIST_EDIT_MODE}}",
+            arguments = listOf(NavArgument.argUserId, NavArgument.argReadMode, NavArgument.argBookId, NavArgument.argEpisodeId,
+                NavArgument.argBookTitle, NavArgument.argPageId, NavArgument.argIsSelectorListEditMode),
+            navController = navController
+        ) {
+            EditorSelectorListScreenDestination(navController = navController, typePane = typePane)
+        }
     }
 }
 
@@ -122,4 +133,8 @@ fun NavController.navigateEditorPageListScreen(episodeRef: EpisodeRef, bookTitle
 fun NavController.navigateEditorPageContentScreen(episodeRef: EpisodeRef, bookTitle: String, episodeTitle: String, pageId: Long = PAGE_ID_NOT_ASSIGNED) {
     navigate(route = "${EditorPageContentContract.NAME}/${episodeRef.userId}/${episodeRef.mode.name}/${episodeRef.bookId}/${episodeRef.episodeId}" +
             "/$bookTitle/$episodeTitle/$pageId")
+}
+
+fun NavController.navigateEditorSelectorListScreen(episodeRef: EpisodeRef, bookTitle: String, pageId: Long, isEditMode: Boolean) {
+    navigate(route = "${EditorSelectorListContract.NAME}/${episodeRef.userId}/${episodeRef.mode.name}/${episodeRef.bookId}/${episodeRef.episodeId}/$bookTitle/$pageId/$isEditMode")
 }

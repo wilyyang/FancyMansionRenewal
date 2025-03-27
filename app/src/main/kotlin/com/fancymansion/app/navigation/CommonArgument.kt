@@ -46,4 +46,9 @@ object NavArgument{
         type = NavType.LongType
         defaultValue = PAGE_ID_NOT_ASSIGNED
     }
+
+    val argIsSelectorListEditMode = navArgument(ArgName.NAME_IS_SELECTOR_LIST_EDIT_MODE){
+        type = NavType.BoolType
+        defaultValue = false
+    }
 }
