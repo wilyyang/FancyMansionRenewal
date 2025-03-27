@@ -34,17 +34,17 @@ import com.fancymansion.presentation.editor.selectorList.SelectorState
 import com.fancymansion.presentation.editor.selectorList.SelectorSortOrder
 
 @Composable
-fun PageListHeader(
+fun SelectorListHeader(
     modifier: Modifier = Modifier,
     isEditMode : Boolean,
     selectorSortOrder : SelectorSortOrder,
-    pageSize : Int,
+    selectorSize : Int,
     onListModeChangeClicked : () -> Unit,
-    onPageSortOrderLastEdited : () -> Unit,
-    onPageSortOrderTitleAscending : () -> Unit,
+    onSelectorSortOrderLastEdited : () -> Unit,
+    onSelectorSortOrderTextAscending : () -> Unit,
     onSelectAllHolders : () -> Unit,
     onDeselectAllHolders : () -> Unit,
-    onAddPageButtonClicked : () -> Unit,
+    onAddSelectorButtonClicked : () -> Unit,
     onDeleteSelectedHolders : () -> Unit
 ){
     val itemPaddingEnd = 12.dp
@@ -58,7 +58,7 @@ fun PageListHeader(
             )
     ) {
         CommonEditInfoTitle(
-            title = stringResource(id = R.string.edit_page_list_header_page_number, pageSize)
+            title = stringResource(id = R.string.edit_page_list_header_page_number, selectorSize)
         )
 
         Row(
@@ -91,7 +91,7 @@ fun PageListHeader(
                     modifier = Modifier
                         .padding(end = itemPaddingEnd)
                         .clickSingle {
-                            onAddPageButtonClicked()
+                            onAddSelectorButtonClicked()
                         },
                     text = stringResource(id = R.string.edit_page_list_header_item_edit_add),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
@@ -121,7 +121,7 @@ fun PageListHeader(
                     modifier = Modifier
                         .padding(end = itemPaddingEnd)
                         .clickSingle {
-                            onPageSortOrderLastEdited()
+                            onSelectorSortOrderLastEdited()
                         },
                     text = stringResource(id = R.string.edit_page_list_header_item_order_edit),
                     color = if (selectorSortOrder == SelectorSortOrder.LAST_EDITED) MaterialTheme.colorScheme.primary
@@ -133,7 +133,7 @@ fun PageListHeader(
                     modifier = Modifier
                         .padding(end = itemPaddingEnd)
                         .clickSingle {
-                            onPageSortOrderTitleAscending()
+                            onSelectorSortOrderTextAscending()
                         },
                     text = stringResource(id = R.string.edit_page_list_header_item_order_title_ascending),
                     color = if (selectorSortOrder == SelectorSortOrder.TEXT_ASCENDING) MaterialTheme.colorScheme.primary
@@ -154,11 +154,11 @@ fun PageListHeader(
 }
 
 @Composable
-fun PageHolder(
+fun SelectorHolder(
     modifier: Modifier = Modifier,
     isEditMode : Boolean,
     state: SelectorState,
-    onPageContentButtonClicked : (Long) -> Unit
+    onSelectorContentButtonClicked : (Long) -> Unit
 ){
     Box(
         modifier = modifier
@@ -166,7 +166,7 @@ fun PageHolder(
             .height(85.dp)
             .background(color = MaterialTheme.colorScheme.surface)
             .clickable {
-                onPageContentButtonClicked(state.selector.pageId)
+                onSelectorContentButtonClicked(state.selector.selectorId)
             }
             .padding(horizontal = 8.dp)
             .borderLine(

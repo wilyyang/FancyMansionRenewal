@@ -62,19 +62,19 @@ fun EditorSelectorListScreenContent(
         )
 
         Column {
-            PageListHeader(
+            SelectorListHeader(
                 isEditMode = uiState.isEditMode,
-                pageSize = selectorStates.size,
+                selectorSize = selectorStates.size,
                 selectorSortOrder = uiState.selectorSortOrder,
                 onListModeChangeClicked = {
                     onEventSent(EditorSelectorListContract.Event.SelectorListModeChangeButtonClicked)
                 },
-                onPageSortOrderLastEdited = {
+                onSelectorSortOrderLastEdited = {
                     if (uiState.selectorSortOrder != SelectorSortOrder.LAST_EDITED) {
                         onEventSent(EditorSelectorListContract.Event.SelectorSortOrderLastEdited)
                     }
                 },
-                onPageSortOrderTitleAscending = {
+                onSelectorSortOrderTextAscending = {
                     if (uiState.selectorSortOrder != SelectorSortOrder.TEXT_ASCENDING) {
                         onEventSent(EditorSelectorListContract.Event.SelectorSortOrderTextAscending)
                     }
@@ -85,7 +85,7 @@ fun EditorSelectorListScreenContent(
                 onDeselectAllHolders = {
                     onEventSent(EditorSelectorListContract.Event.DeselectAllHolders)
                 },
-                onAddPageButtonClicked = {
+                onAddSelectorButtonClicked = {
                     onEventSent(EditorSelectorListContract.Event.AddSelectorButtonClicked)
                 },
                 onDeleteSelectedHolders = {
@@ -103,11 +103,11 @@ fun EditorSelectorListScreenContent(
             ) {
 
                 draggableItems(items = selectorStates, dragDropState = dragDropState) { modifier, _, state ->
-                    PageHolder(
+                    SelectorHolder(
                         modifier = modifier,
                         isEditMode = uiState.isEditMode,
                         state = state,
-                        onPageContentButtonClicked = {
+                        onSelectorContentButtonClicked = {
                             if (uiState.isEditMode) {
                                 onEventSent(EditorSelectorListContract.Event.SelectorHolderSelectClicked(it))
                             } else {
