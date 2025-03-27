@@ -184,7 +184,6 @@ fun SelectorHolder(
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
-                    modifier = Modifier.padding(start = 5.dp),
                     text = state.selector.text,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
