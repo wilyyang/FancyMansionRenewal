@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
 @Composable
-fun EditorPageListScreenFrame(
+fun EditorSelectorListScreenFrame(
     uiState: EditorSelectorListContract.State,
     selectorStates : SnapshotStateList<SelectorState>,
     loadState: LoadState,
@@ -80,7 +80,7 @@ fun EditorPageListScreenFrame(
         statusBarColor = MaterialTheme.colorScheme.surface,
         typePane = TypePane.MOBILE,
         initContent = {
-            EditorPageListSkeletonScreen()
+            EditorSelectorListSkeletonScreen()
         },
         topBar = {
             FancyMansionTopBar(
@@ -90,8 +90,8 @@ fun EditorPageListScreenFrame(
                 onClickLeftIcon = {
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
-                title = uiState.bookTitle,
-                subTitle = stringResource(id = R.string.topbar_editor_sub_title),
+                title = uiState.pageTitle,
+                subTitle = uiState.bookTitle,
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
                     onEventSent(EditorSelectorListContract.Event.SelectorSaveToFile)
@@ -100,7 +100,7 @@ fun EditorPageListScreenFrame(
             )
         }
     ) {
-        EditorPageListScreenContent(
+        EditorSelectorListScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             selectorStates = selectorStates,
@@ -115,7 +115,7 @@ fun EditorPageListScreenFrame(
 }
 
 @Composable
-fun EditorPageListSkeletonScreen() {
+fun EditorSelectorListSkeletonScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()

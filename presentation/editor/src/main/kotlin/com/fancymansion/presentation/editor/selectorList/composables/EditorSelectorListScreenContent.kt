@@ -27,7 +27,7 @@ import com.fancymansion.presentation.editor.selectorList.SelectorState
 import com.fancymansion.presentation.editor.selectorList.SelectorSortOrder
 
 @Composable
-fun EditorPageListScreenContent(
+fun EditorSelectorListScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorSelectorListContract.State,
     selectorStates : SnapshotStateList<SelectorState>,
