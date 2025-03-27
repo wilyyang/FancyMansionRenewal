@@ -58,7 +58,7 @@ fun SelectorListHeader(
             )
     ) {
         CommonEditInfoTitle(
-            title = stringResource(id = R.string.edit_page_list_header_page_number, selectorSize)
+            title = stringResource(id = R.string.edit_selector_list_header_selector_number, selectorSize)
         )
 
         Row(
@@ -73,7 +73,7 @@ fun SelectorListHeader(
                         .clickSingle {
                             onSelectAllHolders()
                         },
-                    text = stringResource(id = R.string.edit_page_list_header_item_edit_total),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_edit_total),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -83,7 +83,7 @@ fun SelectorListHeader(
                         .clickSingle {
                             onDeselectAllHolders()
                         },
-                    text = stringResource(id = R.string.edit_page_list_header_item_edit_cancel),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_edit_cancel),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -93,7 +93,7 @@ fun SelectorListHeader(
                         .clickSingle {
                             onAddSelectorButtonClicked()
                         },
-                    text = stringResource(id = R.string.edit_page_list_header_item_edit_add),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_edit_add),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -103,7 +103,7 @@ fun SelectorListHeader(
                         .clickSingle {
                             onDeleteSelectedHolders()
                         },
-                    text = stringResource(id = R.string.edit_page_list_header_item_edit_delete),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_edit_delete),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -111,7 +111,7 @@ fun SelectorListHeader(
                     modifier = Modifier.clickSingle {
                         onListModeChangeClicked()
                     },
-                    text = stringResource(id = R.string.edit_page_list_header_item_mode_complete),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_mode_complete),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -123,7 +123,7 @@ fun SelectorListHeader(
                         .clickSingle {
                             onSelectorSortOrderLastEdited()
                         },
-                    text = stringResource(id = R.string.edit_page_list_header_item_order_edit),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_order_edit),
                     color = if (selectorSortOrder == SelectorSortOrder.LAST_EDITED) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
@@ -135,7 +135,7 @@ fun SelectorListHeader(
                         .clickSingle {
                             onSelectorSortOrderTextAscending()
                         },
-                    text = stringResource(id = R.string.edit_page_list_header_item_order_title_ascending),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_order_text_ascending),
                     color = if (selectorSortOrder == SelectorSortOrder.TEXT_ASCENDING) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
@@ -145,7 +145,7 @@ fun SelectorListHeader(
                     modifier = Modifier.clickSingle() {
                         onListModeChangeClicked()
                     },
-                    text = stringResource(id = R.string.edit_page_list_header_item_mode_edit),
+                    text = stringResource(id = R.string.edit_selector_list_header_item_mode_edit),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             }
@@ -196,7 +196,7 @@ fun SelectorHolder(
 
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = stringResource(id = R.string.edit_overview_page_holder_page_number, state.selector.pageId),
+                text = stringResource(id = R.string.edit_selector_holder_selector_number, state.selector.selectorId),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -236,7 +236,7 @@ fun SelectorHolder(
                             shape = MaterialTheme.shapes.large
                         )
                         .padding(horizontal = 6.dp, vertical = 4.dp),
-                    text = stringResource(id = R.string.edit_overview_page_holder_selector_count, state.selector.routes.size),
+                    text = stringResource(id = R.string.edit_selector_holder_route_count, state.selector.routes.size),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

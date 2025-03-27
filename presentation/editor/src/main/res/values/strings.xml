@@ -79,4 +79,19 @@
     <string name="edit_page_content_page_type_dialog_text_change_to_start">시작 페이지로 바꾸면 원래 시작 페이지는 일반 페이지가 됩니다. 계속하시겠습니까?</string>
 
     <string name="edit_selector_list_new_selector_text_default">새로운 선택지</string>
+    <string name="edit_selector_list_header_selector_number">선택지 총 %d개</string>
+
+    <string name="edit_selector_list_header_item_mode_edit">편집</string>
+    <string name="edit_selector_list_header_item_mode_complete">완료</string>
+
+    <string name="edit_selector_list_header_item_order_edit">편집순</string>
+    <string name="edit_selector_list_header_item_order_text_ascending">텍스트순</string>
+
+    <string name="edit_selector_list_header_item_edit_total">전체</string>
+    <string name="edit_selector_list_header_item_edit_cancel">해제</string>
+    <string name="edit_selector_list_header_item_edit_add">추가</string>
+    <string name="edit_selector_list_header_item_edit_delete">삭제</string>
+
+    <string name="edit_selector_holder_selector_number">선택지 넘버 : %d</string>
+    <string name="edit_selector_holder_route_count">루트 개수 %d개</string>
 </resources>
