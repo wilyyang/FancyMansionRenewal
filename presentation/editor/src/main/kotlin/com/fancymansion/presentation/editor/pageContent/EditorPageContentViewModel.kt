@@ -194,6 +194,7 @@ class EditorPageContentViewModel @Inject constructor(
     }
 
     private fun handleMoveSelectorList() {
+        isUpdateResume = true
         setEffect {
             EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen(
                 episodeRef = episodeRef,

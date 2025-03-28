@@ -90,8 +90,8 @@ fun EditorSelectorListScreenFrame(
                 onClickLeftIcon = {
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
-                title = uiState.pageTitle,
-                subTitle = uiState.bookTitle,
+                title = stringResource(id = R.string.topbar_editor_title_selector_list),
+                subTitle = "${uiState.bookTitle} - ${uiState.pageTitle}",
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
                     onEventSent(EditorSelectorListContract.Event.SelectorSaveToFile)
@@ -124,7 +124,7 @@ fun EditorSelectorListSkeletonScreen() {
         FancyMansionTopBar(
             typePane = TypePane.MOBILE,
             topBarColor = MaterialTheme.colorScheme.surface,
-            title = "",
+            title = stringResource(id = R.string.topbar_editor_title_selector_list),
             subTitle = stringResource(id = R.string.topbar_editor_sub_title),
             shadowElevation = 1.dp
         )
@@ -177,7 +177,7 @@ fun EditorSelectorListSkeletonScreen() {
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ){
                     FadeInOutSkeleton(
-                        modifier = Modifier.height(16.dp).width(30.dp)
+                        modifier = Modifier.height(16.dp).width(60.dp)
                     )
                 }
             }
