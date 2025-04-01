@@ -134,6 +134,7 @@ const val LOGIC_ID_NOT_ASSIGNED = 0L
 const val ROUTE_PAGE_ID_NOT_ASSIGNED = -4000L
 const val ACTION_ID_NOT_ASSIGNED = 0L
 const val PAGE_ID_NOT_ASSIGNED = -1L
+const val SELECTOR_ID_NOT_ASSIGNED = -1L
 
 enum class PageType(
     val localizedName: StringValue.StringResource

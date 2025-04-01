@@ -5,6 +5,7 @@ import androidx.navigation.navArgument
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.SELECTOR_ID_NOT_ASSIGNED
 
 object NavArgument{
     val argUserId = navArgument(ArgName.NAME_USER_ID){
@@ -45,6 +46,11 @@ object NavArgument{
     val argPageId = navArgument(ArgName.NAME_PAGE_ID){
         type = NavType.LongType
         defaultValue = PAGE_ID_NOT_ASSIGNED
+    }
+
+    val argSelectorId = navArgument(ArgName.NAME_SELECTOR_ID){
+        type = NavType.LongType
+        defaultValue = SELECTOR_ID_NOT_ASSIGNED
     }
 
     val argIsSelectorListEditMode = navArgument(ArgName.NAME_IS_SELECTOR_LIST_EDIT_MODE){

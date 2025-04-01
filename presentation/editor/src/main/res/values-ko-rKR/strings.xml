@@ -95,4 +95,6 @@
 
     <string name="edit_selector_holder_selector_number">선택지 넘버 : %d</string>
     <string name="edit_selector_holder_route_count">루트 개수 %d개</string>
+
+    <string name="topbar_editor_title_selector_content">선택지 편집</string>
 </resources>

@@ -5,22 +5,21 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
-import com.fancymansion.app.navigation.navigateEditorSelectorContentScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
-import com.fancymansion.presentation.editor.selectorList.EditorSelectorListContract
-import com.fancymansion.presentation.editor.selectorList.EditorSelectorListViewModel
-import com.fancymansion.presentation.editor.selectorList.composables.EditorSelectorListScreenFrame
+import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
+import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentViewModel
+import com.fancymansion.presentation.editor.selectorContent.composables.EditorSelectorContentScreenFrame
 
 @Composable
-fun EditorSelectorListScreenDestination(
+fun EditorSelectorContentScreenDestination(
     navController: NavController,
     typePane : TypePane
 ) {
-    val viewModel: EditorSelectorListViewModel = hiltViewModel()
+    val viewModel: EditorSelectorContentViewModel = hiltViewModel()
 
     val onEventSent =  remember {
-        { event : EditorSelectorListContract.Event ->
+        { event : EditorSelectorContentContract.Event ->
             viewModel.setEvent(event)
         }
     }
@@ -31,17 +30,16 @@ fun EditorSelectorListScreenDestination(
         }
     }
 
-    val onNavigationRequested : (EditorSelectorListContract.Effect.Navigation) -> Unit =  remember {
-        { effect : EditorSelectorListContract.Effect.Navigation ->
+    val onNavigationRequested : (EditorSelectorContentContract.Effect.Navigation) -> Unit =  remember {
+        { effect : EditorSelectorContentContract.Effect.Navigation ->
             handleNavigationRequest(effect, navController)
         }
     }
 
     HandleCommonEffect(navController = navController, commonEffectFlow = viewModel.commonEffect, onCommonEventSent = onCommonEventSent)
 
-    EditorSelectorListScreenFrame (
+    EditorSelectorContentScreenFrame (
         uiState = viewModel.uiState.value,
-        selectorStates = viewModel.selectorStates,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
         onCommonEventSent = onCommonEventSent,
@@ -50,11 +48,8 @@ fun EditorSelectorListScreenDestination(
     )
 }
 
-fun handleNavigationRequest(effect: EditorSelectorListContract.Effect, navController: NavController) {
+fun handleNavigationRequest(effect: EditorSelectorContentContract.Effect, navController: NavController) {
     when (effect) {
-        is EditorSelectorListContract.Effect.Navigation.NavigateEditorSelectorContentScreen -> {
-            navController.navigateEditorSelectorContentScreen(effect.episodeRef, effect.bookTitle, effect.pageId, effect.selectorId)
-        }
         else -> {}
     }
 }
