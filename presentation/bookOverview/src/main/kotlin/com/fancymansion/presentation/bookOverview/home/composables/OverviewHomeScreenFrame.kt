@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.bookOverview.home.composables
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -26,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.BuildCompat
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -61,6 +64,7 @@ fun OverviewHomeScreenFrame(
     }
 
     val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
+    val navigationBarPaddingDp = with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
     val screenSize = LocalConfiguration.current
     val bookCoverHeightDp = remember { screenSize.screenWidthDp * 0.72f }
 
@@ -68,7 +72,17 @@ fun OverviewHomeScreenFrame(
      * 플립에서 높이 다르게 나오는 문제 수정
      */
     val metrics = LocalContext.current.resources.displayMetrics
-    val screenHeightDp = metrics.heightPixels / LocalDensity.current.density
+
+    /**
+     * Android 15 이상부터 전체 화면이 Default
+     */
+    val systemUiPaddingValue = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+        statusBarPaddingDp.value + navigationBarPaddingDp.value
+    }else {
+        0
+    }.toInt()
+
+    val screenHeightDp = metrics.heightPixels / LocalDensity.current.density - systemUiPaddingValue
 
     val bookBottomInfoHeightDp = remember { screenHeightDp  - bookCoverHeightDp + detailPanelCornerHeight}
 
