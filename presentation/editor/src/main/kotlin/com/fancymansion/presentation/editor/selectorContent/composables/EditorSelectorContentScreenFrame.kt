@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -50,6 +51,7 @@ fun EditorSelectorContentScreenFrame(
         }
     }
 
+    val focusManager = LocalFocusManager.current
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
             if(effect is EditorSelectorContentContract.Effect.Navigation){
@@ -78,6 +80,7 @@ fun EditorSelectorContentScreenFrame(
                 subTitle = "${uiState.bookTitle} - ${uiState.pageTitle}",
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
+                    focusManager.clearFocus()
                     onEventSent(EditorSelectorContentContract.Event.SelectorSaveToFile)
                 },
                 shadowElevation = 1.dp
@@ -88,7 +91,8 @@ fun EditorSelectorContentScreenFrame(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onEventSent = onEventSent,
-            onCommonEventSent = onCommonEventSent
+            onCommonEventSent = onCommonEventSent,
+            focusManager = focusManager
         )
     }
 

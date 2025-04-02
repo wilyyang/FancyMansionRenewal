@@ -106,7 +106,7 @@ fun EditorPageContentScreenContent(
                             modifier = Modifier.fillMaxWidth()
                                 .padding(top = Paddings.Basic.vertical),
                             title = uiState.pageTitle,
-                            updateBookInfoTitle = {
+                            updatePageInfoTitle = {
                                 onEventSent(EditorPageContentContract.Event.EditPageContentTitle(title = it))
                             }
                         )

@@ -91,7 +91,7 @@ fun PageContentHeader(
 fun EditPageTitle(
     modifier : Modifier = Modifier,
     title: String,
-    updateBookInfoTitle: (String) -> Unit
+    updatePageInfoTitle: (String) -> Unit
 ){
     Column(modifier = modifier) {
         CommonEditInfoTitle(
@@ -109,7 +109,7 @@ fun EditPageTitle(
             hint = stringResource(id = R.string.edit_page_content_edit_hint_page_title),
             isCancelable = true
         ) {
-            updateBookInfoTitle(it)
+            updatePageInfoTitle(it)
         }
 
         Spacer(modifier = Modifier.height(itemMarginHeight))

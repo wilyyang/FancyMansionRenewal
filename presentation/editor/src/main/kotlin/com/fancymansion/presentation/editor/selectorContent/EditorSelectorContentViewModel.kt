@@ -12,6 +12,8 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.domain.model.book.PageLogicModel
+import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
@@ -38,6 +40,8 @@ class EditorSelectorContentViewModel @Inject constructor(
             requireNotNull(get<String>(NAME_EPISODE_ID))
         )
     }
+    private var logics: List<PageLogicModel> = emptyList()
+    private lateinit var originSelector: SelectorModel
 
     init {
         initializeState()
@@ -67,17 +71,32 @@ class EditorSelectorContentViewModel @Inject constructor(
     private fun initializeState() {
         launchWithInit {
             val bookTitle = requireNotNull(savedStateHandle.get<String>(NAME_BOOK_TITLE))
-            // TODO Update 04.01
+            loadSelectorContent(pageId, selectorId)
+
+            val pageTitle = logics.firstOrNull { it.pageId == pageId }?.title.orEmpty()
+            val selectorText = originSelector.text
+
             setState {
                 copy(
                     isInitSuccess = true,
-                    bookTitle = bookTitle
+                    bookTitle = bookTitle,
+                    pageTitle = pageTitle,
+                    selectorText = selectorText
                 )
             }
         }
     }
 
     // CommonEvent
+    private suspend fun loadSelectorContent(pageId: Long, selectorId: Long) {
+        logics = useCaseLoadBook.loadLogic(episodeRef).logics
+
+        originSelector = logics
+            .firstOrNull { it.pageId == pageId }
+            ?.selectors
+            ?.firstOrNull { it.selectorId == selectorId }!!
+    }
+
     private fun handleOnResume() {
         if (isUpdateResume) {
             isUpdateResume = false
