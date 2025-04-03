@@ -104,4 +104,5 @@
     <string name="edit_selector_content_edit_hint_selector_text">선택지</string>
 
     <string name="edit_selector_content_top_label_show_condition">보이기 조건</string>
+    <string name="edit_selector_content_show_condition_item_add">추가</string>
 </resources>

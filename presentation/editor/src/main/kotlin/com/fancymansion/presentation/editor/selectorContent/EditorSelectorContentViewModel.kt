@@ -1,5 +1,7 @@
 package com.fancymansion.presentation.editor.selectorContent
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
@@ -12,11 +14,12 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.domain.model.book.PageLogicModel
+import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.editor.common.ConditionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,6 +31,7 @@ class EditorSelectorContentViewModel @Inject constructor(
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorSelectorContentContract.State, EditorSelectorContentContract.Event, EditorSelectorContentContract.Effect>() {
 
+    val showConditionStates: SnapshotStateList<ConditionState> = mutableStateListOf()
     private var isUpdateResume = false
     private val pageId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_PAGE_ID)) }
     private val selectorId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_SELECTOR_ID)) }
@@ -40,7 +44,7 @@ class EditorSelectorContentViewModel @Inject constructor(
             requireNotNull(get<String>(NAME_EPISODE_ID))
         )
     }
-    private var logics: List<PageLogicModel> = emptyList()
+    private lateinit var logic: LogicModel
     private lateinit var originSelector: SelectorModel
 
     init {
@@ -54,6 +58,9 @@ class EditorSelectorContentViewModel @Inject constructor(
             EditorSelectorContentContract.Event.SelectorSaveToFile -> {
                 // TODO Handle 04.01
             }
+
+            is EditorSelectorContentContract.Event.EditSelectorContentText -> updateSelectorText(event.text)
+
         }
     }
 
@@ -70,10 +77,10 @@ class EditorSelectorContentViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
-            val bookTitle = requireNotNull(savedStateHandle.get<String>(NAME_BOOK_TITLE))
-            loadSelectorContent(pageId, selectorId)
+            updateSelectorAndStateList(pageId, selectorId)
 
-            val pageTitle = logics.firstOrNull { it.pageId == pageId }?.title.orEmpty()
+            val bookTitle = requireNotNull(savedStateHandle.get<String>(NAME_BOOK_TITLE))
+            val pageTitle = logic.logics.firstOrNull { it.pageId == pageId }?.title.orEmpty()
             val selectorText = originSelector.text
 
             setState {
@@ -87,14 +94,23 @@ class EditorSelectorContentViewModel @Inject constructor(
         }
     }
 
-    // CommonEvent
-    private suspend fun loadSelectorContent(pageId: Long, selectorId: Long) {
-        logics = useCaseLoadBook.loadLogic(episodeRef).logics
+    private fun updateSelectorText(text: String) {
+        setState {
+            copy(
+                selectorText = text
+            )
+        }
+    }
 
-        originSelector = logics
-            .firstOrNull { it.pageId == pageId }
-            ?.selectors
-            ?.firstOrNull { it.selectorId == selectorId }!!
+    // CommonEvent
+    private suspend fun updateSelectorAndStateList(pageId: Long, selectorId: Long) {
+        logic = useCaseLoadBook.loadLogic(episodeRef)
+        originSelector = useCaseLoadBook.getSelector(logic, pageId, selectorId)
+
+        showConditionStates.clear()
+        originSelector.showConditions.forEachIndexed { index, condition ->
+            showConditionStates.add(ConditionState(editIndex = index, condition = condition))
+        }
     }
 
     private fun handleOnResume() {

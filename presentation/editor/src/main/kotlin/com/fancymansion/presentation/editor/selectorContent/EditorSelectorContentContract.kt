@@ -18,6 +18,8 @@ class EditorSelectorContentContract {
 
     sealed class Event : ViewEvent {
         data object SelectorSaveToFile : Event()
+
+        data class EditSelectorContentText(val text : String) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

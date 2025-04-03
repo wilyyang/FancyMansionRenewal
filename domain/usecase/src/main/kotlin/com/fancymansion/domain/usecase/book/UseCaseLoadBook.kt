@@ -8,6 +8,7 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.SelectorModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -53,5 +54,13 @@ class UseCaseLoadBook @Inject constructor(
     suspend fun loadCoverImage(episodeRef: EpisodeRef, imageName: String): File =
         withContext(dispatcher) {
             bookLocalRepository.loadCoverImage(episodeRef.userId, episodeRef.mode, episodeRef.bookId, imageName)
+        }
+
+    suspend fun getSelector(logic: LogicModel, pageId : Long, selectorId : Long): SelectorModel =
+        withContext(dispatcher) {
+            logic.logics
+                .firstOrNull { it.pageId == pageId }
+                ?.selectors
+                ?.firstOrNull { it.selectorId == selectorId }!!
         }
 }

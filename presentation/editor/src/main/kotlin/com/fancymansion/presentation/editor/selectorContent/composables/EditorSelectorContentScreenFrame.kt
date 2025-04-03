@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -22,6 +23,7 @@ import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun EditorSelectorContentScreenFrame(
     uiState: EditorSelectorContentContract.State,
+    showConditionStates : SnapshotStateList<ConditionState>,
     loadState: LoadState,
     effectFlow: SharedFlow<EditorSelectorContentContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
@@ -90,6 +93,7 @@ fun EditorSelectorContentScreenFrame(
         EditorSelectorContentScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
+            showConditionStates = showConditionStates,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent,
             focusManager = focusManager

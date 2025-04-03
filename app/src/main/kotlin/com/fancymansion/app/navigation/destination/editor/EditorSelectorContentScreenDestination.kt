@@ -40,6 +40,7 @@ fun EditorSelectorContentScreenDestination(
 
     EditorSelectorContentScreenFrame (
         uiState = viewModel.uiState.value,
+        showConditionStates = viewModel.showConditionStates,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
         onCommonEventSent = onCommonEventSent,
