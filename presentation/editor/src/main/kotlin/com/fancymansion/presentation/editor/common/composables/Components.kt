@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,16 +17,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.ActionInfo
+import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionState
+import com.fancymansion.presentation.editor.common.ConditionWrapper
 
 @Composable
 fun CommonEditInfoTitle(
@@ -69,25 +73,20 @@ fun ConditionHolder(
             .align(Alignment.CenterStart)
             .fillMaxWidth(0.75f)) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(
-                    text = state.condition.conditionRule.logicalOp.name,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-
-            Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = stringResource(id = R.string.edit_selector_holder_selector_number, state.condition.conditionId),
+                text = stringResource(
+                    id = when (state.condition.conditionGroup) {
+                        ConditionGroup.ShowSelectorCondition -> R.string.edit_condition_holder_show_condition_number
+                        ConditionGroup.RouteCondition -> R.string.edit_condition_holder_route_condition_number
+                    }, state.condition.conditionId
+                ),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Spacer(modifier = Modifier.height(5.dp))
+
+            StyledConditionText(conditionWrapper = state.condition)
+
             Spacer(modifier = Modifier.height(3.dp))
         }
 
@@ -110,4 +109,100 @@ fun ConditionHolder(
             )
         }
     }
+}
+
+@Composable
+fun StyledConditionText(
+    conditionWrapper: ConditionWrapper
+) {
+    val partSelf = buildAnnotatedString {
+        when(val self = conditionWrapper.selfActionInfo){
+            is ActionInfo.PageInfo -> {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append("${self.pageTitle} ")
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
+                    append(stringResource(R.string.condition_holder_text_page))
+                }
+            }
+            is ActionInfo.SelectorInfo -> {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append("${self.pageTitle} ")
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
+                    append(stringResource(R.string.condition_holder_text_page))
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append("${self.selectorText} ")
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
+                    append(stringResource(R.string.condition_holder_text_selector))
+                }
+            }
+            else -> {}
+        }
+
+
+    }
+
+    val partTarget = buildAnnotatedString {
+        when(val target = conditionWrapper.targetActionInfo){
+            is ActionInfo.PageInfo -> {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
+                    append("${target.pageTitle} ")
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
+                    append(stringResource(R.string.condition_holder_text_page))
+                }
+
+            }
+            is ActionInfo.SelectorInfo -> {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
+                    append("${target.pageTitle} ")
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
+                    append(stringResource(R.string.condition_holder_text_page))
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
+                    append("${target.selectorText} ")
+                }
+
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
+                    append(stringResource(R.string.condition_holder_text_selector))
+                }
+            }
+            is ActionInfo.CountInfo -> {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
+                    append("${target.count} ")
+                }
+            }
+        }
+    }
+
+    val partLogicOp = buildAnnotatedString {
+        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+            append(stringResource(conditionWrapper.relationOp.localizedName.resId))
+        }
+    }
+
+    val conditionTemplate = stringResource(R.string.condition_holder_text_format)
+    val rawParts = conditionTemplate.split("%1\$s", "%2\$s", "%3\$s")
+
+    val annotatedText = buildAnnotatedString {
+        append(rawParts[0])
+        append(partSelf)
+        append(rawParts[1])
+        append(partTarget)
+        append(rawParts[2])
+        append(partLogicOp)
+    }
+
+    Text(text = annotatedText)
 }

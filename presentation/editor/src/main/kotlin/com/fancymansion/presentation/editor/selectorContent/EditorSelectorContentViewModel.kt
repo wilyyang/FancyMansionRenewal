@@ -20,6 +20,7 @@ import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.editor.common.ConditionState
+import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -109,7 +110,7 @@ class EditorSelectorContentViewModel @Inject constructor(
 
         showConditionStates.clear()
         originSelector.showConditions.forEachIndexed { index, condition ->
-            showConditionStates.add(ConditionState(editIndex = index, condition = condition))
+            showConditionStates.add(ConditionState(editIndex = index, condition = condition.toWrapper(logic)))
         }
     }
 
