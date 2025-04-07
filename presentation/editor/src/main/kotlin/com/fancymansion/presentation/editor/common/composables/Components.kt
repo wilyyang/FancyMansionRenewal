@@ -15,16 +15,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
@@ -115,80 +121,42 @@ fun ConditionHolder(
 fun StyledConditionText(
     conditionWrapper: ConditionWrapper
 ) {
-    val partSelf = buildAnnotatedString {
-        when(val self = conditionWrapper.selfActionInfo){
-            is ActionInfo.PageInfo -> {
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
-                    append("${self.pageTitle} ")
-                }
+    val styleTotal = SpanStyle(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = MaterialTheme.typography.bodySmall.fontSize
+    )
+    val styleRelation = SpanStyle(
+        color = ColorSet.red_dc3232,
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize
+    )
 
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
-                    append(stringResource(R.string.condition_holder_text_page))
-                }
-            }
-            is ActionInfo.SelectorInfo -> {
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
-                    append("${self.pageTitle} ")
-                }
+    val styleLogical = SpanStyle(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+        fontStyle = Italic
+    )
 
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
-                    append(stringResource(R.string.condition_holder_text_page))
-                }
-
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
-                    append("${self.selectorText} ")
-                }
-
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
-                    append(stringResource(R.string.condition_holder_text_selector))
-                }
-            }
-            else -> {}
-        }
-
-
-    }
-
-    val partTarget = buildAnnotatedString {
-        when(val target = conditionWrapper.targetActionInfo){
-            is ActionInfo.PageInfo -> {
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
-                    append("${target.pageTitle} ")
-                }
-
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
-                    append(stringResource(R.string.condition_holder_text_page))
-                }
-
-            }
-            is ActionInfo.SelectorInfo -> {
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
-                    append("${target.pageTitle} ")
-                }
-
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
-                    append(stringResource(R.string.condition_holder_text_page))
-                }
-
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
-                    append("${target.selectorText} ")
-                }
-
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Normal)) {
-                    append(stringResource(R.string.condition_holder_text_selector))
-                }
-            }
-            is ActionInfo.CountInfo -> {
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
-                    append("${target.count} ")
-                }
-            }
-        }
-    }
-
+    val partSelf = buildStyledActionText(
+        conditionWrapper.selfActionInfo, styleMain = SpanStyle(
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            fontWeight = FontWeight.Bold
+        )
+    )
+    val partTarget = buildStyledActionText(
+        conditionWrapper.targetActionInfo, styleMain = SpanStyle(
+            color = MaterialTheme.colorScheme.tertiary,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            fontWeight = FontWeight.Bold
+        )
+    )
     val partLogicOp = buildAnnotatedString {
-        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+        withStyle(styleRelation) {
             append(stringResource(conditionWrapper.relationOp.localizedName.resId))
+        }
+
+        withStyle(styleLogical) {
+            append(" ${stringResource(conditionWrapper.logicalOp.localizedName.resId)}")
         }
     }
 
@@ -196,13 +164,78 @@ fun StyledConditionText(
     val rawParts = conditionTemplate.split("%1\$s", "%2\$s", "%3\$s")
 
     val annotatedText = buildAnnotatedString {
-        append(rawParts[0])
+        withStyle(styleTotal) {
+            append(rawParts[0])
+        }
         append(partSelf)
-        append(rawParts[1])
+        withStyle(styleTotal) {
+            append(rawParts[1])
+        }
         append(partTarget)
-        append(rawParts[2])
+        withStyle(styleTotal) {
+            append(rawParts[2])
+        }
         append(partLogicOp)
     }
 
     Text(text = annotatedText)
+}
+
+@Composable
+fun buildStyledActionText(
+    actionInfo: ActionInfo,
+    styleBase: SpanStyle = SpanStyle(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize
+    ),
+    styleMain: SpanStyle = SpanStyle(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+        fontWeight = FontWeight.Bold
+    )
+): AnnotatedString {
+
+    return buildAnnotatedString {
+        when (actionInfo) {
+            is ActionInfo.PageInfo -> {
+                val formatted =
+                    stringResource(R.string.condition_holder_text_page_unit, actionInfo.pageTitle)
+                withStyle(styleBase) {
+                    val prefix = formatted.substringBefore(actionInfo.pageTitle)
+                    val suffix = formatted.substringAfter(actionInfo.pageTitle)
+                    append(prefix)
+                    withStyle(styleMain) { append(actionInfo.pageTitle) }
+                    append(suffix)
+                }
+            }
+
+            is ActionInfo.SelectorInfo -> {
+                val formatted = stringResource(
+                    R.string.condition_holder_text_selector_unit,
+                    actionInfo.pageTitle,
+                    actionInfo.selectorText
+                )
+                withStyle(styleBase) {
+                    var current = 0
+                    val index1 = formatted.indexOf(actionInfo.pageTitle, current)
+                    append(formatted.substring(current, index1))
+                    withStyle(styleMain) { append(actionInfo.pageTitle) }
+                    current = index1 + actionInfo.pageTitle.length
+
+                    val index2 = formatted.indexOf(actionInfo.selectorText, current)
+                    append(formatted.substring(current, index2))
+                    withStyle(styleMain) { append(actionInfo.selectorText) }
+                    current = index2 + actionInfo.selectorText.length
+
+                    append(formatted.substring(current))
+                }
+            }
+
+            is ActionInfo.CountInfo -> {
+                withStyle(styleMain) {
+                    append("${actionInfo.count}")
+                }
+            }
+        }
+    }
 }
