@@ -173,3 +173,6 @@ enum class LogicalOp(
         localizedName = StringValue.StringResource(com.fancymansion.core.common.R.string.logical_or),
         check = { n1, n2 -> n1 || n2 });
 }
+
+const val PAGE_TITLE_ELLIPSIS_LENGTH = 12
+const val SELECTOR_TEXT_ELLIPSIS_LENGTH = 12

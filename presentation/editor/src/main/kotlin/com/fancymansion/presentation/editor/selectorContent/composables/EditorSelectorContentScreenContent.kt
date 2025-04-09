@@ -135,10 +135,11 @@ fun EditorSelectorContentScreenContent(
                     }
 
                     // TODO Show Condition 04.02
-                    draggableItems(items = showConditionStates, dragDropState = dragDropState) { modifier, _, state ->
+                    draggableItems(items = showConditionStates, dragDropState = dragDropState) { modifier, index, state ->
                         ConditionHolder(
                             modifier = modifier,
                             state = state,
+                            isEnd = index == showConditionStates.size - 1,
                             onConditionHolderClicked = {
                                 // TODO Event 04.02
                             }
@@ -146,6 +147,7 @@ fun EditorSelectorContentScreenContent(
                     }
 
                     item {
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
                         Spacer(modifier = Modifier.height(80.dp))
                     }
                 }

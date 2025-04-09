@@ -29,6 +29,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fancymansion.core.common.const.PAGE_TITLE_ELLIPSIS_LENGTH
+import com.fancymansion.core.common.const.SELECTOR_TEXT_ELLIPSIS_LENGTH
+import com.fancymansion.core.common.util.ellipsis
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
@@ -57,6 +60,7 @@ fun CommonEditInfoTitle(
 fun ConditionHolder(
     modifier: Modifier = Modifier,
     state: ConditionState,
+    isEnd: Boolean = false,
     onConditionHolderClicked : (Long) -> Unit
 ){
     Box(
@@ -68,10 +72,12 @@ fun ConditionHolder(
                 onConditionHolderClicked(state.condition.conditionId)
             }
             .padding(horizontal = 8.dp)
-            .borderLine(
-                density = LocalDensity.current,
-                color = onSurfaceSub,
-                bottom = 0.3.dp
+            .then(
+                if (isEnd) Modifier else Modifier.borderLine(
+                    density = LocalDensity.current,
+                    color = onSurfaceSub,
+                    bottom = 0.3.dp
+                )
             )
             .padding(horizontal = 10.dp)
     ) {
@@ -91,7 +97,7 @@ fun ConditionHolder(
             )
             Spacer(modifier = Modifier.height(5.dp))
 
-            StyledConditionText(conditionWrapper = state.condition)
+            StyledConditionText(conditionWrapper = state.condition, isEnd = isEnd)
 
             Spacer(modifier = Modifier.height(3.dp))
         }
@@ -119,7 +125,8 @@ fun ConditionHolder(
 
 @Composable
 fun StyledConditionText(
-    conditionWrapper: ConditionWrapper
+    conditionWrapper: ConditionWrapper,
+    isEnd: Boolean = false
 ) {
     val styleTotal = SpanStyle(
         color = MaterialTheme.colorScheme.onSurface,
@@ -155,8 +162,10 @@ fun StyledConditionText(
             append(stringResource(conditionWrapper.relationOp.localizedName.resId))
         }
 
-        withStyle(styleLogical) {
-            append(" ${stringResource(conditionWrapper.logicalOp.localizedName.resId)}")
+        if(!isEnd){
+            withStyle(styleLogical) {
+                append(" ${stringResource(conditionWrapper.logicalOp.localizedName.resId)}")
+            }
         }
     }
 
@@ -204,7 +213,9 @@ fun buildStyledActionText(
                     val prefix = formatted.substringBefore(actionInfo.pageTitle)
                     val suffix = formatted.substringAfter(actionInfo.pageTitle)
                     append(prefix)
-                    withStyle(styleMain) { append(actionInfo.pageTitle) }
+                    withStyle(styleMain) { append(actionInfo.pageTitle.ellipsis(
+                        PAGE_TITLE_ELLIPSIS_LENGTH
+                    )) }
                     append(suffix)
                 }
             }
@@ -219,12 +230,16 @@ fun buildStyledActionText(
                     var current = 0
                     val index1 = formatted.indexOf(actionInfo.pageTitle, current)
                     append(formatted.substring(current, index1))
-                    withStyle(styleMain) { append(actionInfo.pageTitle) }
+                    withStyle(styleMain) { append(actionInfo.pageTitle.ellipsis(
+                        PAGE_TITLE_ELLIPSIS_LENGTH
+                    )) }
                     current = index1 + actionInfo.pageTitle.length
 
                     val index2 = formatted.indexOf(actionInfo.selectorText, current)
                     append(formatted.substring(current, index2))
-                    withStyle(styleMain) { append(actionInfo.selectorText) }
+                    withStyle(styleMain) { append(actionInfo.selectorText.ellipsis(
+                        SELECTOR_TEXT_ELLIPSIS_LENGTH
+                    )) }
                     current = index2 + actionInfo.selectorText.length
 
                     append(formatted.substring(current))
