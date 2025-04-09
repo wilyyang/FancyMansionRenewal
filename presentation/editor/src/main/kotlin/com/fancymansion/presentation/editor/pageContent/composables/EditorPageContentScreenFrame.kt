@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -97,7 +98,7 @@ fun EditorPageContentScreenFrame(
         mutableIntStateOf(-1)
     }
     var bottomDialogSource : SourceWrapper by remember {
-        mutableStateOf(SourceWrapper.TextWrapper(mutableStateOf("")))
+        mutableStateOf(SourceWrapper.TextWrapper(mutableStateOf(TextFieldValue(text = ""))))
     }
 
     val launcherGalleryPicker = rememberLauncherForActivityResult(

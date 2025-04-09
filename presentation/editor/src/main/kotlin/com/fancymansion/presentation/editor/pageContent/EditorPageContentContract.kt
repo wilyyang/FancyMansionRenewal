@@ -2,6 +2,7 @@ package com.fancymansion.presentation.editor.pageContent
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.text.input.TextFieldValue
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
@@ -42,7 +43,7 @@ class EditorPageContentContract {
 
         data class OnClickDeleteSource(val sourceIndex: Int) : Event()
 
-        data class EditSourceText(val sourceIndex: Int, val text : String) : Event()
+        data class EditSourceText(val sourceIndex: Int, val text : TextFieldValue) : Event()
         data class EditSourceImage(val sourceIndex: Int) : Event()
 
         class GalleryPickerResult(val sourceIndex: Int, val imageUri : Uri?) : Event()
@@ -65,6 +66,6 @@ class EditorPageContentContract {
 }
 
 sealed class SourceWrapper {
-    data class TextWrapper(val description: MutableState<String>) : SourceWrapper()
+    data class TextWrapper(val description: MutableState<TextFieldValue>) : SourceWrapper()
     data class ImageWrapper(val imagePickType: ImagePickType) : SourceWrapper()
 }

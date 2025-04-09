@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
@@ -81,7 +82,7 @@ class EditorPageContentViewModel @Inject constructor(
             }
 
             EditorPageContentContract.Event.AddTextSourceEvent -> {
-                contentSourceStates.add(SourceWrapper.TextWrapper(mutableStateOf("")))
+                contentSourceStates.add(SourceWrapper.TextWrapper(mutableStateOf(TextFieldValue(text = ""))))
 
                 val lastIndex = contentSourceStates.size - 1
                 setEffect {
@@ -292,7 +293,7 @@ class EditorPageContentViewModel @Inject constructor(
         // Uri 이미지 저장 및 List 변환
         val newSourceList = contentSourceStates.mapNotNull {
             when(it){
-                is SourceWrapper.TextWrapper -> SourceModel.TextModel(it.description.value)
+                is SourceWrapper.TextWrapper -> SourceModel.TextModel(it.description.value.text)
                 is SourceWrapper.ImageWrapper -> {
                     when(it.imagePickType){
                         is ImagePickType.Empty -> null
@@ -345,7 +346,7 @@ class EditorPageContentViewModel @Inject constructor(
         return sources.map { source ->
             when (source) {
                 is SourceModel.TextModel -> {
-                    SourceWrapper.TextWrapper(mutableStateOf(source.description))
+                    SourceWrapper.TextWrapper(mutableStateOf(TextFieldValue(text = source.description)))
                 }
 
                 is SourceModel.ImageModel -> {
@@ -379,7 +380,7 @@ class EditorPageContentViewModel @Inject constructor(
                     val wrapper = stateNotEmpty.getOrNull(index)
                     when {
                         sourceModel is SourceModel.TextModel && wrapper is SourceWrapper.TextWrapper ->
-                            sourceModel.description != wrapper.description.value
+                            sourceModel.description != wrapper.description.value.text
 
                         sourceModel is SourceModel.ImageModel && wrapper is SourceWrapper.ImageWrapper &&
                                 wrapper.imagePickType is ImagePickType.SavedImage ->

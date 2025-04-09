@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -161,7 +162,7 @@ fun SelectSourceDialog(
 fun CommonEditPageContentBottomDialog(
     source: SourceWrapper? = null,
     onClickDeleteSource: () -> Unit,
-    updateSourceText: (String) -> Unit,
+    updateSourceText: (TextFieldValue) -> Unit,
     onClickImagePick: () -> Unit
 ) {
     Box(
