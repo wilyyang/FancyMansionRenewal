@@ -71,7 +71,7 @@ fun ConditionHolder(
     modifier: Modifier = Modifier,
     state: ConditionState,
     isEnd: Boolean = false,
-    onConditionHolderRemoved: (Long) -> Unit,
+    onConditionHolderDelete: (Long) -> Unit,
     onConditionHolderClicked : (Long) -> Unit
 ){
     Row(
@@ -123,7 +123,7 @@ fun ConditionHolder(
             modifier = Modifier
                 .clip(shape = CircleShape)
                 .clickable{
-                    onConditionHolderRemoved(state.condition.conditionId)
+                    onConditionHolderDelete(state.condition.conditionId)
                 }
                 .padding(10.dp)
                 .border(

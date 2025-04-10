@@ -62,6 +62,11 @@ class EditorSelectorContentViewModel @Inject constructor(
 
             is EditorSelectorContentContract.Event.EditSelectorContentText -> updateSelectorText(event.text)
 
+            // Condition Holder Event
+            EditorSelectorContentContract.Event.AddShowConditionClicked -> addShowCondition()
+            is EditorSelectorContentContract.Event.ShowConditionHolderDeleteClicked -> deleteShowCondition(event.conditionId)
+            is EditorSelectorContentContract.Event.ShowConditionHolderNavigateClicked -> navigateToEditCondition(event.conditionId)
+            is EditorSelectorContentContract.Event.MoveShowConditionHolderPosition -> moveShowCondition(event.fromIndex, event.toIndex)
         }
     }
 
@@ -100,6 +105,39 @@ class EditorSelectorContentViewModel @Inject constructor(
             copy(
                 selectorText = text
             )
+        }
+    }
+
+    // Condition Holder Event
+    private fun addShowCondition() = launchWithLoading {
+        // TODO 04.10
+    }
+
+    private fun deleteShowCondition(conditionId: Long) {
+        showConditionStates.removeIf {
+            it.condition.conditionId == conditionId
+        }
+    }
+
+    private fun navigateToEditCondition(conditionId: Long) {
+        // TODO 04.10
+        isUpdateResume = true
+        setEffect {
+            EditorSelectorContentContract.Effect.Navigation.NavigateEditorConditionScreen(
+                episodeRef = episodeRef,
+                bookTitle = uiState.value.bookTitle,
+                pageTitle = uiState.value.pageTitle,
+                pageId = pageId,
+                selectorId = selectorId,
+                conditionId = conditionId
+            )
+        }
+    }
+
+    private fun moveShowCondition(fromIndex: Int, toIndex: Int) {
+        showConditionStates.apply {
+            val item = removeAt(fromIndex)
+            add(toIndex, item)
         }
     }
 

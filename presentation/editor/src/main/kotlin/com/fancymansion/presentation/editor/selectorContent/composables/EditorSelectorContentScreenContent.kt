@@ -71,7 +71,12 @@ fun EditorSelectorContentScreenContent(
             lazyListState = listState,
             draggableItemsSize = showConditionStates.size,
             onMove = { fromIndex, toIndex ->
-                // TODO Show Condition 04.02
+                onEventSent(
+                    EditorSelectorContentContract.Event.MoveShowConditionHolderPosition(
+                        fromIndex = fromIndex,
+                        toIndex = toIndex
+                    )
+                )
             }
         )
 
@@ -124,7 +129,7 @@ fun EditorSelectorContentScreenContent(
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .clickSingle {
-                                        // TODO Add Condition 04.03
+                                        onEventSent(EditorSelectorContentContract.Event.AddShowConditionClicked)
                                     },
                                 text = stringResource(id = R.string.edit_selector_content_show_condition_item_add),
                                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
@@ -140,11 +145,11 @@ fun EditorSelectorContentScreenContent(
                             modifier = modifier,
                             state = state,
                             isEnd = index == showConditionStates.size - 1,
-                            onConditionHolderRemoved = {
-                                // TODO Event 04.10
+                            onConditionHolderDelete = {
+                                onEventSent(EditorSelectorContentContract.Event.ShowConditionHolderDeleteClicked(conditionId = it))
                             },
                             onConditionHolderClicked = {
-                                // TODO Event 04.02
+                                onEventSent(EditorSelectorContentContract.Event.ShowConditionHolderNavigateClicked(conditionId = it))
                             }
                         )
                     }
