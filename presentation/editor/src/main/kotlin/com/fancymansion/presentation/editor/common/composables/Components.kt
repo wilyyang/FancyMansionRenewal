@@ -1,14 +1,20 @@
 package com.fancymansion.presentation.editor.common.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -31,7 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fancymansion.core.common.const.PAGE_TITLE_ELLIPSIS_LENGTH
 import com.fancymansion.core.common.const.SELECTOR_TEXT_ELLIPSIS_LENGTH
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.util.ellipsis
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
@@ -61,9 +71,10 @@ fun ConditionHolder(
     modifier: Modifier = Modifier,
     state: ConditionState,
     isEnd: Boolean = false,
+    onConditionHolderRemoved: (Long) -> Unit,
     onConditionHolderClicked : (Long) -> Unit
 ){
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .height(85.dp)
@@ -78,12 +89,20 @@ fun ConditionHolder(
                     color = onSurfaceSub,
                     bottom = 0.3.dp
                 )
-            )
-            .padding(horizontal = 10.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        Image(
+            modifier = Modifier.width(25.dp),
+            painter = painterResource(com.fancymansion.core.presentation.R.drawable.ic_holder_drag),
+            contentScale = ContentScale.FillWidth,
+            contentDescription = "Drag Holder Condition"
+        )
+
         Column(modifier = Modifier
-            .align(Alignment.CenterStart)
-            .fillMaxWidth(0.75f)) {
+            .padding(start = 7.dp)
+            .padding(vertical = 3.dp)
+            .weight(1f)) {
 
             Text(
                 text = stringResource(
@@ -92,34 +111,31 @@ fun ConditionHolder(
                         ConditionGroup.RouteCondition -> R.string.edit_condition_holder_route_condition_number
                     }, state.condition.conditionId
                 ),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(3.dp))
 
             StyledConditionText(conditionWrapper = state.condition, isEnd = isEnd)
-
-            Spacer(modifier = Modifier.height(3.dp))
         }
 
-        Box(
-            modifier = Modifier.align(Alignment.CenterEnd)
-        ){
-            Text(
-                modifier = Modifier
-                    .clip(shape = MaterialTheme.shapes.large)
-                    .padding(0.5.dp)
-                    .border(
-                        width = 0.5.dp,
-                        color = onSurfaceSub,
-                        shape = MaterialTheme.shapes.large
-                    )
-                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                text = "삭제",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Text(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .clickable{
+                    onConditionHolderRemoved(state.condition.conditionId)
+                }
+                .padding(10.dp)
+                .border(
+                    width = 0.5.dp,
+                    color = onSurfaceSub,
+                    shape = MaterialTheme.shapes.large
+                )
+                .padding(horizontal = 9.dp, vertical = 8.dp),
+            text = "삭제",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

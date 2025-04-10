@@ -140,6 +140,9 @@ fun EditorSelectorContentScreenContent(
                             modifier = modifier,
                             state = state,
                             isEnd = index == showConditionStates.size - 1,
+                            onConditionHolderRemoved = {
+                                // TODO Event 04.10
+                            },
                             onConditionHolderClicked = {
                                 // TODO Event 04.02
                             }
