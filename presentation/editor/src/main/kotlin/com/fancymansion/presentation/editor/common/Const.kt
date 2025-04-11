@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.const.SELECTOR_ID_NOT_ASSIGNED
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.ConditionRuleModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -22,8 +23,8 @@ enum class ConditionGroup{
 
 sealed class ActionInfo{
     data class CountInfo(val count: Int): ActionInfo()
-    data class PageInfo(val pageTitle: String): ActionInfo()
-    data class SelectorInfo(val pageTitle: String, val selectorText: String): ActionInfo()
+    data class PageInfo(val pageTitle: String, val actionId: ActionIdModel): ActionInfo()
+    data class SelectorInfo(val pageTitle: String, val selectorText: String, val actionId: ActionIdModel): ActionInfo()
 }
 
 data class ConditionWrapper(
@@ -31,20 +32,19 @@ data class ConditionWrapper(
     val conditionGroup : ConditionGroup,
     val selfActionInfo : ActionInfo,
     val targetActionInfo : ActionInfo,
-    val logicalOp: LogicalOp,
-    val relationOp: RelationOp
+    val logicalOp: LogicalOp = LogicalOp.AND,
+    val relationOp: RelationOp = RelationOp.EQUAL
 )
 
 fun ConditionModel.toWrapper(logic: LogicModel): ConditionWrapper {
     val selfInfo = logic.findActionInfo(
-        conditionRule.selfActionId.pageId,
-        conditionRule.selfActionId.selectorId
+        conditionRule.selfActionId
     )
 
     val targetInfo = when (val rule = conditionRule) {
         is ConditionRuleModel.CountConditionRuleModel -> CountInfo(rule.count)
         is ConditionRuleModel.TargetConditionRuleModel ->
-            logic.findActionInfo(rule.targetActionId.pageId, rule.targetActionId.selectorId)
+            logic.findActionInfo(rule.targetActionId)
     }
 
     return ConditionWrapper(
@@ -60,15 +60,15 @@ fun ConditionModel.toWrapper(logic: LogicModel): ConditionWrapper {
     )
 }
 
-private fun LogicModel.findActionInfo(pageId: Long, selectorId: Long): ActionInfo {
-    val page = logics.firstOrNull { it.pageId == pageId } ?: return PageInfo("")
+private fun LogicModel.findActionInfo(actionId: ActionIdModel): ActionInfo {
+    val page = logics.firstOrNull { it.pageId == actionId.pageId } ?: return PageInfo("", actionId)
     val pageTitle = page.title
 
-    return if (selectorId != SELECTOR_ID_NOT_ASSIGNED) {
-        page.selectors.firstOrNull { it.selectorId == selectorId }?.let {
-            SelectorInfo(pageTitle, it.text)
-        } ?: PageInfo(pageTitle)
+    return if (actionId.selectorId != SELECTOR_ID_NOT_ASSIGNED) {
+        page.selectors.firstOrNull { it.selectorId == actionId.selectorId }?.let {
+            SelectorInfo(pageTitle, it.text, actionId)
+        } ?: PageInfo(pageTitle, actionId)
     } else {
-        PageInfo(pageTitle)
+        PageInfo(pageTitle, actionId)
     }
 }

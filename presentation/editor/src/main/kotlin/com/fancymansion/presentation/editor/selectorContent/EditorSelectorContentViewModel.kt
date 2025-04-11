@@ -12,14 +12,20 @@ import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.editor.common.ActionInfo
+import com.fancymansion.presentation.editor.common.ActionInfo.CountInfo
+import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionState
+import com.fancymansion.presentation.editor.common.ConditionWrapper
 import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -111,6 +117,20 @@ class EditorSelectorContentViewModel @Inject constructor(
     // Condition Holder Event
     private fun addShowCondition() = launchWithLoading {
         // TODO 04.10
+        val editedIndex = showConditionStates.size
+        val conditionId = BookIDManager.generateId(showConditionStates.map { it.condition.conditionId })
+
+        val condition = ConditionWrapper(
+            conditionId = conditionId,
+            conditionGroup = ConditionGroup.ShowSelectorCondition,
+            selfActionInfo = ActionInfo.PageInfo(
+                pageTitle = uiState.value.pageTitle,
+                actionId = ActionIdModel(pageId = pageId)
+            ),
+            targetActionInfo = CountInfo(count = 0)
+        )
+
+        showConditionStates.add(ConditionState(editIndex = editedIndex, condition = condition))
     }
 
     private fun deleteShowCondition(conditionId: Long) {
