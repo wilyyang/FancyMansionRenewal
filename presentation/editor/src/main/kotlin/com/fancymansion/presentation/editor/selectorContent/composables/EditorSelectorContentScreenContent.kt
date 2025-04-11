@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.editor.selectorContent.composables
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -105,7 +106,8 @@ fun EditorSelectorContentScreenContent(
 
                     item {
                         EditSelectorText(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(horizontal = Paddings.Basic.horizontal)
                                 .padding(top = Paddings.Basic.vertical),
                             text = uiState.selectorText,
@@ -117,20 +119,29 @@ fun EditorSelectorContentScreenContent(
 
                     item {
                         Box(
-                            modifier = Modifier
-                                .padding(vertical = Paddings.Basic.vertical, horizontal = Paddings.Basic.horizontal)
-                                .fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             CommonEditInfoTitle(
+                                modifier = Modifier
+                                    .padding(vertical = Paddings.Basic.vertical)
+                                    .padding(start = Paddings.Basic.horizontal),
                                 title = stringResource(id = R.string.edit_selector_content_top_label_show_condition)
                             )
 
                             Text(
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .clickSingle {
+                                    .padding(horizontal = Paddings.Basic.horizontal / 2)
+                                    .clip(shape = MaterialTheme.shapes.medium)
+                                    .clickSingle(
+                                        indication = LocalIndication.current
+                                    ) {
                                         onEventSent(EditorSelectorContentContract.Event.AddShowConditionClicked)
-                                    },
+                                    }
+                                    .padding(
+                                        vertical = Paddings.Basic.vertical,
+                                        horizontal = Paddings.Basic.horizontal / 2
+                                    ),
                                 text = stringResource(id = R.string.edit_selector_content_show_condition_item_add),
                                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                             )
