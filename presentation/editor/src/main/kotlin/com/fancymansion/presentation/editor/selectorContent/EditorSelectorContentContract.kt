@@ -4,6 +4,20 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
+import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.RouteModel
+
+data class RouteWrapper(val routeId: Long, val targetPageId: Long, val targetPageTitle: String, val routeConditionSize : Int)
+data class RouteState(var editIndex : Int, val route : RouteWrapper)
+fun RouteModel.toWrapper(logic: LogicModel) : RouteWrapper {
+    val targetPageTitle = logic.logics.firstOrNull { it.pageId == routeTargetPageId }?.title.orEmpty()
+    return RouteWrapper(
+        routeId = routeId,
+        targetPageId = routeTargetPageId,
+        targetPageTitle = targetPageTitle,
+        routeConditionSize = routeConditions.size
+    )
+}
 
 class EditorSelectorContentContract {
     companion object {

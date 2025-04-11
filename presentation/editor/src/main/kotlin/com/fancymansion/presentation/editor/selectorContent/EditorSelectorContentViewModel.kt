@@ -39,6 +39,8 @@ class EditorSelectorContentViewModel @Inject constructor(
 ) : BaseViewModel<EditorSelectorContentContract.State, EditorSelectorContentContract.Event, EditorSelectorContentContract.Effect>() {
 
     val showConditionStates: SnapshotStateList<ConditionState> = mutableStateListOf()
+    val routeStates: SnapshotStateList<RouteState> = mutableStateListOf()
+
     private var isUpdateResume = false
     private val pageId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_PAGE_ID)) }
     private val selectorId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_SELECTOR_ID)) }
@@ -169,6 +171,9 @@ class EditorSelectorContentViewModel @Inject constructor(
         showConditionStates.clear()
         originSelector.showConditions.forEachIndexed { index, condition ->
             showConditionStates.add(ConditionState(editIndex = index, condition = condition.toWrapper(logic)))
+        }
+        originSelector.routes.forEachIndexed { index, route ->
+            routeStates.add(RouteState(editIndex = index, route = route.toWrapper(logic)))
         }
     }
 

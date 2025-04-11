@@ -25,6 +25,7 @@ import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
+import com.fancymansion.presentation.editor.selectorContent.RouteState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.onEach
 fun EditorSelectorContentScreenFrame(
     uiState: EditorSelectorContentContract.State,
     showConditionStates : SnapshotStateList<ConditionState>,
+    routeStates : SnapshotStateList<RouteState>,
     loadState: LoadState,
     effectFlow: SharedFlow<EditorSelectorContentContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
@@ -94,6 +96,7 @@ fun EditorSelectorContentScreenFrame(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             showConditionStates = showConditionStates,
+            routeStates = routeStates,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent,
             focusManager = focusManager

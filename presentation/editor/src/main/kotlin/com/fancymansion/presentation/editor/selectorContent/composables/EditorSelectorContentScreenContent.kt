@@ -39,6 +39,7 @@ import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.common.composables.ConditionHolder
 import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
+import com.fancymansion.presentation.editor.selectorContent.RouteState
 import com.fancymansion.presentation.editor.selectorContent.composables.part.EditSelectorText
 import com.fancymansion.presentation.editor.selectorContent.composables.part.SelectorContentHeader
 
@@ -47,6 +48,7 @@ fun EditorSelectorContentScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorSelectorContentContract.State,
     showConditionStates : SnapshotStateList<ConditionState>,
+    routeStates : SnapshotStateList<RouteState>,
     onEventSent: (event: EditorSelectorContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
     focusManager : FocusManager
@@ -89,8 +91,7 @@ fun EditorSelectorContentScreenContent(
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 SelectorContentHeader(
-                    // TODO Route 04.02
-                    routeSize = 0,
+                    routeSize = routeStates.size,
                     onShowRouteList = {
                         // TODO Event 04.02
                     }
