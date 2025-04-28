@@ -132,7 +132,7 @@ fun ConditionHolder(
                     shape = MaterialTheme.shapes.large
                 )
                 .padding(horizontal = 9.dp, vertical = 8.dp),
-            text = "삭제",
+            text = stringResource(R.string.edit_condition_holder_item_delete),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

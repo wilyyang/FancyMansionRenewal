@@ -41,6 +41,9 @@ class EditorSelectorContentContract {
         data class ShowConditionHolderNavigateClicked(val conditionId : Long) : Event()
         data class ShowConditionHolderDeleteClicked(val conditionId : Long) : Event()
         data class MoveShowConditionHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
+
+        // Route Holder Event
+        data class MoveRouteHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

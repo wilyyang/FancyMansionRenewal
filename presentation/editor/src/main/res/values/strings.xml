@@ -109,9 +109,13 @@
 
     <string name="edit_condition_holder_show_condition_number">조건 넘버 : %d</string>
     <string name="edit_condition_holder_route_condition_number">조건 넘버 : %d</string>
+    <string name="edit_condition_holder_item_delete">삭제</string>
 
     <string name="condition_holder_text_page_unit">%1$s 조회수</string>
     <string name="condition_holder_text_selector_unit">%1$s의 %2$s 선택 횟수</string>
 
     <string name="condition_holder_text_format">%1$s가 %2$s에 비해 %3$s</string>
+
+    <string name="edit_route_holder_route_number">경로 넘버 : %d</string>
+    <string name="edit_route_holder_item_delete">삭제</string>
 </resources>

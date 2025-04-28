@@ -1,2 +1,115 @@
 package com.fancymansion.presentation.editor.selectorContent.composables.part
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.modifier.dragContainer
+import com.fancymansion.core.presentation.compose.modifier.draggableItems
+import com.fancymansion.core.presentation.compose.modifier.rememberDragDropState
+import com.fancymansion.core.presentation.compose.theme.Paddings
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
+import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
+import com.fancymansion.presentation.editor.selectorContent.RouteState
+
+const val detailPanelCornerHeight = 12
+val detailPanelShape = RoundedCornerShape(topStart = detailPanelCornerHeight.dp, topEnd = detailPanelCornerHeight.dp)
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun BottomRouteListDialog(
+    routeStates: SnapshotStateList<RouteState>,
+    onEventSent: (event: EditorSelectorContentContract.Event) -> Unit,
+) {
+
+    val listState = rememberLazyListState()
+    val dragDropState = rememberDragDropState(
+        lazyListState = listState,
+        draggableItemsSize = routeStates.size,
+        onMove = { fromIndex, toIndex ->
+            onEventSent(
+                EditorSelectorContentContract.Event.MoveRouteHolderPosition(
+                    fromIndex = fromIndex,
+                    toIndex = toIndex
+                )
+            )
+        }
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.6f)
+            .clip(detailPanelShape)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = Paddings.Basic.horizontal)
+            .padding(top = 10.dp)
+            .clickSingle { }
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.TopStart)
+        ) {
+            LazyColumn(modifier = Modifier
+                .dragContainer(dragDropState)
+                .fillMaxSize()
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+                draggableItems(items = routeStates, dragDropState = dragDropState) { modifier, index, state ->
+                    RouteHolder(
+                        modifier = modifier,
+                        state = state,
+                        isEnd = index == routeStates.size - 1,
+                        onRouteHolderDelete = {
+                            // TODO 04.28
+                        },
+                        onRouteHolderClicked = {
+                            // TODO 04.28
+                        }
+                    )
+                }
+
+                item {
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
+            }
+        }
+
+
+        Box(modifier = Modifier
+            .align(Alignment.TopCenter)
+            .fillMaxWidth()
+            .height(30.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.surface,
+                        Color.Transparent
+                    )
+                )
+            ))
+    }
+}

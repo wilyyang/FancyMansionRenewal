@@ -75,6 +75,9 @@ class EditorSelectorContentViewModel @Inject constructor(
             is EditorSelectorContentContract.Event.ShowConditionHolderDeleteClicked -> deleteShowCondition(event.conditionId)
             is EditorSelectorContentContract.Event.ShowConditionHolderNavigateClicked -> navigateToEditCondition(event.conditionId)
             is EditorSelectorContentContract.Event.MoveShowConditionHolderPosition -> moveShowCondition(event.fromIndex, event.toIndex)
+
+            // Route Holder Event
+            is EditorSelectorContentContract.Event.MoveRouteHolderPosition -> moveRoute(event.fromIndex, event.toIndex)
         }
     }
 
@@ -158,6 +161,13 @@ class EditorSelectorContentViewModel @Inject constructor(
 
     private fun moveShowCondition(fromIndex: Int, toIndex: Int) {
         showConditionStates.apply {
+            val item = removeAt(fromIndex)
+            add(toIndex, item)
+        }
+    }
+
+    private fun moveRoute(fromIndex: Int, toIndex: Int) {
+        routeStates.apply {
             val item = removeAt(fromIndex)
             add(toIndex, item)
         }

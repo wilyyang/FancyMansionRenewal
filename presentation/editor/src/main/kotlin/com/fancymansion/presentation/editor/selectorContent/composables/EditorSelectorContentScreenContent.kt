@@ -51,6 +51,7 @@ fun EditorSelectorContentScreenContent(
     routeStates : SnapshotStateList<RouteState>,
     onEventSent: (event: EditorSelectorContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
+    onOpenEditRoute: () -> Unit,
     focusManager : FocusManager
 ) {
     if (!uiState.isInitSuccess) {
@@ -93,7 +94,7 @@ fun EditorSelectorContentScreenContent(
                 SelectorContentHeader(
                     routeSize = routeStates.size,
                     onShowRouteList = {
-                        // TODO Event 04.02
+                        onOpenEditRoute()
                     }
                 )
 
