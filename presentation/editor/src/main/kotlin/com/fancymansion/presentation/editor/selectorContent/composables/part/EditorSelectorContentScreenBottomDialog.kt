@@ -69,9 +69,11 @@ fun BottomRouteListDialog(
         Column(
             modifier = Modifier.align(Alignment.TopStart)
         ) {
-            LazyColumn(modifier = Modifier
-                .dragContainer(dragDropState)
-                .fillMaxSize()
+            LazyColumn(
+                modifier = Modifier
+                    .dragContainer(dragDropState)
+                    .fillMaxSize(),
+                state = listState
             ) {
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
