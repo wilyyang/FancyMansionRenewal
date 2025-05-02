@@ -68,7 +68,6 @@ fun BottomRouteListDialog(
             .fillMaxHeight(0.6f)
             .clip(detailPanelShape)
             .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = Paddings.Basic.horizontal)
             .padding(top = 10.dp)
             .clickSingle { }
     ) {
@@ -103,50 +102,31 @@ fun BottomRouteListDialog(
 
         HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
 
-        Box {
-            LazyColumn(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .dragContainer(dragDropState)
-                    .fillMaxSize(),
-                state = listState
-            ) {
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+        LazyColumn(
+            modifier = Modifier
+                .dragContainer(dragDropState)
+                .fillMaxSize(),
+            state = listState
+        ) {
 
-                draggableItems(items = routeStates, dragDropState = dragDropState) { modifier, index, state ->
-                    RouteHolder(
-                        modifier = modifier,
-                        state = state,
-                        isEnd = index == routeStates.size - 1,
-                        onRouteHolderDelete = {
-                            onEventSent(EditorSelectorContentContract.Event.RouteHolderDeleteClicked(state.route.routeId))
-                        },
-                        onRouteHolderClicked = {
-                            onEventSent(EditorSelectorContentContract.Event.RouteHolderNavigateClicked(state.route.routeId))
-                        }
-                    )
-                }
-
-                item {
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
-                    Spacer(modifier = Modifier.height(30.dp))
-                }
+            draggableItems(items = routeStates, dragDropState = dragDropState) { modifier, index, state ->
+                RouteHolder(
+                    modifier = modifier,
+                    state = state,
+                    isEnd = index == routeStates.size - 1,
+                    onRouteHolderDelete = {
+                        onEventSent(EditorSelectorContentContract.Event.RouteHolderDeleteClicked(state.route.routeId))
+                    },
+                    onRouteHolderClicked = {
+                        onEventSent(EditorSelectorContentContract.Event.RouteHolderNavigateClicked(state.route.routeId))
+                    }
+                )
             }
 
-            Box(modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .height(30.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            Color.Transparent
-                        )
-                    )
-                ))
+            item {
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+                Spacer(modifier = Modifier.height(30.dp))
+            }
         }
     }
 }

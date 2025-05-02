@@ -100,7 +100,7 @@
     <string name="topbar_editor_title_selector_content">선택지 편집</string>
 
     <string name="edit_selector_content_button_page_preview">미리보기</string>
-    <string name="edit_selector_content_header_route_size">선택지 경로 %d개</string>
+    <string name="edit_selector_content_header_route_size">선택시 페이지 경로 %d개</string>
     <string name="edit_selector_content_top_label_selector_text">선택지 글</string>
     <string name="edit_selector_content_edit_hint_selector_text">선택지</string>
 
@@ -118,7 +118,10 @@
 
     <string name="edit_route_holder_route_number">경로 넘버 : %d</string>
     <string name="edit_route_holder_item_delete">삭제</string>
+    <string name="edit_route_holder_target_page_title">%s 로 진입</string>
+    <string name="edit_route_holder_target_page_not_assign">진입 페이지 미할당</string>
+    <string name="edit_route_holder_condition">진입 조건 %d개</string>
 
-    <string name="edit_selector_dialog_top_label_route">선택지 진입 항목</string>
+    <string name="edit_selector_dialog_top_label_route">선택시 페이지 경로</string>
     <string name="edit_selector_dialog_top_route_item_add">추가</string>
 </resources>

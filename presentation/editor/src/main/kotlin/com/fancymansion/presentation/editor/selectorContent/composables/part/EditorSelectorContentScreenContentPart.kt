@@ -23,8 +23,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.const.ROUTE_PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
@@ -34,6 +40,7 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.selectorContent.RouteState
+import com.fancymansion.presentation.editor.selectorContent.RouteWrapper
 
 @Composable
 fun SelectorContentHeader(
@@ -134,15 +141,26 @@ fun RouteHolder(
             )
             Spacer(modifier = Modifier.height(3.dp))
 
-            // TODO 04.28
-            Text(state.route.targetPageTitle)
+            Text(
+                text = styledTargetPageTitle(state.route),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = stringResource(id = R.string.edit_route_holder_condition, state.route.routeConditionSize),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(3.dp))
 
         }
 
         Text(
             modifier = Modifier
                 .clip(shape = CircleShape)
-                .clickable{
+                .clickable {
                     onRouteHolderDelete(state.route.routeId)
                 }
                 .padding(10.dp)
@@ -157,4 +175,30 @@ fun RouteHolder(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
+}
+
+@Composable
+fun styledTargetPageTitle(route: RouteWrapper) : AnnotatedString {
+    val annotatedTargetTitle = buildAnnotatedString {
+        if (route.targetPageId == ROUTE_PAGE_ID_NOT_ASSIGNED) {
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontWeight = FontWeight.SemiBold)) {
+                append(stringResource(R.string.edit_route_holder_target_page_not_assign))
+            }
+        }else{
+            val fullText = stringResource(R.string.edit_route_holder_target_page_title, route.targetPageTitle)
+            val targetIndex = fullText.indexOf(route.targetPageTitle)
+
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                append(fullText.substring(0, targetIndex))
+            }
+
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)) {
+                append(fullText.substring(targetIndex, targetIndex + route.targetPageTitle.length))
+            }
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                append(fullText.substring(targetIndex + route.targetPageTitle.length))
+            }
+        }
+    }
+    return annotatedTargetTitle
 }
