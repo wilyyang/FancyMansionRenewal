@@ -43,6 +43,9 @@ class EditorSelectorContentContract {
         data class MoveShowConditionHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
 
         // Route Holder Event
+        data object AddRouteClicked : Event()
+        data class RouteHolderNavigateClicked(val routeId : Long) : Event()
+        data class RouteHolderDeleteClicked(val routeId : Long) : Event()
         data class MoveRouteHolderPosition(val fromIndex: Int, val toIndex: Int) : Event()
     }
 
@@ -55,6 +58,15 @@ class EditorSelectorContentContract {
                 val pageId: Long,
                 val selectorId: Long,
                 val conditionId: Long
+            ) : Navigation()
+
+            data class NavigateEditorRouteScreen(
+                val episodeRef: EpisodeRef,
+                val bookTitle: String,
+                val pageTitle: String,
+                val pageId: Long,
+                val selectorId: Long,
+                val routeId: Long
             ) : Navigation()
         }
     }

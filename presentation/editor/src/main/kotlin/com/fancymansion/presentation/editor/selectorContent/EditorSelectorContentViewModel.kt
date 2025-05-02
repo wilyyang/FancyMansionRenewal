@@ -11,6 +11,7 @@ import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
 import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ROUTE_PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -77,6 +78,9 @@ class EditorSelectorContentViewModel @Inject constructor(
             is EditorSelectorContentContract.Event.MoveShowConditionHolderPosition -> moveShowCondition(event.fromIndex, event.toIndex)
 
             // Route Holder Event
+            EditorSelectorContentContract.Event.AddRouteClicked -> addRoute()
+            is EditorSelectorContentContract.Event.RouteHolderDeleteClicked -> deleteRoute(event.routeId)
+            is EditorSelectorContentContract.Event.RouteHolderNavigateClicked -> navigateToEditRoute(event.routeId)
             is EditorSelectorContentContract.Event.MoveRouteHolderPosition -> moveRoute(event.fromIndex, event.toIndex)
         }
     }
@@ -163,6 +167,43 @@ class EditorSelectorContentViewModel @Inject constructor(
         showConditionStates.apply {
             val item = removeAt(fromIndex)
             add(toIndex, item)
+        }
+    }
+
+    // Route Holder Event
+    private fun addRoute() = launchWithLoading {
+        // TODO 05.02
+        val editedIndex = routeStates.size
+        val routeId = BookIDManager.generateId(routeStates.map { it.route.routeId })
+
+        val route = RouteWrapper(
+            routeId = routeId,
+            targetPageId = ROUTE_PAGE_ID_NOT_ASSIGNED,
+            targetPageTitle = "",
+            routeConditionSize = 0
+        )
+
+        routeStates.add(RouteState(editIndex = editedIndex, route = route))
+    }
+
+    private fun deleteRoute(routeId: Long) {
+        routeStates.removeIf {
+            it.route.routeId == routeId
+        }
+    }
+
+    private fun navigateToEditRoute(routeId: Long) {
+        // TODO 05.02
+        isUpdateResume = true
+        setEffect {
+            EditorSelectorContentContract.Effect.Navigation.NavigateEditorRouteScreen(
+                episodeRef = episodeRef,
+                bookTitle = uiState.value.bookTitle,
+                pageTitle = uiState.value.pageTitle,
+                pageId = pageId,
+                selectorId = selectorId,
+                routeId = routeId
+            )
         }
     }
 

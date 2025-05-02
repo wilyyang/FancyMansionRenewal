@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.editor.selectorContent.composables.part
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -22,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.dragContainer
@@ -29,6 +33,8 @@ import com.fancymansion.core.presentation.compose.modifier.draggableItems
 import com.fancymansion.core.presentation.compose.modifier.rememberDragDropState
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
+import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
 import com.fancymansion.presentation.editor.selectorContent.RouteState
 
@@ -56,7 +62,7 @@ fun BottomRouteListDialog(
         }
     )
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.6f)
@@ -66,11 +72,41 @@ fun BottomRouteListDialog(
             .padding(top = 10.dp)
             .clickSingle { }
     ) {
-        Column(
-            modifier = Modifier.align(Alignment.TopStart)
+        Box(
+            modifier = Modifier.fillMaxWidth()
         ) {
+            CommonEditInfoTitle(
+                modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .padding(start = Paddings.Basic.horizontal),
+                title = stringResource(id = R.string.edit_selector_dialog_top_label_route)
+            )
+
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(horizontal = Paddings.Basic.horizontal / 2)
+                    .clip(shape = MaterialTheme.shapes.medium)
+                    .clickSingle(
+                        indication = LocalIndication.current
+                    ) {
+                        onEventSent(EditorSelectorContentContract.Event.AddRouteClicked)
+                    }
+                    .padding(
+                        vertical = Paddings.Basic.vertical,
+                        horizontal = Paddings.Basic.horizontal / 2
+                    ),
+                text = stringResource(id = R.string.edit_selector_dialog_top_route_item_add),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+        Box {
             LazyColumn(
                 modifier = Modifier
+                    .align(Alignment.TopStart)
                     .dragContainer(dragDropState)
                     .fillMaxSize(),
                 state = listState
@@ -85,10 +121,10 @@ fun BottomRouteListDialog(
                         state = state,
                         isEnd = index == routeStates.size - 1,
                         onRouteHolderDelete = {
-                            // TODO 04.28
+                            onEventSent(EditorSelectorContentContract.Event.RouteHolderDeleteClicked(state.route.routeId))
                         },
                         onRouteHolderClicked = {
-                            // TODO 04.28
+                            onEventSent(EditorSelectorContentContract.Event.RouteHolderNavigateClicked(state.route.routeId))
                         }
                     )
                 }
@@ -98,20 +134,19 @@ fun BottomRouteListDialog(
                     Spacer(modifier = Modifier.height(30.dp))
                 }
             }
-        }
 
-
-        Box(modifier = Modifier
-            .align(Alignment.TopCenter)
-            .fillMaxWidth()
-            .height(30.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.surface,
-                        Color.Transparent
+            Box(modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .height(30.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surface,
+                            Color.Transparent
+                        )
                     )
-                )
-            ))
+                ))
+        }
     }
 }
