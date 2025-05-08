@@ -13,21 +13,27 @@ import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ROUTE_PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.ActionIdModel
+import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ActionInfo
 import com.fancymansion.presentation.editor.common.ActionInfo.CountInfo
 import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.common.ConditionWrapper
+import com.fancymansion.presentation.editor.common.toModel
 import com.fancymansion.presentation.editor.common.toWrapper
+import com.fancymansion.presentation.editor.selectorList.SelectorSortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -65,10 +71,7 @@ class EditorSelectorContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorSelectorContentContract.Event) {
         when(event) {
-            EditorSelectorContentContract.Event.SelectorSaveToFile -> {
-                // TODO Handle 04.01
-            }
-
+            EditorSelectorContentContract.Event.SelectorSaveToFile -> handleSelectorSaveToFile()
             is EditorSelectorContentContract.Event.EditSelectorContentText -> updateSelectorText(event.text)
 
             // Condition Holder Event
@@ -115,6 +118,19 @@ class EditorSelectorContentViewModel @Inject constructor(
         }
     }
 
+    private fun handleSelectorSaveToFile() = launchWithLoading(endLoadState = null) {
+        val isComplete = saveEditedSelectorAndReload()
+        setLoadState(
+            loadState = LoadState.AlarmDialog(
+                title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
+                message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_book_info else R.string.dialog_save_fail_book_info),
+                dismissText = null,
+                confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                onConfirm = ::setLoadStateIdle
+            )
+        )
+    }
+
     private fun updateSelectorText(text: String) {
         setState {
             copy(
@@ -131,7 +147,10 @@ class EditorSelectorContentViewModel @Inject constructor(
 
         val condition = ConditionWrapper(
             conditionId = conditionId,
-            conditionGroup = ConditionGroup.ShowSelectorCondition,
+            conditionGroup = ConditionGroup.ShowSelectorCondition(
+                pageId = pageId,
+                selectorId = selectorId
+            ),
             selfActionInfo = ActionInfo.PageInfo(
                 pageTitle = uiState.value.pageTitle,
                 actionId = ActionIdModel(pageId = pageId)
@@ -177,10 +196,12 @@ class EditorSelectorContentViewModel @Inject constructor(
         val routeId = BookIDManager.generateId(routeStates.map { it.route.routeId })
 
         val route = RouteWrapper(
+            pageId = pageId,
+            selectorId = selectorId,
             routeId = routeId,
             targetPageId = ROUTE_PAGE_ID_NOT_ASSIGNED,
             targetPageTitle = "",
-            routeConditionSize = 0
+            routeConditions = listOf()
         )
 
         routeStates.add(RouteState(editIndex = editedIndex, route = route))
@@ -226,6 +247,20 @@ class EditorSelectorContentViewModel @Inject constructor(
         originSelector.routes.forEachIndexed { index, route ->
             routeStates.add(RouteState(editIndex = index, route = route.toWrapper(logic)))
         }
+    }
+
+    private suspend fun saveEditedSelectorAndReload() : Boolean{
+        val result = useCaseMakeBook.saveEditedSelector(
+            episodeRef = episodeRef,
+            pageId = pageId,
+            selector = originSelector.copy(
+                text = uiState.value.selectorText,
+                showConditions = showConditionStates.map { it.condition.toModel() }.filterIsInstance<ConditionModel.ShowSelectorConditionModel>(),
+                routes = routeStates.map { it.route.toModel() }
+            )
+        )
+        updateSelectorAndStateList(pageId, selectorId)
+        return result
     }
 
     private fun handleOnResume() {

@@ -143,6 +143,22 @@ class UseCaseMakeBook @Inject constructor(
             bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
         }
 
+    suspend fun saveEditedSelector(episodeRef: EpisodeRef, pageId: Long, selector: SelectorModel) =
+        withContext(dispatcher) {
+            val newLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef).let { originLogic ->
+                originLogic.logics.first { it.pageId == pageId }.let { originPageLogic ->
+                    originPageLogic.copy(
+                        selectors = originPageLogic.selectors.map { if (it.selectorId == selector.selectorId) selector else it }
+                    ).let { newPageLogic ->
+                        originLogic.copy(
+                            logics = originLogic.logics.map { if (it.pageId == pageId) newPageLogic else it }
+                        )
+                    }
+                }
+            }
+            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+        }
+
     suspend fun removeBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel) =
         withContext(dispatcher) {
             bookInfo.introduce.coverList.getOrNull(0)?.let { coverImageName ->

@@ -149,7 +149,7 @@ fun RouteHolder(
 
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = stringResource(id = R.string.edit_route_holder_condition, state.route.routeConditionSize),
+                text = stringResource(id = R.string.edit_route_holder_condition, state.route.routeConditions.size),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

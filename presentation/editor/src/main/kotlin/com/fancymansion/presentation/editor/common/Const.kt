@@ -16,9 +16,10 @@ val itemMarginHeight = 15.dp
 
 data class ConditionState(var editIndex : Int, val condition : ConditionWrapper)
 
-enum class ConditionGroup{
-    ShowSelectorCondition,
-    RouteCondition
+sealed class ConditionGroup {
+    data class ShowSelectorCondition(val pageId: Long, val selectorId: Long) : ConditionGroup()
+    data class RouteCondition(val pageId: Long, val selectorId: Long, val routeId: Long) :
+        ConditionGroup()
 }
 
 sealed class ActionInfo{
@@ -50,8 +51,8 @@ fun ConditionModel.toWrapper(logic: LogicModel): ConditionWrapper {
     return ConditionWrapper(
         conditionId = conditionId,
         conditionGroup = when (this) {
-            is ConditionModel.ShowSelectorConditionModel -> ConditionGroup.ShowSelectorCondition
-            is ConditionModel.RouteConditionModel -> ConditionGroup.RouteCondition
+            is ConditionModel.ShowSelectorConditionModel -> ConditionGroup.ShowSelectorCondition(pageId = pageId, selectorId = selectorId)
+            is ConditionModel.RouteConditionModel -> ConditionGroup.RouteCondition(pageId = pageId, selectorId = selectorId, routeId = routeId)
         },
         selfActionInfo = selfInfo,
         targetActionInfo = targetInfo,
@@ -70,5 +71,57 @@ private fun LogicModel.findActionInfo(actionId: ActionIdModel): ActionInfo {
         } ?: PageInfo(pageTitle, actionId)
     } else {
         PageInfo(pageTitle, actionId)
+    }
+}
+
+fun ConditionWrapper.toModel(): ConditionModel {
+    val selfActionId = extractSelfActionId()
+    val conditionRule = buildConditionRule(selfActionId)
+
+    return when (conditionGroup) {
+        is ConditionGroup.ShowSelectorCondition -> ConditionModel.ShowSelectorConditionModel(
+            conditionId = conditionId,
+            conditionRule = conditionRule,
+            pageId = conditionGroup.pageId,
+            selectorId = conditionGroup.selectorId
+        )
+        is ConditionGroup.RouteCondition -> ConditionModel.RouteConditionModel(
+            conditionId = conditionId,
+            conditionRule = conditionRule,
+            pageId = conditionGroup.pageId,
+            selectorId = conditionGroup.selectorId,
+            routeId = conditionGroup.routeId
+        )
+    }
+}
+
+private fun ConditionWrapper.extractSelfActionId(): ActionIdModel {
+    return when (selfActionInfo) {
+        is ActionInfo.CountInfo -> throw IllegalArgumentException("CountInfo cannot be used as selfActionInfo")
+        is ActionInfo.PageInfo -> selfActionInfo.actionId
+        is ActionInfo.SelectorInfo -> selfActionInfo.actionId
+    }
+}
+
+private fun ConditionWrapper.buildConditionRule(selfActionId: ActionIdModel): ConditionRuleModel {
+    return when (targetActionInfo) {
+        is ActionInfo.CountInfo -> ConditionRuleModel.CountConditionRuleModel(
+            selfActionId = selfActionId,
+            relationOp = relationOp,
+            logicalOp = logicalOp,
+            count = targetActionInfo.count
+        )
+        is ActionInfo.PageInfo -> ConditionRuleModel.TargetConditionRuleModel(
+            selfActionId = selfActionId,
+            relationOp = relationOp,
+            logicalOp = logicalOp,
+            targetActionId = targetActionInfo.actionId
+        )
+        is ActionInfo.SelectorInfo -> ConditionRuleModel.TargetConditionRuleModel(
+            selfActionId = selfActionId,
+            relationOp = relationOp,
+            logicalOp = logicalOp,
+            targetActionId = targetActionInfo.actionId
+        )
     }
 }

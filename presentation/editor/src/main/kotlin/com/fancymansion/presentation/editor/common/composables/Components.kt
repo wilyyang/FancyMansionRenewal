@@ -107,8 +107,8 @@ fun ConditionHolder(
             Text(
                 text = stringResource(
                     id = when (state.condition.conditionGroup) {
-                        ConditionGroup.ShowSelectorCondition -> R.string.edit_condition_holder_show_condition_number
-                        ConditionGroup.RouteCondition -> R.string.edit_condition_holder_route_condition_number
+                        is ConditionGroup.ShowSelectorCondition -> R.string.edit_condition_holder_show_condition_number
+                        is ConditionGroup.RouteCondition -> R.string.edit_condition_holder_route_condition_number
                     }, state.condition.conditionId
                 ),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
