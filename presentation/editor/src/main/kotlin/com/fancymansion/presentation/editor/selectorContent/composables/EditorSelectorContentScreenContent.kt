@@ -75,6 +75,7 @@ fun EditorSelectorContentScreenContent(
             lazyListState = listState,
             draggableItemsSize = showConditionStates.size,
             onMove = { fromIndex, toIndex ->
+                focusManager.clearFocus()
                 onEventSent(
                     EditorSelectorContentContract.Event.MoveShowConditionHolderPosition(
                         fromIndex = fromIndex,
@@ -138,6 +139,7 @@ fun EditorSelectorContentScreenContent(
                                     .clickSingle(
                                         indication = LocalIndication.current
                                     ) {
+                                        focusManager.clearFocus()
                                         onEventSent(EditorSelectorContentContract.Event.AddShowConditionClicked)
                                     }
                                     .padding(
@@ -152,16 +154,17 @@ fun EditorSelectorContentScreenContent(
                         HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
                     }
 
-                    // TODO Show Condition 04.02
                     draggableItems(items = showConditionStates, dragDropState = dragDropState) { modifier, index, state ->
                         ConditionHolder(
                             modifier = modifier,
                             state = state,
                             isEnd = index == showConditionStates.size - 1,
                             onConditionHolderDelete = {
+                                focusManager.clearFocus()
                                 onEventSent(EditorSelectorContentContract.Event.ShowConditionHolderDeleteClicked(conditionId = it))
                             },
                             onConditionHolderClicked = {
+                                focusManager.clearFocus()
                                 onEventSent(EditorSelectorContentContract.Event.ShowConditionHolderNavigateClicked(conditionId = it))
                             }
                         )
@@ -197,7 +200,7 @@ fun EditorSelectorContentScreenContent(
                         .background(color = MaterialTheme.colorScheme.primary)
                         .clickSingle {
                             focusManager.clearFocus()
-                            // TODO Event 04.02
+                            onEventSent(EditorSelectorContentContract.Event.ReadPagePreviewClicked)
                         }
                 ) {
                     Text(

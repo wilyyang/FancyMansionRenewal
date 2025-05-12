@@ -56,6 +56,7 @@ class EditorSelectorContentContract {
         data object SelectorSaveToFile : Event()
 
         data class EditSelectorContentText(val text : String) : Event()
+        data object ReadPagePreviewClicked : Event()
 
         // Condition Holder Event
         data object AddShowConditionClicked : Event()
@@ -72,6 +73,13 @@ class EditorSelectorContentContract {
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect(){
+            data class NavigateViewerContentScreen(
+                val episodeRef: EpisodeRef,
+                val bookTitle: String,
+                val episodeTitle: String,
+                val pageId: Long
+            ) : Navigation()
+
             data class NavigateEditorConditionScreen(
                 val episodeRef: EpisodeRef,
                 val bookTitle: String,

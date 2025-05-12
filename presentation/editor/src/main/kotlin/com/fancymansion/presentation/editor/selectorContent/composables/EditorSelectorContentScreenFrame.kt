@@ -90,6 +90,7 @@ fun EditorSelectorContentScreenFrame(
                 topBarColor = MaterialTheme.colorScheme.surface,
                 idLeftIcon = com.fancymansion.core.presentation.R.drawable.ic_back,
                 onClickLeftIcon = {
+                    focusManager.clearFocus()
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
                 title = stringResource(id = R.string.topbar_editor_title_selector_content),
@@ -129,6 +130,7 @@ fun EditorSelectorContentScreenFrame(
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent,
             onOpenEditRoute = {
+                focusManager.clearFocus()
                 coroutineScope.launch {
                     bottomDrawerState.open()
                 }

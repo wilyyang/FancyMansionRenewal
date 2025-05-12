@@ -115,10 +115,10 @@ fun BottomRouteListDialog(
                     state = state,
                     isEnd = index == routeStates.size - 1,
                     onRouteHolderDelete = {
-                        onEventSent(EditorSelectorContentContract.Event.RouteHolderDeleteClicked(state.route.routeId))
+                        onEventSent(EditorSelectorContentContract.Event.RouteHolderDeleteClicked(it))
                     },
                     onRouteHolderClicked = {
-                        onEventSent(EditorSelectorContentContract.Event.RouteHolderNavigateClicked(state.route.routeId))
+                        onEventSent(EditorSelectorContentContract.Event.RouteHolderNavigateClicked(it))
                     }
                 )
             }

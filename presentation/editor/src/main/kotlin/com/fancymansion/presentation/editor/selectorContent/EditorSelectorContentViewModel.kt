@@ -33,7 +33,6 @@ import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.common.ConditionWrapper
 import com.fancymansion.presentation.editor.common.toModel
 import com.fancymansion.presentation.editor.common.toWrapper
-import com.fancymansion.presentation.editor.selectorList.SelectorSortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -73,6 +72,7 @@ class EditorSelectorContentViewModel @Inject constructor(
         when(event) {
             EditorSelectorContentContract.Event.SelectorSaveToFile -> handleSelectorSaveToFile()
             is EditorSelectorContentContract.Event.EditSelectorContentText -> updateSelectorText(event.text)
+            EditorSelectorContentContract.Event.ReadPagePreviewClicked -> handleReadPagePreview()
 
             // Condition Holder Event
             EditorSelectorContentContract.Event.AddShowConditionClicked -> addShowCondition()
@@ -92,8 +92,13 @@ class EditorSelectorContentViewModel @Inject constructor(
         when(event){
             is CommonEvent.OnResume -> handleOnResume()
             is CommonEvent.CloseEvent -> {
-                // TODO Check edit 04.01
-                super.handleCommonEvents(CommonEvent.CloseEvent)
+                if (uiState.value.isInitSuccess) {
+                    checkSelectorEdited {
+                        super.handleCommonEvents(CommonEvent.CloseEvent)
+                    }
+                } else {
+                    super.handleCommonEvents(CommonEvent.CloseEvent)
+                }
             }
             else -> super.handleCommonEvents(event)
         }
@@ -131,6 +136,19 @@ class EditorSelectorContentViewModel @Inject constructor(
         )
     }
 
+    private fun handleReadPagePreview() {
+        checkSelectorEdited {
+            setEffect {
+                EditorSelectorContentContract.Effect.Navigation.NavigateViewerContentScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.bookTitle,
+                    episodeTitle = "",
+                    pageId = pageId
+                )
+            }
+        }
+    }
+
     private fun updateSelectorText(text: String) {
         setState {
             copy(
@@ -141,7 +159,6 @@ class EditorSelectorContentViewModel @Inject constructor(
 
     // Condition Holder Event
     private fun addShowCondition() = launchWithLoading {
-        // TODO 04.10
         val editedIndex = showConditionStates.size
         val conditionId = BookIDManager.generateId(showConditionStates.map { it.condition.conditionId })
 
@@ -168,17 +185,18 @@ class EditorSelectorContentViewModel @Inject constructor(
     }
 
     private fun navigateToEditCondition(conditionId: Long) {
-        // TODO 04.10
-        isUpdateResume = true
-        setEffect {
-            EditorSelectorContentContract.Effect.Navigation.NavigateEditorConditionScreen(
-                episodeRef = episodeRef,
-                bookTitle = uiState.value.bookTitle,
-                pageTitle = uiState.value.pageTitle,
-                pageId = pageId,
-                selectorId = selectorId,
-                conditionId = conditionId
-            )
+        checkSelectorEdited {
+            isUpdateResume = true
+            setEffect {
+                EditorSelectorContentContract.Effect.Navigation.NavigateEditorConditionScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.bookTitle,
+                    pageTitle = uiState.value.pageTitle,
+                    pageId = pageId,
+                    selectorId = selectorId,
+                    conditionId = conditionId
+                )
+            }
         }
     }
 
@@ -191,7 +209,6 @@ class EditorSelectorContentViewModel @Inject constructor(
 
     // Route Holder Event
     private fun addRoute() = launchWithLoading {
-        // TODO 05.02
         val editedIndex = routeStates.size
         val routeId = BookIDManager.generateId(routeStates.map { it.route.routeId })
 
@@ -214,17 +231,18 @@ class EditorSelectorContentViewModel @Inject constructor(
     }
 
     private fun navigateToEditRoute(routeId: Long) {
-        // TODO 05.02
-        isUpdateResume = true
-        setEffect {
-            EditorSelectorContentContract.Effect.Navigation.NavigateEditorRouteScreen(
-                episodeRef = episodeRef,
-                bookTitle = uiState.value.bookTitle,
-                pageTitle = uiState.value.pageTitle,
-                pageId = pageId,
-                selectorId = selectorId,
-                routeId = routeId
-            )
+        checkSelectorEdited {
+            isUpdateResume = true
+            setEffect {
+                EditorSelectorContentContract.Effect.Navigation.NavigateEditorRouteScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.bookTitle,
+                    pageTitle = uiState.value.pageTitle,
+                    pageId = pageId,
+                    selectorId = selectorId,
+                    routeId = routeId
+                )
+            }
         }
     }
 
@@ -244,6 +262,7 @@ class EditorSelectorContentViewModel @Inject constructor(
         originSelector.showConditions.forEachIndexed { index, condition ->
             showConditionStates.add(ConditionState(editIndex = index, condition = condition.toWrapper(logic)))
         }
+        routeStates.clear()
         originSelector.routes.forEachIndexed { index, route ->
             routeStates.add(RouteState(editIndex = index, route = route.toWrapper(logic)))
         }
@@ -266,7 +285,45 @@ class EditorSelectorContentViewModel @Inject constructor(
     private fun handleOnResume() {
         if (isUpdateResume) {
             isUpdateResume = false
-            // TODO Update 04.01
+            launchWithLoading { updateSelectorAndStateList(pageId, selectorId) }
+        }
+    }
+
+    private fun checkSelectorEdited(onCheckComplete: () -> Unit) {
+        val newSelector = originSelector.copy(
+            text = uiState.value.selectorText,
+            showConditions = showConditionStates.map { it.condition.toModel() }
+                .filterIsInstance<ConditionModel.ShowSelectorConditionModel>(),
+            routes = routeStates.map { it.route.toModel() }
+        )
+
+        if (originSelector != newSelector) {
+            setLoadState(
+                LoadState.AlarmDialog(
+                    title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
+                    message = StringValue.StringResource(R.string.dialog_save_edited_book_info),
+                    confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                    onConfirm = {
+                        //수정 중인 정보 파일 저장
+                        launchWithLoading {
+                            saveEditedSelectorAndReload()
+                            setLoadStateIdle()
+                            onCheckComplete()
+                        }
+                    },
+                    dismissText = StringValue.StringResource(com.fancymansion.core.common.R.string.cancel),
+                    onDismiss = {
+                        //수정 중인 정보 삭제
+                        launchWithLoading {
+                            updateSelectorAndStateList(pageId, selectorId)
+                            setLoadStateIdle()
+                            onCheckComplete()
+                        }
+                    }
+                )
+            )
+        } else {
+            onCheckComplete()
         }
     }
 }
