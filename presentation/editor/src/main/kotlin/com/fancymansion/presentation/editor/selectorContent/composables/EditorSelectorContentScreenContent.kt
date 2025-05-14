@@ -103,7 +103,8 @@ fun EditorSelectorContentScreenContent(
                     modifier = Modifier
                         .dragContainer(dragDropState)
                         .fillMaxSize()
-                        .background(color = MaterialTheme.colorScheme.surface),
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .clickSingle{ focusManager.clearFocus() },
                     state = listState
                 ) {
 
