@@ -8,6 +8,7 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.RouteModel
 import com.fancymansion.domain.model.book.SelectorModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -62,5 +63,15 @@ class UseCaseLoadBook @Inject constructor(
                 .firstOrNull { it.pageId == pageId }
                 ?.selectors
                 ?.firstOrNull { it.selectorId == selectorId }!!
+        }
+
+    suspend fun getRoute(logic: LogicModel, pageId : Long, selectorId : Long, routeId : Long): RouteModel =
+        withContext(dispatcher) {
+            logic.logics
+                .firstOrNull { it.pageId == pageId }
+                ?.selectors
+                ?.firstOrNull { it.selectorId == selectorId }
+                ?.routes
+                ?.firstOrNull { it.routeId == routeId }!!
         }
 }

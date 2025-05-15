@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
+import com.fancymansion.app.navigation.navigateEditorRouteContentScreen
 import com.fancymansion.app.navigation.navigateViewerContentScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
@@ -55,6 +56,9 @@ fun handleNavigationRequest(effect: EditorSelectorContentContract.Effect, navCon
     when (effect) {
         is EditorSelectorContentContract.Effect.Navigation.NavigateViewerContentScreen -> {
             navController.navigateViewerContentScreen(effect.episodeRef, effect.bookTitle, effect.episodeTitle, effect.pageId)
+        }
+        is EditorSelectorContentContract.Effect.Navigation.NavigateEditorRouteScreen -> {
+            navController.navigateEditorRouteContentScreen(effect.episodeRef, effect.bookTitle, effect.pageId, effect.selectorId, effect.routeId)
         }
         else -> {}
     }
