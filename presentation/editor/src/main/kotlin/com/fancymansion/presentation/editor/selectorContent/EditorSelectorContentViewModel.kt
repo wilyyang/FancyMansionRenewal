@@ -110,14 +110,12 @@ class EditorSelectorContentViewModel @Inject constructor(
 
             val bookTitle = requireNotNull(savedStateHandle.get<String>(NAME_BOOK_TITLE))
             val pageTitle = logic.logics.firstOrNull { it.pageId == pageId }?.title.orEmpty()
-            val selectorText = originSelector.text
 
             setState {
                 copy(
                     isInitSuccess = true,
                     bookTitle = bookTitle,
-                    pageTitle = pageTitle,
-                    selectorText = selectorText
+                    pageTitle = pageTitle
                 )
             }
         }
@@ -257,6 +255,12 @@ class EditorSelectorContentViewModel @Inject constructor(
     private suspend fun updateSelectorAndStateList(pageId: Long, selectorId: Long) {
         logic = useCaseLoadBook.loadLogic(episodeRef)
         originSelector = useCaseLoadBook.getSelector(logic, pageId, selectorId)
+
+        setState {
+            copy(
+                selectorText = originSelector.text
+            )
+        }
 
         showConditionStates.clear()
         originSelector.showConditions.forEachIndexed { index, condition ->
