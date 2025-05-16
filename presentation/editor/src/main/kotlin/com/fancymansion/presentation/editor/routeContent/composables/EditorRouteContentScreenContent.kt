@@ -2,11 +2,12 @@ package com.fancymansion.presentation.editor.routeContent.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,9 +24,11 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
+import com.fancymansion.presentation.editor.routeContent.composables.part.SelectRouteTargetPage
 
 @Composable
 fun EditorRouteContentScreenContent(
@@ -34,6 +37,7 @@ fun EditorRouteContentScreenContent(
     routeConditionStates : SnapshotStateList<ConditionState>,
     onEventSent: (event: EditorRouteContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
+    onOpenTargetPageList: () -> Unit,
     focusManager : FocusManager
 ) {
     if (!uiState.isInitSuccess) {
@@ -52,14 +56,32 @@ fun EditorRouteContentScreenContent(
             )
         }
     } else {
+        val listState = rememberLazyListState()
         Box(modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surface)) {
 
-            Column(
-                modifier = Modifier.align(Alignment.TopStart)
+            LazyColumn(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.surface)
+                    .clickSingle{ focusManager.clearFocus() },
+                state = listState
             ) {
 
+                item {
+                    SelectRouteTargetPage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Paddings.Basic.horizontal)
+                            .padding(top = Paddings.Basic.vertical),
+                        itemText = uiState.targetPage.pageTitle,
+                        onClickItemText = {
+                            onOpenTargetPageList()
+                        }
+                    )
+                }
             }
 
             Box(

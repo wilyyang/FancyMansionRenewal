@@ -126,4 +126,6 @@
     <string name="edit_selector_dialog_top_route_item_add">추가</string>
 
     <string name="topbar_editor_title_route_content">선택지 경로 편집</string>
+    <string name="edit_route_content_label_target_page">경로 진입 페이지</string>
+    <string name="edit_route_content_label_target_page_list">페이지 목록</string>
 </resources>

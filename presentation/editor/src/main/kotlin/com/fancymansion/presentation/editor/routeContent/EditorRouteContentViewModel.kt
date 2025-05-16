@@ -90,5 +90,19 @@ class EditorRouteContentViewModel @Inject constructor(
         originRoute.routeConditions.forEachIndexed { index, condition ->
             routeConditionStates.add(ConditionState(editIndex = index, condition = condition.toWrapper(logic)))
         }
+
+        val targetPageList = logic.logics.map {
+            TargetPageWrapper(
+                pageId = it.pageId,
+                pageTitle = it.title
+            )
+        }
+
+        setState {
+            copy(
+                targetPageList = targetPageList,
+                targetPage = targetPageList.firstOrNull { it.pageId == originRoute.routeTargetPageId }!!
+            )
+        }
     }
 }
