@@ -5,12 +5,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -23,6 +30,7 @@ import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
+import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
@@ -82,8 +90,7 @@ fun EditorRouteContentScreenFrame(
                     focusManager.clearFocus()
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
-                // TODO 05.15
-                title = stringResource(id = R.string.topbar_editor_title_selector_content),
+                title = stringResource(id = R.string.topbar_editor_title_route_content),
                 subTitle = "${uiState.pageTitle} - ${uiState.selectorText}",
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
@@ -115,9 +122,47 @@ fun EditorRouteContentSkeletonScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.secondary),
+                .background(color = MaterialTheme.colorScheme.surface),
+        ) {
+            FancyMansionTopBar(
+                typePane = TypePane.MOBILE,
+                topBarColor = MaterialTheme.colorScheme.surface,
+                title = stringResource(id = R.string.topbar_editor_title_route_content),
+                subTitle = stringResource(id = R.string.topbar_editor_sub_title),
+                shadowElevation = 1.dp
+            )
+
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(MaterialTheme.colorScheme.surface)
+                .borderLine(
+                    density = LocalDensity.current,
+                    color = MaterialTheme.colorScheme.outline,
+                    top = 1.dp
+                )
         ) {
 
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 11.dp, horizontal = 14.dp)
+                    .fillMaxSize()
+                    .clip(
+                        shape = MaterialTheme.shapes.small
+                    )
+                    .background(color = MaterialTheme.colorScheme.background)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(id = R.string.edit_selector_content_button_page_preview),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     }
 }

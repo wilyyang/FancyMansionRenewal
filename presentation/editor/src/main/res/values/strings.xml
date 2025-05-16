@@ -124,4 +124,6 @@
 
     <string name="edit_selector_dialog_top_label_route">선택시 페이지 경로</string>
     <string name="edit_selector_dialog_top_route_item_add">추가</string>
+
+    <string name="topbar_editor_title_route_content">선택지 경로 편집</string>
 </resources>
