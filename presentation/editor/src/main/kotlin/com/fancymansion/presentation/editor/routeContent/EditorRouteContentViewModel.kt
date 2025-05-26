@@ -58,6 +58,7 @@ class EditorRouteContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorRouteContentContract.Event) {
         when(event) {
+            is EditorRouteContentContract.Event.SelectTargetPage -> selectPageId(event.pageId)
             else -> {}
         }
     }
@@ -78,6 +79,15 @@ class EditorRouteContentViewModel @Inject constructor(
                     selectorText = selectorText
                 )
             }
+        }
+    }
+
+    // EditorRouteEvent
+    private fun selectPageId(pageId : Long) {
+        setState {
+            copy(
+                targetPage = targetPageList.firstOrNull { it.pageId == pageId }!!
+            )
         }
     }
 

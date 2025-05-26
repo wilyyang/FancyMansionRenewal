@@ -24,7 +24,9 @@ class EditorRouteContentContract {
         val targetPage: TargetPageWrapper = TargetPageWrapper()
     ) : ViewState
 
-    sealed class Event : ViewEvent
+    sealed class Event : ViewEvent {
+        data class SelectTargetPage(val pageId : Long) : Event()
+    }
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect()

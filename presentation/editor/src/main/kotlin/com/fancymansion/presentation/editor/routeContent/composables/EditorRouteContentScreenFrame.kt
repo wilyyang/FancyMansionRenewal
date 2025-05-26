@@ -40,6 +40,7 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
+import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract.Event.SelectTargetPage
 import com.fancymansion.presentation.editor.routeContent.composables.part.BottomTargetPageListDialog
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -126,7 +127,7 @@ fun EditorRouteContentScreenFrame(
                 targetPageId = uiState.targetPage.pageId,
                 pageList = uiState.targetPageList,
                 onSelectTargetPage = {
-                    // TODO 05.16
+                    onEventSent(SelectTargetPage(pageId = it))
                 }
             )
         }

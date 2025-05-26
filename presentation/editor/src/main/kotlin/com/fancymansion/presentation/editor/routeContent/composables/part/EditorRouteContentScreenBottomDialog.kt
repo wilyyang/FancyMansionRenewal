@@ -1,6 +1,7 @@
 package com.fancymansion.presentation.editor.routeContent.composables.part
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.theme.Paddings
@@ -60,33 +62,47 @@ fun BottomTargetPageListDialog(
             state = listState
         ) {
 
-            items(items = pageList) {
-                // TODO 05.16
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(85.dp)
-                        .background(color = MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            itemsIndexed(items = pageList) { index, item ->
+                Column (
+                    modifier = Modifier.padding(horizontal = 7.dp)
+                ){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = MaterialTheme.colorScheme.surface)
+                            .clickable{
+                                onSelectTargetPage(item.pageId)
+                            }
+                            .padding(horizontal = 7.dp)
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = it.pageTitle,
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    if(targetPageId == it.pageId){
-                        Icon(
-                            modifier = Modifier
-                                .height(MaterialTheme.typography.bodyLarge.lineHeight.value.dp),
-                            painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_check_bold_600),
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = item.pageTitle,
+                            style = if(targetPageId == item.pageId){
+                                MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+                            }else{
+                                MaterialTheme.typography.bodyLarge
+                            },
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+
+                        if(targetPageId == item.pageId){
+                            Icon(
+                                modifier = Modifier
+                                    .height(MaterialTheme.typography.bodyLarge.lineHeight.value.dp),
+                                painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_check_bold_600),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = null
+                            )
+                        }
+                    }
+
+                    if(index < pageList.size - 1){
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
                     }
                 }
             }
