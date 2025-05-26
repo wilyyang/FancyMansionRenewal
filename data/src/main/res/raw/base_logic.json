@@ -9,7 +9,146 @@
           "routes": [
             {
               "pageId": 1,
-              "routeConditions": [],
+              "routeConditions": [
+                {
+                  "conditionId": 1,
+                  "conditionRule": {
+                    "count": 2,
+                    "logicalOp": "AND",
+                    "relationOp": "GREATER_THAN",
+                    "selfActionId": {
+                      "pageId": 5,
+                      "routeId": 0,
+                      "selectorId": 1
+                    },
+                    "targetActionId": {
+                      "pageId": 0,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "type": "COUNT"
+                  },
+                  "pageId": 1,
+                  "routeId": 1,
+                  "selectorId": 1,
+                  "type": "ROUTE"
+                },
+                {
+                  "conditionId": 2,
+                  "conditionRule": {
+                    "count": 8,
+                    "logicalOp": "OR",
+                    "relationOp": "EQUAL",
+                    "selfActionId": {
+                      "pageId": 7,
+                      "routeId": 0,
+                      "selectorId": 1
+                    },
+                    "targetActionId": {
+                      "pageId": 0,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "type": "COUNT"
+                  },
+                  "pageId": 1,
+                  "routeId": 1,
+                  "selectorId": 1,
+                  "type": "ROUTE"
+                },
+                {
+                  "conditionId": 3,
+                  "conditionRule": {
+                    "count": 2,
+                    "logicalOp": "AND",
+                    "relationOp": "LESS_THAN",
+                    "selfActionId": {
+                      "pageId": 1,
+                      "routeId": 0,
+                      "selectorId": 2
+                    },
+                    "targetActionId": {
+                      "pageId": 0,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "type": "COUNT"
+                  },
+                  "pageId": 1,
+                  "routeId": 1,
+                  "selectorId": 1,
+                  "type": "ROUTE"
+                },
+                {
+                  "conditionId": 4,
+                  "conditionRule": {
+                    "count": 0,
+                    "logicalOp": "OR",
+                    "relationOp": "LESS_THAN",
+                    "selfActionId": {
+                      "pageId": 2,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "targetActionId": {
+                      "pageId": 3,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "type": "TARGET"
+                  },
+                  "pageId": 1,
+                  "routeId": 1,
+                  "selectorId": 1,
+                  "type": "ROUTE"
+                },
+                {
+                  "conditionId": 5,
+                  "conditionRule": {
+                    "count": 0,
+                    "logicalOp": "AND",
+                    "relationOp": "LESS_THAN",
+                    "selfActionId": {
+                      "pageId": 2,
+                      "routeId": 0,
+                      "selectorId": 1
+                    },
+                    "targetActionId": {
+                      "pageId": 3,
+                      "routeId": 0,
+                      "selectorId": 1
+                    },
+                    "type": "TARGET"
+                  },
+                  "pageId": 1,
+                  "routeId": 1,
+                  "selectorId": 1,
+                  "type": "ROUTE"
+                },
+                {
+                  "conditionId": 6,
+                  "conditionRule": {
+                    "count": 2,
+                    "logicalOp": "AND",
+                    "relationOp": "GREATER_THAN",
+                    "selfActionId": {
+                      "pageId": 2,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "targetActionId": {
+                      "pageId": 0,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "type": "COUNT"
+                  },
+                  "pageId": 1,
+                  "routeId": 1,
+                  "selectorId": 1,
+                  "type": "ROUTE"
+                }
+              ],
               "routeId": 1,
               "routeTargetPageId": 2,
               "selectorId": 1
