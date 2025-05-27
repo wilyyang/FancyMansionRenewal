@@ -47,8 +47,7 @@ fun EditorRouteContentScreenContent(
     routeConditionStates : SnapshotStateList<ConditionState>,
     onEventSent: (event: EditorRouteContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
-    onOpenTargetPageList: () -> Unit,
-    focusManager : FocusManager
+    onOpenTargetPageList: () -> Unit
 ) {
     if (!uiState.isInitSuccess) {
         Box(
@@ -71,7 +70,12 @@ fun EditorRouteContentScreenContent(
             lazyListState = listState,
             draggableItemsSize = routeConditionStates.size,
             onMove = { fromIndex, toIndex ->
-                // TODO 05.26
+                onEventSent(
+                    EditorRouteContentContract.Event.MoveRouteConditionHolderPosition(
+                        fromIndex = fromIndex,
+                        toIndex = toIndex
+                    )
+                )
             }
         )
 
@@ -120,7 +124,7 @@ fun EditorRouteContentScreenContent(
                                 .clickSingle(
                                     indication = LocalIndication.current
                                 ) {
-                                    // TODO 05.26
+                                    onEventSent(EditorRouteContentContract.Event.AddRouteConditionClicked)
                                 }
                                 .padding(
                                     vertical = Paddings.Basic.vertical,
@@ -140,10 +144,10 @@ fun EditorRouteContentScreenContent(
                         state = state,
                         isEnd = index == routeConditionStates.size - 1,
                         onConditionHolderDelete = {
-                            // TODO 05.26
+                            onEventSent(EditorRouteContentContract.Event.RouteConditionHolderDeleteClicked(conditionId = it))
                         },
                         onConditionHolderClicked = {
-                            // TODO 05.26
+                            onEventSent(EditorRouteContentContract.Event.RouteConditionHolderNavigateClicked(conditionId = it))
                         }
                     )
                 }
@@ -176,7 +180,7 @@ fun EditorRouteContentScreenContent(
                         )
                         .background(color = MaterialTheme.colorScheme.primary)
                         .clickSingle {
-                            // TODO 05.16
+                            // TODO 05.26
                         }
                 ) {
                     Text(

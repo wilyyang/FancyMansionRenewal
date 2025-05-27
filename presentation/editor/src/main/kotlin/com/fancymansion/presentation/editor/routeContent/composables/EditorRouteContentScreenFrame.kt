@@ -143,8 +143,7 @@ fun EditorRouteContentScreenFrame(
                 coroutineScope.launch {
                     bottomDrawerState.open()
                 }
-            },
-            focusManager = focusManager
+            }
         )
     }
 

@@ -14,6 +14,7 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.book.RouteModel
 import com.fancymansion.domain.model.book.SelectorModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -153,6 +154,29 @@ class UseCaseMakeBook @Inject constructor(
                         originLogic.copy(
                             logics = originLogic.logics.map { if (it.pageId == pageId) newPageLogic else it }
                         )
+                    }
+                }
+            }
+            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+        }
+
+    suspend fun saveEditedRoute(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, route: RouteModel) =
+        // TODO 05.27
+        withContext(dispatcher) {
+            val newLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef).let { originLogic ->
+                originLogic.logics.first { it.pageId == pageId }.let { originPageLogic ->
+                    originPageLogic.selectors.first { it.selectorId == selectorId }.let { originSelector ->
+                        originSelector.copy(
+                            routes = originSelector.routes.map { if (it.routeId == route.routeId) route else it }
+                        ).let { newSelector ->
+                            originPageLogic.copy(
+                                selectors = originPageLogic.selectors.map { if (it.selectorId == newSelector.selectorId) newSelector else it }
+                            ).let { newPageLogic ->
+                                originLogic.copy(
+                                    logics = originLogic.logics.map { if (it.pageId == pageId) newPageLogic else it }
+                                )
+                            }
+                        }
                     }
                 }
             }

@@ -13,13 +13,22 @@ import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.resource.StringValue
+import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.RouteModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.ActionInfo
+import com.fancymansion.presentation.editor.common.ActionInfo.CountInfo
+import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionState
+import com.fancymansion.presentation.editor.common.ConditionWrapper
 import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -58,8 +67,14 @@ class EditorRouteContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorRouteContentContract.Event) {
         when(event) {
+            EditorRouteContentContract.Event.RouteSaveToFile -> handleRouteSaveToFile()
             is EditorRouteContentContract.Event.SelectTargetPage -> selectPageId(event.pageId)
-            else -> {}
+
+            // Condition Holder Event
+            EditorRouteContentContract.Event.AddRouteConditionClicked -> addRouteCondition()
+            is EditorRouteContentContract.Event.RouteConditionHolderDeleteClicked -> deleteRouteCondition(event.conditionId)
+            is EditorRouteContentContract.Event.RouteConditionHolderNavigateClicked -> navigateToEditCondition(event.conditionId)
+            is EditorRouteContentContract.Event.MoveRouteConditionHolderPosition -> moveRouteCondition(event.fromIndex, event.toIndex)
         }
     }
 
@@ -82,12 +97,77 @@ class EditorRouteContentViewModel @Inject constructor(
         }
     }
 
+    private fun handleRouteSaveToFile() = launchWithLoading(endLoadState = null) {
+        val isComplete = saveEditedRouteAndReload()
+        setLoadState(
+            loadState = LoadState.AlarmDialog(
+                title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
+                message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_book_info else R.string.dialog_save_fail_book_info),
+                dismissText = null,
+                confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                onConfirm = ::setLoadStateIdle
+            )
+        )
+    }
+
     // EditorRouteEvent
     private fun selectPageId(pageId : Long) {
         setState {
             copy(
                 targetPage = targetPageList.firstOrNull { it.pageId == pageId }!!
             )
+        }
+    }
+
+    // Condition Holder Event
+    private fun addRouteCondition() = launchWithLoading {
+        val editedIndex = routeConditionStates.size
+        val conditionId = BookIDManager.generateId(routeConditionStates.map { it.condition.conditionId })
+
+        val condition = ConditionWrapper(
+            conditionId = conditionId,
+            conditionGroup = ConditionGroup.RouteCondition(
+                pageId = pageId,
+                selectorId = selectorId,
+                routeId = routeId,
+            ),
+            selfActionInfo = ActionInfo.PageInfo(
+                pageTitle = uiState.value.pageTitle,
+                actionId = ActionIdModel(pageId = pageId)
+            ),
+            targetActionInfo = CountInfo(count = 0)
+        )
+
+        routeConditionStates.add(ConditionState(editIndex = editedIndex, condition = condition))
+    }
+
+    private fun deleteRouteCondition(conditionId: Long) {
+        routeConditionStates.removeIf {
+            it.condition.conditionId == conditionId
+        }
+    }
+
+    private fun navigateToEditCondition(conditionId: Long) {
+        checkRouteEdited {
+            isUpdateResume = true
+            setEffect {
+                EditorRouteContentContract.Effect.Navigation.NavigateEditorConditionScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.bookTitle,
+                    pageTitle = uiState.value.pageTitle,
+                    pageId = pageId,
+                    selectorId = selectorId,
+                    routeId = routeId,
+                    conditionId = conditionId
+                )
+            }
+        }
+    }
+
+    private fun moveRouteCondition(fromIndex: Int, toIndex: Int) {
+        routeConditionStates.apply {
+            val item = removeAt(fromIndex)
+            add(toIndex, item)
         }
     }
 
@@ -114,5 +194,14 @@ class EditorRouteContentViewModel @Inject constructor(
                 targetPage = targetPageList.firstOrNull { it.pageId == originRoute.routeTargetPageId }!!
             )
         }
+    }
+
+    private suspend fun saveEditedRouteAndReload() : Boolean{
+        // TODO 05.27
+        return false
+    }
+
+    private fun checkRouteEdited(onCheckComplete: () -> Unit) {
+
     }
 }
