@@ -29,6 +29,7 @@ class EditorRouteContentContract {
         data object RouteSaveToFile : Event()
 
         data class SelectTargetPage(val pageId : Long) : Event()
+        data object ReadPagePreviewClicked : Event()
 
         // Condition Holder Event
         data object AddRouteConditionClicked : Event()
@@ -39,6 +40,13 @@ class EditorRouteContentContract {
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect(){
+            data class NavigateViewerContentScreen(
+                val episodeRef: EpisodeRef,
+                val bookTitle: String,
+                val episodeTitle: String,
+                val pageId: Long
+            ) : Navigation()
+
             data class NavigateEditorConditionScreen(
                 val episodeRef: EpisodeRef,
                 val bookTitle: String,

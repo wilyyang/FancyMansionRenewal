@@ -161,7 +161,6 @@ class UseCaseMakeBook @Inject constructor(
         }
 
     suspend fun saveEditedRoute(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, route: RouteModel) =
-        // TODO 05.27
         withContext(dispatcher) {
             val newLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef).let { originLogic ->
                 originLogic.logics.first { it.pageId == pageId }.let { originPageLogic ->
@@ -173,7 +172,7 @@ class UseCaseMakeBook @Inject constructor(
                                 selectors = originPageLogic.selectors.map { if (it.selectorId == newSelector.selectorId) newSelector else it }
                             ).let { newPageLogic ->
                                 originLogic.copy(
-                                    logics = originLogic.logics.map { if (it.pageId == pageId) newPageLogic else it }
+                                    logics = originLogic.logics.map { if (it.pageId == newPageLogic.pageId) newPageLogic else it }
                                 )
                             }
                         }

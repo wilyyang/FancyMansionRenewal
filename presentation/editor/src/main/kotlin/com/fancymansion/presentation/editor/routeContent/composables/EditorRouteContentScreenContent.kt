@@ -180,7 +180,7 @@ fun EditorRouteContentScreenContent(
                         )
                         .background(color = MaterialTheme.colorScheme.primary)
                         .clickSingle {
-                            // TODO 05.26
+                            onEventSent(EditorRouteContentContract.Event.ReadPagePreviewClicked)
                         }
                 ) {
                     Text(

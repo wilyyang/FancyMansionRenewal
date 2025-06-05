@@ -2,14 +2,19 @@ package com.fancymansion.presentation.editor.routeContent.composables
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,8 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -33,12 +39,17 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.window.TypePane
+import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.Paddings
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionState
+import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
+import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract.Event.SelectTargetPage
 import com.fancymansion.presentation.editor.routeContent.composables.part.BottomTargetPageListDialog
@@ -74,7 +85,6 @@ fun EditorRouteContentScreenFrame(
 
     val bottomDrawerState = remember { DrawerState(initialValue = DrawerValue.Closed) }
     val coroutineScope = rememberCoroutineScope()
-    val focusManager = LocalFocusManager.current
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
             if(effect is EditorRouteContentContract.Effect.Navigation){
@@ -97,15 +107,13 @@ fun EditorRouteContentScreenFrame(
                 topBarColor = MaterialTheme.colorScheme.surface,
                 idLeftIcon = com.fancymansion.core.presentation.R.drawable.ic_back,
                 onClickLeftIcon = {
-                    focusManager.clearFocus()
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
                 title = stringResource(id = R.string.topbar_editor_title_route_content),
                 subTitle = "${uiState.pageTitle} - ${uiState.selectorText}",
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
-                    focusManager.clearFocus()
-                    // TODO 05.15
+                    onEventSent(EditorRouteContentContract.Event.RouteSaveToFile)
                 },
                 shadowElevation = 1.dp
             )
@@ -139,7 +147,6 @@ fun EditorRouteContentScreenFrame(
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent,
             onOpenTargetPageList = {
-                focusManager.clearFocus()
                 coroutineScope.launch {
                     bottomDrawerState.open()
                 }
@@ -173,6 +180,110 @@ fun EditorRouteContentSkeletonScreen() {
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
                 shadowElevation = 1.dp
             )
+
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Paddings.Basic.horizontal)
+                .padding(top = Paddings.Basic.vertical)) {
+                CommonEditInfoTitle(
+                    title = stringResource(id = R.string.edit_route_content_label_target_page)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = Paddings.Basic.vertical
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .padding(0.5.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "",
+                        style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(itemMarginHeight))
+            }
+
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                CommonEditInfoTitle(
+                    modifier = Modifier
+                        .padding(vertical = Paddings.Basic.vertical)
+                        .padding(start = Paddings.Basic.horizontal),
+                    title = stringResource(id = R.string.edit_route_content_top_label_route_condition)
+                )
+
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(horizontal = Paddings.Basic.horizontal / 2)
+                        .padding(
+                            vertical = Paddings.Basic.vertical,
+                            horizontal = Paddings.Basic.horizontal / 2
+                        ),
+                    text = stringResource(id = R.string.edit_route_content_route_condition_item_add),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                )
+            }
+
+            HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+            for(i in 0..2){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(85.dp)
+                        .padding(horizontal = 8.dp)
+                        .borderLine(
+                            density = LocalDensity.current,
+                            color = MaterialTheme.colorScheme.outline,
+                            bottom = 0.3.dp
+                        )
+                        .padding(horizontal = 10.dp)
+                        .padding(start = 15.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .fillMaxWidth(0.75f)
+                    ) {
+
+                        FadeInOutSkeleton(
+                            modifier = Modifier.height(13.dp).width(70.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(7.dp))
+
+                        FadeInOutSkeleton(
+                            modifier = Modifier.height(18.dp).width(260.dp)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ){
+                        FadeInOutSkeleton(
+                            modifier = Modifier.height(25.dp).width(35.dp),
+                            shape = MaterialTheme.shapes.large
+                        )
+                    }
+                }
+            }
 
         }
 
