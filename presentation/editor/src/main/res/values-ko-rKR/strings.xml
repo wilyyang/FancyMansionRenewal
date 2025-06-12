@@ -130,4 +130,6 @@
 
     <string name="edit_route_content_top_label_route_condition">경로 진입 조건</string>
     <string name="edit_route_content_route_condition_item_add">추가</string>
+
+    <string name="topbar_editor_title_condition_content">조건 편집</string>
 </resources>
