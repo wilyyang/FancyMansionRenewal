@@ -85,8 +85,8 @@ fun EditorConditionContentScreenFrame(
                 onClickLeftIcon = {
                     onCommonEventSent(CommonEvent.CloseEvent)
                 },
-                title = stringResource(id = R.string.topbar_editor_title_condition_content),
-                subTitle = "${uiState.pageTitle} - ${uiState.selectorText}",
+                title = stringResource(id = uiState.barTitleResId),
+                subTitle = uiState.barSubTitle,
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
                     // TODO 06.12 sendEvent save to file

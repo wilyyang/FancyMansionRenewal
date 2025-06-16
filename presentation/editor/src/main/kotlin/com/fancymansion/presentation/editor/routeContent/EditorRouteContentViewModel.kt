@@ -31,6 +31,7 @@ import com.fancymansion.presentation.editor.common.ActionInfo.CountInfo
 import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.common.ConditionWrapper
+import com.fancymansion.presentation.editor.common.TargetPageWrapper
 import com.fancymansion.presentation.editor.common.toModel
 import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel

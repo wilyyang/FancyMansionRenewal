@@ -214,8 +214,8 @@ class EditorSelectorContentViewModel @Inject constructor(
             pageId = pageId,
             selectorId = selectorId,
             routeId = routeId,
-            targetPageId = ROUTE_PAGE_ID_NOT_ASSIGNED,
-            targetPageTitle = "",
+            targetPageId = pageId,
+            targetPageTitle = uiState.value.pageTitle,
             routeConditions = listOf()
         )
 

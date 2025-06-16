@@ -10,8 +10,10 @@ import com.fancymansion.core.common.const.ArgName.NAME_ROUTE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.resource.StringValue
+import com.fancymansion.core.common.util.ellipsis
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -82,12 +84,30 @@ class EditorConditionContentViewModel @Inject constructor(
             val pageTitle = logic.logics.firstOrNull { it.pageId == pageId }?.title.orEmpty()
             val selectorText = logic.logics.firstOrNull { it.pageId == pageId }?.selectors?.firstOrNull { it.selectorId == selectorId }?.text.orEmpty()
 
+            val barTitleResId = if(routeId == ROUTE_ID_NOT_ASSIGNED){
+                R.string.topbar_editor_title_show_condition_content
+            }else{
+                R.string.topbar_editor_title_route_condition_content
+            }
+
+            val MAX_SUB_TITLE_PART_LENGTH = 10
+            val barSubTitle = if(routeId == ROUTE_ID_NOT_ASSIGNED){
+                useCaseGetResource.string(R.string.topbar_editor_sub_title_show_condition_content, pageTitle.ellipsis(MAX_SUB_TITLE_PART_LENGTH), selectorText.ellipsis(MAX_SUB_TITLE_PART_LENGTH))
+            }else{
+                val targetPageTitle = logic.logics.firstOrNull { it.pageId == routeId }?.title ?: ""
+                useCaseGetResource.string(R.string.topbar_editor_sub_title_route_condition_content, selectorText.ellipsis(MAX_SUB_TITLE_PART_LENGTH), targetPageTitle.ellipsis(MAX_SUB_TITLE_PART_LENGTH))
+            }
+
+
+
             setState {
                 copy(
                     isInitSuccess = true,
                     bookTitle = bookTitle,
                     pageTitle = pageTitle,
-                    selectorText = selectorText
+                    selectorText = selectorText,
+                    barTitleResId = barTitleResId,
+                    barSubTitle = barSubTitle
                 )
             }
         }

@@ -30,7 +30,7 @@ import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
-import com.fancymansion.presentation.editor.routeContent.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.TargetPageWrapper
 import com.fancymansion.presentation.editor.selectorContent.composables.part.detailPanelShape
 
 @Composable

@@ -2,6 +2,7 @@ package com.fancymansion.presentation.editor.common
 
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.const.LogicalOp
+import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.const.SELECTOR_ID_NOT_ASSIGNED
 import com.fancymansion.domain.model.book.ActionIdModel
@@ -125,3 +126,8 @@ private fun ConditionWrapper.buildConditionRule(selfActionId: ActionIdModel): Co
         )
     }
 }
+
+data class TargetPageWrapper(
+    val pageId: Long = PAGE_ID_NOT_ASSIGNED,
+    val pageTitle: String  = ""
+)

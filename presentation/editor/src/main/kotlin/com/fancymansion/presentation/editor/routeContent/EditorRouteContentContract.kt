@@ -1,15 +1,10 @@
 package com.fancymansion.presentation.editor.routeContent
 
 import com.fancymansion.core.common.const.EpisodeRef
-import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
-
-data class TargetPageWrapper(
-    val pageId: Long = PAGE_ID_NOT_ASSIGNED,
-    val pageTitle: String  = ""
-)
+import com.fancymansion.presentation.editor.common.TargetPageWrapper
 
 class EditorRouteContentContract {
     companion object {
