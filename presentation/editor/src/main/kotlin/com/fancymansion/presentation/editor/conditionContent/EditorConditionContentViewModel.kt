@@ -27,6 +27,8 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
 import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
+import com.fancymansion.presentation.editor.common.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -152,6 +154,21 @@ class EditorConditionContentViewModel @Inject constructor(
             useCaseLoadBook.getRouteCondition(logic, conditionGroup.pageId, conditionGroup.selectorId, (conditionGroup as RouteCondition).routeId, conditionId)
         }else{
             useCaseLoadBook.getShowSelectorCondition(logic, conditionGroup.pageId, conditionGroup.selectorId, conditionId)
+        }
+
+        val condition = originCondition.toWrapper(logic)
+        val targetPageList = logic.logics.map {
+            TargetPageWrapper(
+                pageId = it.pageId,
+                pageTitle = it.title
+            )
+        }
+
+        setState {
+            copy(
+                condition = condition,
+                targetPageList = targetPageList
+            )
         }
         // TODO 06.12 get condition and setState
     }

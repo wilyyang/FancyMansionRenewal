@@ -34,7 +34,9 @@ class EditorConditionContentContract {
             ),
             selfActionInfo = PageInfo(pageTitle = "", actionId = ActionIdModel()),
             targetActionInfo = CountInfo(0)
-        )
+        ),
+        val targetPageList: List<TargetPageWrapper> = listOf(),
+        val selfPage: TargetPageWrapper = TargetPageWrapper()
     ) : ViewState
 
     sealed class Event : ViewEvent
