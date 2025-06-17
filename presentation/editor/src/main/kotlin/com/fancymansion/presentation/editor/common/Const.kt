@@ -17,10 +17,10 @@ val itemMarginHeight = 15.dp
 
 data class ConditionState(var editIndex : Int, val condition : ConditionWrapper)
 
-sealed class ConditionGroup {
-    data class ShowSelectorCondition(val pageId: Long, val selectorId: Long) : ConditionGroup()
-    data class RouteCondition(val pageId: Long, val selectorId: Long, val routeId: Long) :
-        ConditionGroup()
+sealed class ConditionGroup(open val pageId: Long, open val selectorId: Long) {
+    data class ShowSelectorCondition(override val pageId: Long, override val selectorId: Long) : ConditionGroup(pageId, selectorId)
+    data class RouteCondition(override val pageId: Long, override val selectorId: Long, val routeId: Long) :
+        ConditionGroup(pageId, selectorId)
 }
 
 sealed class ActionInfo{

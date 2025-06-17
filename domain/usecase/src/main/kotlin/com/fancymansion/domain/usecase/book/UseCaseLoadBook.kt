@@ -1,10 +1,12 @@
 package com.fancymansion.domain.usecase.book
 
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.throwable.exception.LoadPageException
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
@@ -73,5 +75,15 @@ class UseCaseLoadBook @Inject constructor(
                 ?.firstOrNull { it.selectorId == selectorId }
                 ?.routes
                 ?.firstOrNull { it.routeId == routeId }!!
+        }
+
+    suspend fun getShowSelectorCondition(logic: LogicModel, pageId : Long, selectorId : Long, conditionId: Long): ConditionModel.ShowSelectorConditionModel =
+        withContext(dispatcher) {
+            getSelector(logic, pageId, selectorId).showConditions.firstOrNull { it.conditionId == conditionId }!!
+        }
+
+    suspend fun getRouteCondition(logic: LogicModel, pageId : Long, selectorId : Long, routeId : Long, conditionId: Long): ConditionModel.RouteConditionModel =
+        withContext(dispatcher) {
+            getRoute(logic, pageId, selectorId, routeId).routeConditions.firstOrNull { it.conditionId == conditionId }!!
         }
 }

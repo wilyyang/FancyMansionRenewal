@@ -3,6 +3,7 @@ package com.fancymansion.presentation.editor.conditionContent
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
+import com.fancymansion.core.common.const.ArgName.NAME_CONDITION_ID
 import com.fancymansion.core.common.const.ArgName.NAME_EPISODE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_PAGE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_READ_MODE
@@ -17,11 +18,15 @@ import com.fancymansion.core.common.util.ellipsis
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.ConditionGroup
+import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
+import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -34,9 +39,6 @@ class EditorConditionContentViewModel @Inject constructor(
 ) : BaseViewModel<EditorConditionContentContract.State, EditorConditionContentContract.Event, EditorConditionContentContract.Effect>() {
 
     private var isUpdateResume = false
-    private val pageId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_PAGE_ID)) }
-    private val selectorId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_SELECTOR_ID)) }
-    private val routeId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_ROUTE_ID)) }
 
     private val episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -46,7 +48,22 @@ class EditorConditionContentViewModel @Inject constructor(
             requireNotNull(get<String>(NAME_EPISODE_ID))
         )
     }
+
+    private val conditionGroup: ConditionGroup by lazy {
+        val pageId = requireNotNull(savedStateHandle.get<Long>(NAME_PAGE_ID))
+        val selectorId = requireNotNull(savedStateHandle.get<Long>(NAME_SELECTOR_ID))
+        val routeId = requireNotNull(savedStateHandle.get<Long>(NAME_ROUTE_ID))
+
+        if (routeId == ROUTE_ID_NOT_ASSIGNED) {
+            ShowSelectorCondition(pageId, selectorId)
+        } else {
+            RouteCondition(pageId, selectorId, routeId)
+        }
+    }
+
+    private val conditionId: Long by lazy { requireNotNull(savedStateHandle.get<Long>(NAME_CONDITION_ID)) }
     private lateinit var logic: LogicModel
+    private lateinit var originCondition: ConditionModel
 
     init {
         initializeState()
@@ -78,27 +95,42 @@ class EditorConditionContentViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
-            updateCondition(pageId, selectorId, routeId)
+            updateCondition(conditionId)
 
             val bookTitle = requireNotNull(savedStateHandle.get<String>(NAME_BOOK_TITLE))
-            val pageTitle = logic.logics.firstOrNull { it.pageId == pageId }?.title.orEmpty()
-            val selectorText = logic.logics.firstOrNull { it.pageId == pageId }?.selectors?.firstOrNull { it.selectorId == selectorId }?.text.orEmpty()
+            val (pageTitle, selectorText) = logic.logics.firstOrNull { it.pageId == conditionGroup.pageId }!!
+                .let { pageLogic ->
+                    (pageLogic.title to pageLogic.selectors.firstOrNull { it.selectorId == conditionGroup.selectorId }?.text.orEmpty())
+                }
 
-            val barTitleResId = if(routeId == ROUTE_ID_NOT_ASSIGNED){
-                R.string.topbar_editor_title_show_condition_content
-            }else{
+            val barTitleResId = if(conditionGroup is RouteCondition){
                 R.string.topbar_editor_title_route_condition_content
+            }else{
+                R.string.topbar_editor_title_show_condition_content
             }
 
             val MAX_SUB_TITLE_PART_LENGTH = 10
-            val barSubTitle = if(routeId == ROUTE_ID_NOT_ASSIGNED){
-                useCaseGetResource.string(R.string.topbar_editor_sub_title_show_condition_content, pageTitle.ellipsis(MAX_SUB_TITLE_PART_LENGTH), selectorText.ellipsis(MAX_SUB_TITLE_PART_LENGTH))
-            }else{
-                val targetPageTitle = logic.logics.firstOrNull { it.pageId == routeId }?.title ?: ""
-                useCaseGetResource.string(R.string.topbar_editor_sub_title_route_condition_content, selectorText.ellipsis(MAX_SUB_TITLE_PART_LENGTH), targetPageTitle.ellipsis(MAX_SUB_TITLE_PART_LENGTH))
+            val barSubTitle = if (conditionGroup is RouteCondition) {
+                val routeTargetPageId = useCaseLoadBook.getRoute(
+                    logic,
+                    conditionGroup.pageId,
+                    conditionGroup.selectorId,
+                    (conditionGroup as RouteCondition).routeId
+                ).routeTargetPageId
+
+                val targetPageTitle = logic.logics.firstOrNull { it.pageId == routeTargetPageId }?.title.orEmpty()
+                useCaseGetResource.string(
+                    R.string.topbar_editor_sub_title_route_condition_content,
+                    selectorText.ellipsis(MAX_SUB_TITLE_PART_LENGTH),
+                    targetPageTitle.ellipsis(MAX_SUB_TITLE_PART_LENGTH)
+                )
+            } else {
+                useCaseGetResource.string(
+                    R.string.topbar_editor_sub_title_show_condition_content,
+                    pageTitle.ellipsis(MAX_SUB_TITLE_PART_LENGTH),
+                    selectorText.ellipsis(MAX_SUB_TITLE_PART_LENGTH)
+                )
             }
-
-
 
             setState {
                 copy(
@@ -114,21 +146,26 @@ class EditorConditionContentViewModel @Inject constructor(
     }
 
     // CommonEvent
-    private suspend fun updateCondition(pageId: Long, selectorId: Long, routeId: Long) {
+    private suspend fun updateCondition(conditionId: Long) {
         logic = useCaseLoadBook.loadLogic(episodeRef)
+        originCondition = if(conditionGroup is RouteCondition){
+            useCaseLoadBook.getRouteCondition(logic, conditionGroup.pageId, conditionGroup.selectorId, (conditionGroup as RouteCondition).routeId, conditionId)
+        }else{
+            useCaseLoadBook.getShowSelectorCondition(logic, conditionGroup.pageId, conditionGroup.selectorId, conditionId)
+        }
         // TODO 06.12 get condition and setState
     }
 
     private suspend fun saveEditedConditionAndReload() : Boolean{
         // TODO 06.12 save condition
-        updateCondition(pageId, selectorId, routeId)
+        updateCondition(conditionId)
         return true
     }
 
     private fun handleOnResume() {
         if (isUpdateResume) {
             isUpdateResume = false
-            launchWithLoading { updateCondition(pageId, selectorId, routeId) }
+            launchWithLoading { updateCondition(conditionId) }
         }
     }
 
@@ -152,7 +189,7 @@ class EditorConditionContentViewModel @Inject constructor(
                     onDismiss = {
                         //수정 중인 정보 삭제
                         launchWithLoading {
-                            updateCondition(pageId, selectorId, routeId)
+                            updateCondition(conditionId)
                             setLoadStateIdle()
                             onCheckComplete()
                         }
