@@ -19,6 +19,7 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.ConditionModel
+import com.fancymansion.domain.model.book.ConditionRuleModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -28,7 +29,6 @@ import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
 import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
 import com.fancymansion.presentation.editor.common.TargetPageWrapper
-import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -156,7 +156,6 @@ class EditorConditionContentViewModel @Inject constructor(
             useCaseLoadBook.getShowSelectorCondition(logic, conditionGroup.pageId, conditionGroup.selectorId, conditionId)
         }
 
-        val condition = originCondition.toWrapper(logic)
         val targetPageList = logic.logics.map {
             TargetPageWrapper(
                 pageId = it.pageId,
@@ -164,9 +163,14 @@ class EditorConditionContentViewModel @Inject constructor(
             )
         }
 
+        val copiedConditionRule = when (val rule = originCondition.conditionRule) {
+            is ConditionRuleModel.CountConditionRuleModel -> rule.copy()
+            is ConditionRuleModel.TargetConditionRuleModel -> rule.copy()
+        }
+
         setState {
             copy(
-                condition = condition,
+                conditionRule = copiedConditionRule,
                 targetPageList = targetPageList
             )
         }
