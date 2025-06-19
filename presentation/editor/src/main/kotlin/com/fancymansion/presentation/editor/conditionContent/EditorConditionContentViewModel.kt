@@ -19,7 +19,6 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.ConditionModel
-import com.fancymansion.domain.model.book.ConditionRuleModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -163,14 +162,9 @@ class EditorConditionContentViewModel @Inject constructor(
             )
         }
 
-        val copiedConditionRule = when (val rule = originCondition.conditionRule) {
-            is ConditionRuleModel.CountConditionRuleModel -> rule.copy()
-            is ConditionRuleModel.TargetConditionRuleModel -> rule.copy()
-        }
-
         setState {
             copy(
-                conditionRule = copiedConditionRule,
+                conditionRule = originCondition.conditionRule.toWrapper(logic),
                 targetPageList = targetPageList
             )
         }

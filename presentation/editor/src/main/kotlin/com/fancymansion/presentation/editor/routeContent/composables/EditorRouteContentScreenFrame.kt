@@ -48,11 +48,11 @@ import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionState
+import com.fancymansion.presentation.editor.common.composables.BottomSelectListDialog
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract.Event.SelectTargetPage
-import com.fancymansion.presentation.editor.routeContent.composables.part.BottomTargetPageListDialog
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -131,7 +131,8 @@ fun EditorRouteContentScreenFrame(
                     })
         },
         bottomDrawerContent = {
-            BottomTargetPageListDialog(
+            BottomSelectListDialog(
+                title = stringResource(id = R.string.edit_route_content_label_target_page_list),
                 targetPageId = uiState.targetPage.pageId,
                 pageList = uiState.targetPageList,
                 onSelectTargetPage = {

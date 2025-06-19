@@ -137,4 +137,10 @@
 
     <string name="topbar_editor_sub_title_show_condition_content">≣ %s : □ %s</string>
     <string name="topbar_editor_sub_title_route_condition_content">□ %s → %s</string>
+
+    <string name="edit_condition_content_select_action_page_not_found">페이지 없음</string>
+    <string name="edit_condition_content_select_action_self_title">기준 진입 항목</string>
+
+    <string name="edit_condition_content_label_page_list">페이지 목록</string>
+    <string name="edit_condition_content_label_selector_list">선택지 목록</string>
 </resources>

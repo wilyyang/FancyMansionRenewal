@@ -28,6 +28,7 @@ import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.composables.BottomSelectListDialog
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -108,13 +109,26 @@ fun EditorConditionContentScreenFrame(
         },
         bottomDrawerContent = {
             // TODO 06.12 bottom dialog
+            BottomSelectListDialog(
+                title = stringResource(id = R.string.edit_condition_content_label_page_list),
+                targetPageId = uiState.conditionRule.selfActionId.pageId,
+                pageList = uiState.targetPageList,
+                onSelectTargetPage = {
+                    // TODO 06.19 bottom dialog select event
+                }
+            )
         }
     ) {
         EditorConditionContentScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onEventSent = onEventSent,
-            onCommonEventSent = onCommonEventSent
+            onCommonEventSent = onCommonEventSent,
+            onOpenSelfActionPageList = {
+                coroutineScope.launch {
+                    bottomDrawerState.open()
+                }
+            }
         )
     }
 
