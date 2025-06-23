@@ -74,6 +74,7 @@ class EditorConditionContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorConditionContentContract.Event) {
         when(event) {
+            is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.pageId)
             else -> {}
         }
     }
@@ -143,6 +144,18 @@ class EditorConditionContentViewModel @Inject constructor(
                     barSubTitle = barSubTitle
                 )
             }
+        }
+    }
+
+    // EditorConditionEvent
+    private fun selectSelfPageId(pageId : Long) {
+        setState {
+            copy(
+                conditionRule = conditionRule.withUpdatedSelfPageInfo(
+                    pageId = pageId,
+                    pageTitle = targetPageList.firstOrNull { it.pageId == pageId }?.pageTitle
+                )
+            )
         }
     }
 

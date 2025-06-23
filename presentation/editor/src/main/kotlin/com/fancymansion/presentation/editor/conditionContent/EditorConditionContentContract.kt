@@ -30,6 +30,19 @@ sealed class ConditionRuleWrapper(
         override val logicalOp: LogicalOp = LogicalOp.AND,
         val targetActionId: ActionIdWrapper
     ) : ConditionRuleWrapper(selfActionId, relationOp, logicalOp)
+
+
+    fun withUpdatedSelfPageInfo(
+        pageId: Long,
+        pageTitle: String?
+    ): ConditionRuleWrapper = when (this) {
+        is CountConditionRuleWrapper -> copy(
+            selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle)
+        )
+        is TargetConditionRuleWrapper -> copy(
+            selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle)
+        )
+    }
 }
 
 fun ConditionRuleWrapper.toModel(): ConditionRuleModel = when (this) {
@@ -119,7 +132,9 @@ class EditorConditionContentContract {
         val targetPageList: List<TargetPageWrapper> = listOf()
     ) : ViewState
 
-    sealed class Event : ViewEvent
+    sealed class Event : ViewEvent {
+        data class SelectSelfPage(val pageId : Long) : Event()
+    }
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect()

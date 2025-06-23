@@ -114,7 +114,7 @@ fun EditorConditionContentScreenFrame(
                 targetPageId = uiState.conditionRule.selfActionId.pageId,
                 pageList = uiState.targetPageList,
                 onSelectTargetPage = {
-                    // TODO 06.19 bottom dialog select event
+                    onEventSent(EditorConditionContentContract.Event.SelectSelfPage(pageId = it))
                 }
             )
         }
