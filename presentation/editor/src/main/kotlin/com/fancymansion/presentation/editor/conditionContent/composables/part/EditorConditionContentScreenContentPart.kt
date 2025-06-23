@@ -35,12 +35,28 @@ fun SelectActionTarget(
                 .padding(
                     vertical = Paddings.Basic.vertical
                 ),
+            isSelect = mainItemText != null,
             textVerticalPadding = 12.dp,
             itemText = mainItemText ?: stringResource(R.string.edit_condition_content_select_action_page_not_found)
         ) {
             onClickMainItemText()
         }
 
+        if(mainItemText != null){
+
+            SelectItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = Paddings.Basic.vertical
+                    ),
+                isSelect = subItemText != null,
+                textVerticalPadding = 12.dp,
+                itemText = subItemText ?: stringResource(R.string.edit_condition_content_select_action_selector_not_found)
+            ) {
+                onClickSubItemText()
+            }
+        }
         Spacer(modifier = Modifier.height(itemMarginHeight))
     }
 }

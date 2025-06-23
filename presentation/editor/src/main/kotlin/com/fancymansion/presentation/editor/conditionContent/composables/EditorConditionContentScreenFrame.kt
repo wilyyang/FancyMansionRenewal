@@ -128,6 +128,11 @@ fun EditorConditionContentScreenFrame(
                 coroutineScope.launch {
                     bottomDrawerState.open()
                 }
+            },
+            onOpenSelfActionSelectorList = {
+                coroutineScope.launch {
+                    bottomDrawerState.open()
+                }
             }
         )
     }

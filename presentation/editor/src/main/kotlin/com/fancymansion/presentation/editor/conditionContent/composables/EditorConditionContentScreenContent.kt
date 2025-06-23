@@ -27,7 +27,8 @@ fun EditorConditionContentScreenContent(
     uiState: EditorConditionContentContract.State,
     onEventSent: (event: EditorConditionContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
-    onOpenSelfActionPageList: () -> Unit
+    onOpenSelfActionPageList: () -> Unit,
+    onOpenSelfActionSelectorList: () -> Unit
 ) {
     if (!uiState.isInitSuccess) {
         Box(
@@ -67,8 +68,17 @@ fun EditorConditionContentScreenContent(
                             .padding(top = Paddings.Basic.vertical),
                         title = stringResource(R.string.edit_condition_content_select_action_self_title),
                         mainItemText = uiState.conditionRule.selfActionId.pageTitle,
+                        subItemText = uiState.conditionRule.selfActionId.selectorText?.let { selector ->
+                            stringResource(
+                                R.string.edit_condition_content_select_action_selector_prefix,
+                                selector
+                            )
+                        },
                         onClickMainItemText = {
                             onOpenSelfActionPageList()
+                        },
+                        onClickSubItemText = {
+                            onOpenSelfActionSelectorList()
                         }
                     )
                 }

@@ -40,6 +40,9 @@ import com.fancymansion.presentation.editor.selectorContent.composables.part.det
 @Composable
 fun SelectItem(
     modifier: Modifier = Modifier,
+    selectBackground: Color = MaterialTheme.colorScheme.surface,
+    notSelectBackground: Color = MaterialTheme.colorScheme.background,
+    isSelect: Boolean = true,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     textHorizontalPadding: Dp = 16.dp,
     textVerticalPadding: Dp = 8.dp,
@@ -57,6 +60,7 @@ fun SelectItem(
             )
             .padding(0.5.dp)
             .clip(borderShape)
+            .background(color = if(isSelect) selectBackground else notSelectBackground)
             .clickable{
                 onClickItemText()
             }
@@ -72,13 +76,15 @@ fun SelectItem(
             overflow = TextOverflow.Ellipsis
         )
 
-        Icon(
-            modifier = Modifier
-                .height(textStyle.lineHeight.value.dp),
-            painter = painterResource(id = R.drawable.ic_check_bold_600),
-            tint = MaterialTheme.colorScheme.primary,
-            contentDescription = null
-        )
+        if(isSelect){
+            Icon(
+                modifier = Modifier
+                    .height(textStyle.lineHeight.value.dp),
+                painter = painterResource(id = R.drawable.ic_check_bold_600),
+                tint = MaterialTheme.colorScheme.primary,
+                contentDescription = null
+            )
+        }
     }
 }
 
