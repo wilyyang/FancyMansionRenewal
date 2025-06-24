@@ -18,7 +18,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -98,7 +97,7 @@ fun EditorRouteContentScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = Paddings.Basic.horizontal)
                             .padding(top = Paddings.Basic.vertical),
-                        itemText = uiState.targetPage.pageTitle,
+                        itemText = uiState.targetPage.itemText,
                         onClickItemText = {
                             onOpenTargetPageList()
                         }

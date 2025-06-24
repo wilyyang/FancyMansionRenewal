@@ -4,7 +4,7 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
-import com.fancymansion.presentation.editor.common.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.SelectItemWrapper
 
 class EditorRouteContentContract {
     companion object {
@@ -16,8 +16,8 @@ class EditorRouteContentContract {
         val bookTitle : String = "",
         val pageTitle : String = "",
         val selectorText : String = "",
-        val targetPageList: List<TargetPageWrapper> = listOf(),
-        val targetPage: TargetPageWrapper = TargetPageWrapper()
+        val targetPageList: List<SelectItemWrapper> = listOf(),
+        val targetPage: SelectItemWrapper = SelectItemWrapper()
     ) : ViewState
 
     sealed class Event : ViewEvent {

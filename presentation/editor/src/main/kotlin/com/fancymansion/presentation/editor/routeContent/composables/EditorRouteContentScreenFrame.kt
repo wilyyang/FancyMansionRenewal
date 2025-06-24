@@ -133,9 +133,9 @@ fun EditorRouteContentScreenFrame(
         bottomDrawerContent = {
             BottomSelectListDialog(
                 title = stringResource(id = R.string.edit_route_content_label_target_page_list),
-                targetPageId = uiState.targetPage.pageId,
-                pageList = uiState.targetPageList,
-                onSelectTargetPage = {
+                selectedId = uiState.targetPage.itemId,
+                itemList = uiState.targetPageList,
+                onSelectItem = {
                     onEventSent(SelectTargetPage(pageId = it))
                 }
             )

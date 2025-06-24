@@ -27,7 +27,7 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
 import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
-import com.fancymansion.presentation.editor.common.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.SelectItemWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -153,7 +153,7 @@ class EditorConditionContentViewModel @Inject constructor(
             copy(
                 conditionRule = conditionRule.withUpdatedSelfPageInfo(
                     pageId = pageId,
-                    pageTitle = targetPageList.firstOrNull { it.pageId == pageId }?.pageTitle
+                    pageTitle = targetPageList.firstOrNull { it.itemId == pageId }?.itemText
                 )
             )
         }
@@ -169,15 +169,15 @@ class EditorConditionContentViewModel @Inject constructor(
         }
 
         val targetPageList = logic.logics.map {
-            TargetPageWrapper(
-                pageId = it.pageId,
-                pageTitle = it.title
+            SelectItemWrapper(
+                itemId = it.pageId,
+                itemText = it.title
             )
         }
 
         val targetSelectorMap = logic.logics.associate { logicPage ->
             logicPage.pageId to logicPage.selectors.map { selector ->
-                TargetPageWrapper(selector.selectorId, selector.text)
+                SelectItemWrapper(selector.selectorId, selector.text)
             }
         }
 

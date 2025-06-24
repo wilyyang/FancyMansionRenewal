@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,6 +52,7 @@ fun SelectActionTarget(
                         vertical = Paddings.Basic.vertical
                     ),
                 isSelect = subItemText != null,
+                checkIconTint = MaterialTheme.colorScheme.secondary,
                 textVerticalPadding = 12.dp,
                 itemText = subItemText ?: stringResource(R.string.edit_condition_content_select_action_selector_not_found)
             ) {

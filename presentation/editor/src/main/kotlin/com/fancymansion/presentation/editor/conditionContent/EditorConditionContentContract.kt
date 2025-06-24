@@ -10,7 +10,7 @@ import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.ConditionRuleModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.presentation.editor.R
-import com.fancymansion.presentation.editor.common.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.SelectItemWrapper
 
 sealed class ConditionRuleWrapper(
     open val selfActionId: ActionIdWrapper,
@@ -129,8 +129,8 @@ class EditorConditionContentContract {
             selfActionId = ActionIdWrapper(),
             count = 0
         ),
-        val targetPageList: List<TargetPageWrapper> = listOf(),
-        val targetSelectorMap: Map<Long, List<TargetPageWrapper>> = emptyMap()
+        val targetPageList: List<SelectItemWrapper> = listOf(),
+        val targetSelectorMap: Map<Long, List<SelectItemWrapper>> = emptyMap()
     ) : ViewState
 
     sealed class Event : ViewEvent {

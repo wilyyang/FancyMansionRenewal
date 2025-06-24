@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.R
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
-import com.fancymansion.presentation.editor.common.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.SelectItemWrapper
 import com.fancymansion.presentation.editor.selectorContent.composables.part.detailPanelShape
 
 @Composable
@@ -43,6 +42,7 @@ fun SelectItem(
     selectBackground: Color = MaterialTheme.colorScheme.surface,
     notSelectBackground: Color = MaterialTheme.colorScheme.background,
     isSelect: Boolean = true,
+    checkIconTint: Color = MaterialTheme.colorScheme.primary,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     textHorizontalPadding: Dp = 16.dp,
     textVerticalPadding: Dp = 8.dp,
@@ -81,7 +81,7 @@ fun SelectItem(
                 modifier = Modifier
                     .height(textStyle.lineHeight.value.dp),
                 painter = painterResource(id = R.drawable.ic_check_bold_600),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = checkIconTint,
                 contentDescription = null
             )
         }
@@ -91,9 +91,10 @@ fun SelectItem(
 @Composable
 fun BottomSelectListDialog(
     title: String,
-    targetPageId: Long,
-    pageList: List<TargetPageWrapper>,
-    onSelectTargetPage: (pageId: Long) -> Unit,
+    selectedId: Long,
+    checkIconTint: Color = MaterialTheme.colorScheme.primary,
+    itemList: List<SelectItemWrapper>,
+    onSelectItem: (itemId: Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
     Column(
@@ -118,7 +119,7 @@ fun BottomSelectListDialog(
             state = listState
         ) {
 
-            itemsIndexed(items = pageList) { index, item ->
+            itemsIndexed(items = itemList) { index, item ->
                 Column (
                     modifier = Modifier.padding(horizontal = 7.dp)
                 ){
@@ -127,7 +128,7 @@ fun BottomSelectListDialog(
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.surface)
                             .clickable{
-                                onSelectTargetPage(item.pageId)
+                                onSelectItem(item.itemId)
                             }
                             .padding(horizontal = 7.dp)
                             .padding(vertical = 12.dp),
@@ -136,8 +137,8 @@ fun BottomSelectListDialog(
 
                         Text(
                             modifier = Modifier.weight(1f),
-                            text = item.pageTitle,
-                            style = if(targetPageId == item.pageId){
+                            text = item.itemText,
+                            style = if(selectedId == item.itemId){
                                 MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                             }else{
                                 MaterialTheme.typography.bodyLarge
@@ -146,18 +147,18 @@ fun BottomSelectListDialog(
                             overflow = TextOverflow.Ellipsis
                         )
 
-                        if(targetPageId == item.pageId){
+                        if(selectedId == item.itemId){
                             Icon(
                                 modifier = Modifier
                                     .height(MaterialTheme.typography.bodyLarge.lineHeight.value.dp),
-                                painter = painterResource(id = com.fancymansion.core.presentation.R.drawable.ic_check_bold_600),
-                                tint = MaterialTheme.colorScheme.primary,
+                                painter = painterResource(id = R.drawable.ic_check_bold_600),
+                                tint = checkIconTint,
                                 contentDescription = null
                             )
                         }
                     }
 
-                    if(index < pageList.size - 1){
+                    if(index < itemList.size - 1){
                         HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
                     }
                 }

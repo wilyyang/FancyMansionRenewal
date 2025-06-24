@@ -31,7 +31,7 @@ import com.fancymansion.presentation.editor.common.ActionInfo.CountInfo
 import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionState
 import com.fancymansion.presentation.editor.common.ConditionWrapper
-import com.fancymansion.presentation.editor.common.TargetPageWrapper
+import com.fancymansion.presentation.editor.common.SelectItemWrapper
 import com.fancymansion.presentation.editor.common.toModel
 import com.fancymansion.presentation.editor.common.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -148,7 +148,7 @@ class EditorRouteContentViewModel @Inject constructor(
     private fun selectPageId(pageId : Long) {
         setState {
             copy(
-                targetPage = targetPageList.firstOrNull { it.pageId == pageId }!!
+                targetPage = targetPageList.firstOrNull { it.itemId == pageId }!!
             )
         }
     }
@@ -216,16 +216,16 @@ class EditorRouteContentViewModel @Inject constructor(
         }
 
         val targetPageList = logic.logics.map {
-            TargetPageWrapper(
-                pageId = it.pageId,
-                pageTitle = it.title
+            SelectItemWrapper(
+                itemId = it.pageId,
+                itemText = it.title
             )
         }
 
         setState {
             copy(
                 targetPageList = targetPageList,
-                targetPage = targetPageList.firstOrNull { it.pageId == originRoute.routeTargetPageId }!!
+                targetPage = targetPageList.firstOrNull { it.itemId == originRoute.routeTargetPageId }!!
             )
         }
     }
@@ -236,7 +236,7 @@ class EditorRouteContentViewModel @Inject constructor(
             pageId = pageId,
             selectorId = selectorId,
             route = originRoute.copy(
-                routeTargetPageId = uiState.value.targetPage.pageId,
+                routeTargetPageId = uiState.value.targetPage.itemId,
                 routeConditions = routeConditionStates.map { it.condition.toModel() }.filterIsInstance<ConditionModel.RouteConditionModel>()
             )
         )
@@ -254,7 +254,7 @@ class EditorRouteContentViewModel @Inject constructor(
 
     private fun checkRouteEdited(onCheckComplete: () -> Unit) {
         val newRoute = originRoute.copy(
-            routeTargetPageId = uiState.value.targetPage.pageId,
+            routeTargetPageId = uiState.value.targetPage.itemId,
             routeConditions = routeConditionStates.map { it.condition.toModel() }.filterIsInstance<ConditionModel.RouteConditionModel>()
         )
 

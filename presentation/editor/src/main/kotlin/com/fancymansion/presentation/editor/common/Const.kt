@@ -127,7 +127,7 @@ private fun ConditionWrapper.buildConditionRule(selfActionId: ActionIdModel): Co
     }
 }
 
-data class TargetPageWrapper(
-    val pageId: Long = PAGE_ID_NOT_ASSIGNED,
-    val pageTitle: String  = ""
+data class SelectItemWrapper(
+    val itemId: Long = PAGE_ID_NOT_ASSIGNED,
+    val itemText: String  = ""
 )
