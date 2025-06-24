@@ -112,7 +112,7 @@ fun EditorConditionContentScreenFrame(
             BottomSelectListDialog(
                 title = stringResource(id = R.string.edit_condition_content_label_page_list),
                 selectedId = uiState.conditionRule.selfActionId.pageId,
-                itemList = uiState.targetPageList,
+                itemList = uiState.pageItemList,
                 onSelectItem = {
                     onEventSent(EditorConditionContentContract.Event.SelectSelfPage(pageId = it))
                 }

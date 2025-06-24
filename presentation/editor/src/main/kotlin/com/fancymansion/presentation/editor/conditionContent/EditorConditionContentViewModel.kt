@@ -153,7 +153,7 @@ class EditorConditionContentViewModel @Inject constructor(
             copy(
                 conditionRule = conditionRule.withUpdatedSelfPageInfo(
                     pageId = pageId,
-                    pageTitle = targetPageList.firstOrNull { it.itemId == pageId }?.itemText
+                    pageTitle = pageItemList.firstOrNull { it.itemId == pageId }?.itemText
                 )
             )
         }
@@ -168,14 +168,14 @@ class EditorConditionContentViewModel @Inject constructor(
             useCaseLoadBook.getShowSelectorCondition(logic, conditionGroup.pageId, conditionGroup.selectorId, conditionId)
         }
 
-        val targetPageList = logic.logics.map {
+        val pageItemList = logic.logics.map {
             SelectItemWrapper(
                 itemId = it.pageId,
                 itemText = it.title
             )
         }
 
-        val targetSelectorMap = logic.logics.associate { logicPage ->
+        val selectorItemMap = logic.logics.associate { logicPage ->
             logicPage.pageId to logicPage.selectors.map { selector ->
                 SelectItemWrapper(selector.selectorId, selector.text)
             }
@@ -184,8 +184,8 @@ class EditorConditionContentViewModel @Inject constructor(
         setState {
             copy(
                 conditionRule = originCondition.conditionRule.toWrapper(logic),
-                targetPageList = targetPageList,
-                targetSelectorMap = targetSelectorMap
+                pageItemList = pageItemList,
+                selectorItemMap = selectorItemMap
             )
         }
         // TODO 06.12 get condition and setState

@@ -129,8 +129,8 @@ class EditorConditionContentContract {
             selfActionId = ActionIdWrapper(),
             count = 0
         ),
-        val targetPageList: List<SelectItemWrapper> = listOf(),
-        val targetSelectorMap: Map<Long, List<SelectItemWrapper>> = emptyMap()
+        val pageItemList: List<SelectItemWrapper> = listOf(),
+        val selectorItemMap: Map<Long, List<SelectItemWrapper>> = emptyMap()
     ) : ViewState
 
     sealed class Event : ViewEvent {
