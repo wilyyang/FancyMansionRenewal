@@ -175,10 +175,17 @@ class EditorConditionContentViewModel @Inject constructor(
             )
         }
 
+        val targetSelectorMap = logic.logics.associate { logicPage ->
+            logicPage.pageId to logicPage.selectors.map { selector ->
+                TargetPageWrapper(selector.selectorId, selector.text)
+            }
+        }
+
         setState {
             copy(
                 conditionRule = originCondition.conditionRule.toWrapper(logic),
-                targetPageList = targetPageList
+                targetPageList = targetPageList,
+                targetSelectorMap = targetSelectorMap
             )
         }
         // TODO 06.12 get condition and setState
