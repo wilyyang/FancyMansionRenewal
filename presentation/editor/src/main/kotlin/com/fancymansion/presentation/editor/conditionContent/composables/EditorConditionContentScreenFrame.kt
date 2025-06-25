@@ -11,8 +11,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -29,11 +32,22 @@ import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.BottomSelectListDialog
+import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+
+sealed class DialogActionType {
+    object Self : DialogActionType()
+    object Target : DialogActionType()
+}
+
+sealed class DialogItemType {
+    object Page : DialogItemType()
+    object Selector : DialogItemType()
+}
 
 @Composable
 fun EditorConditionContentScreenFrame(
@@ -69,6 +83,9 @@ fun EditorConditionContentScreenFrame(
             }
         }?.collect()
     }
+
+    var dialogActionType by remember { mutableStateOf<DialogActionType?>(null) }
+    var dialogItemType by remember { mutableStateOf<DialogItemType?>(null) }
 
     BaseScreen(
         loadState = loadState,
@@ -108,15 +125,51 @@ fun EditorConditionContentScreenFrame(
                     })
         },
         bottomDrawerContent = {
-            // TODO 06.12 bottom dialog
-            BottomSelectListDialog(
-                title = stringResource(id = R.string.edit_condition_content_label_page_list),
-                selectedId = uiState.conditionRule.selfActionId.pageId,
-                itemList = uiState.pageItemList,
-                onSelectItem = {
-                    onEventSent(EditorConditionContentContract.Event.SelectSelfPage(pageId = it))
+            dialogActionType?.let { actionType ->
+                dialogItemType?.let { itemType ->
+                    when(actionType){
+                        is DialogActionType.Self -> uiState.conditionRule.selfActionId
+                        is DialogActionType.Target -> {
+                            (uiState.conditionRule as? ConditionRuleWrapper.TargetConditionRuleWrapper)?.targetActionId
+                        }
+                    }?.let { actionId ->
+                        BottomSelectListDialog(
+                            title = stringResource(
+                                id = when (itemType) {
+                                    is DialogItemType.Page -> R.string.edit_condition_content_label_page_list
+                                    is DialogItemType.Selector -> R.string.edit_condition_content_label_selector_list
+                                }
+                            ),
+                            selectedId = when (itemType) {
+                                is DialogItemType.Page -> actionId.pageId
+                                is DialogItemType.Selector -> actionId.selectorId
+                            },
+                            checkIconTint = when (itemType) {
+                                is DialogItemType.Page -> MaterialTheme.colorScheme.primary
+                                is DialogItemType.Selector -> MaterialTheme.colorScheme.secondary
+                            },
+                            itemList = when (itemType) {
+                                is DialogItemType.Page -> uiState.pageItemList
+                                is DialogItemType.Selector -> uiState.selectorItemMap[actionId.pageId]?:emptyList()
+                            },
+                            onSelectItem = {
+                                val event = when (actionType) {
+                                    is DialogActionType.Self -> when (itemType) {
+                                        is DialogItemType.Page -> EditorConditionContentContract.Event.SelectSelfPage(it)
+                                        is DialogItemType.Selector -> EditorConditionContentContract.Event.SelectSelfSelector(it)
+                                    }
+
+                                    is DialogActionType.Target -> when (itemType) {
+                                        is DialogItemType.Page -> EditorConditionContentContract.Event.SelectTargetPage(it)
+                                        is DialogItemType.Selector -> EditorConditionContentContract.Event.SelectTargetSelector(it)
+                                    }
+                                }
+                                onEventSent(event)
+                            }
+                        )
+                    }
                 }
-            )
+            }
         }
     ) {
         EditorConditionContentScreenContent(
@@ -126,11 +179,15 @@ fun EditorConditionContentScreenFrame(
             onCommonEventSent = onCommonEventSent,
             onOpenSelfActionPageList = {
                 coroutineScope.launch {
+                    dialogActionType = DialogActionType.Self
+                    dialogItemType = DialogItemType.Page
                     bottomDrawerState.open()
                 }
             },
             onOpenSelfActionSelectorList = {
                 coroutineScope.launch {
+                    dialogActionType = DialogActionType.Self
+                    dialogItemType = DialogItemType.Selector
                     bottomDrawerState.open()
                 }
             }
@@ -141,6 +198,8 @@ fun EditorConditionContentScreenFrame(
         if(bottomDrawerState.currentValue == DrawerValue.Open){
             coroutineScope.launch {
                 bottomDrawerState.close()
+                dialogActionType = null
+                dialogItemType = null
             }
         }else{
             onCommonEventSent(CommonEvent.CloseEvent)

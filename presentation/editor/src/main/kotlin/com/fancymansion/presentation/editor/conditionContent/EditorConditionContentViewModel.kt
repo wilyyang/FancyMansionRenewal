@@ -75,6 +75,7 @@ class EditorConditionContentViewModel @Inject constructor(
     override fun handleEvents(event: EditorConditionContentContract.Event) {
         when(event) {
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.pageId)
+            is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.selectorId)
             else -> {}
         }
     }
@@ -154,6 +155,17 @@ class EditorConditionContentViewModel @Inject constructor(
                 conditionRule = conditionRule.withUpdatedSelfPageInfo(
                     pageId = pageId,
                     pageTitle = pageItemList.firstOrNull { it.itemId == pageId }?.itemText
+                )
+            )
+        }
+    }
+
+    private fun selectSelfSelectorId(selectorId : Long) {
+        setState {
+            copy(
+                conditionRule = conditionRule.withUpdatedSelfSelectorInfo(
+                    selectorId = selectorId,
+                    selectorText = selectorItemMap[conditionRule.selfActionId.pageId]?.first { it.itemId == selectorId }?.itemText
                 )
             )
         }

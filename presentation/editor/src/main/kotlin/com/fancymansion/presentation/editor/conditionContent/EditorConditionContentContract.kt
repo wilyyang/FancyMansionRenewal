@@ -43,6 +43,18 @@ sealed class ConditionRuleWrapper(
             selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle)
         )
     }
+
+    fun withUpdatedSelfSelectorInfo(
+        selectorId: Long,
+        selectorText: String?
+    ): ConditionRuleWrapper = when (this) {
+        is CountConditionRuleWrapper -> copy(
+            selfActionId = selfActionId.copy(selectorId = selectorId, selectorText = selectorText)
+        )
+        is TargetConditionRuleWrapper -> copy(
+            selfActionId = selfActionId.copy(selectorId = selectorId, selectorText = selectorText)
+        )
+    }
 }
 
 fun ConditionRuleWrapper.toModel(): ConditionRuleModel = when (this) {
@@ -135,6 +147,10 @@ class EditorConditionContentContract {
 
     sealed class Event : ViewEvent {
         data class SelectSelfPage(val pageId : Long) : Event()
+        data class SelectSelfSelector(val selectorId : Long) : Event()
+
+        data class SelectTargetPage(val pageId : Long) : Event()
+        data class SelectTargetSelector(val selectorId : Long) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
