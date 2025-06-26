@@ -192,6 +192,20 @@ fun EditorConditionContentScreenFrame(
                     dialogItemType = DialogItemType.Selector
                     bottomDrawerState.open()
                 }
+            },
+            onOpenTargetActionPageList = {
+                coroutineScope.launch {
+                    dialogActionType = DialogActionType.Target
+                    dialogItemType = DialogItemType.Page
+                    bottomDrawerState.open()
+                }
+            },
+            onOpenTargetActionSelectorList = {
+                coroutineScope.launch {
+                    dialogActionType = DialogActionType.Target
+                    dialogItemType = DialogItemType.Selector
+                    bottomDrawerState.open()
+                }
             }
         )
     }

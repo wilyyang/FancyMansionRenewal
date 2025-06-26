@@ -32,6 +32,7 @@ import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
 import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
 import com.fancymansion.presentation.editor.common.ITEM_ID_NOT_ASSIGNED
 import com.fancymansion.presentation.editor.common.SelectItemWrapper
+import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper.TargetConditionRuleWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -80,7 +81,8 @@ class EditorConditionContentViewModel @Inject constructor(
         when(event) {
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
-            else -> {}
+            is EditorConditionContentContract.Event.SelectTargetPage -> selectTargetPageId(event.itemId)
+            is EditorConditionContentContract.Event.SelectTargetSelector -> selectTargetSelectorId(event.itemId)
         }
     }
 
@@ -183,6 +185,12 @@ class EditorConditionContentViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun selectTargetPageId(itemId : Long) {
+    }
+
+    private fun selectTargetSelectorId(itemId : Long) {
     }
 
     // CommonEvent

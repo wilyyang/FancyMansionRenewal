@@ -142,6 +142,7 @@
     <string name="edit_condition_content_select_action_selector_not_found">선택지 없음</string>
     <string name="edit_condition_content_select_action_selector_prefix">선택지 : %s</string>
     <string name="edit_condition_content_select_action_self_title">기준 진입 항목</string>
+    <string name="edit_condition_content_select_action_target_title">대상 진입 항목</string>
 
     <string name="edit_condition_content_label_page_list">페이지 목록</string>
     <string name="edit_condition_content_label_selector_list">선택지 목록</string>

@@ -18,6 +18,7 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper.TargetConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectActionTarget
 
@@ -28,7 +29,9 @@ fun EditorConditionContentScreenContent(
     onEventSent: (event: EditorConditionContentContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit,
     onOpenSelfActionPageList: () -> Unit,
-    onOpenSelfActionSelectorList: () -> Unit
+    onOpenSelfActionSelectorList: () -> Unit,
+    onOpenTargetActionPageList: () -> Unit,
+    onOpenTargetActionSelectorList: () -> Unit
 ) {
     if (!uiState.isInitSuccess) {
         Box(
@@ -81,6 +84,31 @@ fun EditorConditionContentScreenContent(
                             onOpenSelfActionSelectorList()
                         }
                     )
+                }
+
+                if(uiState.conditionRule is TargetConditionRuleWrapper){
+                    item {
+                        SelectActionTarget(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Paddings.Basic.horizontal)
+                                .padding(top = Paddings.Basic.vertical),
+                            title = stringResource(R.string.edit_condition_content_select_action_target_title),
+                            mainItemText = uiState.conditionRule.targetActionId.pageTitle,
+                            subItemText = uiState.conditionRule.targetActionId.selectorText?.let { selector ->
+                                stringResource(
+                                    R.string.edit_condition_content_select_action_selector_prefix,
+                                    selector
+                                )
+                            },
+                            onClickMainItemText = {
+                                onOpenTargetActionPageList()
+                            },
+                            onClickSubItemText = {
+                                onOpenTargetActionSelectorList()
+                            }
+                        )
+                    }
                 }
             }
         }
