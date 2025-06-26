@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.fancymansion.core.common.const.ACTION_ID_NOT_ASSIGNED
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
@@ -31,6 +32,7 @@ import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.common.ITEM_ID_NOT_ASSIGNED
 import com.fancymansion.presentation.editor.common.composables.BottomSelectListDialog
 import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
@@ -141,8 +143,8 @@ fun EditorConditionContentScreenFrame(
                                 }
                             ),
                             selectedId = when (itemType) {
-                                is DialogItemType.Page -> actionId.pageId
-                                is DialogItemType.Selector -> actionId.selectorId
+                                is DialogItemType.Page -> actionId.pageId.takeIf { it != ACTION_ID_NOT_ASSIGNED } ?: ITEM_ID_NOT_ASSIGNED
+                                is DialogItemType.Selector -> actionId.selectorId.takeIf { it != ACTION_ID_NOT_ASSIGNED } ?: ITEM_ID_NOT_ASSIGNED
                             },
                             checkIconTint = when (itemType) {
                                 is DialogItemType.Page -> MaterialTheme.colorScheme.primary

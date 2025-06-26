@@ -37,10 +37,10 @@ sealed class ConditionRuleWrapper(
         pageTitle: String?
     ): ConditionRuleWrapper = when (this) {
         is CountConditionRuleWrapper -> copy(
-            selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle)
+            selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle, selectorId = ACTION_ID_NOT_ASSIGNED, selectorText = null)
         )
         is TargetConditionRuleWrapper -> copy(
-            selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle)
+            selfActionId = selfActionId.copy(pageId = pageId, pageTitle = pageTitle, selectorId = ACTION_ID_NOT_ASSIGNED, selectorText = null)
         )
     }
 
@@ -146,11 +146,11 @@ class EditorConditionContentContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
-        data class SelectSelfPage(val pageId : Long) : Event()
-        data class SelectSelfSelector(val selectorId : Long) : Event()
+        data class SelectSelfPage(val itemId : Long) : Event()
+        data class SelectSelfSelector(val itemId : Long) : Event()
 
-        data class SelectTargetPage(val pageId : Long) : Event()
-        data class SelectTargetSelector(val selectorId : Long) : Event()
+        data class SelectTargetPage(val itemId : Long) : Event()
+        data class SelectTargetSelector(val itemId : Long) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

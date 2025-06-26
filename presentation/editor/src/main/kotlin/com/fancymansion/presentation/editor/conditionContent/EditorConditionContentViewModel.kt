@@ -1,6 +1,7 @@
 package com.fancymansion.presentation.editor.conditionContent
 
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.ACTION_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_ID
 import com.fancymansion.core.common.const.ArgName.NAME_BOOK_TITLE
 import com.fancymansion.core.common.const.ArgName.NAME_CONDITION_ID
@@ -11,8 +12,10 @@ import com.fancymansion.core.common.const.ArgName.NAME_ROUTE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.SELECTOR_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.common.util.ellipsis
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -27,6 +30,7 @@ import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ConditionGroup
 import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
 import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
+import com.fancymansion.presentation.editor.common.ITEM_ID_NOT_ASSIGNED
 import com.fancymansion.presentation.editor.common.SelectItemWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -74,8 +78,8 @@ class EditorConditionContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorConditionContentContract.Event) {
         when(event) {
-            is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.pageId)
-            is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.selectorId)
+            is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
+            is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
             else -> {}
         }
     }
@@ -149,23 +153,33 @@ class EditorConditionContentViewModel @Inject constructor(
     }
 
     // EditorConditionEvent
-    private fun selectSelfPageId(pageId : Long) {
+    private fun selectSelfPageId(itemId : Long) {
+        val (pageId, pageTitle) = if(itemId != ITEM_ID_NOT_ASSIGNED){
+            (itemId to uiState.value.pageItemList.firstOrNull { it.itemId == itemId }?.itemText)
+        }else{
+            (ACTION_ID_NOT_ASSIGNED to null)
+        }
         setState {
             copy(
                 conditionRule = conditionRule.withUpdatedSelfPageInfo(
                     pageId = pageId,
-                    pageTitle = pageItemList.firstOrNull { it.itemId == pageId }?.itemText
+                    pageTitle = pageTitle
                 )
             )
         }
     }
 
-    private fun selectSelfSelectorId(selectorId : Long) {
+    private fun selectSelfSelectorId(itemId : Long) {
+        val (selectorId, selectorText) = if(itemId != ITEM_ID_NOT_ASSIGNED){
+            (itemId to uiState.value.selectorItemMap[uiState.value.conditionRule.selfActionId.pageId]?.first { it.itemId == itemId }?.itemText)
+        }else{
+            (ACTION_ID_NOT_ASSIGNED to null)
+        }
         setState {
             copy(
                 conditionRule = conditionRule.withUpdatedSelfSelectorInfo(
                     selectorId = selectorId,
-                    selectorText = selectorItemMap[conditionRule.selfActionId.pageId]?.first { it.itemId == selectorId }?.itemText
+                    selectorText = selectorText
                 )
             )
         }
@@ -188,7 +202,9 @@ class EditorConditionContentViewModel @Inject constructor(
         }
 
         val selectorItemMap = logic.logics.associate { logicPage ->
-            logicPage.pageId to logicPage.selectors.map { selector ->
+            logicPage.pageId to listOf(
+                SelectItemWrapper(itemText = useCaseGetResource.string(R.string.edit_condition_content_select_action_selector_not_found))
+            ) + logicPage.selectors.map { selector ->
                 SelectItemWrapper(selector.selectorId, selector.text)
             }
         }

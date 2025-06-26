@@ -127,7 +127,8 @@ private fun ConditionWrapper.buildConditionRule(selfActionId: ActionIdModel): Co
     }
 }
 
+const val ITEM_ID_NOT_ASSIGNED = -1L
 data class SelectItemWrapper(
-    val itemId: Long = PAGE_ID_NOT_ASSIGNED,
+    val itemId: Long = ITEM_ID_NOT_ASSIGNED,
     val itemText: String  = ""
 )
