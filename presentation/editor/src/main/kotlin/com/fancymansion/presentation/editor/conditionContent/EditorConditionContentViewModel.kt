@@ -188,9 +188,49 @@ class EditorConditionContentViewModel @Inject constructor(
     }
 
     private fun selectTargetPageId(itemId : Long) {
+        val conditionRule = uiState.value.conditionRule
+        if(conditionRule is TargetConditionRuleWrapper){
+            val (pageId, pageTitle) = if(itemId != ITEM_ID_NOT_ASSIGNED){
+                (itemId to uiState.value.pageItemList.firstOrNull { it.itemId == itemId }?.itemText)
+            }else{
+                (ACTION_ID_NOT_ASSIGNED to null)
+            }
+
+            setState {
+                copy(
+                    conditionRule = conditionRule.copy(
+                        targetActionId = conditionRule.targetActionId.copy(
+                            pageId = pageId,
+                            pageTitle = pageTitle,
+                            selectorId = ACTION_ID_NOT_ASSIGNED,
+                            selectorText = null
+                        )
+                    )
+                )
+            }
+        }
     }
 
     private fun selectTargetSelectorId(itemId : Long) {
+        val conditionRule = uiState.value.conditionRule
+        if (conditionRule is TargetConditionRuleWrapper) {
+            val (selectorId, selectorText) = if (itemId != ITEM_ID_NOT_ASSIGNED) {
+                (itemId to uiState.value.selectorItemMap[conditionRule.targetActionId.pageId]?.first { it.itemId == itemId }?.itemText)
+            } else {
+                (ACTION_ID_NOT_ASSIGNED to null)
+            }
+
+            setState {
+                copy(
+                    conditionRule = conditionRule.copy(
+                        targetActionId = conditionRule.targetActionId.copy(
+                            selectorId = selectorId,
+                            selectorText = selectorText
+                        )
+                    )
+                )
+            }
+        }
     }
 
     // CommonEvent

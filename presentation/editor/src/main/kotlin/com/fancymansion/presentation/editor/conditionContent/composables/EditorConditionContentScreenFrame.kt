@@ -167,6 +167,10 @@ fun EditorConditionContentScreenFrame(
                                     }
                                 }
                                 onEventSent(event)
+
+                                coroutineScope.launch {
+                                    bottomDrawerState.close()
+                                }
                             }
                         )
                     }
@@ -214,8 +218,6 @@ fun EditorConditionContentScreenFrame(
         if(bottomDrawerState.currentValue == DrawerValue.Open){
             coroutineScope.launch {
                 bottomDrawerState.close()
-                dialogActionType = null
-                dialogItemType = null
             }
         }else{
             onCommonEventSent(CommonEvent.CloseEvent)
