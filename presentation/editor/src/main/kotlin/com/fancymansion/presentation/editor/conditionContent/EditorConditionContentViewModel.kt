@@ -12,10 +12,8 @@ import com.fancymansion.core.common.const.ArgName.NAME_ROUTE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
-import com.fancymansion.core.common.const.PAGE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.const.SELECTOR_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.common.util.ellipsis
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -32,6 +30,7 @@ import com.fancymansion.presentation.editor.common.ConditionGroup.RouteCondition
 import com.fancymansion.presentation.editor.common.ConditionGroup.ShowSelectorCondition
 import com.fancymansion.presentation.editor.common.ITEM_ID_NOT_ASSIGNED
 import com.fancymansion.presentation.editor.common.SelectItemWrapper
+import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper.CountConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper.TargetConditionRuleWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -81,6 +80,7 @@ class EditorConditionContentViewModel @Inject constructor(
         when(event) {
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
+            is EditorConditionContentContract.Event.SelectCompareType -> selectCompareType(event.type)
             is EditorConditionContentContract.Event.SelectTargetPage -> selectTargetPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectTargetSelector -> selectTargetSelectorId(event.itemId)
         }
@@ -183,6 +183,35 @@ class EditorConditionContentViewModel @Inject constructor(
                     selectorId = selectorId,
                     selectorText = selectorText
                 )
+            )
+        }
+    }
+
+    private fun selectCompareType(type : CompareType) {
+        val conditionRule = uiState.value.conditionRule
+        val newConditionRule = when{
+            conditionRule is CountConditionRuleWrapper && type != CompareType.Count-> {
+                TargetConditionRuleWrapper(
+                    selfActionId = conditionRule.selfActionId,
+                    relationOp = conditionRule.relationOp,
+                    logicalOp = conditionRule.logicalOp,
+                    targetActionId = ActionIdWrapper()
+                )
+            }
+            conditionRule is TargetConditionRuleWrapper && type != CompareType.TargetActionId -> {
+                CountConditionRuleWrapper(
+                    selfActionId = conditionRule.selfActionId,
+                    relationOp = conditionRule.relationOp,
+                    logicalOp = conditionRule.logicalOp,
+                    count = 0
+                )
+            }
+            else -> conditionRule
+        }
+
+        setState {
+            copy(
+                conditionRule = newConditionRule
             )
         }
     }

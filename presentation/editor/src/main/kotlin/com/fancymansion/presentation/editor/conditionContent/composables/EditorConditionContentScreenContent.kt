@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,10 +18,14 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.theme.Paddings
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
+import com.fancymansion.presentation.editor.conditionContent.CompareType
+import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper.CountConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper.TargetConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectActionTarget
+import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectCompareType
 
 @Composable
 fun EditorConditionContentScreenContent(
@@ -82,6 +87,25 @@ fun EditorConditionContentScreenContent(
                         },
                         onClickSubItemText = {
                             onOpenSelfActionSelectorList()
+                        }
+                    )
+                }
+
+                item {
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+                    SelectCompareType(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Paddings.Basic.horizontal)
+                            .padding(top = Paddings.Basic.vertical),
+                        selectedType = when (uiState.conditionRule) {
+                            is CountConditionRuleWrapper -> CompareType.Count
+                            is TargetConditionRuleWrapper -> CompareType.TargetActionId
+                        },
+                        onClickDropdownTitle = {},
+                        onItemSelected = {
+                            onEventSent(EditorConditionContentContract.Event.SelectCompareType(it))
                         }
                     )
                 }

@@ -146,4 +146,8 @@
 
     <string name="edit_condition_content_label_page_list">페이지 목록</string>
     <string name="edit_condition_content_label_selector_list">선택지 목록</string>
+
+    <string name="edit_condition_content_label_compare_type_title">비교 타입</string>
+    <string name="edit_condition_content_compare_type_count">횟수</string>
+    <string name="edit_condition_content_compare_type_target">대상</string>
 </resources>

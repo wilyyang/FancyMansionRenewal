@@ -3,6 +3,7 @@ package com.fancymansion.presentation.editor.conditionContent
 import com.fancymansion.core.common.const.ACTION_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.RelationOp
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -125,6 +126,13 @@ fun ActionIdModel.toWrapper(logic: LogicModel): ActionIdWrapper {
     )
 }
 
+enum class CompareType(
+    val localizedName: StringValue.StringResource
+) {
+    Count(localizedName = StringValue.StringResource(R.string.edit_condition_content_compare_type_count)),
+    TargetActionId(localizedName = StringValue.StringResource(R.string.edit_condition_content_compare_type_target))
+}
+
 class EditorConditionContentContract {
     companion object {
         const val NAME = "editor_condition_content"
@@ -148,6 +156,8 @@ class EditorConditionContentContract {
     sealed class Event : ViewEvent {
         data class SelectSelfPage(val itemId : Long) : Event()
         data class SelectSelfSelector(val itemId : Long) : Event()
+
+        data class SelectCompareType(val type : CompareType) : Event()
 
         data class SelectTargetPage(val itemId : Long) : Event()
         data class SelectTargetSelector(val itemId : Long) : Event()

@@ -5,16 +5,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
 import com.fancymansion.presentation.editor.common.composables.SelectItem
 import com.fancymansion.presentation.editor.common.itemMarginHeight
+import com.fancymansion.presentation.editor.conditionContent.CompareType
 
 @Composable
 fun SelectActionTarget(
@@ -59,6 +63,37 @@ fun SelectActionTarget(
                 onClickSubItemText()
             }
         }
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+    }
+}
+
+@Composable
+fun SelectCompareType(
+    modifier : Modifier = Modifier,
+    selectedType: CompareType,
+    onClickDropdownTitle: () -> Unit,
+    onItemSelected: (CompareType) -> Unit
+) {
+    val context = LocalContext.current
+    Column(modifier = modifier) {
+        CommonEditInfoTitle(
+            title = stringResource(id = R.string.edit_condition_content_label_compare_type_title)
+        )
+
+        EnumDropdown(
+            modifier = Modifier
+                .width(100.dp)
+                .padding(vertical = Paddings.Basic.vertical),
+            options = CompareType.entries.toTypedArray(),
+            selectedOption = selectedType,
+            onClickDropdownTitle = onClickDropdownTitle,
+            getDisplayName = {
+                context.getString(it.localizedName.resId)
+            }
+        ) {
+            onItemSelected(it)
+        }
+
         Spacer(modifier = Modifier.height(itemMarginHeight))
     }
 }
