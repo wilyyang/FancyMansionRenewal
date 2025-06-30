@@ -26,6 +26,7 @@ import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrappe
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectActionTarget
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectCompareType
+import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectTargetCount
 
 @Composable
 fun EditorConditionContentScreenContent(
@@ -110,28 +111,46 @@ fun EditorConditionContentScreenContent(
                     )
                 }
 
-                if(uiState.conditionRule is TargetConditionRuleWrapper){
-                    item {
-                        SelectActionTarget(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = Paddings.Basic.horizontal)
-                                .padding(top = Paddings.Basic.vertical),
-                            title = stringResource(R.string.edit_condition_content_select_action_target_title),
-                            mainItemText = uiState.conditionRule.targetActionId.pageTitle,
-                            subItemText = uiState.conditionRule.targetActionId.selectorText?.let { selector ->
-                                stringResource(
-                                    R.string.edit_condition_content_select_action_selector_prefix,
-                                    selector
-                                )
-                            },
-                            onClickMainItemText = {
-                                onOpenTargetActionPageList()
-                            },
-                            onClickSubItemText = {
-                                onOpenTargetActionSelectorList()
-                            }
-                        )
+                item {
+                    when(uiState.conditionRule){
+                        is CountConditionRuleWrapper -> {
+                            val options = (0..20).toList()
+                            SelectTargetCount(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = Paddings.Basic.horizontal)
+                                    .padding(top = Paddings.Basic.vertical),
+                                options = options,
+                                count = uiState.conditionRule.count,
+                                onClickDropdownTitle = {},
+                                onItemSelected = {
+                                    onEventSent(EditorConditionContentContract.Event.SelectTargetCount(it))
+                                }
+                            )
+                        }
+
+                        is TargetConditionRuleWrapper -> {
+                            SelectActionTarget(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = Paddings.Basic.horizontal)
+                                    .padding(top = Paddings.Basic.vertical),
+                                title = stringResource(R.string.edit_condition_content_select_action_target_title),
+                                mainItemText = uiState.conditionRule.targetActionId.pageTitle,
+                                subItemText = uiState.conditionRule.targetActionId.selectorText?.let { selector ->
+                                    stringResource(
+                                        R.string.edit_condition_content_select_action_selector_prefix,
+                                        selector
+                                    )
+                                },
+                                onClickMainItemText = {
+                                    onOpenTargetActionPageList()
+                                },
+                                onClickSubItemText = {
+                                    onOpenTargetActionSelectorList()
+                                }
+                            )
+                        }
                     }
                 }
             }

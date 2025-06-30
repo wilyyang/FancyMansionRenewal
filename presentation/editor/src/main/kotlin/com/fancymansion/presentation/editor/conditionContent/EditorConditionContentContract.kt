@@ -159,6 +159,7 @@ class EditorConditionContentContract {
 
         data class SelectCompareType(val type : CompareType) : Event()
 
+        data class SelectTargetCount(val count : Int) : Event()
         data class SelectTargetPage(val itemId : Long) : Event()
         data class SelectTargetSelector(val itemId : Long) : Event()
     }

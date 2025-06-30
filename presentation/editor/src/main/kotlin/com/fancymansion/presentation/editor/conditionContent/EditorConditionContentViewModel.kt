@@ -81,6 +81,7 @@ class EditorConditionContentViewModel @Inject constructor(
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
             is EditorConditionContentContract.Event.SelectCompareType -> selectCompareType(event.type)
+            is EditorConditionContentContract.Event.SelectTargetCount -> selectTargetCount(event.count)
             is EditorConditionContentContract.Event.SelectTargetPage -> selectTargetPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectTargetSelector -> selectTargetSelectorId(event.itemId)
         }
@@ -213,6 +214,19 @@ class EditorConditionContentViewModel @Inject constructor(
             copy(
                 conditionRule = newConditionRule
             )
+        }
+    }
+
+    private fun selectTargetCount(count : Int) {
+        val conditionRule = uiState.value.conditionRule
+        if(conditionRule is CountConditionRuleWrapper){
+            setState {
+                copy(
+                    conditionRule = conditionRule.copy(
+                        count = count
+                    )
+                )
+            }
         }
     }
 

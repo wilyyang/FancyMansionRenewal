@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
+import com.fancymansion.core.presentation.compose.component.ListDropdown
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
@@ -92,6 +93,34 @@ fun SelectCompareType(
             }
         ) {
             onItemSelected(it)
+        }
+
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+    }
+}
+
+@Composable
+fun SelectTargetCount(
+    modifier : Modifier = Modifier,
+    options: List<Int>,
+    count: Int,
+    onClickDropdownTitle: () -> Unit,
+    onItemSelected: (Int) -> Unit
+) {
+    Column(modifier = modifier) {
+        CommonEditInfoTitle(
+            title = stringResource(id = R.string.edit_condition_content_select_count_target_title)
+        )
+
+        ListDropdown (
+            modifier = Modifier
+                .width(100.dp)
+                .padding(vertical = Paddings.Basic.vertical),
+            options = options,
+            selectedIndex = options.indexOf(count),
+            onClickDropdownTitle = onClickDropdownTitle
+        ) {
+            onItemSelected(options.getOrNull(it)?: 0)
         }
 
         Spacer(modifier = Modifier.height(itemMarginHeight))

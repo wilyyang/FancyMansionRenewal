@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -128,6 +129,107 @@ fun <T : Enum<T>> EnumDropdown(
                     ),
                     onClick = {
                         onItemSelected(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun <T> ListDropdown(
+    modifier: Modifier = Modifier,
+    options: List<T>,
+    selectedIndex: Int,
+
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    textHorizontalPadding: Dp = 16.dp,
+    textVerticalPadding: Dp = 8.dp,
+
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+    borderShape: Shape = MaterialTheme.shapes.small,
+
+    dropdownOffset: DpOffset = DpOffset(x = 0.dp, y = 0.dp),
+    dropdownMaxHeight: Dp = 200.dp,
+    dropdownBackgroundColor: Color = MaterialTheme.colorScheme.surface,
+
+    onClickDropdownTitle: () -> Unit = {},
+    onItemSelectedIndex: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = borderShape
+                )
+                .padding(0.5.dp)
+                .clip(borderShape)
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null){
+                    onClickDropdownTitle()
+                    expanded = true
+                }
+                .padding(horizontal = textHorizontalPadding, vertical = textVerticalPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                modifier = Modifier.weight(1f),
+                text = options.getOrNull(selectedIndex).toString(),
+                style = textStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Image(
+                modifier = Modifier
+                    .height(textStyle.lineHeight.value.dp)
+                    .padding(top = 4.dp)
+                    .graphicsLayer(rotationZ = 180f),
+                painter = painterResource(id = R.drawable.ic_triangle),
+                contentScale = ContentScale.FillHeight,
+                contentDescription = null
+            )
+        }
+
+
+        DropdownMenu(
+            expanded = expanded,
+            offset = dropdownOffset,
+            onDismissRequest = { expanded = false },
+            properties = PopupProperties(focusable = true),
+            containerColor = Color.Transparent,
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = borderShape
+                )
+                .padding(0.5.dp)
+                .clip(borderShape)
+                .background(dropdownBackgroundColor)
+                .heightIn(max = dropdownMaxHeight),
+        ) {
+            options.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = item.toString(),
+                            style = textStyle.copy(fontWeight = if (index == selectedIndex) FontWeight.Bold else FontWeight.Normal)
+                        )
+                    },
+                    contentPadding = PaddingValues(
+                        vertical = textVerticalPadding,
+                        horizontal = textHorizontalPadding
+                    ),
+                    onClick = {
+                        onItemSelectedIndex(index)
                         expanded = false
                     }
                 )
