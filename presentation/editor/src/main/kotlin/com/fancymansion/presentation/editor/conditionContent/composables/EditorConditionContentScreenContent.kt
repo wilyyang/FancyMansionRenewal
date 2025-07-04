@@ -97,22 +97,6 @@ fun EditorConditionContentScreenContent(
                 item {
                     HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
 
-                    SelectRelationOperator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = Paddings.Basic.horizontal)
-                            .padding(top = Paddings.Basic.vertical),
-                        selectedType = uiState.conditionRule.relationOp,
-                        onClickDropdownTitle = {},
-                        onItemSelected = {
-                            onEventSent(EditorConditionContentContract.Event.SelectRelationOperator(it))
-                        }
-                    )
-                }
-
-                item {
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
-
                     SelectCompareType(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -170,6 +154,22 @@ fun EditorConditionContentScreenContent(
                             )
                         }
                     }
+                }
+
+                item {
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+                    SelectRelationOperator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Paddings.Basic.horizontal)
+                            .padding(top = Paddings.Basic.vertical),
+                        selectedType = uiState.conditionRule.relationOp,
+                        onClickDropdownTitle = {},
+                        onItemSelected = {
+                            onEventSent(EditorConditionContentContract.Event.SelectRelationOperator(it))
+                        }
+                    )
                 }
 
                 item {
