@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.component.ListDropdown
 import com.fancymansion.core.presentation.compose.theme.Paddings
@@ -64,6 +65,37 @@ fun SelectActionTarget(
                 onClickSubItemText()
             }
         }
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+    }
+}
+
+@Composable
+fun SelectRelationOperator(
+    modifier : Modifier = Modifier,
+    selectedType: RelationOp,
+    onClickDropdownTitle: () -> Unit,
+    onItemSelected: (RelationOp) -> Unit
+) {
+    val context = LocalContext.current
+    Column(modifier = modifier) {
+        CommonEditInfoTitle(
+            title = stringResource(id = R.string.edit_condition_content_label_relation_operator)
+        )
+
+        EnumDropdown(
+            modifier = Modifier
+                .width(100.dp)
+                .padding(vertical = Paddings.Basic.vertical),
+            options = RelationOp.entries.toTypedArray(),
+            selectedOption = selectedType,
+            onClickDropdownTitle = onClickDropdownTitle,
+            getDisplayName = {
+                context.getString(it.localizedName.resId)
+            }
+        ) {
+            onItemSelected(it)
+        }
+
         Spacer(modifier = Modifier.height(itemMarginHeight))
     }
 }

@@ -14,6 +14,7 @@ import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.common.util.ellipsis
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -80,6 +81,7 @@ class EditorConditionContentViewModel @Inject constructor(
         when(event) {
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
+            is EditorConditionContentContract.Event.SelectRelationOperator -> selectRelationOperator(event.relationOp)
             is EditorConditionContentContract.Event.SelectCompareType -> selectCompareType(event.type)
             is EditorConditionContentContract.Event.SelectTargetCount -> selectTargetCount(event.count)
             is EditorConditionContentContract.Event.SelectTargetPage -> selectTargetPageId(event.itemId)
@@ -184,6 +186,25 @@ class EditorConditionContentViewModel @Inject constructor(
                     selectorId = selectorId,
                     selectorText = selectorText
                 )
+            )
+        }
+    }
+
+    private fun selectRelationOperator(relationOp: RelationOp) {
+        val conditionRule = uiState.value.conditionRule
+        val newConditionRule = when (conditionRule) {
+            is CountConditionRuleWrapper -> conditionRule.copy(
+                relationOp = relationOp
+            )
+
+            is TargetConditionRuleWrapper -> conditionRule.copy(
+                relationOp = relationOp
+            )
+        }
+
+        setState {
+            copy(
+                conditionRule = newConditionRule
             )
         }
     }

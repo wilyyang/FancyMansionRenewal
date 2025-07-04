@@ -152,4 +152,6 @@
     <string name="edit_condition_content_label_compare_type_title">비교 타입</string>
     <string name="edit_condition_content_compare_type_count">횟수</string>
     <string name="edit_condition_content_compare_type_target">대상</string>
+
+    <string name="edit_condition_content_label_relation_operator">연산자</string>
 </resources>

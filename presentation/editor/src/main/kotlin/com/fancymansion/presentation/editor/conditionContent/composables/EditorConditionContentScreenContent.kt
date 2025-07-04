@@ -26,6 +26,7 @@ import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrappe
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectActionTarget
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectCompareType
+import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectRelationOperator
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectTargetCount
 
 @Composable
@@ -88,6 +89,22 @@ fun EditorConditionContentScreenContent(
                         },
                         onClickSubItemText = {
                             onOpenSelfActionSelectorList()
+                        }
+                    )
+                }
+
+                item {
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+                    SelectRelationOperator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Paddings.Basic.horizontal)
+                            .padding(top = Paddings.Basic.vertical),
+                        selectedType = uiState.conditionRule.relationOp,
+                        onClickDropdownTitle = {},
+                        onItemSelected = {
+                            onEventSent(EditorConditionContentContract.Event.SelectRelationOperator(it))
                         }
                     )
                 }
