@@ -11,6 +11,9 @@ import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.ConditionModel
+import com.fancymansion.domain.model.book.ConditionModel.RouteConditionModel
+import com.fancymansion.domain.model.book.ConditionModel.ShowSelectorConditionModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
@@ -181,6 +184,61 @@ class UseCaseMakeBook @Inject constructor(
             }
             bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
         }
+
+    suspend fun saveEditedShowSelectorCondition(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, condition: ShowSelectorConditionModel) =
+        withContext(dispatcher) {
+            val newLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef).let { originLogic ->
+                originLogic.logics.first { it.pageId == pageId }.let { originPageLogic ->
+                    originPageLogic.selectors.first { it.selectorId == selectorId }.let { originSelector ->
+                        originSelector.copy(
+                            showConditions = originSelector.showConditions.map { if (it.conditionId == condition.conditionId) condition else it }
+                        ).let { newSelector ->
+                            rebuildLogicWithUpdatedSelector(originLogic, originPageLogic, newSelector)
+                        }
+                    }
+                }
+            }
+            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+        }
+
+    suspend fun saveEditedRouteCondition(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, routeId: Long, condition: RouteConditionModel) =
+        withContext(dispatcher) {
+            val newLogic = bookLocalRepository.loadLogic(episodeRef = episodeRef).let { originLogic ->
+                originLogic.logics.first { it.pageId == pageId }.let { originPageLogic ->
+                    originPageLogic.selectors.first { it.selectorId == selectorId }.let { originSelector ->
+                        originSelector.routes.first { it.routeId == routeId }.let { originRoute ->
+                            originRoute.copy(
+                                routeConditions = originRoute.routeConditions.map { if (it.conditionId == condition.conditionId) condition else it }
+                            ).let { newRoute ->
+                                originSelector.copy(
+                                    routes = originSelector.routes.map { if (it.routeId == newRoute.routeId) newRoute else it }
+                                ).let { newSelector ->
+                                    rebuildLogicWithUpdatedSelector(originLogic, originPageLogic, newSelector)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+        }
+
+    private fun rebuildLogicWithUpdatedSelector(
+        originLogic: LogicModel,
+        originPageLogic: PageLogicModel,
+        updatedSelector: SelectorModel
+    ): LogicModel {
+        val newPageLogic = originPageLogic.copy(
+            selectors = originPageLogic.selectors.map {
+                if (it.selectorId == updatedSelector.selectorId) updatedSelector else it
+            }
+        )
+        return originLogic.copy(
+            logics = originLogic.logics.map {
+                if (it.pageId == newPageLogic.pageId) newPageLogic else it
+            }
+        )
+    }
 
     suspend fun removeBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel) =
         withContext(dispatcher) {

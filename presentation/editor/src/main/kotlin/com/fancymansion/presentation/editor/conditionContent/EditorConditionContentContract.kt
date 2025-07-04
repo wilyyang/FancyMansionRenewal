@@ -154,6 +154,8 @@ class EditorConditionContentContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
+        data object ConditionSaveToFile : Event()
+
         data class SelectSelfPage(val itemId : Long) : Event()
         data class SelectSelfSelector(val itemId : Long) : Event()
 

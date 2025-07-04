@@ -80,6 +80,7 @@ class EditorConditionContentViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorConditionContentContract.Event) {
         when(event) {
+            EditorConditionContentContract.Event.ConditionSaveToFile -> handleConditionSaveToFile()
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
             is EditorConditionContentContract.Event.SelectCompareType -> selectCompareType(event.type)
@@ -160,6 +161,19 @@ class EditorConditionContentViewModel @Inject constructor(
     }
 
     // EditorConditionEvent
+    private fun handleConditionSaveToFile() = launchWithLoading(endLoadState = null) {
+        val isComplete = saveEditedConditionAndReload()
+        setLoadState(
+            loadState = LoadState.AlarmDialog(
+                title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_save_result_title),
+                message = StringValue.StringResource(if (isComplete) R.string.dialog_save_complete_book_info else R.string.dialog_save_fail_book_info),
+                dismissText = null,
+                confirmText = StringValue.StringResource(com.fancymansion.core.common.R.string.confirm),
+                onConfirm = ::setLoadStateIdle
+            )
+        )
+    }
+
     private fun selectSelfPageId(itemId : Long) {
         val (pageId, pageTitle) = if(itemId != ITEM_ID_NOT_ASSIGNED){
             (itemId to uiState.value.pageItemList.firstOrNull { it.itemId == itemId }?.itemText)
@@ -352,10 +366,34 @@ class EditorConditionContentViewModel @Inject constructor(
         // TODO 06.12 get condition and setState
     }
 
-    private suspend fun saveEditedConditionAndReload() : Boolean{
+    private suspend fun saveEditedConditionAndReload(): Boolean {
+        val (originCondition, conditionGroup) = originCondition to conditionGroup
+        val result = when {
+            originCondition is ConditionModel.ShowSelectorConditionModel
+                    && conditionGroup is ShowSelectorCondition
+                -> useCaseMakeBook.saveEditedShowSelectorCondition(
+                episodeRef = episodeRef,
+                pageId = conditionGroup.pageId,
+                selectorId = conditionGroup.selectorId,
+                condition = originCondition
+            )
+
+            originCondition is ConditionModel.RouteConditionModel
+                    && conditionGroup is RouteCondition
+                -> useCaseMakeBook.saveEditedRouteCondition(
+                episodeRef = episodeRef,
+                pageId = conditionGroup.pageId,
+                selectorId = conditionGroup.selectorId,
+                routeId = conditionGroup.routeId,
+                condition = originCondition
+            )
+
+            else -> false
+        }
+
         // TODO 06.12 save condition
         updateCondition(conditionId)
-        return true
+        return result
     }
 
     private fun handleOnResume() {

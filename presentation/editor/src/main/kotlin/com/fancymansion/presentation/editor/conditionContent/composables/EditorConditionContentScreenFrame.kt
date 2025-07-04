@@ -109,7 +109,7 @@ fun EditorConditionContentScreenFrame(
                 subTitle = uiState.barSubTitle,
                 sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
-                    // TODO 06.12 sendEvent save to file
+                    onEventSent(EditorConditionContentContract.Event.ConditionSaveToFile)
                 },
                 shadowElevation = 1.dp
             )
