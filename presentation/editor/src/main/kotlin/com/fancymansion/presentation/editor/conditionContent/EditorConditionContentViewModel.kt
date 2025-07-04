@@ -82,11 +82,11 @@ class EditorConditionContentViewModel @Inject constructor(
         when(event) {
             is EditorConditionContentContract.Event.SelectSelfPage -> selectSelfPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectSelfSelector -> selectSelfSelectorId(event.itemId)
-            is EditorConditionContentContract.Event.SelectRelationOperator -> selectRelationOperator(event.relationOp)
             is EditorConditionContentContract.Event.SelectCompareType -> selectCompareType(event.type)
             is EditorConditionContentContract.Event.SelectTargetCount -> selectTargetCount(event.count)
             is EditorConditionContentContract.Event.SelectTargetPage -> selectTargetPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectTargetSelector -> selectTargetSelectorId(event.itemId)
+            is EditorConditionContentContract.Event.SelectRelationOperator -> selectRelationOperator(event.relationOp)
             is EditorConditionContentContract.Event.SelectNextLogicalOperator -> selectNextLogicalOperator(event.logicalOp)
         }
     }
@@ -192,25 +192,6 @@ class EditorConditionContentViewModel @Inject constructor(
         }
     }
 
-    private fun selectRelationOperator(relationOp: RelationOp) {
-        val conditionRule = uiState.value.conditionRule
-        val newConditionRule = when (conditionRule) {
-            is CountConditionRuleWrapper -> conditionRule.copy(
-                relationOp = relationOp
-            )
-
-            is TargetConditionRuleWrapper -> conditionRule.copy(
-                relationOp = relationOp
-            )
-        }
-
-        setState {
-            copy(
-                conditionRule = newConditionRule
-            )
-        }
-    }
-
     private fun selectCompareType(type : CompareType) {
         val conditionRule = uiState.value.conditionRule
         val newConditionRule = when{
@@ -296,6 +277,25 @@ class EditorConditionContentViewModel @Inject constructor(
                     )
                 )
             }
+        }
+    }
+
+    private fun selectRelationOperator(relationOp: RelationOp) {
+        val conditionRule = uiState.value.conditionRule
+        val newConditionRule = when (conditionRule) {
+            is CountConditionRuleWrapper -> conditionRule.copy(
+                relationOp = relationOp
+            )
+
+            is TargetConditionRuleWrapper -> conditionRule.copy(
+                relationOp = relationOp
+            )
+        }
+
+        setState {
+            copy(
+                conditionRule = newConditionRule
+            )
         }
     }
 

@@ -157,13 +157,12 @@ class EditorConditionContentContract {
         data class SelectSelfPage(val itemId : Long) : Event()
         data class SelectSelfSelector(val itemId : Long) : Event()
 
-        data class SelectRelationOperator(val relationOp : RelationOp) : Event()
         data class SelectCompareType(val type : CompareType) : Event()
-
         data class SelectTargetCount(val count : Int) : Event()
         data class SelectTargetPage(val itemId : Long) : Event()
         data class SelectTargetSelector(val itemId : Long) : Event()
 
+        data class SelectRelationOperator(val relationOp : RelationOp) : Event()
         data class SelectNextLogicalOperator(val logicalOp : LogicalOp) : Event()
     }
 
