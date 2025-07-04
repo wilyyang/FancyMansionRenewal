@@ -163,6 +163,8 @@ class EditorConditionContentContract {
         data class SelectTargetCount(val count : Int) : Event()
         data class SelectTargetPage(val itemId : Long) : Event()
         data class SelectTargetSelector(val itemId : Long) : Event()
+
+        data class SelectNextLogicalOperator(val logicalOp : LogicalOp) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

@@ -26,6 +26,7 @@ import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrappe
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectActionTarget
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectCompareType
+import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectLogicalOperator
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectRelationOperator
 import com.fancymansion.presentation.editor.conditionContent.composables.part.SelectTargetCount
 
@@ -169,6 +170,22 @@ fun EditorConditionContentScreenContent(
                             )
                         }
                     }
+                }
+
+                item {
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+                    SelectLogicalOperator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Paddings.Basic.horizontal)
+                            .padding(top = Paddings.Basic.vertical),
+                        selectedType = uiState.conditionRule.logicalOp,
+                        onClickDropdownTitle = {},
+                        onItemSelected = {
+                            onEventSent(EditorConditionContentContract.Event.SelectNextLogicalOperator(it))
+                        }
+                    )
                 }
             }
         }

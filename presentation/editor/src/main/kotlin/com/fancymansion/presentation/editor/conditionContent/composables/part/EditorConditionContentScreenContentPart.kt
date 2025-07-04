@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.RelationOp
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.component.ListDropdown
@@ -153,6 +154,37 @@ fun SelectTargetCount(
             onClickDropdownTitle = onClickDropdownTitle
         ) {
             onItemSelected(options.getOrNull(it)?: 0)
+        }
+
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+    }
+}
+
+@Composable
+fun SelectLogicalOperator(
+    modifier : Modifier = Modifier,
+    selectedType: LogicalOp,
+    onClickDropdownTitle: () -> Unit,
+    onItemSelected: (LogicalOp) -> Unit
+) {
+    val context = LocalContext.current
+    Column(modifier = modifier) {
+        CommonEditInfoTitle(
+            title = stringResource(id = R.string.edit_condition_content_label_next_logical_operator)
+        )
+
+        EnumDropdown(
+            modifier = Modifier
+                .width(100.dp)
+                .padding(vertical = Paddings.Basic.vertical),
+            options = LogicalOp.entries.toTypedArray(),
+            selectedOption = selectedType,
+            onClickDropdownTitle = onClickDropdownTitle,
+            getDisplayName = {
+                context.getString(it.localizedName.resId)
+            }
+        ) {
+            onItemSelected(it)
         }
 
         Spacer(modifier = Modifier.height(itemMarginHeight))

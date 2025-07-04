@@ -12,6 +12,7 @@ import com.fancymansion.core.common.const.ArgName.NAME_ROUTE_ID
 import com.fancymansion.core.common.const.ArgName.NAME_SELECTOR_ID
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.LogicalOp
 import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.RelationOp
@@ -86,6 +87,7 @@ class EditorConditionContentViewModel @Inject constructor(
             is EditorConditionContentContract.Event.SelectTargetCount -> selectTargetCount(event.count)
             is EditorConditionContentContract.Event.SelectTargetPage -> selectTargetPageId(event.itemId)
             is EditorConditionContentContract.Event.SelectTargetSelector -> selectTargetSelectorId(event.itemId)
+            is EditorConditionContentContract.Event.SelectNextLogicalOperator -> selectNextLogicalOperator(event.logicalOp)
         }
     }
 
@@ -294,6 +296,25 @@ class EditorConditionContentViewModel @Inject constructor(
                     )
                 )
             }
+        }
+    }
+
+    private fun selectNextLogicalOperator(logicalOp : LogicalOp) {
+        val conditionRule = uiState.value.conditionRule
+        val newConditionRule = when (conditionRule) {
+            is CountConditionRuleWrapper -> conditionRule.copy(
+                logicalOp = logicalOp
+            )
+
+            is TargetConditionRuleWrapper -> conditionRule.copy(
+                logicalOp = logicalOp
+            )
+        }
+
+        setState {
+            copy(
+                conditionRule = newConditionRule
+            )
         }
     }
 

@@ -154,4 +154,5 @@
     <string name="edit_condition_content_compare_type_target">대상</string>
 
     <string name="edit_condition_content_label_relation_operator">연산자</string>
+    <string name="edit_condition_content_label_next_logical_operator">다음 조건 관계</string>
 </resources>
