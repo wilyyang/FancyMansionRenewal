@@ -366,7 +366,6 @@ class EditorConditionContentViewModel @Inject constructor(
                 selectorItemMap = selectorItemMap
             )
         }
-        // TODO 06.12 get condition and setState
     }
 
     private suspend fun saveEditedConditionAndReload(): Boolean {
@@ -398,7 +397,6 @@ class EditorConditionContentViewModel @Inject constructor(
             else -> false
         }
 
-        // TODO 06.12 save condition
         updateCondition(conditionId)
         return result
     }
@@ -411,8 +409,8 @@ class EditorConditionContentViewModel @Inject constructor(
     }
 
     private fun checkConditionEdited(onCheckComplete: () -> Unit) {
-        // TODO 06.12 edited condition to model
-        if (false) {
+        val edited = originCondition.conditionRule != uiState.value.conditionRule.toModel()
+        if (edited) {
             setLoadState(
                 LoadState.AlarmDialog(
                     title = StringValue.StringResource(com.fancymansion.core.common.R.string.book_file_edited_info_title),
