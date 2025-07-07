@@ -214,7 +214,10 @@ class EditorConditionContentViewModel @Inject constructor(
                     selfActionId = conditionRule.selfActionId,
                     relationOp = conditionRule.relationOp,
                     logicalOp = conditionRule.logicalOp,
-                    targetActionId = ActionIdWrapper()
+                    targetActionId = ActionIdWrapper(
+                        pageId = conditionGroup.pageId,
+                        pageTitle = logic.logics.firstOrNull { it.pageId == conditionGroup.pageId }!!.title
+                    )
                 )
             }
             conditionRule is TargetConditionRuleWrapper && type != CompareType.TargetActionId -> {
@@ -375,7 +378,9 @@ class EditorConditionContentViewModel @Inject constructor(
                 episodeRef = episodeRef,
                 pageId = conditionGroup.pageId,
                 selectorId = conditionGroup.selectorId,
-                condition = originCondition
+                condition = originCondition.copy(
+                    conditionRule = uiState.value.conditionRule.toModel()
+                )
             )
 
             originCondition is ConditionModel.RouteConditionModel
@@ -385,7 +390,9 @@ class EditorConditionContentViewModel @Inject constructor(
                 pageId = conditionGroup.pageId,
                 selectorId = conditionGroup.selectorId,
                 routeId = conditionGroup.routeId,
-                condition = originCondition
+                condition = originCondition.copy(
+                    conditionRule = uiState.value.conditionRule.toModel()
+                )
             )
 
             else -> false
