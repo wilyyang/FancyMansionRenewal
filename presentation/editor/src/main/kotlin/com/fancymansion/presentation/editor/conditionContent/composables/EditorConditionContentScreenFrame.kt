@@ -2,12 +2,21 @@ package com.fancymansion.presentation.editor.conditionContent.composables
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -16,9 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -28,12 +40,17 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.window.TypePane
+import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.frame.FancyMansionTopBar
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.theme.Paddings
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.common.ITEM_ID_NOT_ASSIGNED
 import com.fancymansion.presentation.editor.common.composables.BottomSelectListDialog
+import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
+import com.fancymansion.presentation.editor.common.itemMarginHeight
 import com.fancymansion.presentation.editor.conditionContent.ConditionRuleWrapper
 import com.fancymansion.presentation.editor.conditionContent.EditorConditionContentContract
 import kotlinx.coroutines.flow.SharedFlow
@@ -239,5 +256,147 @@ fun EditorConditionContentSkeletonScreen() {
             subTitle = stringResource(id = R.string.topbar_editor_sub_title),
             shadowElevation = 1.dp
         )
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.Basic.horizontal)
+            .padding(top = Paddings.Basic.vertical)) {
+
+            CommonEditInfoTitle(
+                title = stringResource(id = R.string.edit_condition_content_select_action_self_title)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = Paddings.Basic.vertical
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = MaterialTheme.shapes.small
+                    )
+                    .padding(0.5.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "",
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = Paddings.Basic.vertical
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = MaterialTheme.shapes.small
+                    )
+                    .padding(0.5.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "",
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.Basic.horizontal)
+            .padding(top = Paddings.Basic.vertical)) {
+
+            CommonEditInfoTitle(
+                title = stringResource(id = R.string.edit_condition_content_label_compare_type_title)
+            )
+
+            FadeInOutSkeleton(
+                modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .width(100.dp)
+                    .height(33.dp)
+            )
+
+            Spacer(modifier = Modifier.height(19.dp))
+
+            FadeInOutSkeleton(
+                modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .width(70.dp)
+                    .height(25.dp)
+            )
+
+            FadeInOutSkeleton(
+                modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .width(100.dp)
+                    .height(33.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(itemMarginHeight))
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.Basic.horizontal)
+            .padding(top = Paddings.Basic.vertical)) {
+
+            CommonEditInfoTitle(
+                title = stringResource(id = R.string.edit_condition_content_label_relation_operator)
+            )
+
+            FadeInOutSkeleton(
+                modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .width(100.dp)
+                    .height(33.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(17.dp))
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Paddings.Basic.horizontal)
+            .padding(top = Paddings.Basic.vertical)) {
+
+            CommonEditInfoTitle(
+                title = stringResource(id = R.string.edit_condition_content_label_next_logical_operator)
+            )
+
+            FadeInOutSkeleton(
+                modifier = Modifier
+                    .padding(vertical = Paddings.Basic.vertical)
+                    .width(100.dp)
+                    .height(33.dp)
+            )
+        }
     }
 }
