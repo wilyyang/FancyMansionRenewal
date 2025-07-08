@@ -51,10 +51,11 @@ class UseCaseMakeBook @Inject constructor(
 
             // Start Page 변경
             if(pageLogic.type == PageType.START){
-                var startPageLogic = logic.logics.firstOrNull{it.type == PageType.START}!!
-                if(pageLogic.pageId != startPageLogic.pageId){
-                    startPageLogic = startPageLogic.copy(type = PageType.NORMAL)
-                    logic = logic.copy(logics = logic.logics.map { if (it.pageId == startPageLogic.pageId) startPageLogic else it })
+                logic.logics.firstOrNull{it.type == PageType.START}?.let { startPageLogic ->
+                    if(pageLogic.pageId != startPageLogic.pageId){
+                        val updatedPageLogic = startPageLogic.copy(type = PageType.NORMAL)
+                        logic = logic.copy(logics = logic.logics.map { if (it.pageId == updatedPageLogic.pageId) updatedPageLogic else it })
+                    }
                 }
             }
 
