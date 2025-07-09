@@ -267,8 +267,8 @@ class ViewerContentViewModel @Inject constructor(
                 .first { it.selectorId == selectorId }
                 .routes
         )
-        val (pageWrapper, selectors) = loadPageContent(nextPageId)
         useCaseBookLogic.incrementActionCount(episodeRef, pageId = pageId, selectorId = selectorId)
+        val (pageWrapper, selectors) = loadPageContent(nextPageId)
         useCaseBookLogic.incrementActionCount(episodeRef, pageId = nextPageId)
         useCaseBookLogic.updateReadingProgressPageId(episodeRef, nextPageId)
 
