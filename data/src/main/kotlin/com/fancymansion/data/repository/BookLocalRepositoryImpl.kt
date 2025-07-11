@@ -203,6 +203,10 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.makeCoverImageFromResource(userId, mode, bookId, imageName, resourceId)
     }
 
+    override suspend fun bookLogicFileExists(episodeRef: EpisodeRef) : Boolean {
+        return bookStorageSource.bookLogicFileExists(episodeRef)
+    }
+
     override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
         return bookStorageSource.makeSampleEpisode(episodeRef)
     }

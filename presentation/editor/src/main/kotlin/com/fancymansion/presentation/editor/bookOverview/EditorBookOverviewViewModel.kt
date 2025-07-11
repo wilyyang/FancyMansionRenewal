@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
-import com.fancymansion.core.common.const.testEpisodeRef
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -31,13 +31,10 @@ class EditorBookOverviewViewModel @Inject constructor(
     private var isUpdateResume : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
-            get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId }
-                ?: testEpisodeRef.userId,
-            testEpisodeRef.mode, //get<ReadMode>(NAME_READ_MODE)
-            get<String>(ArgName.NAME_BOOK_ID)?.ifBlank { testEpisodeRef.bookId }
-                ?: testEpisodeRef.bookId,
-            get<String>(ArgName.NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId }
-                ?: testEpisodeRef.episodeId
+            get<String>(ArgName.NAME_USER_ID)!!,
+            get<ReadMode>(ArgName.NAME_READ_MODE)!!,
+            get<String>(ArgName.NAME_BOOK_ID)!!,
+            get<String>(ArgName.NAME_EPISODE_ID)!!
         )
     }
 
@@ -210,7 +207,6 @@ class EditorBookOverviewViewModel @Inject constructor(
 
     init {
         launchWithInit {
-            useCaseMakeBook.makeSampleEpisode()
             useCaseGetTotalKeyword().forEach {
                 keywordStates.add(createKeywordState(it, false))
             }

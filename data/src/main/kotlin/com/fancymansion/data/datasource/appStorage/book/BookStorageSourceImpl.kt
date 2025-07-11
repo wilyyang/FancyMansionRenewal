@@ -224,6 +224,10 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         copyStreamToFile(inputStream, outputFile)
     }
 
+    override suspend fun bookLogicFileExists(
+        episodeRef: EpisodeRef
+    ) : Boolean = root.logicFile(episodeRef).exists()
+
     override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
         val gson = GsonBuilder()
             .registerTypeAdapter(SourceData::class.java, JsonSerializer<SourceData> { src, _, context -> src?.toJson(context!!) })

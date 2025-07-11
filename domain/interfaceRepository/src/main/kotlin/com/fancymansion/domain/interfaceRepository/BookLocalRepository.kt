@@ -90,6 +90,9 @@ interface BookLocalRepository {
         imageName: String,
         resourceId: Int
     )
+
+    suspend fun bookLogicFileExists(episodeRef: EpisodeRef) : Boolean
+
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean
 
     suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File>
