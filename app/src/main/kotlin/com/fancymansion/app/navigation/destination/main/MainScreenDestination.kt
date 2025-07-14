@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
-import com.fancymansion.app.navigation.navigateEditorBookOverviewScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.main.content.MainViewModel
@@ -51,8 +50,6 @@ fun MainScreenDestination(
 
 fun handleNavigationRequest(effect: MainContract.Effect, navController: NavController) {
     when (effect) {
-        is MainContract.Effect.Navigation.NavigateEditorBookOverviewScreen -> {
-            navController.navigateEditorBookOverviewScreen(effect.episodeRef)
-        }
+        else -> {}
     }
 }

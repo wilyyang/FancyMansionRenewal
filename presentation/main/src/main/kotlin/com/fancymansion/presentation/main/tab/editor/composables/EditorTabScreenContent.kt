@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.main.content.composables
+package com.fancymansion.presentation.main.tab.editor.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,13 +15,13 @@ import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
-import com.fancymansion.presentation.main.content.MainContract
+import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 
 @Composable
-fun MainScreenContent(
+fun EditorTabScreenContent(
     modifier: Modifier = Modifier,
-    uiState: MainContract.State,
-    onEventSent: (event: MainContract.Event) -> Unit,
+    uiState: EditorTabContract.State,
+    onEventSent: (event: EditorTabContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
     if (!uiState.isInitSuccess) {
@@ -46,7 +46,7 @@ fun MainScreenContent(
 
             Text(
                 modifier = Modifier.align(Alignment.Center).clickable{
-                    onEventSent(MainContract.Event.EditorBookHolderClicked(
+                    onEventSent(EditorTabContract.Event.EditorBookHolderClicked(
                         episodeRef = testEpisodeRef
                     ))
                 },
