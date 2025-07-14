@@ -1,4 +1,4 @@
-package com.fancymansion.core.presentation.compose.frame
+package com.fancymansion.core.presentation.compose.frame.tab
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,12 +40,16 @@ import com.fancymansion.core.common.const.DELAY_SCREEN_ANIMATION_MS
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.dialog.Loading
+import com.fancymansion.core.presentation.compose.frame.CommonPopupLayerProcess
+import com.fancymansion.core.presentation.compose.frame.InitShowState
+import com.fancymansion.core.presentation.compose.frame.topBarDpMobile
+import com.fancymansion.core.presentation.compose.frame.topBarDpTablet
 import kotlinx.coroutines.delay
 
 @Composable
-fun BaseScreen(
+fun TabBaseScreen(
     modifier : Modifier = Modifier,
-    description : String = "BaseScreen",
+    description : String = "TabBaseScreen",
     statusBarColor : Color? = null,
     isStatusBarTextDark : Boolean = true,
     typePane: TypePane,
@@ -55,17 +58,6 @@ fun BaseScreen(
     isOverlayTopBar : Boolean = false,
     topBar: @Composable (() -> Unit)? = null,
     topBarHeight: Dp = if(typePane == TypePane.MOBILE) topBarDpMobile else topBarDpTablet,
-
-    // drawer
-    leftDrawerState: DrawerState? = null,
-    leftDrawerBackground: (@Composable () -> Unit)? = null,
-    leftDrawerContent: (@Composable () -> Unit)? = null,
-    rightDrawerState: DrawerState? = null,
-    rightDrawerBackground: (@Composable () -> Unit)? = null,
-    rightDrawerContent: (@Composable () -> Unit)? = null,
-    bottomDrawerState: DrawerState? = null,
-    bottomDrawerBackground: (@Composable () -> Unit)? = null,
-    bottomDrawerContent: (@Composable () -> Unit)? = null,
 
     // ui state
     loadState : LoadState,
@@ -120,7 +112,7 @@ fun BaseScreen(
                     .fillMaxSize()
                     .padding(top = if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
             ) {
-                BaseContent(
+                TabBaseContent(
                     modifier = modifier
                         .semantics {
                             contentDescription = description
@@ -145,20 +137,6 @@ fun BaseScreen(
                     .height(if (statusBarColor != null && statusBarColor != Color.Transparent) statusBarPaddingDp else 0.dp)
                     .background(color = statusBarColor ?: Color.Transparent)
             )
-
-            SideDrawer(
-                sideDrawerTopPadding = statusBarPaddingDp,
-                drawerVisible = InitShowState.None == initShowState.value && loadState != LoadState.Close,
-                leftDrawerState = leftDrawerState,
-                leftDrawerBackground = leftDrawerBackground,
-                leftDrawerContent = leftDrawerContent,
-                rightDrawerState = rightDrawerState,
-                rightDrawerBackground = rightDrawerBackground,
-                rightDrawerContent = rightDrawerContent,
-                bottomDrawerState = bottomDrawerState,
-                bottomDrawerBackground = bottomDrawerBackground,
-                bottomDrawerContent = bottomDrawerContent
-            )
         }
     }
 
@@ -180,7 +158,7 @@ fun BaseScreen(
 }
 
 @Composable
-fun BaseContent(
+fun TabBaseContent(
     modifier : Modifier = Modifier,
 
     isOverlayTopBar : Boolean = false,
