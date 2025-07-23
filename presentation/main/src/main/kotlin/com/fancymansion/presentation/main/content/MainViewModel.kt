@@ -21,7 +21,9 @@ class MainViewModel @Inject constructor(
 
     override fun handleEvents(event: MainContract.Event) {
         when(event) {
-            else -> {}
+            is MainContract.Event.TabSelected -> {
+                setState { copy(currentTab = event.tab) }
+            }
         }
     }
 

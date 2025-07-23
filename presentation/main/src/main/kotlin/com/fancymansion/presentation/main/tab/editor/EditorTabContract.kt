@@ -7,7 +7,7 @@ import com.fancymansion.core.presentation.base.ViewState
 
 class EditorTabContract {
     companion object {
-        const val NAME = "main_editor_tab"
+        const val NAME = "main_tab_editor"
     }
 
     data class State(

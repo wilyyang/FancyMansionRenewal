@@ -67,7 +67,6 @@ fun TabBaseScreen(
 )
 {
     val statusBarPaddingDp = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
-    val navigationBarPaddingDp = with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
 
     val view = LocalView.current
     SideEffect {
@@ -103,8 +102,7 @@ fun TabBaseScreen(
 
 
     Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(bottom = navigationBarPaddingDp)) {
+        .fillMaxSize()) {
 
         Box(modifier = Modifier.fillMaxSize()) {
             Box(

@@ -5,51 +5,93 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
+import com.fancymansion.app.navigation.navigateEditorBookOverviewScreen
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.ViewSideEffect
+import com.fancymansion.core.presentation.base.tab.TabScreenComponents
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.presentation.main.content.MainViewModel
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.content.composables.MainScreenFrame
+import com.fancymansion.presentation.main.tab.editor.EditorTabContract
+import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen
+import com.fancymansion.presentation.main.tab.editor.EditorTabViewModel
 
 @Composable
 fun MainScreenDestination(
     navController: NavController,
     typePane : TypePane
 ){
-    val viewModel: MainViewModel = hiltViewModel()
-
-    val onEventSent =  remember {
+    // MainViewModel
+    val mainViewModel: MainViewModel = hiltViewModel()
+    val onMainEventSent =  remember {
         { event : MainContract.Event ->
-            viewModel.setEvent(event)
+            mainViewModel.setEvent(event)
         }
     }
-
-    val onCommonEventSent =  remember {
+    val onMainCommonEventSent =  remember {
         { event : CommonEvent ->
-            viewModel.setCommonEvent(event)
+            mainViewModel.setCommonEvent(event)
         }
     }
-
-    val onNavigationRequested : (MainContract.Effect.Navigation) -> Unit =  remember {
+    val onMainNavigationRequested : (MainContract.Effect.Navigation) -> Unit =  remember {
         { effect : MainContract.Effect.Navigation ->
             handleNavigationRequest(effect, navController)
         }
     }
+    HandleCommonEffect(navController = navController, commonEffectFlow = mainViewModel.commonEffect, onCommonEventSent = onMainCommonEventSent)
 
-    HandleCommonEffect(navController = navController, commonEffectFlow = viewModel.commonEffect, onCommonEventSent = onCommonEventSent)
+    // Tab : EditorTabViewModel
+    val editorTabViewModel: EditorTabViewModel = hiltViewModel()
+    val onEditorTabEventSent =  remember {
+        { event : EditorTabContract.Event ->
+            editorTabViewModel.setEvent(event)
+        }
+    }
+    val onEditorTabCommonEventSent =  remember {
+        { event : CommonEvent ->
+            editorTabViewModel.setCommonEvent(event)
+        }
+    }
+    val onEditorTabNavigationRequested: (EditorTabContract.Effect) -> Unit = remember {
+        { effect ->
+            if (effect is EditorTabContract.Effect.Navigation) {
+                handleNavigationRequest(effect, navController)
+            }
+        }
+    }
+    HandleCommonEffect(navController = navController, commonEffectFlow = editorTabViewModel.commonEffect, onCommonEventSent = onEditorTabCommonEventSent)
 
+    val editorTabComponents = TabScreenComponents(
+        uiState = editorTabViewModel.uiState.value,
+        loadState = editorTabViewModel.loadState.value,
+        effectFlow = editorTabViewModel.effect,
+        onEventSent = onEditorTabEventSent,
+        onCommonEventSent = onEditorTabCommonEventSent,
+        onNavigationRequested = onEditorTabNavigationRequested,
+    )
+
+    // MainScreenFrame
     MainScreenFrame (
-        uiState = viewModel.uiState.value,
-        loadState = viewModel.loadState.value,
-        effectFlow = viewModel.effect,
-        onCommonEventSent = onCommonEventSent,
-        onEventSent = onEventSent,
-        onNavigationRequested = onNavigationRequested
+        uiState = mainViewModel.uiState.value,
+        loadState = mainViewModel.loadState.value,
+        effectFlow = mainViewModel.effect,
+        onCommonEventSent = onMainCommonEventSent,
+        onEventSent = onMainEventSent,
+        onNavigationRequested = onMainNavigationRequested,
+        editorTabComponents = editorTabComponents
     )
 }
 
-fun handleNavigationRequest(effect: MainContract.Effect, navController: NavController) {
+fun handleNavigationRequest(effect: ViewSideEffect, navController: NavController) {
     when (effect) {
+        is EditorTabContract.Effect.Navigation -> {
+            when(effect){
+                is NavigateEditorBookOverviewScreen -> {
+                    navController.navigateEditorBookOverviewScreen(effect.episodeRef)
+                }
+            }
+        }
         else -> {}
     }
 }
