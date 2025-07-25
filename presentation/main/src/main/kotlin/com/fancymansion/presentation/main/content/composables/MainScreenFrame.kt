@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -84,6 +86,10 @@ fun MainScreenFrame(
         .padding(bottom = navigationBarPaddingDp)) {
         Box(modifier = Modifier.weight(1f)) {
             when (uiState.currentTab) {
+                // TODO : Tab Test
+                MainScreenTab.Home -> {
+                    Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.tertiary))
+                }
                 MainScreenTab.Editor -> {
                     EditorTabScreenFrame(
                         uiState = editorTabComponents.uiState,
@@ -94,6 +100,9 @@ fun MainScreenFrame(
                         onNavigationRequested = editorTabComponents.onNavigationRequested
                     )
                 }
+                // TODO : Tab Test
+                MainScreenTab.MyInfo -> {
+                    Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.tertiaryContainer))}
             }
         }
 
@@ -106,6 +115,25 @@ fun MainScreenFrame(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // TODO : Tab Test Home
+            Column(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(color = MaterialTheme.colorScheme.secondary)
+                    .clickable {
+                        onEventSent(MainContract.Event.TabSelected(MainScreenTab.Home))
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    tint = if (uiState.currentTab is MainScreenTab.Home) MaterialTheme.colorScheme.onSurface else onSurfaceSub,
+                    contentDescription = "Home"
+                )
+                Text(text = "Home", style = MaterialTheme.typography.labelSmall)
+            }
+
             // Editor Tab 버튼
             Column(
                 modifier = Modifier
@@ -126,6 +154,25 @@ fun MainScreenFrame(
             }
 
             // 다른 탭 버튼도 여기에 추가 가능
+
+            // TODO : Tab Test MyInfo
+            Column(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(color = MaterialTheme.colorScheme.secondary)
+                    .clickable {
+                        onEventSent(MainContract.Event.TabSelected(MainScreenTab.MyInfo))
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    tint = if (uiState.currentTab is MainScreenTab.MyInfo) MaterialTheme.colorScheme.onSurface else onSurfaceSub,
+                    contentDescription = "Info"
+                )
+                Text(text = "Info", style = MaterialTheme.typography.labelSmall)
+            }
         }
     }
 

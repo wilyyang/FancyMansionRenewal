@@ -10,6 +10,7 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
 import com.fancymansion.core.presentation.base.window.TypePane
+import com.fancymansion.presentation.main.common.HomeTabViewModel
 import com.fancymansion.presentation.main.content.MainViewModel
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.content.composables.MainScreenFrame
@@ -70,6 +71,10 @@ fun MainScreenDestination(
         onCommonEventSent = onEditorTabCommonEventSent,
         onNavigationRequested = onEditorTabNavigationRequested,
     )
+
+    // TODO : Tab Test
+    // Tab : HomeTabViewModel
+    // Tab : MyInfoTabViewModel
 
     // MainScreenFrame
     MainScreenFrame (
