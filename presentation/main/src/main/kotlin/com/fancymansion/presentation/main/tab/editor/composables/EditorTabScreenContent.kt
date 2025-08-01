@@ -42,7 +42,7 @@ fun EditorTabScreenContent(
     } else {
         Box(modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.primaryContainer)) {
+            .background(color = MaterialTheme.colorScheme.surface)) {
 
             Text(
                 modifier = Modifier.align(Alignment.Center).clickable{

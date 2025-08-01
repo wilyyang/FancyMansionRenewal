@@ -3,11 +3,14 @@ package com.fancymansion.presentation.main.content.composables
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,9 +27,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -36,6 +42,7 @@ import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
@@ -44,6 +51,9 @@ import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreen
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+
+val TAB_BAR_HEIGHT = 58.dp
+val TAB_BUTTON_SIZE = 58.dp
 
 @Composable
 fun MainScreenFrame(
@@ -86,10 +96,6 @@ fun MainScreenFrame(
         .padding(bottom = navigationBarPaddingDp)) {
         Box(modifier = Modifier.weight(1f)) {
             when (uiState.currentTab) {
-                // TODO : Tab Test
-                MainScreenTab.Home -> {
-                    Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.tertiary))
-                }
                 MainScreenTab.Editor -> {
                     EditorTabScreenFrame(
                         uiState = editorTabComponents.uiState,
@@ -100,9 +106,61 @@ fun MainScreenFrame(
                         onNavigationRequested = editorTabComponents.onNavigationRequested
                     )
                 }
+
+                // TODO : Tab Test
+                MainScreenTab.Home -> {
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.tertiary)){
+                        Text(
+                            modifier = Modifier.align(Alignment.TopStart),
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            text = "위 시작"
+                        )
+                        Text(
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            text = "위 끝"
+                        )
+                        Text(
+                            modifier = Modifier.align(Alignment.BottomStart),
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            text = "아래 시작"
+                        )
+                        Text(
+                            modifier = Modifier.align(Alignment.BottomEnd),
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
+                            text = "아래 끝"
+                        )
+                    }
+                }
                 // TODO : Tab Test
                 MainScreenTab.MyInfo -> {
-                    Box(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.tertiaryContainer))}
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.tertiaryContainer)){
+                        Text(
+                            modifier = Modifier.align(Alignment.TopStart),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            text = "위 시작"
+                        )
+                        Text(
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            text = "위 끝"
+                        )
+                        Text(
+                            modifier = Modifier.align(Alignment.BottomStart),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            text = "아래 시작"
+                        )
+                        Text(
+                            modifier = Modifier.align(Alignment.BottomEnd),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            text = "아래 끝"
+                        )
+                    }
+                }
             }
         }
 
@@ -110,73 +168,58 @@ fun MainScreenFrame(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .background(MaterialTheme.colorScheme.surface),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+                .padding(horizontal = 9.dp)
+                .height(TAB_BAR_HEIGHT)
+                .background(MaterialTheme.colorScheme.surface)
+                .borderLine(
+                    density = LocalDensity.current,
+                    color = MaterialTheme.colorScheme.outline,
+                    top = 1.dp
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // TODO : Tab Test Home
-            Column(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(color = MaterialTheme.colorScheme.secondary)
-                    .clickable {
-                        onEventSent(MainContract.Event.TabSelected(MainScreenTab.Home))
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    tint = if (uiState.currentTab is MainScreenTab.Home) MaterialTheme.colorScheme.onSurface else onSurfaceSub,
-                    contentDescription = "Home"
+            for(tab in MainScreenTab.entries){
+                TabButton(
+                    modifier = Modifier
+                        .size(TAB_BUTTON_SIZE)
+                        .background(color = MaterialTheme.colorScheme.tertiaryContainer)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            onEventSent(MainContract.Event.TabSelected(tab))
+                        },
+                    tabInfo = tab,
+                    isFocus = tab == uiState.currentTab
                 )
-                Text(text = "Home", style = MaterialTheme.typography.labelSmall)
-            }
-
-            // Editor Tab 버튼
-            Column(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(color = MaterialTheme.colorScheme.secondary)
-                    .clickable {
-                        onEventSent(MainContract.Event.TabSelected(MainScreenTab.Editor))
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    tint = if (uiState.currentTab is MainScreenTab.Editor) MaterialTheme.colorScheme.onSurface else onSurfaceSub,
-                    contentDescription = "Editor"
-                )
-                Text(text = "Editor", style = MaterialTheme.typography.labelSmall)
-            }
-
-            // 다른 탭 버튼도 여기에 추가 가능
-
-            // TODO : Tab Test MyInfo
-            Column(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(color = MaterialTheme.colorScheme.secondary)
-                    .clickable {
-                        onEventSent(MainContract.Event.TabSelected(MainScreenTab.MyInfo))
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    tint = if (uiState.currentTab is MainScreenTab.MyInfo) MaterialTheme.colorScheme.onSurface else onSurfaceSub,
-                    contentDescription = "Info"
-                )
-                Text(text = "Info", style = MaterialTheme.typography.labelSmall)
             }
         }
     }
 
     BackHandler {
         onCommonEventSent(CommonEvent.CloseEvent)
+    }
+}
+
+@Composable
+fun TabButton(
+    modifier: Modifier = Modifier,
+    tabInfo: MainScreenTab,
+    isFocus: Boolean
+){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            painter =
+                if (isFocus) painterResource(id = tabInfo.iconFillResId)
+                else painterResource(id = tabInfo.iconResId),
+            contentDescription = tabInfo.tabName
+        )
+        Spacer(Modifier.height(5.dp))
+        Text(text = stringResource(tabInfo.titleResId), style = MaterialTheme.typography.labelMedium)
     }
 }
