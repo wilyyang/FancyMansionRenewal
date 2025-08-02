@@ -1,6 +1,7 @@
 package com.fancymansion.presentation.main.content.composables
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -8,20 +9,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,9 +24,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -41,9 +37,8 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
-import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
-import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
+import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
@@ -168,14 +163,14 @@ fun MainScreenFrame(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 9.dp)
                 .height(TAB_BAR_HEIGHT)
                 .background(MaterialTheme.colorScheme.surface)
                 .borderLine(
                     density = LocalDensity.current,
                     color = MaterialTheme.colorScheme.outline,
                     top = 1.dp
-                ),
+                )
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -183,7 +178,6 @@ fun MainScreenFrame(
                 TabButton(
                     modifier = Modifier
                         .size(TAB_BUTTON_SIZE)
-                        .background(color = MaterialTheme.colorScheme.tertiaryContainer)
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
@@ -208,18 +202,26 @@ fun TabButton(
     tabInfo: MainScreenTab,
     isFocus: Boolean
 ){
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
+    Box(
+        modifier = modifier.padding(top = 6.dp, bottom = 8.dp)
+    ){
+        Image(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .height(30.dp),
             painter =
                 if (isFocus) painterResource(id = tabInfo.iconFillResId)
                 else painterResource(id = tabInfo.iconResId),
+            contentScale = ContentScale.FillHeight,
             contentDescription = tabInfo.tabName
         )
-        Spacer(Modifier.height(5.dp))
-        Text(text = stringResource(tabInfo.titleResId), style = MaterialTheme.typography.labelMedium)
+        Text(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            text = stringResource(tabInfo.titleResId),
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = if (isFocus) FontWeight.SemiBold else FontWeight.Normal,
+                color = if (isFocus) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
+            )
+        )
     }
 }
