@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +45,7 @@ import java.util.Locale
 fun EditorTabScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorTabContract.State,
+    bookInfoStates: SnapshotStateList<EditBookState>,
     onEventSent: (event: EditorTabContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -63,25 +65,6 @@ fun EditorTabScreenContent(
             )
         }
     } else {
-        val testListData = mutableListOf<EditBookState>()
-        for (i in 0..30) {
-            testListData.add(
-                EditBookState(
-                    bookInfo = EditBookWrapper(
-                        bookId = "test1",
-                        title = "나는 왜 남들보다 쉽게 지칠까 $i",
-                        editTime = 1752105600000L,
-                        pageCount = 21,
-                        keywords = listOf()
-                    ),
-                    selected = remember { mutableStateOf<Boolean>(false) }
-                )
-            )
-        }
-
-        val list1 = testListData.subList(0, 10)
-        val list2 = testListData.subList(10, 20)
-        val list3 = testListData.subList(20, 30)
         val context = LocalContext.current
 
         Column(
@@ -160,12 +143,12 @@ fun EditorTabScreenContent(
                     }
                 }
 
-                itemsIndexed (list1){ idx, data ->
+                itemsIndexed (bookInfoStates){ idx, data ->
                     EditBookHolder(
                         bookState = data
                     )
 
-                    if (idx < list1.size - 1) {
+                    if (idx < bookInfoStates.size - 1) {
                         HorizontalDivider(
                             modifier = Modifier
                                 .padding(horizontal = 14.dp)
@@ -255,7 +238,7 @@ fun EditBookHolder(
                                 shape = MaterialTheme.shapes.extraSmall
                             )
                             .padding(horizontal = 7.dp, vertical = 5.dp),
-                        text = "#$keyword",
+                        text = "#${keyword.name}",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Black
                     )

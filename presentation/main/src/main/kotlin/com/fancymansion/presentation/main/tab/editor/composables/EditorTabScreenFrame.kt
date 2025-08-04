@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -16,6 +17,7 @@ import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.frame.tab.TabBaseScreen
+import com.fancymansion.presentation.main.tab.editor.EditBookState
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun EditorTabScreenFrame(
     uiState: EditorTabContract.State,
+    bookInfoStates: SnapshotStateList<EditBookState>,
     loadState: LoadState,
     effectFlow: SharedFlow<EditorTabContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
@@ -66,6 +69,7 @@ fun EditorTabScreenFrame(
         EditorTabScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
+            bookInfoStates = bookInfoStates,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent
         )

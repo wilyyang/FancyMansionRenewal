@@ -29,7 +29,7 @@ class UseCaseBookList @Inject constructor(
     suspend fun getUserEditBookInfoList(userId: String): List<Pair<BookInfoModel, EpisodeInfoModel>> =
         withContext(dispatcher) {
             // TODO Main Tab Editor 08.04
-            listOf()
+            sampleBookInfoList
         }
 
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef = testEpisodeRef) =

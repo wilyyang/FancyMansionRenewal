@@ -79,7 +79,8 @@ fun MainScreenDestination(
         onCommonEventSent = onMainCommonEventSent,
         onEventSent = onMainEventSent,
         onNavigationRequested = onMainNavigationRequested,
-        editorTabComponents = editorTabComponents
+        editorTabComponents = editorTabComponents,
+        editorTabBookInfoStates = editorTabViewModel.bookInfoStates
     )
 }
 
