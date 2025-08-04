@@ -13,6 +13,7 @@ import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -39,7 +40,21 @@ class EditorTabViewModel @Inject constructor(
 
     override fun handleEvents(event: EditorTabContract.Event) {
         when(event) {
-            else -> {}
+            is SearchTextInputUpdate -> handleSearchTextInput(searchText = event.searchText)
+            SearchTextInputCancel -> handleSearchTextInput(searchText = "")
+            is SelectBookSortOrder -> sortBooksByOrder(sortOrder = event.sortOrder)
+            BookListEnterEditMode -> toggleEditMode()
+            BookListExitEditMode -> toggleEditMode()
+
+            BookHolderSelectAll -> selectAllHolders()
+            BookHolderDeselectAll -> deselectAllHolders()
+            BookHolderAddBook -> addNewBook()
+            BookHolderDeleteBook -> deleteSelectedBooks()
+
+            is BookHolderEnterEditBook -> navigateToEditBook(bookId = event.bookId)
+            is BookHolderSelectBook -> toggleBookSelection(bookId = event.bookId)
+
+            is SelectBookPageNumber -> showBooksForPage(pageNumber = event.pageNumber)
         }
     }
 
@@ -67,12 +82,52 @@ class EditorTabViewModel @Inject constructor(
     }
 
     // EditorTabEvent
+    private fun handleSearchTextInput(searchText : String) = launchWithLoading{
+        // TODO 08.04 Search Book
+    }
+
+
+    private fun sortBooksByOrder(sortOrder: EditBookSortOrder) = launchWithLoading {
+        // TODO 08.04 Sort Books
+    }
+
+    private fun toggleEditMode() = launchWithLoading {
+        // TODO 08.04 Edit Mode
+    }
+
+    private fun selectAllHolders() = launchWithLoading {
+        // TODO 08.04 Holder Select All
+    }
+
+    private fun deselectAllHolders() = launchWithLoading {
+        // TODO 08.04 Holder Deselect All
+    }
+
+    private fun addNewBook() = launchWithLoading {
+        // TODO 08.04 Holder Add New
+    }
+
+    private fun deleteSelectedBooks() = launchWithLoading {
+        // TODO 08.04 Holder Delete Selected
+    }
+
+    private fun navigateToEditBook(bookId: String) {
+        // TODO 08.04 Holder Navigate Edit Book
+    }
+
+    private fun toggleBookSelection(bookId: String) {
+        // TODO 08.04 Holder Book Selection
+    }
+
+    private fun showBooksForPage(pageNumber: Int) = launchWithLoading {
+        // TODO 08.04 Show Books For Page Number
+    }
 
     // CommonEvent
 
     // CommonFunction
     private suspend fun updateBookStateList() {
-        originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map { it.toWrapper() }
+        originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map { it.toWrapper() }.sortedBy { it.bookId }
 
         bookInfoStates.clear()
         originBookInfoList.forEach { bookInfo ->
@@ -82,6 +137,11 @@ class EditorTabViewModel @Inject constructor(
                     selected = mutableStateOf(false)
                 )
             )
+        }
+
+        when(uiState.value.bookSortOrder){
+            EditBookSortOrder.LAST_EDITED -> bookInfoStates.sortByDescending { it.bookInfo.editTime }
+            EditBookSortOrder.TITLE_ASCENDING -> bookInfoStates.sortBy { it.bookInfo.title }
         }
     }
 

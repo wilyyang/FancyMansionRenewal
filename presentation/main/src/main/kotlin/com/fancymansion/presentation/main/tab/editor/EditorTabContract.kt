@@ -45,17 +45,19 @@ class EditorTabContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
-        val bookSortOrder: EditBookSortOrder = EditBookSortOrder.LAST_EDITED
+        val searchText: String = "",
+        val bookSortOrder: EditBookSortOrder = EditBookSortOrder.LAST_EDITED,
+        val isEditMode : Boolean = false,
+        val currentPageNumber : Int = 0
     ) : ViewState
 
     sealed class Event : ViewEvent {
         // Search
-        data object SearchTextInputUpdate : Event()
+        data class SearchTextInputUpdate(val searchText : String) : Event()
         data object SearchTextInputCancel : Event()
 
         // Header
-        data object BookSortOrderLastEdited : Event()
-        data object BookSortOrderTitleAscending : Event()
+        data class SelectBookSortOrder(val sortOrder: EditBookSortOrder) : Event()
 
         data object BookListEnterEditMode : Event()
         data object BookListExitEditMode : Event()
@@ -65,11 +67,12 @@ class EditorTabContract {
         data object BookHolderDeselectAll : Event()
         data object BookHolderAddBook : Event()
         data object BookHolderDeleteBook : Event()
-        data object BookHolderSelectBook : Event()
-        data object BookHolderEnterBook : Event()
+
+        data class BookHolderEnterEditBook(val bookId : String) : Event()
+        data class BookHolderSelectBook(val bookId : String) : Event()
 
         // Page Number
-        data object BookListMoveToPageNumber : Event()
+        data class SelectBookPageNumber(val pageNumber : Int) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
