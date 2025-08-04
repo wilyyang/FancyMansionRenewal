@@ -11,11 +11,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -30,21 +33,12 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
+import com.fancymansion.presentation.main.tab.editor.EditBookState
+import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-enum class EditBookSortOrder(val textTitle : String) {
-    LAST_EDITED ("최근 편집순"),
-    TITLE_ASCENDING ("제목 오름차순")
-}
-
-data class BookHolderData(
-    val title : String,
-    val editDate : Long,
-    val pageCount : Int,
-    val keywords : List<String>
-)
 
 @Composable
 fun EditorTabScreenContent(
@@ -69,14 +63,18 @@ fun EditorTabScreenContent(
             )
         }
     } else {
-        val testListData = mutableListOf<BookHolderData>()
+        val testListData = mutableListOf<EditBookState>()
         for (i in 0..30) {
             testListData.add(
-                BookHolderData(
-                    title = "나는 왜 남들보다 쉽게 지칠까 $i",
-                    editDate = 1752105600000L,
-                    pageCount = 21,
-                    keywords = listOf("희망", "절망", "리얼리즘")
+                EditBookState(
+                    bookInfo = EditBookWrapper(
+                        bookId = "test1",
+                        title = "나는 왜 남들보다 쉽게 지칠까 $i",
+                        editTime = 1752105600000L,
+                        pageCount = 21,
+                        keywords = listOf()
+                    ),
+                    selected = remember { mutableStateOf<Boolean>(false) }
                 )
             )
         }
@@ -84,6 +82,7 @@ fun EditorTabScreenContent(
         val list1 = testListData.subList(0, 10)
         val list2 = testListData.subList(10, 20)
         val list3 = testListData.subList(20, 30)
+        val context = LocalContext.current
 
         Column(
             modifier = Modifier
@@ -145,7 +144,7 @@ fun EditorTabScreenContent(
                             options = EditBookSortOrder.entries.toTypedArray(),
                             selectedOption = EditBookSortOrder.LAST_EDITED,
                             getDisplayName = {
-                                it.textTitle
+                                context.getString(it.textResId)
                             }
                         ) {
 
@@ -163,7 +162,7 @@ fun EditorTabScreenContent(
 
                 itemsIndexed (list1){ idx, data ->
                     EditBookHolder(
-                        bookHolderData = data
+                        bookState = data
                     )
 
                     if (idx < list1.size - 1) {
@@ -203,7 +202,7 @@ fun EditorTabScreenContent(
 @Composable
 fun EditBookHolder(
     modifier : Modifier = Modifier,
-    bookHolderData : BookHolderData
+    bookState : EditBookState
 ){
     Row(
         modifier = modifier.padding(vertical = 18.dp, horizontal = 14.dp),
@@ -224,19 +223,19 @@ fun EditBookHolder(
                 .padding(start = 10.dp)
         ) {
             Text(
-                text = bookHolderData.title,
+                text = bookState.bookInfo.title,
                 style = MaterialTheme.typography.titleMedium
             )
 
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "${formatTimestampLegacy(bookHolderData.editDate)} 편집됨",
+                text = "${formatTimestampLegacy(bookState.bookInfo.editTime)} 편집됨",
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "총 ${bookHolderData.pageCount} 페이지",
+                text = "총 ${bookState.bookInfo.pageCount} 페이지",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -244,7 +243,7 @@ fun EditBookHolder(
             Row(
                 modifier = Modifier.padding(top = 5.dp)
             ) {
-                bookHolderData.keywords.forEach { keyword ->
+                bookState.bookInfo.keywords.forEach { keyword ->
                     Text(
                         modifier = Modifier
                             .padding(end = 2.dp)

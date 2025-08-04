@@ -3,4 +3,7 @@
     <string name="main_tab_title_home">홈</string>
     <string name="main_tab_title_editor">에디터</string>
     <string name="main_tab_title_my_info">MY</string>
+
+    <string name="edit_book_sort_order_last_edited">최근 편집순</string>
+    <string name="edit_book_sort_order_title_ascending">제목 오름차순</string>
 </resources>

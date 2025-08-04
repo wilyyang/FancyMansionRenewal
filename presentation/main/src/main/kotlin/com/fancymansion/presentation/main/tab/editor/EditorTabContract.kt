@@ -1,9 +1,42 @@
 package com.fancymansion.presentation.main.tab.editor
 
+import androidx.compose.runtime.MutableState
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
+import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EpisodeInfoModel
+import com.fancymansion.domain.model.book.KeywordModel
+import com.fancymansion.presentation.main.R
+
+enum class EditBookSortOrder(val textResId : Int) {
+    LAST_EDITED (textResId = R.string.edit_book_sort_order_last_edited),
+    TITLE_ASCENDING (textResId = R.string.edit_book_sort_order_title_ascending)
+}
+
+data class EditBookWrapper(
+    val bookId: String,
+    val title: String,
+    val editTime: Long,
+    val pageCount: Int,
+    val keywords: List<KeywordModel>
+)
+
+data class EditBookState(val bookInfo: EditBookWrapper, val selected: MutableState<Boolean>)
+
+fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper() : EditBookWrapper {
+    val bookInfo = first
+    val episodeInfo = second
+
+    return EditBookWrapper(
+        bookId = bookInfo.id,
+        title = bookInfo.introduce.title,
+        editTime = episodeInfo.editTime,
+        pageCount = episodeInfo.pageCount,
+        keywords = bookInfo.introduce.keywordList
+    )
+}
 
 class EditorTabContract {
     companion object {
@@ -12,10 +45,31 @@ class EditorTabContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
+        val bookSortOrder: EditBookSortOrder = EditBookSortOrder.LAST_EDITED
     ) : ViewState
 
     sealed class Event : ViewEvent {
-        data class EditorBookHolderClicked(val episodeRef: EpisodeRef) : Event()
+        // Search
+        data object SearchTextInputUpdate : Event()
+        data object SearchTextInputCancel : Event()
+
+        // Header
+        data object BookSortOrderLastEdited : Event()
+        data object BookSortOrderTitleAscending : Event()
+
+        data object BookListEnterEditMode : Event()
+        data object BookListExitEditMode : Event()
+
+        // Holder
+        data object BookHolderSelectAll : Event()
+        data object BookHolderDeselectAll : Event()
+        data object BookHolderAddBook : Event()
+        data object BookHolderDeleteBook : Event()
+        data object BookHolderSelectBook : Event()
+        data object BookHolderEnterBook : Event()
+
+        // Page Number
+        data object BookListMoveToPageNumber : Event()
     }
 
     sealed class Effect : ViewSideEffect {

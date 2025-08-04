@@ -256,9 +256,4 @@ class UseCaseMakeBook @Inject constructor(
     ) = withContext(dispatcher) {
         bookLocalRepository.bookLogicFileExists(episodeRef)
     }
-
-    suspend fun makeSampleEpisode(episodeRef: EpisodeRef = testEpisodeRef) =
-        withContext(dispatcher) {
-            bookLocalRepository.makeSampleEpisode(episodeRef)
-        }
 }
