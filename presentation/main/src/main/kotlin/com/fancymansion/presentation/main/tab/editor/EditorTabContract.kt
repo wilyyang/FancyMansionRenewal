@@ -2,6 +2,7 @@ package com.fancymansion.presentation.main.tab.editor
 
 import androidx.compose.runtime.MutableState
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -20,12 +21,13 @@ data class EditBookWrapper(
     val title: String,
     val editTime: Long,
     val pageCount: Int,
+    val thumbnail: ImagePickType,
     val keywords: List<KeywordModel>
 )
 
 data class EditBookState(val bookInfo: EditBookWrapper, val selected: MutableState<Boolean>)
 
-fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper() : EditBookWrapper {
+fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     val bookInfo = first
     val episodeInfo = second
 
@@ -34,6 +36,7 @@ fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper() : EditBookWrapper {
         title = bookInfo.introduce.title,
         editTime = episodeInfo.editTime,
         pageCount = episodeInfo.pageCount,
+        thumbnail = thumbnail,
         keywords = bookInfo.introduce.keywordList
     )
 }

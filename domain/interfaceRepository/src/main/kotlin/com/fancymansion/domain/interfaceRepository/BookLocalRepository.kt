@@ -26,6 +26,7 @@ interface BookLocalRepository {
     /**
      * App Storage : Directory
      */
+    suspend fun getUserBookFolderNameList(userId: String, mode: ReadMode) : List<String>
     suspend fun makeUserDir(userId: String)
     suspend fun deleteUserDir(userId: String)
     suspend fun makeBookDir(userId: String, mode : ReadMode, bookId : String)

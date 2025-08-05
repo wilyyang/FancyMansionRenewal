@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
+import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.presentation.base.BaseViewModel
@@ -15,6 +17,7 @@ import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,9 +71,7 @@ class EditorTabViewModel @Inject constructor(
     private fun initializeState() {
         launchWithInit {
             // TODO 07.14 init Editor Tab
-            if(!useCaseMakeBook.bookLogicFileExists(episodeRef = testEpisodeRef)){
-                useCaseBookList.makeSampleEpisode()
-            }
+            useCaseBookList.makeSampleEpisode()
 
             updateBookStateList()
             setState {
@@ -112,7 +113,15 @@ class EditorTabViewModel @Inject constructor(
     }
 
     private fun navigateToEditBook(bookId: String) {
-        // TODO 08.04 Holder Navigate Edit Book
+        isUpdateResume = true
+        setEffect {
+            EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen(episodeRef = EpisodeRef(
+                userId = userId,
+                mode = mode,
+                bookId = bookId,
+                episodeId = "${bookId}_0"
+            ))
+        }
     }
 
     private fun toggleBookSelection(bookId: String) {
@@ -127,7 +136,22 @@ class EditorTabViewModel @Inject constructor(
 
     // CommonFunction
     private suspend fun updateBookStateList() {
-        originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map { it.toWrapper() }.sortedBy { it.bookId }
+        originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map {
+            val bookInfo = it.first
+            val episodeInfo = it.second
+
+            val bookCoverFile: File? =
+                if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
+                    EpisodeRef(userId = userId, mode = ReadMode.EDIT, bookId = bookInfo.id, episodeId = episodeInfo.id),
+                    bookInfo.introduce.coverList[0]
+                ) else null
+
+            val savedPickType = if (bookCoverFile != null) ImagePickType.SavedImage(
+                bookCoverFile
+            ) else ImagePickType.Empty
+
+            it.toWrapper(savedPickType)
+        }.sortedBy { it.bookId }
 
         bookInfoStates.clear()
         originBookInfoList.forEach { bookInfo ->

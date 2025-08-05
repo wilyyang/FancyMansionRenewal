@@ -8,7 +8,10 @@ import com.fancymansion.core.common.util.readModuleRawFile
 import com.fancymansion.core.common.util.type
 import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.IntroduceData
+import com.fancymansion.data.datasource.appStorage.book.model.KeywordData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
 import com.fancymansion.data.datasource.appStorage.book.model.SourceData
@@ -55,6 +58,16 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     /**
      * Dir
      */
+    override suspend fun getUserBookFolderNameList(
+        userId: String,
+        mode: ReadMode
+    ) : List<String> {
+        return File(root, BookPath.modePath(userId, mode)).listFiles()
+            ?.filter { it.isDirectory }
+            ?.map { it.name }
+            ?: emptyList()
+    }
+
     override suspend fun makeUserDir(userId: String) {
         ReadMode.entries.forEach { mode ->
             File(root, BookPath.modePath(userId, mode)).let { modeDir ->
@@ -260,6 +273,10 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             gson.fromJson<PageData>(context.readModuleRawFile(resourceId), type<PageData>())
         }
 
+        /**
+         * Make Edit Book Samples
+         */
+        makeEditBookInfoSampleList(episodeRef.userId)
 
         // make sample file
         return makeBookInfo(
@@ -279,5 +296,103 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
 
     override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long) : List<File> {
         return root.mediaFile(episodeRef).listFiles()?.asList()?.filter { it.name.startsWith("$pageId") }?:listOf()
+    }
+
+    private suspend fun makeEditBookInfoSampleList(userId: String) {
+        val titles = listOf(
+            "사랑의 법칙", "시간의 파편", "유령 도시의 연대기", "끝나지 않는 이야기", "비밀의 정원",
+            "별이 머문 자리", "무지개의 심장", "새벽의 노래", "달빛 그림자", "하늘을 걷는 아이",
+            "잃어버린 계절", "고양이의 꿈", "기억의 조각", "폭풍 속으로", "미로 속의 너",
+            "어느 날의 약속", "은하수를 따라", "눈물의 연대기", "코끼리의 시간", "거울 저편의 세계",
+            "우주 너머의 메아리", "비 오는 날의 연주", "잊혀진 약속", "파란 하늘의 아이", "시간 도둑",
+            "달려라, 토끼!", "섬광 속의 너", "조용한 혁명", "그림자 속에서", "하루의 끝"
+        )
+        val keywords = listOf(
+            "판타지",
+            "로맨스",
+            "스릴러",
+            "미스터리",
+            "성장",
+            "감성",
+            "드라마",
+            "모험",
+            "일상",
+            "SF",
+            "역사",
+            "동화",
+            "공포",
+            "학습",
+            "힐링",
+            "숲",
+            "바다",
+            "토론",
+            "종교"
+        )
+
+        for (i in 0 until 30) {
+            val bookId = "test_sample_$i"
+            val episodeId = "${bookId}_0"
+
+            val episodeRef = EpisodeRef(
+                userId = userId,
+                mode = ReadMode.EDIT,
+                bookId = bookId,
+                episodeId = episodeId
+            )
+
+            makeBookDir(userId, ReadMode.EDIT, bookId)
+            makeEpisodeDir(episodeRef)
+
+            val coverFileName = "test_cover_$i.jpg"
+            // 실제 존재하는 drawable 리소스를 재사용하거나 범위 제한 필요
+            val coverResId = context.resources.getIdentifier(coverFileName.substringBeforeLast("."), "drawable", context.packageName)
+            makeCoverImageFromResource(userId, ReadMode.EDIT, bookId, coverFileName, coverResId)
+
+            val bookInfo = BookInfoData(
+                id = bookId,
+                introduce = IntroduceData(
+                    title = titles[i % titles.size],
+                    coverList = listOf(coverFileName),
+                    keywordList = List((1..6).random()) {
+                        KeywordData(
+                            id = (1000 + i * 10 + it).toLong(),
+                            category = "장르",
+                            name = keywords.random()
+                        )
+                    },
+                    description = "${titles[i % titles.size]}는 ${keywords.random()}와 ${keywords.random()}이 어우러진 이야기입니다."
+                ),
+                editor = EditorData(
+                    editorId = "editor_$i",
+                    editorName = "테스터 $i",
+                    editorEmail = "tester$i@example.com"
+                )
+            )
+
+            val now = System.currentTimeMillis()
+            val daysAgo = (0..365).random()
+            val createTime = now - daysAgo * 24 * 60 * 60 * 1000L
+            val editTime = createTime + (1..5).random() * 60 * 60 * 1000L // 1~5시간 후에 수정했다고 가정
+
+            val episodeInfo = EpisodeInfoData(
+                bookId = bookId,
+                createTime = System.currentTimeMillis(),
+                editTime = editTime,
+                id = episodeId,
+                readMode = ReadMode.EDIT,
+                title = "제 1화",
+                pageCount = (10..40).random(),
+                version = 0
+            )
+
+            val logic = LogicData(
+                id = i.toLong(),
+                logics = listOf()
+            )
+
+            makeBookInfo(userId, ReadMode.EDIT, bookId, bookInfo)
+            makeEpisodeInfo(episodeRef, episodeInfo)
+            makeLogic(episodeRef, logic)
+        }
     }
 }

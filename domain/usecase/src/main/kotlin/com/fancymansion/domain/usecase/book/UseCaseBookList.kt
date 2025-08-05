@@ -1,6 +1,7 @@
 package com.fancymansion.domain.usecase.book
 
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
@@ -28,8 +29,24 @@ class UseCaseBookList @Inject constructor(
 
     suspend fun getUserEditBookInfoList(userId: String): List<Pair<BookInfoModel, EpisodeInfoModel>> =
         withContext(dispatcher) {
-            // TODO Main Tab Editor 08.04
-            sampleBookInfoList
+            val result = bookLocalRepository.getUserBookFolderNameList(userId = userId, mode = ReadMode.EDIT).map {
+                val bookInfo = bookLocalRepository.loadBookInfo(
+                    userId = userId,
+                    bookId = it,
+                    mode = ReadMode.EDIT
+                )
+                val episodeInfo = bookLocalRepository.loadEpisodeInfo(
+                    EpisodeRef(
+                        userId,
+                        ReadMode.EDIT,
+                        it,
+                        "${it}_0"
+                    )
+                )
+
+                (bookInfo to episodeInfo)
+            }
+            result
         }
 
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef = testEpisodeRef) =

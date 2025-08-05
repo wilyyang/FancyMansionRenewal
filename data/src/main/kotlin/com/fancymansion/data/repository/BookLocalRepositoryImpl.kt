@@ -77,6 +77,13 @@ class BookLocalRepositoryImpl @Inject constructor(
     /**
      * App Storage : File
      */
+    override suspend fun getUserBookFolderNameList(
+        userId: String,
+        mode: ReadMode
+    ): List<String> {
+        return bookStorageSource.getUserBookFolderNameList(userId, mode)
+    }
+
     override suspend fun makeBookInfo(
         userId: String,
         mode: ReadMode,

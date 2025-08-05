@@ -11,13 +11,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -25,10 +24,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
@@ -36,7 +38,6 @@ import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
 import com.fancymansion.presentation.main.tab.editor.EditBookState
-import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -66,6 +67,17 @@ fun EditorTabScreenContent(
         }
     } else {
         val context = LocalContext.current
+        val painterList = bookInfoStates.map { data ->
+            when (data.bookInfo.thumbnail) {
+                is ImagePickType.SavedImage -> {
+                    rememberAsyncImagePainter(data.bookInfo.thumbnail.file)
+                }
+
+                else -> {
+                    painterResource(id = R.drawable.holder_book_image_sample)
+                }
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -145,7 +157,11 @@ fun EditorTabScreenContent(
 
                 itemsIndexed (bookInfoStates){ idx, data ->
                     EditBookHolder(
-                        bookState = data
+                        bookState = data,
+                        painter = painterList[idx],
+                        onClickHolder = {
+                            onEventSent(EditorTabContract.Event.BookHolderEnterEditBook(it))
+                        }
                     )
 
                     if (idx < bookInfoStates.size - 1) {
@@ -185,20 +201,31 @@ fun EditorTabScreenContent(
 @Composable
 fun EditBookHolder(
     modifier : Modifier = Modifier,
-    bookState : EditBookState
+    painter: Painter,
+    bookState : EditBookState,
+    onClickHolder : (String) -> Unit
 ){
+
     Row(
-        modifier = modifier.padding(vertical = 18.dp, horizontal = 14.dp),
+        modifier = modifier.padding(vertical = 18.dp, horizontal = 14.dp).clickSingle{
+            onClickHolder(bookState.bookInfo.bookId)
+        },
         verticalAlignment = Alignment.CenterVertically
     ){
-        Image(
+        Box(
             modifier = Modifier
                 .fillMaxWidth(0.25f)
-                .heightIn(max = 200.dp),
-            painter = painterResource(id = R.drawable.holder_book_image_sample),
-            contentScale = ContentScale.FillWidth,
-            contentDescription = ""
-        )
+                .heightIn(max = 200.dp)
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                painter = painter,
+                contentScale = ContentScale.FillWidth,
+                contentDescription = ""
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -223,13 +250,13 @@ fun EditBookHolder(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Row(
+            FlowRow(
                 modifier = Modifier.padding(top = 5.dp)
             ) {
-                bookState.bookInfo.keywords.forEach { keyword ->
+                bookState.bookInfo.keywords.take(6).forEach { keyword ->
                     Text(
                         modifier = Modifier
-                            .padding(end = 2.dp)
+                            .padding(end = 2.dp).padding(bottom = 2.dp)
                             .clip(shape = MaterialTheme.shapes.extraSmall)
                             .padding(0.5.dp)
                             .border(
