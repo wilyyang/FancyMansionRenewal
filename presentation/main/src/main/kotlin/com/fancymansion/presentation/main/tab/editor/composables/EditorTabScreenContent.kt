@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +23,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
@@ -31,7 +34,6 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
-import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
@@ -40,6 +42,7 @@ import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
 import com.fancymansion.presentation.main.tab.editor.EditBookState
+import com.fancymansion.presentation.main.tab.editor.composables.part.SearchTextField
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -88,6 +91,7 @@ fun EditorTabScreenContent(
             }
         }
 
+        val focusManager = LocalFocusManager.current
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,16 +103,32 @@ fun EditorTabScreenContent(
                     .padding(vertical = 10.dp, horizontal = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RoundedTextField(
+                SearchTextField(
                     modifier = Modifier.fillMaxWidth(0.85f),
-                    value = ""
-                ) {}
+                    value = uiState.searchText,
+                    maxLine = 1,
+                    hint = stringResource(R.string.edit_book_search_text_hint),
+                    keyboardActions = KeyboardActions {
+                        focusManager.clearFocus()
+                        onEventSent(EditorTabContract.Event.RequestSearchText)
+                    },
+                    isCancelable = true
+                ) {
+                    onEventSent(EditorTabContract.Event.SearchTextInputUpdate(searchText = it))
+                }
 
-                Box(modifier = Modifier.fillMaxWidth(1f)) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .fillMaxWidth(1f)
+                        .height(35.dp)
+                        .clickSingle{
+                            focusManager.clearFocus()
+                            onEventSent(EditorTabContract.Event.SearchTextInputCancel)
+                        }
+                ) {
                     Text(
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .align(Alignment.CenterEnd),
+                        modifier = Modifier.align(Alignment.Center),
                         text = "취소",
                         style = MaterialTheme.typography.bodyMedium
                     )

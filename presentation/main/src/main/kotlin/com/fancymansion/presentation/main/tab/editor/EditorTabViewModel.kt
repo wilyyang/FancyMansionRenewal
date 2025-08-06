@@ -44,7 +44,8 @@ class EditorTabViewModel @Inject constructor(
     override fun handleEvents(event: EditorTabContract.Event) {
         when(event) {
             is SearchTextInputUpdate -> handleSearchTextInput(searchText = event.searchText)
-            SearchTextInputCancel -> handleSearchTextInput(searchText = "")
+            SearchTextInputCancel -> cancelSearchText()
+            RequestSearchText -> requestSearchText()
             is SelectBookSortOrder -> sortBooksByOrder(sortOrder = event.sortOrder)
             BookListEnterEditMode -> toggleEditMode()
             BookListExitEditMode -> toggleEditMode()
@@ -83,8 +84,24 @@ class EditorTabViewModel @Inject constructor(
     }
 
     // EditorTabEvent
-    private fun handleSearchTextInput(searchText : String) = launchWithLoading{
-        // TODO 08.04 Search Book
+    private fun handleSearchTextInput(searchText : String) {
+        setState {
+            copy(
+                searchText = searchText
+            )
+        }
+    }
+
+    private fun requestSearchText() {
+        searchBookList(uiState.value.searchText)
+    }
+
+    private fun cancelSearchText() {
+        setState {
+            copy(
+                searchText = ""
+            )
+        }
     }
 
 
@@ -133,19 +150,18 @@ class EditorTabViewModel @Inject constructor(
         updatePagedVisibleList(pageNumber)
     }
 
-    private fun updatePagedVisibleList(pageNumber : Int) {
-        val totalPageCount = (totalBookInfoStates.size + 9) / 10
-
-        val page = pageNumber.coerceIn(0, totalPageCount - 1)
-        val pagedBookList = getPagedBookList(totalBookInfoStates, page)
+    /**
+     * Search (searchBookList) -> Sort (sortTotalBookList) -> Page (updatePagedVisibleList)
+     */
+    private fun searchBookList(searchText: String) {
+        val searchList = totalBookInfoStates.filter { it.bookInfo.title.contains(searchText) }
 
         setState {
             copy(
-                pagedBookList = pagedBookList,
-                totalPageCount = totalPageCount,
-                currentPageNumber = page
+                pagedBookList = searchList
             )
         }
+
     }
 
     private fun sortTotalBookList(order: EditBookSortOrder) {
@@ -157,6 +173,21 @@ class EditorTabViewModel @Inject constructor(
         setState {
             copy(
                 bookSortOrder = order
+            )
+        }
+    }
+
+    private fun updatePagedVisibleList(pageNumber : Int) {
+        val totalPageCount = (totalBookInfoStates.size + 9) / 10
+
+        val page = pageNumber.coerceIn(0, totalPageCount - 1)
+        val pagedBookList = getPagedBookList(totalBookInfoStates, page)
+
+        setState {
+            copy(
+                pagedBookList = pagedBookList,
+                totalPageCount = totalPageCount,
+                currentPageNumber = page
             )
         }
     }

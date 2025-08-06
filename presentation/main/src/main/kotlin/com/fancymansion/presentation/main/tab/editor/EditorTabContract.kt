@@ -59,6 +59,7 @@ class EditorTabContract {
     sealed class Event : ViewEvent {
         // Search
         data class SearchTextInputUpdate(val searchText : String) : Event()
+        data object RequestSearchText : Event()
         data object SearchTextInputCancel : Event()
 
         // Header
