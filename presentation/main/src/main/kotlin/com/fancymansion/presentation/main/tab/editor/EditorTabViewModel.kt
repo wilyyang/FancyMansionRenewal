@@ -89,7 +89,8 @@ class EditorTabViewModel @Inject constructor(
 
 
     private fun sortBooksByOrder(sortOrder: EditBookSortOrder) = launchWithLoading {
-        // TODO 08.04 Sort Books
+        sortTotalBookList(sortOrder)
+        updatePagedVisibleList(0)
     }
 
     private fun toggleEditMode() = launchWithLoading {

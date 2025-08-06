@@ -145,14 +145,17 @@ fun EditorTabScreenContent(
                             .padding(vertical = 18.dp, horizontal = 14.dp)
                     ){
                         EnumDropdown(
-                            modifier = Modifier.width(125.dp),
+                            modifier = Modifier.width(140.dp),
                             options = EditBookSortOrder.entries.toTypedArray(),
-                            selectedOption = EditBookSortOrder.LAST_EDITED,
+                            selectedOption = uiState.bookSortOrder,
+                            onClickDropdownTitle = {
+                                // TODO 08.06 Reset Focus
+                            },
                             getDisplayName = {
                                 context.getString(it.textResId)
                             }
                         ) {
-
+                            onEventSent(EditorTabContract.Event.SelectBookSortOrder(it))
                         }
 
                         Text(
