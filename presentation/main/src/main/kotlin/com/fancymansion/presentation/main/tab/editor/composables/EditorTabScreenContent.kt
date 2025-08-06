@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +40,7 @@ import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
 import com.fancymansion.presentation.main.tab.editor.EditBookState
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -46,7 +49,6 @@ import java.util.Locale
 fun EditorTabScreenContent(
     modifier: Modifier = Modifier,
     uiState: EditorTabContract.State,
-    bookInfoStates: SnapshotStateList<EditBookState>,
     onEventSent: (event: EditorTabContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
@@ -67,7 +69,7 @@ fun EditorTabScreenContent(
         }
     } else {
         val context = LocalContext.current
-        val painterList = bookInfoStates.map { data ->
+        val painterList = uiState.pagedBookList.map { data ->
             when (data.bookInfo.thumbnail) {
                 is ImagePickType.SavedImage -> {
                     rememberAsyncImagePainter(data.bookInfo.thumbnail.file)
@@ -76,6 +78,13 @@ fun EditorTabScreenContent(
                 else -> {
                     painterResource(id = R.drawable.holder_book_image_sample)
                 }
+            }
+        }
+        val listState = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
+        LaunchedEffect(uiState.currentPageNumber) {
+            coroutineScope.launch {
+                listState.scrollToItem(0)
             }
         }
 
@@ -107,6 +116,7 @@ fun EditorTabScreenContent(
             }
 
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize()
             ) {
                 item {
@@ -155,7 +165,7 @@ fun EditorTabScreenContent(
                     }
                 }
 
-                itemsIndexed (bookInfoStates){ idx, data ->
+                itemsIndexed (uiState.pagedBookList){ idx, data ->
                     EditBookHolder(
                         bookState = data,
                         painter = painterList[idx],
@@ -164,7 +174,7 @@ fun EditorTabScreenContent(
                         }
                     )
 
-                    if (idx < bookInfoStates.size - 1) {
+                    if (idx < uiState.pagedBookList.size - 1) {
                         HorizontalDivider(
                             modifier = Modifier
                                 .padding(horizontal = 14.dp)
@@ -183,12 +193,16 @@ fun EditorTabScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ){
-                        for(i in 1 .. 3){
+                        for(i in 0 until uiState.totalPageCount){
                             Text(
-                                modifier = Modifier.padding(end = if(i != 3) 30.dp else 0.dp),
-                                text = "$i",
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if(i == 1) SemiBold else Medium),
-                                color = if(i == 1) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
+                                modifier = Modifier
+                                    .padding(end = if (i < uiState.totalPageCount - 1) 30.dp else 0.dp)
+                                    .clickSingle {
+                                        onEventSent(EditorTabContract.Event.SelectBookPageNumber(i))
+                                    },
+                                text = "${i + 1}",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (i == uiState.currentPageNumber) SemiBold else Medium),
+                                color = if (i == uiState.currentPageNumber) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
                             )
                         }
                     }
@@ -207,9 +221,11 @@ fun EditBookHolder(
 ){
 
     Row(
-        modifier = modifier.padding(vertical = 18.dp, horizontal = 14.dp).clickSingle{
-            onClickHolder(bookState.bookInfo.bookId)
-        },
+        modifier = modifier
+            .padding(vertical = 18.dp, horizontal = 14.dp)
+            .clickSingle {
+                onClickHolder(bookState.bookInfo.bookId)
+            },
         verticalAlignment = Alignment.CenterVertically
     ){
         Box(
@@ -256,7 +272,8 @@ fun EditBookHolder(
                 bookState.bookInfo.keywords.take(6).forEach { keyword ->
                     Text(
                         modifier = Modifier
-                            .padding(end = 2.dp).padding(bottom = 2.dp)
+                            .padding(end = 2.dp)
+                            .padding(bottom = 2.dp)
                             .clip(shape = MaterialTheme.shapes.extraSmall)
                             .padding(0.5.dp)
                             .border(

@@ -51,7 +51,9 @@ class EditorTabContract {
         val searchText: String = "",
         val bookSortOrder: EditBookSortOrder = EditBookSortOrder.LAST_EDITED,
         val isEditMode : Boolean = false,
-        val currentPageNumber : Int = 0
+        val currentPageNumber : Int = 0,
+        val totalPageCount: Int = 0,
+        val pagedBookList: List<EditBookState> = emptyList()
     ) : ViewState
 
     sealed class Event : ViewEvent {

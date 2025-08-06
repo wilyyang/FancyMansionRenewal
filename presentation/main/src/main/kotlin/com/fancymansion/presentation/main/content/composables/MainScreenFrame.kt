@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -42,7 +41,6 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
-import com.fancymansion.presentation.main.tab.editor.EditBookState
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreenFrame
 import kotlinx.coroutines.flow.SharedFlow
@@ -60,8 +58,7 @@ fun MainScreenFrame(
     onCommonEventSent: (event: CommonEvent) -> Unit,
     onEventSent: (event: MainContract.Event) -> Unit,
     onNavigationRequested: (MainContract.Effect.Navigation) -> Unit,
-    editorTabComponents: TabScreenComponents<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>,
-    editorTabBookInfoStates: SnapshotStateList<EditBookState>
+    editorTabComponents: TabScreenComponents<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -97,7 +94,6 @@ fun MainScreenFrame(
                 MainScreenTab.Editor -> {
                     EditorTabScreenFrame(
                         uiState = editorTabComponents.uiState,
-                        bookInfoStates = editorTabBookInfoStates,
                         loadState = editorTabComponents.loadState,
                         effectFlow = editorTabComponents.effectFlow,
                         onEventSent = editorTabComponents.onEventSent,

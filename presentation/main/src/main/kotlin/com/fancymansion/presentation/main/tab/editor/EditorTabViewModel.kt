@@ -33,7 +33,7 @@ class EditorTabViewModel @Inject constructor(
     private var userId: String = savedStateHandle.get<String>(NAME_USER_ID) ?: testEpisodeRef.userId
     private val mode: ReadMode = ReadMode.EDIT
     private lateinit var originBookInfoList: List<EditBookWrapper>
-    val bookInfoStates: SnapshotStateList<EditBookState> = mutableStateListOf()
+    private val totalBookInfoStates: SnapshotStateList<EditBookState> = mutableStateListOf()
 
     init {
         initializeState()
@@ -129,7 +129,45 @@ class EditorTabViewModel @Inject constructor(
     }
 
     private fun showBooksForPage(pageNumber: Int) = launchWithLoading {
-        // TODO 08.04 Show Books For Page Number
+        updatePagedVisibleList(pageNumber)
+    }
+
+    private fun updatePagedVisibleList(pageNumber : Int) {
+        val totalPageCount = (totalBookInfoStates.size + 9) / 10
+
+        val page = pageNumber.coerceIn(0, totalPageCount - 1)
+        val pagedBookList = getPagedBookList(totalBookInfoStates, page)
+
+        setState {
+            copy(
+                pagedBookList = pagedBookList,
+                totalPageCount = totalPageCount,
+                currentPageNumber = page
+            )
+        }
+    }
+
+    private fun sortTotalBookList(order: EditBookSortOrder) {
+        when (order) {
+            EditBookSortOrder.LAST_EDITED -> totalBookInfoStates.sortByDescending { it.bookInfo.editTime }
+            EditBookSortOrder.TITLE_ASCENDING -> totalBookInfoStates.sortBy { it.bookInfo.title }
+        }
+
+        setState {
+            copy(
+                bookSortOrder = order
+            )
+        }
+    }
+
+    private fun getPagedBookList(
+        list: List<EditBookState>,
+        page: Int,
+        pageSize: Int = 10
+    ): List<EditBookState> {
+        val from = page * pageSize
+        val to = minOf(from + pageSize, list.size)
+        return if (from >= list.size) emptyList() else list.subList(from, to)
     }
 
     // CommonEvent
@@ -153,20 +191,17 @@ class EditorTabViewModel @Inject constructor(
             it.toWrapper(savedPickType)
         }.sortedBy { it.bookId }
 
-        bookInfoStates.clear()
+        totalBookInfoStates.clear()
         originBookInfoList.forEach { bookInfo ->
-            bookInfoStates.add(
+            totalBookInfoStates.add(
                 EditBookState(
                     bookInfo = bookInfo,
                     selected = mutableStateOf(false)
                 )
             )
         }
-
-        when(uiState.value.bookSortOrder){
-            EditBookSortOrder.LAST_EDITED -> bookInfoStates.sortByDescending { it.bookInfo.editTime }
-            EditBookSortOrder.TITLE_ASCENDING -> bookInfoStates.sortBy { it.bookInfo.title }
-        }
+        sortTotalBookList(EditBookSortOrder.LAST_EDITED)
+        updatePagedVisibleList(0)
     }
 
     private fun handleOnResume() {
