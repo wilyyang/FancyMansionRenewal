@@ -72,7 +72,7 @@ fun EditorTabScreenContent(
         }
     } else {
         val context = LocalContext.current
-        val painterList = uiState.pagedBookList.map { data ->
+        val painterList = uiState.visibleBookList.map { data ->
             when (data.bookInfo.thumbnail) {
                 is ImagePickType.SavedImage -> {
                     rememberAsyncImagePainter(data.bookInfo.thumbnail.file)
@@ -85,7 +85,7 @@ fun EditorTabScreenContent(
         }
         val listState = rememberLazyListState()
         val coroutineScope = rememberCoroutineScope()
-        LaunchedEffect(uiState.currentPageNumber) {
+        LaunchedEffect(uiState.currentPage) {
             coroutineScope.launch {
                 listState.scrollToItem(0)
             }
@@ -110,11 +110,11 @@ fun EditorTabScreenContent(
                     hint = stringResource(R.string.edit_book_search_text_hint),
                     keyboardActions = KeyboardActions {
                         focusManager.clearFocus()
-                        onEventSent(EditorTabContract.Event.RequestSearchText)
+                        onEventSent(EditorTabContract.Event.SearchClicked)
                     },
                     isCancelable = true
                 ) {
-                    onEventSent(EditorTabContract.Event.SearchTextInputUpdate(searchText = it))
+                    onEventSent(EditorTabContract.Event.SearchTextInput(searchText = it))
                 }
 
                 Box(
@@ -124,7 +124,7 @@ fun EditorTabScreenContent(
                         .height(35.dp)
                         .clickSingle{
                             focusManager.clearFocus()
-                            onEventSent(EditorTabContract.Event.SearchTextInputCancel)
+                            onEventSent(EditorTabContract.Event.SearchCancel)
                         }
                 ) {
                     Text(
@@ -168,9 +168,6 @@ fun EditorTabScreenContent(
                             modifier = Modifier.width(140.dp),
                             options = EditBookSortOrder.entries.toTypedArray(),
                             selectedOption = uiState.bookSortOrder,
-                            onClickDropdownTitle = {
-                                // TODO 08.06 Reset Focus
-                            },
                             getDisplayName = {
                                 context.getString(it.textResId)
                             }
@@ -188,16 +185,16 @@ fun EditorTabScreenContent(
                     }
                 }
 
-                itemsIndexed (uiState.pagedBookList){ idx, data ->
+                itemsIndexed (uiState.visibleBookList){ idx, data ->
                     EditBookHolder(
                         bookState = data,
                         painter = painterList[idx],
                         onClickHolder = {
-                            onEventSent(EditorTabContract.Event.BookHolderEnterEditBook(it))
+                            onEventSent(EditorTabContract.Event.BookHolderClicked(it))
                         }
                     )
 
-                    if (idx < uiState.pagedBookList.size - 1) {
+                    if (idx < uiState.visibleBookList.size - 1) {
                         HorizontalDivider(
                             modifier = Modifier
                                 .padding(horizontal = 14.dp)
@@ -221,11 +218,11 @@ fun EditorTabScreenContent(
                                 modifier = Modifier
                                     .padding(end = if (i < uiState.totalPageCount - 1) 30.dp else 0.dp)
                                     .clickSingle {
-                                        onEventSent(EditorTabContract.Event.SelectBookPageNumber(i))
+                                        onEventSent(EditorTabContract.Event.BookPageNumberClicked(i))
                                     },
                                 text = "${i + 1}",
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (i == uiState.currentPageNumber) SemiBold else Medium),
-                                color = if (i == uiState.currentPageNumber) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (i == uiState.currentPage) SemiBold else Medium),
+                                color = if (i == uiState.currentPage) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
                             )
                         }
                     }

@@ -48,37 +48,36 @@ class EditorTabContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
+        val isEditMode : Boolean = false,
         val searchText: String = "",
         val bookSortOrder: EditBookSortOrder = EditBookSortOrder.LAST_EDITED,
-        val isEditMode : Boolean = false,
-        val currentPageNumber : Int = 0,
         val totalPageCount: Int = 0,
-        val pagedBookList: List<EditBookState> = emptyList()
+        val currentPage : Int = 0,
+        val visibleBookList: List<EditBookState> = emptyList()
     ) : ViewState
 
     sealed class Event : ViewEvent {
-        // Search
-        data class SearchTextInputUpdate(val searchText : String) : Event()
-        data object RequestSearchText : Event()
-        data object SearchTextInputCancel : Event()
 
-        // Header
+        // Mode Common
+        data class BookPageNumberClicked(val pageNumber : Int) : Event()
+        data class BookHolderClicked(val bookId : String) : Event()
+
+        // Normal Mode
+        data class SearchTextInput(val searchText : String) : Event()
+        data object SearchClicked : Event()
+        data object SearchCancel : Event()
+
         data class SelectBookSortOrder(val sortOrder: EditBookSortOrder) : Event()
 
+        // Edit Mode
         data object BookListEnterEditMode : Event()
         data object BookListExitEditMode : Event()
 
-        // Holder
         data object BookHolderSelectAll : Event()
         data object BookHolderDeselectAll : Event()
+
         data object BookHolderAddBook : Event()
         data object BookHolderDeleteBook : Event()
-
-        data class BookHolderEnterEditBook(val bookId : String) : Event()
-        data class BookHolderSelectBook(val bookId : String) : Event()
-
-        // Page Number
-        data class SelectBookPageNumber(val pageNumber : Int) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
