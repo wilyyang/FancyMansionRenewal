@@ -168,6 +168,9 @@ fun EditorTabScreenContent(
                             modifier = Modifier.width(140.dp),
                             options = EditBookSortOrder.entries.toTypedArray(),
                             selectedOption = uiState.bookSortOrder,
+                            onClickDropdownTitle = {
+                              focusManager.clearFocus()
+                            },
                             getDisplayName = {
                                 context.getString(it.textResId)
                             }

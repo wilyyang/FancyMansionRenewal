@@ -142,8 +142,10 @@ class EditorTabViewModel @Inject constructor(
 
     private fun handleSelectBookSortOrder(sortOrder: EditBookSortOrder) = launchWithLoading {
         val targetList = if (isSearchMode) {
+            updateSearchResultBookStates(uiState.value.searchText)
             searchResultBookStates
         } else {
+            searchResultBookStates.clear()
             allBookStates
         }
 
@@ -195,6 +197,7 @@ class EditorTabViewModel @Inject constructor(
     // CommonFunction
     private fun handleOnResume() {
         if (isUpdateResume) {
+            // TODO 08.08 Scroll Position
             isUpdateResume = false
             launchWithLoading {
                 loadBookStateList()
@@ -266,7 +269,7 @@ class EditorTabViewModel @Inject constructor(
     private fun updatePagedList(list: List<EditBookState>, pageNumber: Int) {
         val totalPageCount = (list.size + BOOKS_PER_PAGE - 1) / BOOKS_PER_PAGE
 
-        val page = pageNumber.coerceIn(0, totalPageCount - 1)
+        val page = if(totalPageCount < 1) 0 else pageNumber.coerceIn(0, totalPageCount - 1)
         val pagedBookList = getPagedBookList(list, page)
 
         setState {
