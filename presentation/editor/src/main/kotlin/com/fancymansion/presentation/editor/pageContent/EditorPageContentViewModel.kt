@@ -195,14 +195,16 @@ class EditorPageContentViewModel @Inject constructor(
     }
 
     private fun handleMoveSelectorList() {
-        isUpdateResume = true
-        setEffect {
-            EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen(
-                episodeRef = episodeRef,
-                bookTitle = uiState.value.bookTitle,
-                episodeTitle = "",
-                pageId = originPage.id
-            )
+        checkPageContentEdited {
+            isUpdateResume = true
+            setEffect {
+                EditorPageContentContract.Effect.Navigation.NavigateSelectorListScreen(
+                    episodeRef = episodeRef,
+                    bookTitle = uiState.value.bookTitle,
+                    episodeTitle = "",
+                    pageId = originPage.id
+                )
+            }
         }
     }
 
