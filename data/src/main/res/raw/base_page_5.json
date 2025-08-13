@@ -2,25 +2,21 @@
   "id": 5,
   "sources": [
     {
+      "type": "image",
+      "imageName": "5_page_img_1.png"
+    },
+    {
       "type": "text",
-      "description": "\n달을 향해 날아오르는 배트!\n하늘로 날아오르니 기분이 아주 좋아요!\n"
+      "description": "\n파비가 담장 뒤쪽으로 가보니 웬디가 있었어요!\n\n웬디는 작은 그릇 앞에서 무언가를 열심히 하고 있었어요. 연어맛 츄르와 참치맛 츄르 통이 웬디 옆에 놓여 있었어요.\n\n\"웬디야! 뭐 하는 거야?\"\n\n웬디가 고개를 들며 말했어요.\n"
     },
     {
       "type": "image",
-      "imageName": "test_book_id_img_4.png"
+      "imageName": "5_page_img_2.png"
     },
     {
       "type": "text",
-      "description": "\n그런데 그 뿐이었습니다.\n"
-    },
-    {
-      "type": "image",
-      "imageName": "test_book_id_img_9.png"
-    },
-    {
-      "type": "text",
-      "description": "밝은 달 아래에서 바라봐도 집이 어딘지 보이지 않아요.\n"
+      "description": "\n\"야옹! 나는 지금 가장 맛있는 츄르 믹스를 만들고 있어!\"\n\n하지만 웬디는 츄르를 그릇에 짤 수 없었죠.\n\n\"가장 맛있는 츄르의 비율은... 참치는 꼭 들어가야 해! 그리고 연어는 참치보다 많이 들어가야 하지!\"\n\n웬디는 정말 츄르 믹스에 진심인가 봐요!\n"
     }
   ],
-  "title": "플라이 투더 문"
+  "title": "얼룩 고양이 웬디"
 }

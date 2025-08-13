@@ -259,7 +259,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         )
 
         // make sample image
-        makeCoverImageFromResource(episodeRef.userId, episodeRef.mode, episodeRef.bookId, "test_book_id_cover_1.png", R.drawable.test_book_id_cover_1)
+        makeCoverImageFromResource(episodeRef.userId, episodeRef.mode, episodeRef.bookId, "cover_test_book_id_1.png", R.drawable.sample_cat)
         SAMPLE_IMAGE_LIST.forEach {
             makePageImageFromResource(episodeRef, it.first, it.second)
         }
@@ -268,7 +268,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         val bookInfo : BookInfoData = gson.fromJson(context.readModuleRawFile(R.raw.base_book_info), type<BookInfoData>())
         val episodeInfo : EpisodeInfoData = gson.fromJson(context.readModuleRawFile(R.raw.base_episode_info), type<EpisodeInfoData>())
         val logic : LogicData = gson.fromJson(context.readModuleRawFile(R.raw.base_logic), type<LogicData>())
-        val pages = (1..11).map { pageId ->
+        val pages = (1..7).map { pageId ->
             val resourceId = getSamplePageResourceId(pageId)
             gson.fromJson<PageData>(context.readModuleRawFile(resourceId), type<PageData>())
         }

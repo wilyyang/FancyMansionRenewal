@@ -2,29 +2,25 @@
   "id": 2,
   "sources": [
     {
-      "type": "image",
-      "imageName": "test_book_id_img_6.png"
-    },
-    {
       "type": "text",
-      "description": "\n배트는 커다란 벌레 몇 마리를 찾았어요.\n배트는 작은 벌레 몇 마리를 찾았어요.\n"
+      "description": "\n파비는 먼저 길건너 횟집으로 향했어요. 그 곳에는 하얀 고양이 모야가 수조 앞에 앉아 있었어요.\n\n\"모야야! 존이 어딨는지 봤니?\"\n"
     },
     {
       "type": "image",
-      "imageName": "test_book_id_img_7.png"
+      "imageName": "2_page_img_1.png"
     },
     {
       "type": "text",
-      "description": "\n배트는 먹고 먹고 또 먹었어요.\n배트는 날고 날고 또 날았어요.\n"
+      "description": "\n하지만 모야는 파비의 말을 듣지 못하는 것 같았어요. 모야는 횟집의 커다란 수조를 빤히 바라보고 있었거든요. 수조 속에는 싱싱한 물고기들이 펄떡펄떡 헤엄치고 있었어요.\n\n모야의 파란 눈이 반짝이며 수조 안을 따라 움직였어요. 그리고 작은 목소리로 중얼거렸어요.\n\n\"야옹... 물고기 세 마리만 있었으면...\"\n"
     },
     {
       "type": "image",
-      "imageName": "test_book_id_img_9.png"
+      "imageName": "2_page_img_2.png"
     },
     {
       "type": "text",
-      "description": "\n그런데 이제 아주 어두워졌어요.\n\"집이 어디지?\" 배트가 말했어요.\n"
+      "description": "\n모야는 물고기를 바라보며 꼬리를 살랑살랑 흔들었어요. 맛있어 보이는 물고기에 눈이 팔려 고개를 갸웃거리는 모야였어요.\n"
     }
   ],
-  "title": "물가에서의 사냥"
+  "title": "하얀 고양이 모야"
 }

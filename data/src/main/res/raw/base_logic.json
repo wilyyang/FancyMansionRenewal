@@ -9,61 +9,30 @@
           "routes": [
             {
               "pageId": 1,
+              "routeConditions": [],
+              "routeId": 1,
+              "routeTargetPageId": 2,
+              "selectorId": 1
+            }
+          ],
+          "selectorId": 1,
+          "showConditions": [],
+          "text": "하얀 고양이 모야에게로"
+        },
+        {
+          "pageId": 1,
+          "routes": [
+            {
+              "pageId": 1,
               "routeConditions": [
                 {
                   "conditionId": 1,
                   "conditionRule": {
-                    "count": 2,
+                    "count": 0,
                     "logicalOp": "AND",
-                    "relationOp": "GREATER_THAN",
+                    "relationOp": "NOT_EQUAL",
                     "selfActionId": {
-                      "pageId": 5,
-                      "routeId": 0,
-                      "selectorId": 1
-                    },
-                    "targetActionId": {
-                      "pageId": 0,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "COUNT"
-                  },
-                  "pageId": 1,
-                  "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                },
-                {
-                  "conditionId": 2,
-                  "conditionRule": {
-                    "count": 8,
-                    "logicalOp": "OR",
-                    "relationOp": "EQUAL",
-                    "selfActionId": {
-                      "pageId": 7,
-                      "routeId": 0,
-                      "selectorId": 1
-                    },
-                    "targetActionId": {
-                      "pageId": 0,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "COUNT"
-                  },
-                  "pageId": 1,
-                  "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                },
-                {
-                  "conditionId": 3,
-                  "conditionRule": {
-                    "count": 2,
-                    "logicalOp": "AND",
-                    "relationOp": "LESS_THAN",
-                    "selfActionId": {
-                      "pageId": 1,
+                      "pageId": 2,
                       "routeId": 0,
                       "selectorId": 2
                     },
@@ -76,239 +45,59 @@
                   },
                   "pageId": 1,
                   "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                },
-                {
-                  "conditionId": 4,
-                  "conditionRule": {
-                    "count": 0,
-                    "logicalOp": "OR",
-                    "relationOp": "LESS_THAN",
-                    "selfActionId": {
-                      "pageId": 2,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "targetActionId": {
-                      "pageId": 3,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "TARGET"
-                  },
-                  "pageId": 1,
-                  "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                },
-                {
-                  "conditionId": 5,
-                  "conditionRule": {
-                    "count": 0,
-                    "logicalOp": "AND",
-                    "relationOp": "LESS_THAN",
-                    "selfActionId": {
-                      "pageId": 2,
-                      "routeId": 0,
-                      "selectorId": 1
-                    },
-                    "targetActionId": {
-                      "pageId": 3,
-                      "routeId": 0,
-                      "selectorId": 1
-                    },
-                    "type": "TARGET"
-                  },
-                  "pageId": 1,
-                  "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                },
-                {
-                  "conditionId": 6,
-                  "conditionRule": {
-                    "count": 2,
-                    "logicalOp": "AND",
-                    "relationOp": "GREATER_THAN",
-                    "selfActionId": {
-                      "pageId": 2,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "targetActionId": {
-                      "pageId": 0,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "COUNT"
-                  },
-                  "pageId": 1,
-                  "routeId": 1,
-                  "selectorId": 1,
+                  "selectorId": 2,
                   "type": "ROUTE"
                 }
               ],
               "routeId": 1,
-              "routeTargetPageId": 2,
-              "selectorId": 1
+              "routeTargetPageId": 5,
+              "selectorId": 2
             },
             {
               "pageId": 1,
-              "routeConditions": [],
+              "routeConditions": [
+                {
+                  "conditionId": 1,
+                  "conditionRule": {
+                    "count": 0,
+                    "logicalOp": "AND",
+                    "relationOp": "GREATER_THAN",
+                    "selfActionId": {
+                      "pageId": 4,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "targetActionId": {
+                      "pageId": 2,
+                      "routeId": 0,
+                      "selectorId": 0
+                    },
+                    "type": "TARGET"
+                  },
+                  "pageId": 1,
+                  "routeId": 2,
+                  "selectorId": 2,
+                  "type": "ROUTE"
+                }
+              ],
               "routeId": 2,
-              "routeTargetPageId": 1,
-              "selectorId": 1
+              "routeTargetPageId": 7,
+              "selectorId": 2
             },
             {
               "pageId": 1,
               "routeConditions": [],
               "routeId": 3,
-              "routeTargetPageId": 3,
-              "selectorId": 1
-            },
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 4,
               "routeTargetPageId": 4,
-              "selectorId": 1
-            },
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 5,
-              "routeTargetPageId": 5,
-              "selectorId": 1
-            },
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 6,
-              "routeTargetPageId": 6,
-              "selectorId": 1
-            },
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 7,
-              "routeTargetPageId": 7,
-              "selectorId": 1
-            },
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 8,
-              "routeTargetPageId": 8,
-              "selectorId": 1
-            }
-          ],
-          "selectorId": 1,
-          "showConditions": [],
-          "text": "물가로 간다"
-        },
-        {
-          "pageId": 1,
-          "routes": [
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 1,
-              "routeTargetPageId": 3,
               "selectorId": 2
             }
           ],
           "selectorId": 2,
           "showConditions": [],
-          "text": "옥수수밭으로 간다"
-        },
-        {
-          "pageId": 1,
-          "routes": [
-            {
-              "pageId": 1,
-              "routeConditions": [],
-              "routeId": 1,
-              "routeTargetPageId": 11,
-              "selectorId": 3
-            }
-          ],
-          "selectorId": 3,
-          "showConditions": [
-            {
-              "conditionId": 1,
-              "conditionRule": {
-                "count": 7,
-                "logicalOp": "AND",
-                "relationOp": "LESS_THAN",
-                "selfActionId": {
-                  "pageId": 1,
-                  "routeId": 0,
-                  "selectorId": 0
-                },
-                "targetActionId": {
-                  "pageId": 0,
-                  "routeId": 0,
-                  "selectorId": 0
-                },
-                "type": "COUNT"
-              },
-              "pageId": 1,
-              "routeId": 0,
-              "selectorId": 3,
-              "type": "SHOW_SELECTOR"
-            },
-            {
-              "conditionId": 2,
-              "conditionRule": {
-                "count": 1,
-                "logicalOp": "AND",
-                "relationOp": "GREATER_THAN",
-                "selfActionId": {
-                  "pageId": 2,
-                  "routeId": 0,
-                  "selectorId": 0
-                },
-                "targetActionId": {
-                  "pageId": 0,
-                  "routeId": 0,
-                  "selectorId": 0
-                },
-                "type": "COUNT"
-              },
-              "pageId": 1,
-              "routeId": 0,
-              "selectorId": 3,
-              "type": "SHOW_SELECTOR"
-            },
-            {
-              "conditionId": 3,
-              "conditionRule": {
-                "count": 0,
-                "logicalOp": "OR",
-                "relationOp": "LESS_THAN",
-                "selfActionId": {
-                  "pageId": 2,
-                  "routeId": 0,
-                  "selectorId": 0
-                },
-                "targetActionId": {
-                  "pageId": 3,
-                  "routeId": 0,
-                  "selectorId": 0
-                },
-                "type": "TARGET"
-              },
-              "pageId": 1,
-              "routeId": 0,
-              "selectorId": 3,
-              "type": "SHOW_SELECTOR"
-            }
-          ],
-          "text": "숨겨진 행선지?"
+          "text": "얼룩 고양이 웬디에게로"
         }
       ],
-      "title": "잠에서 깨어난 배트",
+      "title": "대체 어딨는거야?",
       "type": "START"
     },
     {
@@ -321,13 +110,37 @@
               "pageId": 2,
               "routeConditions": [],
               "routeId": 1,
-              "routeTargetPageId": 5,
+              "routeTargetPageId": 3,
               "selectorId": 1
             }
           ],
           "selectorId": 1,
-          "showConditions": [],
-          "text": "달을 향해 날아오른다"
+          "showConditions": [
+            {
+              "conditionId": 1,
+              "conditionRule": {
+                "count": 3,
+                "logicalOp": "AND",
+                "relationOp": "LESS_THAN",
+                "selfActionId": {
+                  "pageId": 3,
+                  "routeId": 0,
+                  "selectorId": 0
+                },
+                "targetActionId": {
+                  "pageId": 0,
+                  "routeId": 0,
+                  "selectorId": 0
+                },
+                "type": "COUNT"
+              },
+              "pageId": 2,
+              "routeId": 0,
+              "selectorId": 1,
+              "type": "SHOW_SELECTOR"
+            }
+          ],
+          "text": "수조을 바라본다"
         },
         {
           "pageId": 2,
@@ -336,16 +149,40 @@
               "pageId": 2,
               "routeConditions": [],
               "routeId": 1,
-              "routeTargetPageId": 4,
+              "routeTargetPageId": 1,
               "selectorId": 2
             }
           ],
           "selectorId": 2,
-          "showConditions": [],
-          "text": "바위 틈으로 들어간다"
+          "showConditions": [
+            {
+              "conditionId": 1,
+              "conditionRule": {
+                "count": 2,
+                "logicalOp": "AND",
+                "relationOp": "GREATER_THAN",
+                "selfActionId": {
+                  "pageId": 3,
+                  "routeId": 0,
+                  "selectorId": 0
+                },
+                "targetActionId": {
+                  "pageId": 0,
+                  "routeId": 0,
+                  "selectorId": 0
+                },
+                "type": "COUNT"
+              },
+              "pageId": 2,
+              "routeId": 0,
+              "selectorId": 2,
+              "type": "SHOW_SELECTOR"
+            }
+          ],
+          "text": "모야가 나지막히 말합니다. \"웬디가 알걸?\""
         }
       ],
-      "title": "물가에서의 사냥",
+      "title": "하얀 고양이 모야",
       "type": "NORMAL"
     },
     {
@@ -358,31 +195,16 @@
               "pageId": 3,
               "routeConditions": [],
               "routeId": 1,
-              "routeTargetPageId": 8,
+              "routeTargetPageId": 2,
               "selectorId": 1
             }
           ],
           "selectorId": 1,
           "showConditions": [],
-          "text": "헛간을 향해 날아오른다"
-        },
-        {
-          "pageId": 3,
-          "routes": [
-            {
-              "pageId": 3,
-              "routeConditions": [],
-              "routeId": 1,
-              "routeTargetPageId": 4,
-              "selectorId": 2
-            }
-          ],
-          "selectorId": 2,
-          "showConditions": [],
-          "text": "바위 틈으로 들어간다"
+          "text": "물고기 한마리를 잡아 모야에게 준다"
         }
       ],
-      "title": "옥수수밭에 가다",
+      "title": "수조 속의 물고기",
       "type": "NORMAL"
     },
     {
@@ -401,10 +223,10 @@
           ],
           "selectorId": 1,
           "showConditions": [],
-          "text": "다시금 돌아간다"
+          "text": "다시 돌아간다"
         }
       ],
-      "title": "바위틈에서",
+      "title": "웬디는 안보입니다",
       "type": "NORMAL"
     },
     {
@@ -415,46 +237,15 @@
           "routes": [
             {
               "pageId": 5,
-              "routeConditions": [
-                {
-                  "conditionId": 1,
-                  "conditionRule": {
-                    "count": 2,
-                    "logicalOp": "AND",
-                    "relationOp": "GREATER_THAN",
-                    "selfActionId": {
-                      "pageId": 5,
-                      "routeId": 0,
-                      "selectorId": 1
-                    },
-                    "targetActionId": {
-                      "pageId": 0,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "COUNT"
-                  },
-                  "pageId": 5,
-                  "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                }
-              ],
-              "routeId": 1,
-              "routeTargetPageId": 6,
-              "selectorId": 1
-            },
-            {
-              "pageId": 5,
               "routeConditions": [],
-              "routeId": 2,
+              "routeId": 1,
               "routeTargetPageId": 5,
               "selectorId": 1
             }
           ],
           "selectorId": 1,
           "showConditions": [],
-          "text": "달로 다시 날아오른다"
+          "text": "츄르믹스에 연어 츄르를 섞는다"
         },
         {
           "pageId": 5,
@@ -463,13 +254,13 @@
               "pageId": 5,
               "routeConditions": [],
               "routeId": 1,
-              "routeTargetPageId": 3,
+              "routeTargetPageId": 5,
               "selectorId": 2
             }
           ],
           "selectorId": 2,
           "showConditions": [],
-          "text": "옥수수밭으로 간다"
+          "text": "츄르믹스에 참치 츄르를 섞는다"
         },
         {
           "pageId": 5,
@@ -478,7 +269,7 @@
               "pageId": 5,
               "routeConditions": [],
               "routeId": 1,
-              "routeTargetPageId": 7,
+              "routeTargetPageId": 6,
               "selectorId": 3
             }
           ],
@@ -487,13 +278,13 @@
             {
               "conditionId": 1,
               "conditionRule": {
-                "count": 3,
+                "count": 1,
                 "logicalOp": "AND",
                 "relationOp": "EQUAL",
                 "selfActionId": {
                   "pageId": 5,
                   "routeId": 0,
-                  "selectorId": 0
+                  "selectorId": 2
                 },
                 "targetActionId": {
                   "pageId": 0,
@@ -506,173 +297,47 @@
               "routeId": 0,
               "selectorId": 3,
               "type": "SHOW_SELECTOR"
+            },
+            {
+              "conditionId": 2,
+              "conditionRule": {
+                "count": 0,
+                "logicalOp": "AND",
+                "relationOp": "GREATER_THAN",
+                "selfActionId": {
+                  "pageId": 5,
+                  "routeId": 0,
+                  "selectorId": 1
+                },
+                "targetActionId": {
+                  "pageId": 5,
+                  "routeId": 0,
+                  "selectorId": 2
+                },
+                "type": "TARGET"
+              },
+              "pageId": 5,
+              "routeId": 0,
+              "selectorId": 3,
+              "type": "SHOW_SELECTOR"
             }
           ],
-          "text": "비가 오기 시작한다"
+          "text": "존의 위치를 아냐고 묻는다"
         }
       ],
-      "title": "플라이 투더 문",
+      "title": "얼룩 고양이 웬디",
       "type": "NORMAL"
     },
     {
       "pageId": 6,
       "selectors": [],
-      "title": "여긴 어디지?",
+      "title": "존의 위치를 아냐고?",
       "type": "ENDING"
     },
     {
       "pageId": 7,
-      "selectors": [
-        {
-          "pageId": 7,
-          "routes": [
-            {
-              "pageId": 7,
-              "routeConditions": [],
-              "routeId": 1,
-              "routeTargetPageId": 8,
-              "selectorId": 1
-            }
-          ],
-          "selectorId": 1,
-          "showConditions": [],
-          "text": "헛간을 향해 날아오른다"
-        }
-      ],
-      "title": "어두운 밤에 비가 축축",
-      "type": "NORMAL"
-    },
-    {
-      "pageId": 8,
-      "selectors": [
-        {
-          "pageId": 8,
-          "routes": [
-            {
-              "pageId": 8,
-              "routeConditions": [
-                {
-                  "conditionId": 1,
-                  "conditionRule": {
-                    "count": 1,
-                    "logicalOp": "AND",
-                    "relationOp": "EQUAL",
-                    "selfActionId": {
-                      "pageId": 7,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "targetActionId": {
-                      "pageId": 0,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "COUNT"
-                  },
-                  "pageId": 8,
-                  "routeId": 1,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                }
-              ],
-              "routeId": 1,
-              "routeTargetPageId": 9,
-              "selectorId": 1
-            },
-            {
-              "pageId": 8,
-              "routeConditions": [
-                {
-                  "conditionId": 1,
-                  "conditionRule": {
-                    "count": 3,
-                    "logicalOp": "AND",
-                    "relationOp": "GREATER_THAN",
-                    "selfActionId": {
-                      "pageId": 8,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "targetActionId": {
-                      "pageId": 0,
-                      "routeId": 0,
-                      "selectorId": 0
-                    },
-                    "type": "COUNT"
-                  },
-                  "pageId": 8,
-                  "routeId": 2,
-                  "selectorId": 1,
-                  "type": "ROUTE"
-                }
-              ],
-              "routeId": 2,
-              "routeTargetPageId": 6,
-              "selectorId": 1
-            },
-            {
-              "pageId": 8,
-              "routeConditions": [],
-              "routeId": 3,
-              "routeTargetPageId": 8,
-              "selectorId": 1
-            }
-          ],
-          "selectorId": 1,
-          "showConditions": [],
-          "text": "다시한 번 날개짓한다."
-        }
-      ],
-      "title": "헛간을 향해 힘찬 날개짓!",
-      "type": "NORMAL"
-    },
-    {
-      "pageId": 9,
-      "selectors": [
-        {
-          "pageId": 9,
-          "routes": [
-            {
-              "pageId": 9,
-              "routeConditions": [],
-              "routeId": 1,
-              "routeTargetPageId": 11,
-              "selectorId": 1
-            }
-          ],
-          "selectorId": 1,
-          "showConditions": [],
-          "text": "가지 않고 비가 그치길 기다린다"
-        },
-        {
-          "pageId": 9,
-          "routes": [
-            {
-              "pageId": 9,
-              "routeConditions": [],
-              "routeId": 1,
-              "routeTargetPageId": 10,
-              "selectorId": 2
-            }
-          ],
-          "selectorId": 2,
-          "showConditions": [],
-          "text": "구멍으로 들어간다"
-        }
-      ],
-      "title": "지붕에 도착한 배트",
-      "type": "NORMAL"
-    },
-    {
-      "pageId": 10,
       "selectors": [],
-      "title": "조용히 어둠 속으로…",
-      "type": "ENDING"
-    },
-    {
-      "pageId": 11,
-      "selectors": [],
-      "title": "다시 집으로!",
+      "title": "웬디는 항상 없군요?",
       "type": "ENDING"
     }
   ]

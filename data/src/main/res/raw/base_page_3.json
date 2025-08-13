@@ -2,29 +2,25 @@
   "id": 3,
   "sources": [
     {
-      "type": "image",
-      "imageName": "test_book_id_img_8.png"
-    },
-    {
       "type": "text",
-      "description": "\n배트는 옥수수밭에 도착했어요. 그러나 곧\n\n\"우르르 쾅쾅!\"\n"
+      "description": "\n수조 속에는 여러 빛깔의 물고기가 헤엄치고 있었어요.\n"
     },
     {
       "type": "image",
-      "imageName": "test_book_id_img_14.png"
+      "imageName": "3_page_img_1.png"
     },
     {
       "type": "text",
-      "description": "\n폭우가 쏟아지기 시작했어요.\n배트는 비를 피하기 위해 옥수수밭으로 들어갔습니다.\n"
+      "description": "\n모야가 물고기를 먹고 싶나봐요.\n\"모야야, 내가 물고기를 잡아줄게!\"\n"
     },
     {
       "type": "image",
-      "imageName": "test_book_id_img_17.png"
+      "imageName": "3_page_img_2.png"
     },
     {
       "type": "text",
-      "description": "\n옥수수밭에서 비를 피할만한 헛간이 보이는군요?\n"
+      "description": "\n파비는 소매를 걷어올리고 수조에 손을 넣었어요.\n\n\"영차! 영차!\"\n\n물고기들이 파비의 손을 피해 이리저리 헤엄쳤어요. 그치만 파비는 물고기를 손에 꽈악 움켜잡고 꺼냈어요.\n"
     }
   ],
-  "title": "옥수수밭에 가다"
+  "title": "수조 속의 물고기"
 }
