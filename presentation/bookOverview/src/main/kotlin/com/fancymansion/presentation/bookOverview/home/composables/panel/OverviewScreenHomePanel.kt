@@ -306,7 +306,7 @@ fun OverviewScreenHomePanel(
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
                             text = bookInfo.introduce.description,
-                            maxLines = 4,
+                            maxLines = 8,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 24.sp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
