@@ -373,7 +373,7 @@ fun EditOverviewDescription(
                 .padding(
                     vertical = Paddings.Basic.vertical
                 ), value = description,
-            minLine = 15,
+            minLine = 8,
             maxLine = 15,
             hint = stringResource(id = R.string.edit_overview_edit_hint_book_introduce)
         ) {
