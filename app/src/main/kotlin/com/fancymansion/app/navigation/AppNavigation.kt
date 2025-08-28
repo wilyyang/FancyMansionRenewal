@@ -56,7 +56,7 @@ fun AppNavigation(typePane : TypePane) {
 
     NavHost(
         navController = navController,
-        startDestination = MainContract.NAME
+        startDestination = "${EditorBookOverviewContract.NAME}/{${ArgName.NAME_USER_ID}}/{${ArgName.NAME_READ_MODE}}/{${ArgName.NAME_BOOK_ID}}/{${ArgName.NAME_EPISODE_ID}}"
     ) {
         leftScreenTransition(
             route = MainContract.NAME,

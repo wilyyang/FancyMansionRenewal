@@ -242,6 +242,10 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     ) : Boolean = root.logicFile(episodeRef).exists()
 
     override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
+        if(root.mediaFile(episodeRef).exists()){
+            return true
+        }
+
         val gson = GsonBuilder()
             .registerTypeAdapter(SourceData::class.java, JsonSerializer<SourceData> { src, _, context -> src?.toJson(context!!) })
             .registerTypeAdapter(SourceData::class.java, JsonDeserializer { json, _, context -> SourceData.fromJson(json!!, context!!) })
@@ -276,7 +280,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         /**
          * Make Edit Book Samples
          */
-        makeEditBookInfoSampleList(episodeRef.userId)
+        // makeEditBookInfoSampleList(episodeRef.userId)
 
         // make sample file
         return makeBookInfo(

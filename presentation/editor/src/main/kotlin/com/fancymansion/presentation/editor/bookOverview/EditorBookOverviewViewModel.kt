@@ -7,12 +7,14 @@ import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
+import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -26,15 +28,19 @@ class EditorBookOverviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
+    private val useCaseBookList: UseCaseBookList,
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
     private var isUpdateResume : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
         EpisodeRef(
-            get<String>(ArgName.NAME_USER_ID)!!,
-            get<ReadMode>(ArgName.NAME_READ_MODE)!!,
-            get<String>(ArgName.NAME_BOOK_ID)!!,
-            get<String>(ArgName.NAME_EPISODE_ID)!!
+            get<String>(ArgName.NAME_USER_ID)?.ifBlank { testEpisodeRef.userId }
+                ?: testEpisodeRef.userId,
+            testEpisodeRef.mode, //get<ReadMode>(NAME_READ_MODE)
+            get<String>(ArgName.NAME_BOOK_ID)?.ifBlank { testEpisodeRef.bookId }
+                ?: testEpisodeRef.bookId,
+            get<String>(ArgName.NAME_EPISODE_ID)?.ifBlank { testEpisodeRef.episodeId }
+                ?: testEpisodeRef.episodeId
         )
     }
 
@@ -207,6 +213,9 @@ class EditorBookOverviewViewModel @Inject constructor(
 
     init {
         launchWithInit {
+            // 임시
+            useCaseBookList.makeSampleEpisode()
+
             useCaseGetTotalKeyword().forEach {
                 keywordStates.add(createKeywordState(it, false))
             }
