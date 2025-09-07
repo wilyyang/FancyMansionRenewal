@@ -52,7 +52,7 @@ class TestBookLocalRepository {
     }
 
     @Test
-    fun `Given - Database, Target - PageSetting, When - insert, update, Then - Success equal`()  = runTest {
+    fun `대상 - PageSetting, 동작 - insert, update, 결과 - Success (equal)`()  = runTest {
         val pageSetting = PageSettingModel()
         repository.insertPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, pageSetting)
 
@@ -66,7 +66,7 @@ class TestBookLocalRepository {
     }
 
     @Test
-    fun `Given - Database, Target - ActionCount, When - insert, update, Then - Success equal`()  = runTest {
+    fun `대상 - ActionCount, 동작 - insert, update, 결과 - Success (equal)`()  = runTest {
         val actionId = ActionIdModel(pageId = 1, selectorId = 1)
         repository.insertActionCount(defaultRef, actionId)
         val initValue = repository.getActionCount(defaultRef, actionId)
@@ -78,13 +78,13 @@ class TestBookLocalRepository {
     }
 
     @Test
-    fun `Given - Database, Target - ReadingProgress, When - initValue, get, Then - Success equal null`()  = runTest {
+    fun `대상 - ReadingProgress, 동작 - initValue, get, 결과 - Success (초기값 없음)`()  = runTest {
         val initPageId = repository.getReadingProgressPageId(defaultRef)
         Truth.assertThat(initPageId == null).isTrue()
     }
 
     @Test
-    fun `Given - Database, Target - ReadingProgress, When - insert, update, Then - Success equal`()  = runTest {
+    fun `대상 - ReadingProgress, 동작 - insert, update, 결과 - Success (디폴트값)`()  = runTest {
         repository.insertReadingProgress(defaultRef, pageId = 3)
         val insertPageId = repository.getReadingProgressPageId(defaultRef)
         Truth.assertThat(insertPageId?.toInt() == 3).isTrue()
@@ -95,21 +95,21 @@ class TestBookLocalRepository {
     }
 
     @Test
-    fun `Given - Storage, Target - Logic, When - load, Then - Success equal`()  = runTest {
+    fun `대상 - Logic, 동작 - load, 결과 - Success (변환 일치)`()  = runTest {
         val logic = bookStorage.loadLogic(defaultRef).asModel()
         val loadLogic = repository.loadLogic(defaultRef)
         Truth.assertThat(logic == loadLogic).isTrue()
     }
 
     @Test
-    fun `Given - Storage, Target - Page, When - load, Then - Success equal`()  = runTest {
+    fun `대상 - Page, 동작 - load, 결과 - Success (변환 일치)`()  = runTest {
         val page = bookStorage.loadPage(defaultRef, pageId = 1).asModel()
         val loadPage = repository.loadPage(defaultRef, pageId = 1)
         Truth.assertThat(page == loadPage).isTrue()
     }
 
     @Test
-    fun `Given - Storage, Target - Page, When - load, Then - Fail not equal`()  = runTest {
+    fun `대상 - Page, 동작 - load, 결과 - Fail (다른 페이지)`()  = runTest {
         val page1 = repository.loadPage(defaultRef, pageId = 1)
         val page2 = repository.loadPage(defaultRef, pageId = 2)
         Truth.assertThat(page1 == page2).isFalse()

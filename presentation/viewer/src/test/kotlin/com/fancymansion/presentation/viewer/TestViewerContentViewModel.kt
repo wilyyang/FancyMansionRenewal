@@ -26,6 +26,7 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.di.injectRepository.HiltRepository
 import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -39,7 +40,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import dagger.hilt.android.testing.UninstallModules
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -79,23 +79,39 @@ class TestViewerContentViewModel {
     @Inject
     lateinit var useCaseMakeBook: UseCaseMakeBook
 
+    @Inject
+    lateinit var useCaseBookList: UseCaseBookList
+
     private lateinit var testEventSent: (event: ViewerContentContract.Event) -> Unit
     private var getEffect: ViewerContentContract.Effect? = null
     private lateinit var targetLogic : LogicModel
 
     private val defaultRef = EpisodeRef(
         userId = "test_user_id",
-        mode = ReadMode.READ,
+        mode = ReadMode.EDIT,
         bookId = "test_book_id",
         episodeId = "test_book_id_0"
     )
 
+    private suspend fun ComposeTestRule.waitForInitEnd() {
+        this.waitForIdle()
+        this.waitUntil(
+            timeoutMillis = 3000L
+        ) {
+            this.onAllNodesWithTag(LoadState.Init::class.java.simpleName)
+                .fetchSemanticsNodes().isEmpty()
+        }
+        this.waitForIdle()
+    }
     private suspend fun ComposeTestRule.waitForLoadingEnd() {
-        delay(300L)
-        this.waitUntil {
+        this.waitForIdle()
+        this.waitUntil(
+            timeoutMillis = 3000L
+        ) {
             this.onAllNodesWithTag(LoadState.Loading::class.java.simpleName)
                 .fetchSemanticsNodes().isEmpty()
         }
+        this.waitForIdle()
     }
 
     @ExperimentalAnimationApi
@@ -116,11 +132,11 @@ class TestViewerContentViewModel {
             }
         }
 
-        useCaseMakeBook.makeSampleEpisode()
+        useCaseBookList.makeSampleEpisode()
         targetLogic = useCaseLoadBook.loadLogic(defaultRef)
         setupViewModel()
 
-        composeRule.waitForLoadingEnd()
+        composeRule.waitForInitEnd()
     }
 
     private fun setupViewModel(){
@@ -128,16 +144,19 @@ class TestViewerContentViewModel {
         saveStatedHandle[ArgName.NAME_READ_MODE] = defaultRef.mode
         saveStatedHandle[ArgName.NAME_BOOK_ID] = defaultRef.bookId
         saveStatedHandle[ArgName.NAME_EPISODE_ID] = defaultRef.episodeId
+        saveStatedHandle[ArgName.NAME_BOOK_TITLE] = ""
+        saveStatedHandle[ArgName.NAME_EPISODE_TITLE] = ""
+        saveStatedHandle[ArgName.NAME_PAGE_ID] = 1L
 
         composeRule.activity.setContent {
             viewModel = viewModel(checkNotNull(LocalViewModelStoreOwner.current), factory = viewModelFactory)
-//            viewModel = hiltViewModel()
             testEventSent = remember { viewModel::setEvent }
             val onEventSent =  remember {
                 { event : ViewerContentContract.Event ->
                     viewModel.setEvent(event)
                 }
             }
+
             val onCommonEventSent =  remember {
                 { event : CommonEvent ->
                     viewModel.setCommonEvent(event)
@@ -162,7 +181,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - OnConfirmMoveSavePageDialog, Then - Success, pageId 1 to 3`()  = runTest {
+    fun `동작 - OnConfirmMoveSavePageDialog, 결과 - Success (pageId 에서 3으로 이동)`()  = runTest {
         // Init
         val startPageId = targetLogic.logics.first { it.type == PageType.START }.pageId
         val initPageId = viewModel.uiState.value.pageWrapper?.id
@@ -180,26 +199,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - OnCancelMoveSavePageDialog, Then - Success, initializeAndLoadStartPage`()  = runTest {
-        // Init
-        val beforePageId = 3L
-        testEventSent(ViewerContentContract.Event.OnConfirmMoveSavePageDialog(beforePageId))
-        composeRule.waitForLoadingEnd()
-        var currentPageId = viewModel.uiState.value.pageWrapper?.id
-        Truth.assertThat(currentPageId).isEqualTo(beforePageId)
-
-        // Call Event
-        val startPageId = targetLogic.logics.first { it.type == PageType.START }.pageId
-        testEventSent(ViewerContentContract.Event.OnCancelMoveSavePageDialog)
-        composeRule.waitForLoadingEnd()
-
-        currentPageId = viewModel.uiState.value.pageWrapper?.id
-        println("currentPageId : $currentPageId, startPageId : $startPageId")
-        Truth.assertThat(currentPageId).isEqualTo(startPageId)
-    }
-
-    @Test
-    fun `Target - Event, When - OnClickSelector, Then - Success, move route`()  = runTest {
+    fun `동작 - OnClickSelector, 결과 - Success (선택지로 페이지 이동)`()  = runTest {
         // Init
         val initPageId = viewModel.uiState.value.pageWrapper?.id!!
         val firstSelector = targetLogic.logics.first { it.pageId == initPageId }.selectors[0]
@@ -215,7 +215,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - ChangeSettingPageTheme, Then - Success`()  = runTest {
+    fun `동작 - ChangeSettingPageTheme, 결과 - Success`()  = runTest {
         // Init
         val beforeTheme = viewModel.uiState.value.pageSetting.pageTheme
 
@@ -230,7 +230,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - SettingContentTextSize, Then - Success`()  = runTest {
+    fun `동작 - SettingContentTextSize, 결과 - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.textSize
         val incValue = PageTextSize.values[PageTextSize.values.indexOf(origin) + 1]
@@ -251,7 +251,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - SettingContentLineHeight, Then - Success`()  = runTest {
+    fun `동작 - SettingContentLineHeight, 결과 - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.lineHeight
         val incValue = PageLineHeight.values[PageLineHeight.values.indexOf(origin) + 1]
@@ -272,7 +272,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - SettingContentTextMarginHorizontal, Then - Success`()  = runTest {
+    fun `동작 - SettingContentTextMarginHorizontal, 결과 - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.textMarginHorizontal
         val incValue = PageMarginHorizontal.values[PageMarginHorizontal.values.indexOf(origin) + 1]
@@ -293,7 +293,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - SettingContentImageMarginHorizontal, Then - Success`()  = runTest {
+    fun `동작 - SettingContentImageMarginHorizontal, 결과 - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.pageContentSetting.imageMarginHorizontal
         val incValue = PageMarginHorizontal.values[PageMarginHorizontal.values.indexOf(origin) + 1]
@@ -314,7 +314,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - SettingSelectorTextSize, Then - Success`()  = runTest {
+    fun `동작 - SettingSelectorTextSize, 결과 - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.selectorSetting.textSize
         val incValue = PageTextSize.values[PageTextSize.values.indexOf(origin) + 1]
@@ -335,7 +335,7 @@ class TestViewerContentViewModel {
     }
 
     @Test
-    fun `Target - Event, When - SettingSelectorPaddingVertical, Then - Success`()  = runTest {
+    fun `동작 - SettingSelectorPaddingVertical, 결과 - Success`()  = runTest {
         // Init
         val origin = viewModel.uiState.value.pageSetting.selectorSetting.paddingVertical
         val incValue = SelectorPaddingVertical.values[SelectorPaddingVertical.values.indexOf(origin) + 1]

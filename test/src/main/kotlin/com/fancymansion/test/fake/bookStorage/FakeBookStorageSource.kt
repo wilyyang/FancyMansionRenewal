@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.util.readModuleRawFile
-import com.fancymansion.core.common.util.type
 import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.coverFile
@@ -34,6 +32,7 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
     /**
      * Dir
      */
+    override suspend fun getUserBookFolderNameList(userId: String, mode: ReadMode) : List<String> {  return listOf() }
     override suspend fun makeUserDir(userId: String) { }
 
     override suspend fun deleteUserDir(userId: String) { }
@@ -167,6 +166,8 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         resourceId: Int
     ) { }
 
+    override suspend fun bookLogicFileExists(episodeRef: EpisodeRef) : Boolean { return true }
+
     override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
         val gson = GsonBuilder()
             .registerTypeAdapter(SourceData::class.java, JsonSerializer<SourceData> { src, _, context -> src?.toJson(context!!) })
@@ -190,12 +191,27 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         }
 
         // read raw file
-        val bookInfo : BookInfoData = gson.fromJson(context.readModuleRawFile(R.raw.base_book_info), type<BookInfoData>())
-        val episodeInfo : EpisodeInfoData = gson.fromJson(context.readModuleRawFile(R.raw.base_episode_info), type<EpisodeInfoData>())
-        val logic : LogicData = gson.fromJson(context.readModuleRawFile(R.raw.base_logic), type<LogicData>())
-        val pages = (1..11).map { pageId ->
-            val resourceId = getSamplePageResourceId(pageId)
-            gson.fromJson<PageData>(context.readModuleRawFile(resourceId), type<PageData>())
+        val bookInfo: BookInfoData = gson.fromJson(
+            context.assets.open("base_book_info.json").bufferedReader().use { it.readText() },
+            BookInfoData::class.java
+        )
+
+        val episodeInfo: EpisodeInfoData = gson.fromJson(
+            context.assets.open("base_episode_info.json").bufferedReader().use { it.readText() },
+            EpisodeInfoData::class.java
+        )
+
+        val logic: LogicData = gson.fromJson(
+            context.assets.open("base_logic.json").bufferedReader().use { it.readText() },
+            LogicData::class.java
+        )
+
+        val pages: List<PageData> = (1..7).map { pageNumber ->
+            val fileName = "base_page_$pageNumber.json"
+            gson.fromJson(
+                context.assets.open(fileName).bufferedReader().use { it.readText() },
+                PageData::class.java
+            )
         }
 
 
