@@ -23,3 +23,7 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.bouncycastle.jsse.**
 -dontwarn org.openjsse.**
+
+# Gson에서 사용하는 모델 보존
+-keep class com.fancymansion.data.datasource.appStorage.book.model.** { *; }
+-keep class com.fancymansion.core.common.const.** { *; }
