@@ -7,12 +7,12 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.testEpisodeRef
-import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.main.common.paged
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -36,8 +36,7 @@ class EditorTabViewModel @Inject constructor(
     private val allBookStates: MutableList<EditBookState> = mutableListOf()
     private val searchResultBookStates: MutableList<EditBookState> = mutableListOf()
 
-    private val isSearchMode : Boolean
-        get() = uiState.value.searchText.isNotEmpty()
+    private var listTarget : ListTarget = ListTarget.ALL
 
     init {
         initializeState()
@@ -48,7 +47,7 @@ class EditorTabViewModel @Inject constructor(
     override fun handleEvents(event: EditorTabContract.Event) {
         when(event) {
             // Mode Common
-            is BookPageNumberClicked -> showBooksForPage(page = event.pageNumber)
+            is BookPageNumberClicked -> handlePageNumberClicked(page = event.pageNumber)
             is BookHolderClicked -> {
                 if (uiState.value.isEditMode) {
                     toggleBookSelection(bookId = event.bookId)
@@ -58,11 +57,11 @@ class EditorTabViewModel @Inject constructor(
             }
 
             // Normal Mode
-            is SearchTextInput -> updateSearchText(searchText = event.searchText)
+            is SearchTextInput -> handleUpdateSearchText(searchText = event.searchText)
             SearchClicked -> handleSearch()
             SearchCancel -> handleSearchCancel()
 
-            is SelectBookSortOrder -> handleSelectBookSortOrder(sortOrder = event.sortOrder)
+            is SelectBookSortOrder -> handleBookSortOrder(sortOrder = event.sortOrder)
 
             // Edit Mode
             BookListEnterEditMode -> handleEnterEditMode()
@@ -89,79 +88,13 @@ class EditorTabViewModel @Inject constructor(
 
             loadBookStateList()
 
-            sortTargetBookList(allBookStates, EditBookSortOrder.LAST_EDITED)
-            updatePagedList(allBookStates, 0)
+            sortBookList(ListTarget.ALL, EditBookSortOrder.LAST_EDITED)
+            pagedBookList(ListTarget.ALL, 0)
             setState {
                 copy(
                     isInitSuccess = true
                 )
             }
-        }
-    }
-
-    /**
-     * EditorTabEvent
-     */
-    // Mode Common
-    private fun showBooksForPage(page: Int) = launchWithLoading {
-        val targetList = if (isSearchMode) {
-            searchResultBookStates
-        } else {
-            allBookStates
-        }
-        updatePagedList(targetList, page)
-    }
-
-    // Normal Mode
-    private fun updateSearchText(searchText : String) {
-        setState {
-            copy(
-                searchText = searchText
-            )
-        }
-    }
-
-    private fun handleSearch() = launchWithLoading {
-        if(isSearchMode){
-            updateSearchResultBookStates(uiState.value.searchText)
-            sortTargetBookList(searchResultBookStates, uiState.value.bookSortOrder)
-            updatePagedList(searchResultBookStates, 0)
-        }
-    }
-
-    private fun handleSearchCancel() = launchWithLoading{
-        searchResultBookStates.clear()
-        setState {
-            copy(
-                searchText = ""
-            )
-        }
-        sortTargetBookList(allBookStates, uiState.value.bookSortOrder)
-        updatePagedList(allBookStates, 0)
-    }
-
-    private fun handleSelectBookSortOrder(sortOrder: EditBookSortOrder) = launchWithLoading {
-        val targetList = if (isSearchMode) {
-            updateSearchResultBookStates(uiState.value.searchText)
-            searchResultBookStates
-        } else {
-            searchResultBookStates.clear()
-            allBookStates
-        }
-
-        sortTargetBookList(targetList, sortOrder)
-        updatePagedList(targetList, 0)
-    }
-
-    private fun navigateEditBookScreen(bookId: String) {
-        isUpdateResume = true
-        setEffect {
-            EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen(episodeRef = EpisodeRef(
-                userId = userId,
-                mode = mode,
-                bookId = bookId,
-                episodeId = "${bookId}_0"
-            ))
         }
     }
 
@@ -202,22 +135,76 @@ class EditorTabViewModel @Inject constructor(
             launchWithLoading {
                 loadBookStateList()
 
-                val targetList = if (isSearchMode) {
-                    updateSearchResultBookStates(uiState.value.searchText)
-                    searchResultBookStates
-                } else {
-                    searchResultBookStates.clear()
-                    allBookStates
+                when(listTarget){
+                    ListTarget.ALL -> searchBookListClear()
+                    ListTarget.SEARCH -> searchBookList(uiState.value.searchText)
                 }
 
-                sortTargetBookList(targetList, uiState.value.bookSortOrder)
-                updatePagedList(targetList, uiState.value.currentPage)
+                sortBookList(listTarget, uiState.value.bookSortOrder)
+                pagedBookList(listTarget, uiState.value.currentPage)
             }
         }
     }
 
     /**
-     * Core Function
+     * [1] 이벤트 처리 함수
+     */
+    private fun handlePageNumberClicked(page: Int) = launchWithLoading {
+        pagedBookList(listTarget, page)
+    }
+
+    private fun navigateEditBookScreen(bookId: String) {
+        isUpdateResume = true
+        setEffect {
+            EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen(episodeRef = EpisodeRef(
+                userId = userId,
+                mode = mode,
+                bookId = bookId,
+                episodeId = "${bookId}_0"
+            ))
+        }
+    }
+
+    private fun handleUpdateSearchText(searchText : String) {
+        setState {
+            copy(
+                searchText = searchText
+            )
+        }
+    }
+
+    private fun handleSearch() = launchWithLoading {
+        if(uiState.value.searchText.isNotBlank()){
+            listTarget = ListTarget.SEARCH
+            searchBookList(uiState.value.searchText)
+            sortBookList(listTarget, uiState.value.bookSortOrder)
+            pagedBookList(listTarget, 0)
+        }
+    }
+
+    private fun handleSearchCancel() = launchWithLoading{
+        listTarget = ListTarget.ALL
+        searchBookListClear()
+        sortBookList(listTarget, uiState.value.bookSortOrder)
+        pagedBookList(listTarget, 0)
+
+        setState {
+            copy(
+                searchText = ""
+            )
+        }
+    }
+    private fun handleBookSortOrder(sortOrder: EditBookSortOrder) = launchWithLoading {
+        when(listTarget){
+            ListTarget.ALL -> searchBookListClear()
+            ListTarget.SEARCH -> searchBookList(uiState.value.searchText)
+        }
+
+        sortBookList(listTarget, sortOrder)
+        pagedBookList(listTarget, 0)
+    }
+    /**
+     * [2] 처리 함수
      */
     private suspend fun loadBookStateList() {
         originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map {
@@ -248,14 +235,29 @@ class EditorTabViewModel @Inject constructor(
         }
     }
 
-    // Sort List
-    private fun sortTargetBookList(
-        targetList: MutableList<EditBookState>,
+    private fun searchBookList(searchText: String) {
+        searchResultBookStates.clear()
+        allBookStates.filter { it.bookInfo.title.contains(searchText) }.forEach {
+            searchResultBookStates.add(it)
+        }
+    }
+
+    private fun searchBookListClear() {
+        searchResultBookStates.clear()
+    }
+
+    private fun sortBookList(
+        listTarget: ListTarget,
         order: EditBookSortOrder
     ) {
+        val target = when(listTarget){
+            ListTarget.ALL -> allBookStates
+            ListTarget.SEARCH -> searchResultBookStates
+        }
+
         when (order) {
-            EditBookSortOrder.LAST_EDITED -> targetList.sortByDescending { it.bookInfo.editTime }
-            EditBookSortOrder.TITLE_ASCENDING -> targetList.sortBy { it.bookInfo.title }
+            EditBookSortOrder.LAST_EDITED -> target.sortByDescending { it.bookInfo.editTime }
+            EditBookSortOrder.TITLE_ASCENDING -> target.sortBy { it.bookInfo.title }
         }
 
         setState {
@@ -265,38 +267,26 @@ class EditorTabViewModel @Inject constructor(
         }
     }
 
-    // Paging
-    private fun updatePagedList(list: List<EditBookState>, pageNumber: Int) {
-        val totalPageCount = (list.size + BOOKS_PER_PAGE - 1) / BOOKS_PER_PAGE
+    private fun pagedBookList(
+        listTarget: ListTarget,
+        pageNumber: Int
+    ) {
+        val target = when(listTarget){
+            ListTarget.ALL -> allBookStates
+            ListTarget.SEARCH -> searchResultBookStates
+        }
 
-        val page = if(totalPageCount < 1) 0 else pageNumber.coerceIn(0, totalPageCount - 1)
-        val pagedBookList = getPagedBookList(list, page)
+        val totalPage = (target.size + BOOKS_PER_PAGE - 1) / BOOKS_PER_PAGE
+        val currentPage = if(totalPage < 1) 0 else pageNumber.coerceIn(0, totalPage - 1)
+
+        val pagedBookList = target.paged(currentPage, BOOKS_PER_PAGE)
 
         setState {
             copy(
-                totalPageCount = totalPageCount,
-                currentPage = page,
+                totalPageCount = totalPage,
+                currentPage = currentPage,
                 visibleBookList = pagedBookList
             )
         }
     }
-
-    private fun getPagedBookList(
-        list: List<EditBookState>,
-        page: Int,
-        pageSize: Int = BOOKS_PER_PAGE
-    ): List<EditBookState> {
-        val from = page * pageSize
-        val to = minOf(from + pageSize, list.size)
-        return if (from >= list.size) emptyList() else list.subList(from, to).toList()
-    }
-
-    // Search
-    private fun updateSearchResultBookStates(searchText: String) {
-        searchResultBookStates.clear()
-        allBookStates.filter { it.bookInfo.title.contains(searchText) }.forEach {
-            searchResultBookStates.add(it)
-        }
-    }
-
 }

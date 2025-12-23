@@ -11,6 +11,10 @@ import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.presentation.main.R
 
+enum class ListTarget{
+    ALL, SEARCH
+}
+
 enum class EditBookSortOrder(val textResId : Int) {
     LAST_EDITED (textResId = R.string.edit_book_sort_order_last_edited),
     TITLE_ASCENDING (textResId = R.string.edit_book_sort_order_title_ascending)
