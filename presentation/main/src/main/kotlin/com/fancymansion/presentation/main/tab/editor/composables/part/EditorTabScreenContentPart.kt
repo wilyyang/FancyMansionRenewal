@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
@@ -66,15 +67,32 @@ fun EditorTabHeader(
         Row(
             modifier = Modifier
                 .padding(end = 4.dp)
-                .align(Alignment.CenterEnd)
+                .align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if(isEditMode){
+                Text(
+                    modifier = Modifier.padding(end = 12.dp).clickSingle {
+                        onEventSent(EditorTabContract.Event.BookHolderSelectAll)
+                    },
+                    text = "전체",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                )
+
+                Text(
+                    modifier = Modifier.padding(end = 12.dp).clickSingle {
+                        onEventSent(EditorTabContract.Event.BookHolderDeselectAll)
+                    },
+                    text = "해제",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                )
+
                 Text(
                     modifier = Modifier.clickSingle {
                         onEventSent(EditorTabContract.Event.BookListExitEditMode)
                     },
                     text = "완료",
-                    style = MaterialTheme.typography.labelLarge
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             } else {
                 Text(
@@ -82,7 +100,7 @@ fun EditorTabHeader(
                         onEventSent(EditorTabContract.Event.BookListEnterEditMode)
                     },
                     text = "편집",
-                    style = MaterialTheme.typography.labelLarge
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             }
         }

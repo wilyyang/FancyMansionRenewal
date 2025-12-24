@@ -50,7 +50,7 @@ class EditorTabViewModel @Inject constructor(
             is BookPageNumberClicked -> handlePageNumberClicked(page = event.pageNumber)
             is BookHolderClicked -> {
                 if (uiState.value.isEditMode) {
-                    toggleBookSelection(bookId = event.bookId)
+                    toggleBookSelected(bookId = event.bookId)
                 } else {
                     navigateEditBookScreen(bookId = event.bookId)
                 }
@@ -67,8 +67,8 @@ class EditorTabViewModel @Inject constructor(
             BookListEnterEditMode -> handleEnterEditMode()
             BookListExitEditMode -> handleExitEditMode()
 
-            BookHolderSelectAll -> selectAllHolders()
-            BookHolderDeselectAll -> deselectAllHolders()
+            BookHolderSelectAll -> handleSelectAllHolders()
+            BookHolderDeselectAll -> handleDeselectAllHolders()
 
             BookHolderAddBook -> handleAddBook()
             BookHolderDeleteBook -> handleDeleteSelectedBooks()
@@ -98,65 +98,12 @@ class EditorTabViewModel @Inject constructor(
         }
     }
 
-    // Edit Mode
-    private fun handleEnterEditMode() = launchWithLoading {
-        val resetFlag =
-            listTarget != ListTarget.ALL || uiState.value.bookSortOrder != EditBookSortOrder.LAST_EDITED
-
-        if(listTarget == ListTarget.SEARCH){
-            listTarget = ListTarget.ALL
-            searchBookListClear()
-        }
-
-        setState {
-            copy(
-                searchText = ""
-            )
-        }
-
-        if(resetFlag){
-            sortBookList(listTarget, EditBookSortOrder.LAST_EDITED)
-            pagedBookList(listTarget, 0)
-        }
-
-        setState {
-            copy(
-                isEditMode = true
-            )
-        }
-    }
-
-    private fun handleExitEditMode() = launchWithLoading {
-        loadBookStateList()
-        sortBookList(listTarget, EditBookSortOrder.LAST_EDITED)
-        pagedBookList(listTarget, uiState.value.currentPage)
-        setState {
-            copy(
-                isEditMode = false
-            )
-        }
-    }
-
-    private fun selectAllHolders() = launchWithLoading {
-        // TODO 08.04 Holder Select All
-    }
-
-    private fun deselectAllHolders() = launchWithLoading {
-        // TODO 08.04 Holder Deselect All
-    }
-
     private fun handleAddBook() = launchWithLoading {
         // TODO 08.04 Holder Add New
     }
 
     private fun handleDeleteSelectedBooks() = launchWithLoading {
         // TODO 08.04 Holder Delete Selected
-    }
-
-    private fun toggleBookSelection(bookId: String) {
-        allBookStates.find { it.bookInfo.bookId == bookId }?.let {
-            it.selected.value = !it.selected.value
-        }
     }
 
     // CommonFunction
@@ -179,7 +126,7 @@ class EditorTabViewModel @Inject constructor(
     }
 
     /**
-     * [1] 이벤트 처리 함수
+     * [1] 일반 이벤트 처리 함수
      */
     private fun handlePageNumberClicked(page: Int) = launchWithLoading {
         pagedBookList(listTarget, page)
@@ -235,8 +182,80 @@ class EditorTabViewModel @Inject constructor(
         sortBookList(listTarget, sortOrder)
         pagedBookList(listTarget, 0)
     }
+
     /**
-     * [2] 처리 함수
+     * [2] 편집 이벤트 처리 함수
+     */
+    private fun handleEnterEditMode() = launchWithLoading {
+        val resetFlag =
+            listTarget != ListTarget.ALL || uiState.value.bookSortOrder != EditBookSortOrder.LAST_EDITED
+
+        if(listTarget == ListTarget.SEARCH){
+            listTarget = ListTarget.ALL
+            searchBookListClear()
+        }
+
+        setState {
+            copy(
+                searchText = ""
+            )
+        }
+
+        if(resetFlag){
+            sortBookList(listTarget, EditBookSortOrder.LAST_EDITED)
+            pagedBookList(listTarget, 0)
+        }
+
+        setState {
+            copy(
+                isEditMode = true
+            )
+        }
+    }
+
+    private fun handleExitEditMode() = launchWithLoading {
+        loadBookStateList()
+        sortBookList(listTarget, EditBookSortOrder.LAST_EDITED)
+        pagedBookList(listTarget, uiState.value.currentPage)
+        setState {
+            copy(
+                isEditMode = false
+            )
+        }
+    }
+
+    private fun toggleBookSelected(bookId: String) {
+        allBookStates.find { it.bookInfo.bookId == bookId }?.let {
+            it.selected.value = !it.selected.value
+        }
+    }
+
+    private fun handleSelectAllHolders() = launchWithLoading {
+        val visibleIds = uiState.value.visibleBookList
+            .map { it.bookInfo.bookId }
+            .toSet()
+
+        allBookStates
+            .filter { it.bookInfo.bookId in visibleIds }
+            .forEach {
+                it.selected.value = true
+            }
+    }
+
+    private fun handleDeselectAllHolders() = launchWithLoading {
+        val visibleIds = uiState.value.visibleBookList
+            .map { it.bookInfo.bookId }
+            .toSet()
+
+        allBookStates
+            .filter { it.bookInfo.bookId in visibleIds }
+            .forEach {
+                it.selected.value = false
+            }
+    }
+
+    /**
+     * [3] 처리 함수
      */
     private suspend fun loadBookStateList() {
         originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map {
