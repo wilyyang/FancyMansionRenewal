@@ -88,6 +88,14 @@ fun EditorTabHeader(
                 )
 
                 Text(
+                    modifier = Modifier.padding(end = 12.dp).clickSingle {
+                        onEventSent(EditorTabContract.Event.BookHolderAddBook)
+                    },
+                    text = "추가",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                )
+
+                Text(
                     modifier = Modifier.clickSingle {
                         onEventSent(EditorTabContract.Event.BookListExitEditMode)
                     },

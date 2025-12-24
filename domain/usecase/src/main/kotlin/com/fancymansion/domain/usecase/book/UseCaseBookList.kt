@@ -7,6 +7,7 @@ import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
+import com.fancymansion.domain.model.book.LogicModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,9 +16,27 @@ class UseCaseBookList @Inject constructor(
     @DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
-    suspend fun addUserEditBook(userId: String): Boolean =
+    suspend fun addUserEditBook(
+        episodeRef: EpisodeRef,
+        bookInfo: BookInfoModel,
+        episodeInfo: EpisodeInfoModel,
+        logic: LogicModel
+    ): Boolean =
         withContext(dispatcher) {
+            bookLocalRepository.makeBookDir(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
+            bookLocalRepository.makeEpisodeDir(episodeRef)
+
+            bookLocalRepository.makeBookInfo(
+                episodeRef.userId,
+                episodeRef.mode,
+                episodeRef.bookId,
+                bookInfo
+            )
+            bookLocalRepository.makeEpisodeInfo(episodeRef, episodeInfo)
+            bookLocalRepository.makeLogic(episodeRef, logic)
+
             // TODO Main Tab Editor 08.04
+
             false
         }
 

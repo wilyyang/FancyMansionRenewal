@@ -3,12 +3,21 @@ package com.fancymansion.presentation.main.tab.editor
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
+import com.fancymansion.core.common.const.BOOKS_PER_PAGE
+import com.fancymansion.core.common.const.EDIT_BOOKS_LIMIT
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.testEpisodeRef
+import com.fancymansion.core.common.util.BookIDManager
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EditorModel
+import com.fancymansion.domain.model.book.EpisodeInfoModel
+import com.fancymansion.domain.model.book.IntroduceModel
+import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
@@ -17,8 +26,6 @@ import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
-
-const val BOOKS_PER_PAGE = 10
 
 @HiltViewModel
 class EditorTabViewModel @Inject constructor(
@@ -67,8 +74,8 @@ class EditorTabViewModel @Inject constructor(
             BookListEnterEditMode -> handleEnterEditMode()
             BookListExitEditMode -> handleExitEditMode()
 
-            BookHolderSelectAll -> handleSelectAllHolders()
-            BookHolderDeselectAll -> handleDeselectAllHolders()
+            BookHolderSelectAll -> selectVisibleHolders()
+            BookHolderDeselectAll -> deselectVisibleHolders()
 
             BookHolderAddBook -> handleAddBook()
             BookHolderDeleteBook -> handleDeleteSelectedBooks()
@@ -98,15 +105,6 @@ class EditorTabViewModel @Inject constructor(
         }
     }
 
-    private fun handleAddBook() = launchWithLoading {
-        // TODO 08.04 Holder Add New
-    }
-
-    private fun handleDeleteSelectedBooks() = launchWithLoading {
-        // TODO 08.04 Holder Delete Selected
-    }
-
-    // CommonFunction
     private fun handleOnResume() {
         if (isUpdateResume) {
             // TODO 08.08 Scroll Position
@@ -224,34 +222,74 @@ class EditorTabViewModel @Inject constructor(
         }
     }
 
-    private fun toggleBookSelected(bookId: String) {
-        allBookStates.find { it.bookInfo.bookId == bookId }?.let {
-            it.selected.value = !it.selected.value
+    private fun handleAddBook() = launchWithLoading(endLoadState = null){
+        if(allBookStates.size <= EDIT_BOOKS_LIMIT){
+            val currentTime = System.currentTimeMillis()
+            val newNumber = 0//BookIDManager.generateId(originBookInfoList.map { it.bookId })
+            val bookId = "${userId}-$newNumber"
+            val episodeId = "${bookId}_0"
+            val episodeRef = EpisodeRef(
+                userId = userId,
+                mode = mode,
+                bookId = bookId,
+                episodeId = episodeId
+            )
+            val bookInfo = BookInfoModel(
+                id = bookId,
+                introduce = IntroduceModel(
+                    title = "새로운 작품 $newNumber",
+                    coverList = listOf(),
+                    keywordList = listOf(),
+                    description = ""
+                ),
+                editor = EditorModel(
+                    editorId = "editor",
+                    editorName = "테스터",
+                    editorEmail = "tester@example.com"
+                )
+            )
+
+            val episodeInfo = EpisodeInfoModel(
+                bookId = bookId,
+                createTime = currentTime,
+                editTime = currentTime,
+                id = episodeRef.episodeId,
+                readMode = ReadMode.EDIT,
+                title = "",
+                pageCount = 0,
+                version = 0
+            )
+
+            val logic = LogicModel(
+                id = 0,
+                logics = listOf()
+            )
+
+            useCaseBookList.addUserEditBook(
+                episodeRef = episodeRef,
+                bookInfo = bookInfo,
+                episodeInfo = episodeInfo,
+                logic = logic
+            )
+            loadBookStateList()
+            sortBookList(listTarget, uiState.value.bookSortOrder)
+            pagedBookList(listTarget, 0)
+            setLoadStateIdle()
+        }else{
+            setLoadState(
+                loadState = LoadState.AlarmDialog(
+                    title = "알림",
+                    message = "편집 작품의 개수를 초과했습니다. \n작품 한도는 ${EDIT_BOOKS_LIMIT}개 입니다. \n작품을 삭제해주세요.",
+                    dismissText = null,
+                    confirmText = "확인",
+                    onConfirm = ::setLoadStateIdle
+                )
+            )
         }
     }
 
-    private fun handleSelectAllHolders() = launchWithLoading {
-        val visibleIds = uiState.value.visibleBookList
-            .map { it.bookInfo.bookId }
-            .toSet()
-
-        allBookStates
-            .filter { it.bookInfo.bookId in visibleIds }
-            .forEach {
-                it.selected.value = true
-            }
-    }
-
-    private fun handleDeselectAllHolders() = launchWithLoading {
-        val visibleIds = uiState.value.visibleBookList
-            .map { it.bookInfo.bookId }
-            .toSet()
-
-        allBookStates
-            .filter { it.bookInfo.bookId in visibleIds }
-            .forEach {
-                it.selected.value = false
-            }
+    private fun handleDeleteSelectedBooks() = launchWithLoading {
+        // TODO 08.04 Holder Delete Selected
     }
 
     /**
@@ -339,5 +377,35 @@ class EditorTabViewModel @Inject constructor(
                 visibleBookList = pagedBookList
             )
         }
+    }
+
+    private fun toggleBookSelected(bookId: String) {
+        allBookStates.find { it.bookInfo.bookId == bookId }?.let {
+            it.selected.value = !it.selected.value
+        }
+    }
+
+    private fun selectVisibleHolders() = launchWithLoading {
+        val visibleIds = uiState.value.visibleBookList
+            .map { it.bookInfo.bookId }
+            .toSet()
+
+        allBookStates
+            .filter { it.bookInfo.bookId in visibleIds }
+            .forEach {
+                it.selected.value = true
+            }
+    }
+
+    private fun deselectVisibleHolders() = launchWithLoading {
+        val visibleIds = uiState.value.visibleBookList
+            .map { it.bookInfo.bookId }
+            .toSet()
+
+        allBookStates
+            .filter { it.bookInfo.bookId in visibleIds }
+            .forEach {
+                it.selected.value = false
+            }
     }
 }
