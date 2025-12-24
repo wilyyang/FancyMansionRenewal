@@ -3,149 +3,202 @@ package com.fancymansion.presentation.main.tab.editor.composables.part
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.presentation.R
+import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
-import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
+import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
+import com.fancymansion.presentation.main.tab.editor.EditBookState
+import com.fancymansion.presentation.main.tab.editor.EditorTabContract
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun SearchTextField(
-    modifier : Modifier = Modifier,
-    @androidx.annotation.IntRange(from = 1)
-    minLine : Int = 1,
-    maxLine : Int = Int.MAX_VALUE,
-
-    value : String,
-    textStyle : TextStyle = MaterialTheme.typography.bodyLarge,
-    hint : String = "",
-
-    imeAction : ImeAction = ImeAction.Search,
-    keyboardType : KeyboardType = KeyboardType.Text,
-    keyboardActions : KeyboardActions = KeyboardActions.Default,
-
-    rememberFocus : MutableState<Boolean> = remember { mutableStateOf(false) },
-    focusRequester : FocusRequester = remember { FocusRequester() },
-
-    borderShape : Shape = MaterialTheme.shapes.small,
-    textPadding : Dp = 13.5.dp,
-
-    isCancelable : Boolean = false,
-    isEnabled : Boolean = true,
-    onValueChange : (String) -> Unit,
+fun EditorTabHeader(
+    modifier: Modifier,
+    isEditMode: Boolean,
+    bookSortOrder: EditBookSortOrder,
+    focusManager: FocusManager,
+    onEventSent: (event: EditorTabContract.Event) -> Unit
 ) {
-    val textColor = MaterialTheme.colorScheme.onBackground
-    val backgroundColor = MaterialTheme.colorScheme.background
+    val context = LocalContext.current
+    Box(
+        modifier = modifier
+    ) {
+        EnumDropdown(
+            modifier = Modifier.width(140.dp),
+            options = EditBookSortOrder.entries.toTypedArray(),
+            selectedOption = bookSortOrder,
+            onClickDropdownTitle = {
+                focusManager.clearFocus()
+            },
+            getDisplayName = {
+                context.getString(it.textResId)
+            },
+            isEnabled = !isEditMode,
+            backgroundColor = if (isEditMode) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface
+        ) {
+            onEventSent(EditorTabContract.Event.SelectBookSortOrder(it))
+        }
 
-    val passwordVisible = rememberSaveable { mutableStateOf(keyboardType != KeyboardType.Password) }
-    val visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation()
+        Row(
+            modifier = Modifier
+                .padding(end = 4.dp)
+                .align(Alignment.CenterEnd)
+        ) {
+            if(isEditMode){
+                Text(
+                    modifier = Modifier.clickSingle {
+                        onEventSent(EditorTabContract.Event.BookListExitEditMode)
+                    },
+                    text = "완료",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            } else {
+                Text(
+                    modifier = Modifier.clickSingle {
+                        onEventSent(EditorTabContract.Event.BookListEnterEditMode)
+                    },
+                    text = "편집",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EditBookHolder(
+    modifier : Modifier = Modifier,
+    painter: Painter,
+    isEditMode: Boolean,
+    bookState : EditBookState,
+    onClickHolder : (String) -> Unit
+){
 
     Row(
-        // 보더 영역
         modifier = modifier
-            .clip(
-                shape = borderShape
-            )
-            .background(backgroundColor).padding(start = textPadding, end = 8.dp)
-            .focusRequester(focusRequester = focusRequester),
-
-        verticalAlignment = Alignment.CenterVertically) {
-
-        Image(
-            modifier = Modifier.padding(end = 5.dp).height(textStyle.lineHeight.value.dp + textPadding/2),
-            painter = painterResource(id = com.fancymansion.presentation.main.R.drawable.ic_search_w300),
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight,
-            colorFilter = ColorFilter.tint(onSurfaceDimmed)
-        )
-
-        // 입력 영역
-        BasicTextField(
-            modifier = Modifier.weight(1f)
-                .padding(vertical = textPadding)
-                .onFocusChanged {rememberFocus.value = it.isFocused },
-            enabled = isEnabled,
-
-            singleLine = maxLine == 1,
-            minLines = minLine,
-            maxLines = maxLine,
-            value = value,
-            textStyle = textStyle.copy(color = textColor),
-
-            visualTransformation = visualTransformation,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = keyboardType,
-                imeAction = imeAction
-            ),
-            keyboardActions = keyboardActions,
-            decorationBox = { innerTextField ->
-
-                // 힌트 영역
-                if (value.isEmpty() && hint.isNotEmpty()) {
-                    Text(text = hint,  maxLines = maxLine, style = textStyle.copy(color = onSurfaceSub))
-                }
-                innerTextField()
+            .padding(vertical = 18.dp, horizontal = 14.dp)
+            .clickSingle {
+                onClickHolder(bookState.bookInfo.bookId)
             },
-            onValueChange = onValueChange,
-        )
-
-        if (keyboardType == KeyboardType.Password) {
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.25f)
+                .heightIn(max = 200.dp)
+        ) {
             Image(
-                modifier = Modifier.padding(start = 6.dp, end = 3.dp).height(textStyle.lineHeight.value.dp + textPadding/2).clickSingle {
-                    focusRequester.requestFocus()
-                    passwordVisible.value = !passwordVisible.value
-                },
-                painter = painterResource(id = if (passwordVisible.value) {
-                    R.drawable.ic_text_password_hide
-                } else {
-                    R.drawable.ic_text_password_show
-                }),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
-            )
-
-        }else if(isCancelable && value.isNotEmpty()){
-            Image(
-                modifier = Modifier.padding(start = 6.dp, end = 3.dp).height(textStyle.lineHeight.value.dp + textPadding/2).clickSingle {
-                    focusRequester.requestFocus()
-                    onValueChange("")
-                },
-                painter = painterResource(id = R.drawable.ic_text_cancel),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outlineVariant)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                painter = painter,
+                contentScale = ContentScale.FillWidth,
+                contentDescription = ""
             )
         }
 
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 10.dp)
+        ) {
+            Text(
+                text = bookState.bookInfo.title,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Text(
+                modifier = Modifier.padding(top = 5.dp),
+                text = "${formatTimestampLegacy(bookState.bookInfo.editTime)} 편집됨",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                modifier = Modifier.padding(top = 5.dp),
+                text = "총 ${bookState.bookInfo.pageCount} 페이지",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            FlowRow(
+                modifier = Modifier.padding(top = 5.dp)
+            ) {
+                bookState.bookInfo.keywords.take(6).forEach { keyword ->
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 2.dp)
+                            .padding(bottom = 2.dp)
+                            .clip(shape = MaterialTheme.shapes.extraSmall)
+                            .padding(0.5.dp)
+                            .border(
+                                width = 0.5.dp,
+                                color = MaterialTheme.colorScheme.outline,
+                                shape = MaterialTheme.shapes.extraSmall
+                            )
+                            .padding(horizontal = 7.dp, vertical = 5.dp),
+                        text = "#${keyword.name}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Black
+                    )
+                }
+            }
+        }
+
+        Box(
+            modifier = Modifier.width(24.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            if (isEditMode) {
+                Box(
+                    modifier = Modifier
+                        .clip(shape = CircleShape)
+                        .padding(0.5.dp)
+                        .border(
+                            width = 0.5.dp,
+                            color = onSurfaceSub,
+                            shape = CircleShape
+                        )
+                        .padding(4.dp)
+                ) {
+
+                    Box(
+                        modifier = Modifier
+                            .size(13.dp)
+                            .clip(shape = CircleShape)
+                            .background(color = if (bookState.selected.value) onSurfaceSub else Color.Transparent)
+                    )
+                }
+            }
+        }
     }
+}
+
+fun formatTimestampLegacy(timestamp: Long): String {
+    val date = Date(timestamp)
+    val formatter = SimpleDateFormat("yyyy.M.d", Locale.getDefault())
+    return formatter.format(date)
 }

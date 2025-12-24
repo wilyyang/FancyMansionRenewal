@@ -51,8 +51,9 @@ fun <T : Enum<T>> EnumDropdown(
     borderShape: Shape = MaterialTheme.shapes.small,
 
     dropdownOffset: DpOffset = DpOffset(x = 0.dp, y = 0.dp),
-    dropdownBackgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
 
+    isEnabled: Boolean = true,
     onClickDropdownTitle: () -> Unit = {},
     getDisplayName: (T) -> String,
     onItemSelected: (T) -> Unit
@@ -69,7 +70,8 @@ fun <T : Enum<T>> EnumDropdown(
                 )
                 .padding(0.5.dp)
                 .clip(borderShape)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null){
+                .background(color = backgroundColor)
+                .clickable(enabled = isEnabled, interactionSource = remember { MutableInteractionSource() }, indication = null){
                     onClickDropdownTitle()
                     expanded = true
                 }
@@ -113,7 +115,7 @@ fun <T : Enum<T>> EnumDropdown(
                 )
                 .padding(0.5.dp)
                 .clip(borderShape)
-                .background(dropdownBackgroundColor),
+                .background(backgroundColor),
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
@@ -152,8 +154,9 @@ fun <T> ListDropdown(
 
     dropdownOffset: DpOffset = DpOffset(x = 0.dp, y = 0.dp),
     dropdownMaxHeight: Dp = 200.dp,
-    dropdownBackgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
 
+    isEnabled: Boolean = true,
     onClickDropdownTitle: () -> Unit = {},
     onItemSelectedIndex: (Int) -> Unit
 ) {
@@ -169,7 +172,8 @@ fun <T> ListDropdown(
                 )
                 .padding(0.5.dp)
                 .clip(borderShape)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null){
+                .background(color = backgroundColor)
+                .clickable(enabled = isEnabled, interactionSource = remember { MutableInteractionSource() }, indication = null){
                     onClickDropdownTitle()
                     expanded = true
                 }
@@ -213,7 +217,7 @@ fun <T> ListDropdown(
                 )
                 .padding(0.5.dp)
                 .clip(borderShape)
-                .background(dropdownBackgroundColor)
+                .background(backgroundColor)
                 .heightIn(max = dropdownMaxHeight),
         ) {
             options.forEachIndexed { index, item ->

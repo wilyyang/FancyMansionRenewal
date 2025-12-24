@@ -43,6 +43,8 @@ val onSurfaceDimmed = ColorSet.gray_787878
 val onSurfaceInactive = ColorSet.gray_787878
 val onSurfaceSub = ColorSet.gray_a4aab0
 
+val backgroundLight = ColorSet.gray_aa_f3f4f5
+
 var colorScheme = LightColorScheme
 
 @Composable

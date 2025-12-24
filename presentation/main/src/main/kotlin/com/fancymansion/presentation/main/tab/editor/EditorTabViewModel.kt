@@ -100,11 +100,41 @@ class EditorTabViewModel @Inject constructor(
 
     // Edit Mode
     private fun handleEnterEditMode() = launchWithLoading {
-        // TODO 08.04 Edit Mode
+        val resetFlag =
+            listTarget != ListTarget.ALL || uiState.value.bookSortOrder != EditBookSortOrder.LAST_EDITED
+
+        if(listTarget == ListTarget.SEARCH){
+            listTarget = ListTarget.ALL
+            searchBookListClear()
+        }
+
+        setState {
+            copy(
+                searchText = ""
+            )
+        }
+
+        if(resetFlag){
+            sortBookList(listTarget, EditBookSortOrder.LAST_EDITED)
+            pagedBookList(listTarget, 0)
+        }
+
+        setState {
+            copy(
+                isEditMode = true
+            )
+        }
     }
 
     private fun handleExitEditMode() = launchWithLoading {
-        // TODO 08.04 Edit Mode
+        loadBookStateList()
+        sortBookList(listTarget, EditBookSortOrder.LAST_EDITED)
+        pagedBookList(listTarget, uiState.value.currentPage)
+        setState {
+            copy(
+                isEditMode = false
+            )
+        }
     }
 
     private fun selectAllHolders() = launchWithLoading {
@@ -124,7 +154,9 @@ class EditorTabViewModel @Inject constructor(
     }
 
     private fun toggleBookSelection(bookId: String) {
-        // TODO 08.04 Holder Book Selection
+        allBookStates.find { it.bookInfo.bookId == bookId }?.let {
+            it.selected.value = !it.selected.value
+        }
     }
 
     // CommonFunction

@@ -1,8 +1,6 @@
 package com.fancymansion.presentation.main.tab.editor.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,11 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -33,20 +26,16 @@ import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
-import com.fancymansion.presentation.main.tab.editor.EditBookState
+import com.fancymansion.presentation.main.tab.editor.composables.part.EditBookHolder
+import com.fancymansion.presentation.main.tab.editor.composables.part.EditorTabHeader
 import com.fancymansion.presentation.main.tab.editor.composables.part.SearchTextField
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun EditorTabScreenContent(
@@ -71,7 +60,6 @@ fun EditorTabScreenContent(
             )
         }
     } else {
-        val context = LocalContext.current
         val painterList = uiState.visibleBookList.map { data ->
             when (data.bookInfo.thumbnail) {
                 is ImagePickType.SavedImage -> {
@@ -112,6 +100,7 @@ fun EditorTabScreenContent(
                         focusManager.clearFocus()
                         onEventSent(EditorTabContract.Event.SearchClicked)
                     },
+                    isEnabled = !uiState.isEditMode,
                     isCancelable = true
                 ) {
                     onEventSent(EditorTabContract.Event.SearchTextInput(searchText = it))
@@ -122,7 +111,9 @@ fun EditorTabScreenContent(
                         .padding(start = 5.dp)
                         .fillMaxWidth(1f)
                         .height(35.dp)
-                        .clickSingle{
+                        .clickSingle(
+                            enabled = !uiState.isEditMode
+                        ){
                             focusManager.clearFocus()
                             onEventSent(EditorTabContract.Event.SearchCancel)
                         }
@@ -157,41 +148,23 @@ fun EditorTabScreenContent(
                     }
                 }
 
-
                 item {
-                    Box(
+                    EditorTabHeader(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 18.dp, horizontal = 14.dp)
-                    ){
-                        EnumDropdown(
-                            modifier = Modifier.width(140.dp),
-                            options = EditBookSortOrder.entries.toTypedArray(),
-                            selectedOption = uiState.bookSortOrder,
-                            onClickDropdownTitle = {
-                              focusManager.clearFocus()
-                            },
-                            getDisplayName = {
-                                context.getString(it.textResId)
-                            }
-                        ) {
-                            onEventSent(EditorTabContract.Event.SelectBookSortOrder(it))
-                        }
-
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 4.dp)
-                                .align(Alignment.CenterEnd),
-                            text = "편집",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                            .padding(vertical = 18.dp, horizontal = 14.dp),
+                        isEditMode = uiState.isEditMode,
+                        bookSortOrder = uiState.bookSortOrder,
+                        focusManager = focusManager,
+                        onEventSent = onEventSent
+                    )
                 }
 
                 itemsIndexed (uiState.visibleBookList){ idx, data ->
                     EditBookHolder(
                         bookState = data,
                         painter = painterList[idx],
+                        isEditMode = uiState.isEditMode,
                         onClickHolder = {
                             onEventSent(EditorTabContract.Event.BookHolderClicked(it))
                         }
@@ -233,90 +206,4 @@ fun EditorTabScreenContent(
             }
         }
     }
-}
-
-@Composable
-fun EditBookHolder(
-    modifier : Modifier = Modifier,
-    painter: Painter,
-    bookState : EditBookState,
-    onClickHolder : (String) -> Unit
-){
-
-    Row(
-        modifier = modifier
-            .padding(vertical = 18.dp, horizontal = 14.dp)
-            .clickSingle {
-                onClickHolder(bookState.bookInfo.bookId)
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.25f)
-                .heightIn(max = 200.dp)
-        ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
-                painter = painter,
-                contentScale = ContentScale.FillWidth,
-                contentDescription = ""
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(start = 10.dp)
-        ) {
-            Text(
-                text = bookState.bookInfo.title,
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 5.dp),
-                text = "${formatTimestampLegacy(bookState.bookInfo.editTime)} 편집됨",
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 5.dp),
-                text = "총 ${bookState.bookInfo.pageCount} 페이지",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            FlowRow(
-                modifier = Modifier.padding(top = 5.dp)
-            ) {
-                bookState.bookInfo.keywords.take(6).forEach { keyword ->
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 2.dp)
-                            .padding(bottom = 2.dp)
-                            .clip(shape = MaterialTheme.shapes.extraSmall)
-                            .padding(0.5.dp)
-                            .border(
-                                width = 0.5.dp,
-                                color = MaterialTheme.colorScheme.outline,
-                                shape = MaterialTheme.shapes.extraSmall
-                            )
-                            .padding(horizontal = 7.dp, vertical = 5.dp),
-                        text = "#${keyword.name}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Black
-                    )
-                }
-            }
-        }
-    }
-}
-
-fun formatTimestampLegacy(timestamp: Long): String {
-    val date = Date(timestamp)
-    val formatter = SimpleDateFormat("yyyy.M.d", Locale.getDefault())
-    return formatter.format(date)
 }

@@ -11,6 +11,7 @@ object ColorSet {
     val navy_324155 = Color(0xff_324155)
 
     val gray_f3f4f5 = Color(0xff_f3f4f5)
+    val gray_aa_f3f4f5 = Color(0xaa_f3f4f5)
     val black_303538 = Color(0xff_303538)
 
     val white_ffffff = Color(0xff_ffffff)
