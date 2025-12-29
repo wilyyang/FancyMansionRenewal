@@ -226,7 +226,7 @@ class EditorTabViewModel @Inject constructor(
     private fun handleAddBook() = launchWithLoading(endLoadState = null){
         if(allBookStates.size <= EDIT_BOOKS_LIMIT){
             val currentTime = System.currentTimeMillis()
-            val newNumber = 0//BookIDManager.generateId(originBookInfoList.map { it.bookId })
+            val newNumber = 32//BookIDManager.generateId(originBookInfoList.map { it.bookId })
             val bookId = getBookId(userId, ReadMode.EDIT, newNumber)
             val episodeId = getEpisodeId(userId, ReadMode.EDIT, newNumber)
             val episodeRef = EpisodeRef(

@@ -4,13 +4,12 @@ import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.baseBookCoverName
+import com.fancymansion.core.common.const.getCoverFileName
 import com.fancymansion.core.common.const.imageFileNamePrefix
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
-import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.ConditionModel.RouteConditionModel
 import com.fancymansion.domain.model.book.ConditionModel.ShowSelectorConditionModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -93,7 +92,7 @@ class UseCaseMakeBook @Inject constructor(
     suspend fun createBookCover(episodeRef: EpisodeRef, bookInfo: BookInfoModel, uri: Uri) =
         withContext(dispatcher) {
             val fileExtension = context.getFileExtension(uri)?:""
-            baseBookCoverName(episodeRef.bookId, 1, fileExtension).let { newBookCoverName ->
+            getCoverFileName(episodeRef.bookId, 0, fileExtension).let { newBookCoverName ->
                 bookLocalRepository.makeBookInfo(
                     episodeRef.userId, episodeRef.mode, episodeRef.bookId,
                     bookInfo.copy(introduce = bookInfo.introduce.copy(coverList = listOf(newBookCoverName)))

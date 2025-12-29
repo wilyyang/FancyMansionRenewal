@@ -5,6 +5,7 @@ import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getCoverFileName
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.const.sampleUserId
 import com.fancymansion.data.R
@@ -264,7 +265,13 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         )
 
         // make sample image
-        makeCoverImageFromResource(episodeRef.userId, episodeRef.mode, episodeRef.bookId, "cover_test_book_id_1.png", R.drawable.sample_1_1)
+        makeCoverImageFromResource(
+            episodeRef.userId,
+            episodeRef.mode,
+            episodeRef.bookId,
+            getCoverFileName(episodeRef.bookId, 0, "png"),
+            R.drawable.sample_1_1
+        )
         SAMPLE_IMAGE_LIST.forEach {
             makePageImageFromResource(episodeRef, it.first, it.second)
         }
@@ -376,9 +383,10 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             makeBookDir(userId, ReadMode.EDIT, bookId)
             makeEpisodeDir(episodeRef)
 
-            val coverFileName = "test_cover_$i.jpg"
+            val resourceFileName = "test_cover_$i.jpg"
+            val coverFileName = getCoverFileName(bookId, 0, "jpg")
             // 실제 존재하는 drawable 리소스를 재사용하거나 범위 제한 필요
-            val coverResId = context.resources.getIdentifier(coverFileName.substringBeforeLast("."), "drawable", context.packageName)
+            val coverResId = context.resources.getIdentifier(resourceFileName.substringBeforeLast("."), "drawable", context.packageName)
             makeCoverImageFromResource(userId, ReadMode.EDIT, bookId, coverFileName, coverResId)
 
             val bookInfo = BookInfoData(

@@ -11,8 +11,8 @@ class BookPath {
         private const val CONTENT = "content"
         private const val MEDIA = "media"
         private const val PAGES = "pages"
-        private const val BOOK_INFO_JSON = "bookInfo.json"
-        private const val EPISODE_INFO_JSON = "episodeInfo.json"
+        private const val BOOK_INFO_JSON = "book.info.json"
+        private const val EPISODE_INFO_JSON = "episode.info.json"
         private const val LOGIC_JSON = "logic.json"
 
         private fun pageJson(pageId: Long) = "$pageId.json"

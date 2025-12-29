@@ -8,7 +8,7 @@ fun getBookId(userId: String, mode: ReadMode, number: Int) = "${userId}_${mode.n
 fun getEpisodeId(userId: String, mode: ReadMode, number: Int) = "${userId}_${mode.name}_${number}.0"
 fun getEpisodeId(bookId: String) = "${bookId}.0"
 
-fun baseBookCoverName(id: String, number: Int, fileExtension: String) = "cover_${id}_${number}.$fileExtension"
+fun getCoverFileName(id: String, number: Int, fileExtension: String) = "${id}.cover.${number}.$fileExtension"
 
 val sampleEpisodeRef = EpisodeRef(
     userId = sampleUserId,
