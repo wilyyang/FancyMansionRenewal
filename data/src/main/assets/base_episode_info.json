@@ -1,10 +1,10 @@
 {
-  "bookId": "test_book_id",
+  "bookId": "sample_EDIT_31",
   "createTime": 1725431843121,
   "editTime": 1754956800000,
-  "id": "test_book_id_0",
+  "id": "sample_EDIT_31.0",
   "readMode": "EDIT",
   "title": "제 1화",
-  "pageCount": 11,
+  "pageCount": 7,
   "version": 0
 }

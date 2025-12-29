@@ -3,6 +3,9 @@ package com.fancymansion.data.repository
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.testUserId
 import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.di.HiltBookStorage
@@ -38,28 +41,28 @@ class TestBookLocalRepository {
     @Inject
     lateinit var bookStorage : BookStorageSource
 
-    private val defaultRef = EpisodeRef(
-        userId = "test_user_id",
+    private val testRef = EpisodeRef(
+        userId = testUserId,
         mode = ReadMode.READ,
-        bookId = "test_book_id",
-        episodeId = "test_book_id_0"
+        bookId = getBookId(testUserId, ReadMode.READ, 0),
+        episodeId = getEpisodeId(testUserId, ReadMode.READ, 0)
     )
 
     @Before
     fun setUp() = runTest {
         hiltRule.inject()
-        repository.makeSampleEpisode(defaultRef)
+        repository.makeSampleEpisode(testRef)
     }
 
     @Test
     fun `대상 - PageSetting, 동작 - insert, update, 결과 - Success (equal)`()  = runTest {
         val pageSetting = PageSettingModel()
-        repository.insertPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, pageSetting)
+        repository.insertPageSetting(testRef.userId, testRef.mode.name, testRef.bookId, pageSetting)
 
         val updateSetting = pageSetting.copy(pageTheme = PageTheme.THEME_IVORY)
-        repository.updatePageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId, updateSetting)
+        repository.updatePageSetting(testRef.userId, testRef.mode.name, testRef.bookId, updateSetting)
 
-        val targetSetting = repository.getPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.bookId)
+        val targetSetting = repository.getPageSetting(testRef.userId, testRef.mode.name, testRef.bookId)
 
         Truth.assertThat(pageSetting == targetSetting).isFalse()
         Truth.assertThat(updateSetting == targetSetting).isTrue()
@@ -68,50 +71,50 @@ class TestBookLocalRepository {
     @Test
     fun `대상 - ActionCount, 동작 - insert, update, 결과 - Success (equal)`()  = runTest {
         val actionId = ActionIdModel(pageId = 1, selectorId = 1)
-        repository.insertActionCount(defaultRef, actionId)
-        val initValue = repository.getActionCount(defaultRef, actionId)
+        repository.insertActionCount(testRef, actionId)
+        val initValue = repository.getActionCount(testRef, actionId)
         Truth.assertThat(initValue == 1).isTrue()
 
-        repository.updateActionCount(defaultRef, actionId, newCount = 2)
-        val newValue = repository.getActionCount(defaultRef, actionId)
+        repository.updateActionCount(testRef, actionId, newCount = 2)
+        val newValue = repository.getActionCount(testRef, actionId)
         Truth.assertThat(newValue == 2).isTrue()
     }
 
     @Test
     fun `대상 - ReadingProgress, 동작 - initValue, get, 결과 - Success (초기값 없음)`()  = runTest {
-        val initPageId = repository.getReadingProgressPageId(defaultRef)
+        val initPageId = repository.getReadingProgressPageId(testRef)
         Truth.assertThat(initPageId == null).isTrue()
     }
 
     @Test
     fun `대상 - ReadingProgress, 동작 - insert, update, 결과 - Success (디폴트값)`()  = runTest {
-        repository.insertReadingProgress(defaultRef, pageId = 3)
-        val insertPageId = repository.getReadingProgressPageId(defaultRef)
+        repository.insertReadingProgress(testRef, pageId = 3)
+        val insertPageId = repository.getReadingProgressPageId(testRef)
         Truth.assertThat(insertPageId?.toInt() == 3).isTrue()
 
-        repository.updateReadingProgressPageId(defaultRef, newPageId = 5)
-        val newPageId = repository.getReadingProgressPageId(defaultRef)
+        repository.updateReadingProgressPageId(testRef, newPageId = 5)
+        val newPageId = repository.getReadingProgressPageId(testRef)
         Truth.assertThat(newPageId?.toInt() == 5).isTrue()
     }
 
     @Test
     fun `대상 - Logic, 동작 - load, 결과 - Success (변환 일치)`()  = runTest {
-        val logic = bookStorage.loadLogic(defaultRef).asModel()
-        val loadLogic = repository.loadLogic(defaultRef)
+        val logic = bookStorage.loadLogic(testRef).asModel()
+        val loadLogic = repository.loadLogic(testRef)
         Truth.assertThat(logic == loadLogic).isTrue()
     }
 
     @Test
     fun `대상 - Page, 동작 - load, 결과 - Success (변환 일치)`()  = runTest {
-        val page = bookStorage.loadPage(defaultRef, pageId = 1).asModel()
-        val loadPage = repository.loadPage(defaultRef, pageId = 1)
+        val page = bookStorage.loadPage(testRef, pageId = 1).asModel()
+        val loadPage = repository.loadPage(testRef, pageId = 1)
         Truth.assertThat(page == loadPage).isTrue()
     }
 
     @Test
     fun `대상 - Page, 동작 - load, 결과 - Fail (다른 페이지)`()  = runTest {
-        val page1 = repository.loadPage(defaultRef, pageId = 1)
-        val page2 = repository.loadPage(defaultRef, pageId = 2)
+        val page1 = repository.loadPage(testRef, pageId = 1)
+        val page2 = repository.loadPage(testRef, pageId = 2)
         Truth.assertThat(page1 == page2).isFalse()
     }
 }

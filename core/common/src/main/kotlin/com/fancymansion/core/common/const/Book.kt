@@ -2,18 +2,6 @@ package com.fancymansion.core.common.const
 
 import com.fancymansion.core.common.resource.StringValue
 
-const val imageFileNamePrefix = "_page_img_"
-
-fun baseBookCoverName(id: String, number: Int, fileExtension: String) = "cover_${id}_${number}.$fileExtension"
-val testBookTitle = "배트의 어드벤처"
-val testEpisodeTitle = "1화"
-val testEpisodeRef = EpisodeRef(
-    userId = "test_user_id",
-    mode = ReadMode.EDIT,
-    bookId = "test_book_id",
-    episodeId = "test_book_id_0"
-)
-
 /**
  * Viewer Config
  */

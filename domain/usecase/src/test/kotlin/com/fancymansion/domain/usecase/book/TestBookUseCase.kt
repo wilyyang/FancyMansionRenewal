@@ -2,6 +2,9 @@ package com.fancymansion.domain.usecase.book
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.testUserId
 import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.di.injectRepository.HiltRepository
 import com.fancymansion.domain.model.book.PageSettingModel
@@ -42,44 +45,44 @@ class TestBookUseCase {
     @Inject
     lateinit var useCaseBookList: UseCaseBookList
 
-    private val defaultRef = EpisodeRef(
-        userId = "test_user_id",
+    private val testRef = EpisodeRef(
+        userId = testUserId,
         mode = ReadMode.READ,
-        bookId = "test_book_id",
-        episodeId = "test_book_id_0"
+        bookId = getBookId(testUserId, ReadMode.READ, 0),
+        episodeId = getEpisodeId(testUserId, ReadMode.READ, 0)
     )
 
 
     @Before
     fun setUp() = runTest {
         hiltRule.inject()
-        useCaseBookList.makeSampleEpisode(defaultRef)
+        useCaseBookList.makeSampleEpisode(testRef)
     }
 
     @Test
     fun `대상 - PageSetting, 동작 - get, 결과 - equal null`()  = runTest {
-        val loadSetting = useCasePageSetting.getPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.episodeId)
+        val loadSetting = useCasePageSetting.getPageSetting(testRef.userId, testRef.mode.name, testRef.episodeId)
         Truth.assertThat(loadSetting == null).isTrue()
     }
 
     @Test
     fun `대상 - PageSetting, 동작 - save, 결과 - Success equal`()  = runTest {
         val defaultSetting = PageSettingModel()
-        useCasePageSetting.savePageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.episodeId, defaultSetting)
-        val loadSetting = useCasePageSetting.getPageSetting(defaultRef.userId, defaultRef.mode.name, defaultRef.episodeId)
+        useCasePageSetting.savePageSetting(testRef.userId, testRef.mode.name, testRef.episodeId, defaultSetting)
+        val loadSetting = useCasePageSetting.getPageSetting(testRef.userId, testRef.mode.name, testRef.episodeId)
         Truth.assertThat(loadSetting == defaultSetting).isTrue()
     }
 
     @Test
     fun `대상 - ProgressPageId, 동작 - get, 결과 - equal null`()  = runTest {
-        val id = useCaseBookLogic.getReadingProgressPageId(defaultRef)
+        val id = useCaseBookLogic.getReadingProgressPageId(testRef)
         Truth.assertThat(id == null).isTrue()
     }
 
     @Test
     fun `대상 - ProgressPageId, 동작 - update, 결과 - Success equal`()  = runTest {
-        useCaseBookLogic.updateReadingProgressPageId(defaultRef, 3)
-        val id = useCaseBookLogic.getReadingProgressPageId(defaultRef)
+        useCaseBookLogic.updateReadingProgressPageId(testRef, 3)
+        val id = useCaseBookLogic.getReadingProgressPageId(testRef)
         Truth.assertThat(id == 3L).isTrue()
     }
 
@@ -94,26 +97,26 @@ class TestBookUseCase {
     private val TEST_SELECTOR_CONDITION_TARGET_ID = 2L
     @Test
     fun `대상 - Logic, 동작 - selector default count, 결과 - Success`()  = runTest {
-        val logic = useCaseLoadBook.loadLogic(defaultRef)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_PAGE_ID)
+        val logic = useCaseLoadBook.loadLogic(testRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = testRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_PAGE_ID)
         Truth.assertThat(selectors.size == 2).isTrue()
     }
 
     @Test
     fun `대상 - Logic, 동작 - selector condition, 결과 - Fail`()  = runTest {
-        val logic = useCaseLoadBook.loadLogic(defaultRef)
-        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_SELF_ID)
-        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_TARGET_ID)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_PAGE_ID)
+        val logic = useCaseLoadBook.loadLogic(testRef)
+        useCaseBookLogic.incrementActionCount(testRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_SELF_ID)
+        useCaseBookLogic.incrementActionCount(testRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_TARGET_ID)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = testRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_PAGE_ID)
         Truth.assertThat(selectors.size == 3).isFalse()
     }
     @Test
     fun `대상 - Logic, 동작 - selector condition, 결과 - Success`()  = runTest {
-        val logic = useCaseLoadBook.loadLogic(defaultRef)
-        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_SELF_ID)
-        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_SELF_ID)
-        useCaseBookLogic.incrementActionCount(defaultRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_TARGET_ID)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_PAGE_ID)
+        val logic = useCaseLoadBook.loadLogic(testRef)
+        useCaseBookLogic.incrementActionCount(testRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_SELF_ID)
+        useCaseBookLogic.incrementActionCount(testRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_SELF_ID)
+        useCaseBookLogic.incrementActionCount(testRef, TEST_SELECTOR_CONDITION_PAGE_ID, TEST_SELECTOR_CONDITION_TARGET_ID)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = testRef, logic = logic, pageId = TEST_SELECTOR_CONDITION_PAGE_ID)
         Truth.assertThat(selectors.size == 3).isTrue()
     }
 
@@ -134,32 +137,32 @@ class TestBookUseCase {
 
     @Test
     fun `대상 - Logic, 동작 - route default, 결과 - Success (next page 4)`()  = runTest {
-        val logic = useCaseLoadBook.loadLogic(defaultRef)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_ROUTE_CONDITION_PAGE_ID)
+        val logic = useCaseLoadBook.loadLogic(testRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = testRef, logic = logic, pageId = TEST_ROUTE_CONDITION_PAGE_ID)
         val selector = selectors.first { it.selectorId == TEST_ROUTE_CONDITION_SELECTOR_ID }
 
-        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, selector.routes)
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(testRef, selector.routes)
         Truth.assertThat(nextPageId == TEST_DEFAULT_NEXT_PAGE_ID).isTrue()
     }
 
     @Test
     fun `대상 - Logic, 동작 - route condition, 결과 - Fail (next page 5)`()  = runTest {
-        val logic = useCaseLoadBook.loadLogic(defaultRef)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_ROUTE_CONDITION_PAGE_ID)
+        val logic = useCaseLoadBook.loadLogic(testRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = testRef, logic = logic, pageId = TEST_ROUTE_CONDITION_PAGE_ID)
         val selector = selectors.first { it.selectorId == TEST_ROUTE_CONDITION_SELECTOR_ID }
-        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, selector.routes)
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(testRef, selector.routes)
         Truth.assertThat(nextPageId == TEST_ROUTE_CONDITION_NEXT_PAGE_ID).isFalse()
     }
 
     @Test
     fun `대상 - Logic, 동작 - route condition, 결과 - Success (next page 5)`()  = runTest {
-        val logic = useCaseLoadBook.loadLogic(defaultRef)
-        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = defaultRef, logic = logic, pageId = TEST_ROUTE_CONDITION_PAGE_ID)
+        val logic = useCaseLoadBook.loadLogic(testRef)
+        val selectors = useCaseBookLogic.getVisibleSelectors(episodeRef = testRef, logic = logic, pageId = TEST_ROUTE_CONDITION_PAGE_ID)
         val selector = selectors.first { it.selectorId == TEST_ROUTE_CONDITION_SELECTOR_ID }
 
-        useCaseBookLogic.incrementActionCount(defaultRef, pageId = TEST_ROUTE_SELF_PAGE_ID, selectorId = TEST_ROUTE_SELF_SELECTOR_ID)
+        useCaseBookLogic.incrementActionCount(testRef, pageId = TEST_ROUTE_SELF_PAGE_ID, selectorId = TEST_ROUTE_SELF_SELECTOR_ID)
 
-        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, selector.routes)
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(testRef, selector.routes)
         Truth.assertThat(nextPageId == TEST_ROUTE_CONDITION_NEXT_PAGE_ID).isTrue()
     }
 }

@@ -8,8 +8,9 @@ import com.fancymansion.core.common.const.EDIT_BOOKS_LIMIT
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.const.testEpisodeRef
-import com.fancymansion.core.common.util.BookIDManager
+import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.sampleEpisodeRef
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -36,7 +37,7 @@ class EditorTabViewModel @Inject constructor(
 ) : BaseViewModel<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>() {
 
     private var isUpdateResume = false
-    private var userId: String = savedStateHandle.get<String>(NAME_USER_ID) ?: testEpisodeRef.userId
+    private var userId: String = savedStateHandle.get<String>(NAME_USER_ID) ?: sampleEpisodeRef.userId
     private val mode: ReadMode = ReadMode.EDIT
     private lateinit var originBookInfoList: List<EditBookWrapper>
 
@@ -137,7 +138,7 @@ class EditorTabViewModel @Inject constructor(
                 userId = userId,
                 mode = mode,
                 bookId = bookId,
-                episodeId = "${bookId}_0"
+                episodeId = getEpisodeId(bookId)
             ))
         }
     }
@@ -226,8 +227,8 @@ class EditorTabViewModel @Inject constructor(
         if(allBookStates.size <= EDIT_BOOKS_LIMIT){
             val currentTime = System.currentTimeMillis()
             val newNumber = 0//BookIDManager.generateId(originBookInfoList.map { it.bookId })
-            val bookId = "${userId}-$newNumber"
-            val episodeId = "${bookId}_0"
+            val bookId = getBookId(userId, ReadMode.EDIT, newNumber)
+            val episodeId = getEpisodeId(userId, ReadMode.EDIT, newNumber)
             val episodeRef = EpisodeRef(
                 userId = userId,
                 mode = mode,

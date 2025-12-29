@@ -7,7 +7,6 @@ import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent

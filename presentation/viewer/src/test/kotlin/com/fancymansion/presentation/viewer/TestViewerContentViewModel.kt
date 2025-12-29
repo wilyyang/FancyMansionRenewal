@@ -21,6 +21,10 @@ import com.fancymansion.core.common.const.PageTheme
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.SelectorPaddingVertical
+import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.sampleUserId
+import com.fancymansion.core.common.const.testUserId
 import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -86,11 +90,11 @@ class TestViewerContentViewModel {
     private var getEffect: ViewerContentContract.Effect? = null
     private lateinit var targetLogic : LogicModel
 
-    private val defaultRef = EpisodeRef(
-        userId = "test_user_id",
+    private val testRef = EpisodeRef(
+        userId = sampleUserId,
         mode = ReadMode.EDIT,
-        bookId = "test_book_id",
-        episodeId = "test_book_id_0"
+        bookId = getBookId(sampleUserId, ReadMode.EDIT, 31),
+        episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, 31)
     )
 
     private suspend fun ComposeTestRule.waitForInitEnd() {
@@ -133,17 +137,17 @@ class TestViewerContentViewModel {
         }
 
         useCaseBookList.makeSampleEpisode()
-        targetLogic = useCaseLoadBook.loadLogic(defaultRef)
+        targetLogic = useCaseLoadBook.loadLogic(testRef)
         setupViewModel()
 
         composeRule.waitForInitEnd()
     }
 
     private fun setupViewModel(){
-        saveStatedHandle[ArgName.NAME_USER_ID] = defaultRef.userId
-        saveStatedHandle[ArgName.NAME_READ_MODE] = defaultRef.mode
-        saveStatedHandle[ArgName.NAME_BOOK_ID] = defaultRef.bookId
-        saveStatedHandle[ArgName.NAME_EPISODE_ID] = defaultRef.episodeId
+        saveStatedHandle[ArgName.NAME_USER_ID] = testRef.userId
+        saveStatedHandle[ArgName.NAME_READ_MODE] = testRef.mode
+        saveStatedHandle[ArgName.NAME_BOOK_ID] = testRef.bookId
+        saveStatedHandle[ArgName.NAME_EPISODE_ID] = testRef.episodeId
         saveStatedHandle[ArgName.NAME_BOOK_TITLE] = ""
         saveStatedHandle[ArgName.NAME_EPISODE_TITLE] = ""
         saveStatedHandle[ArgName.NAME_PAGE_ID] = 1L
@@ -203,7 +207,7 @@ class TestViewerContentViewModel {
         // Init
         val initPageId = viewModel.uiState.value.pageWrapper?.id!!
         val firstSelector = targetLogic.logics.first { it.pageId == initPageId }.selectors[0]
-        val nextPageId = useCaseBookLogic.getNextRoutePageId(defaultRef, firstSelector.routes)
+        val nextPageId = useCaseBookLogic.getNextRoutePageId(testRef, firstSelector.routes)
 
         // Call Event
         testEventSent(ViewerContentContract.Event.OnClickSelector(initPageId, firstSelector.selectorId))

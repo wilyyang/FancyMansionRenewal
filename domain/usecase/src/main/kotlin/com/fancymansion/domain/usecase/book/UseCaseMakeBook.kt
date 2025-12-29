@@ -6,7 +6,6 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.baseBookCoverName
 import com.fancymansion.core.common.const.imageFileNamePrefix
-import com.fancymansion.core.common.const.testEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository

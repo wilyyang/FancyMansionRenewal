@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.sampleUserId
 import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.EditorData
@@ -360,8 +363,8 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         )
 
         for (i in 0 until 30) {
-            val bookId = "test_sample_$i"
-            val episodeId = "${bookId}_0"
+            val bookId = getBookId(sampleUserId, ReadMode.EDIT, i)
+            val episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, i)
 
             val episodeRef = EpisodeRef(
                 userId = userId,
