@@ -108,4 +108,7 @@ interface BookStorageSource {
     suspend fun makeSampleEpisode(episodeRef: EpisodeRef) : Boolean
 
     suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File>
+
+    suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean
+    suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean
 }

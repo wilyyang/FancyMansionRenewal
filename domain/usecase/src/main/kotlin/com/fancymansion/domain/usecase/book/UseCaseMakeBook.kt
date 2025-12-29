@@ -32,17 +32,19 @@ class UseCaseMakeBook @Inject constructor(
     suspend fun makeBookInfo(episodeRef: EpisodeRef, bookInfo : BookInfoModel) =
         withContext(dispatcher) {
             bookLocalRepository.makeBookInfo(userId = episodeRef.userId, mode = episodeRef.mode, bookId = episodeRef.bookId, bookInfo = bookInfo)
+            bookLocalRepository.updateEditTime(episodeRef)
         }
 
     suspend fun updatePageContent(episodeRef: EpisodeRef, pageId: Long, page: PageModel) =
         withContext(dispatcher) {
             bookLocalRepository.deletePage(episodeRef, pageId)
             bookLocalRepository.makePage(episodeRef, pageId, page)
+            bookLocalRepository.updateEditTime(episodeRef)
         }
 
     suspend fun makeBookLogic(episodeRef: EpisodeRef, logic: LogicModel) : Boolean =
         withContext(dispatcher) {
-            bookLocalRepository.deleteLogic(episodeRef) && bookLocalRepository.makeLogic(episodeRef, logic)
+            bookLocalRepository.deleteLogic(episodeRef) && makeLogicAndUpdateEditTime(episodeRef, logic)
         }
 
     suspend fun updateBookPageLogic(episodeRef: EpisodeRef, pageLogic: PageLogicModel) : Boolean =
@@ -130,7 +132,8 @@ class UseCaseMakeBook @Inject constructor(
             originLogic.copy(
                 logics = editedPageList
             ).let { updatedLogic ->
-                bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = updatedLogic)
+                makeLogicAndUpdateEditTime(episodeRef, updatedLogic)
+                bookLocalRepository.updatePageCount(episodeRef, editedPageList.size)
             }
         }
 
@@ -145,7 +148,7 @@ class UseCaseMakeBook @Inject constructor(
                     }
                 }
             }
-            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+            makeLogicAndUpdateEditTime(episodeRef, newLogic)
         }
 
     suspend fun saveEditedSelector(episodeRef: EpisodeRef, pageId: Long, selector: SelectorModel) =
@@ -161,7 +164,7 @@ class UseCaseMakeBook @Inject constructor(
                     }
                 }
             }
-            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+            makeLogicAndUpdateEditTime(episodeRef, newLogic)
         }
 
     suspend fun saveEditedRoute(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, route: RouteModel) =
@@ -183,7 +186,7 @@ class UseCaseMakeBook @Inject constructor(
                     }
                 }
             }
-            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+            makeLogicAndUpdateEditTime(episodeRef, newLogic)
         }
 
     suspend fun saveEditedShowSelectorCondition(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, condition: ShowSelectorConditionModel) =
@@ -199,7 +202,7 @@ class UseCaseMakeBook @Inject constructor(
                     }
                 }
             }
-            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+            makeLogicAndUpdateEditTime(episodeRef, newLogic)
         }
 
     suspend fun saveEditedRouteCondition(episodeRef: EpisodeRef, pageId: Long, selectorId: Long, routeId: Long, condition: RouteConditionModel) =
@@ -221,7 +224,7 @@ class UseCaseMakeBook @Inject constructor(
                     }
                 }
             }
-            bookLocalRepository.makeLogic(episodeRef = episodeRef, logic = newLogic)
+            makeLogicAndUpdateEditTime(episodeRef, newLogic)
         }
 
     private fun rebuildLogicWithUpdatedSelector(
@@ -255,5 +258,15 @@ class UseCaseMakeBook @Inject constructor(
         episodeRef: EpisodeRef
     ) = withContext(dispatcher) {
         bookLocalRepository.bookLogicFileExists(episodeRef)
+    }
+
+    private suspend fun makeLogicAndUpdateEditTime(
+        episodeRef: EpisodeRef,
+        updatedLogic: LogicModel
+    ): Boolean {
+        return bookLocalRepository.makeLogic(
+            episodeRef = episodeRef,
+            logic = updatedLogic
+        ) && bookLocalRepository.updateEditTime(episodeRef)
     }
 }

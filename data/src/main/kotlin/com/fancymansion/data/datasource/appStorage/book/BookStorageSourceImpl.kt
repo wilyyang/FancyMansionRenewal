@@ -314,6 +314,20 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         return root.mediaFile(episodeRef).listFiles()?.asList()?.filter { it.name.startsWith("$pageId") }?:listOf()
     }
 
+    override suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean {
+        val newEpisode = loadEpisodeInfo(episodeRef).copy(
+            editTime = System.currentTimeMillis()
+        )
+        return makeEpisodeInfo(episodeRef, newEpisode)
+    }
+
+    override suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean {
+        val newEpisode = loadEpisodeInfo(episodeRef).copy(
+            pageCount = pageCount
+        )
+        return makeEpisodeInfo(episodeRef, newEpisode)
+    }
+
     private suspend fun makeEditBookInfoSampleList(userId: String) {
         val titles = listOf(
             "사랑의 법칙", "시간의 파편", "유령 도시의 연대기", "끝나지 않는 이야기", "비밀의 정원 이야기",

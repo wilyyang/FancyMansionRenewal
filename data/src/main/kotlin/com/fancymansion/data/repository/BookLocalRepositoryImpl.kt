@@ -222,6 +222,14 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.getPageImageFiles(episodeRef, pageId)
     }
 
+    override suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean {
+        return bookStorageSource.updateEditTime(episodeRef)
+    }
+
+    override suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean {
+        return bookStorageSource.updatePageCount(episodeRef, pageCount)
+    }
+
     /**
      * ActionCount
      */

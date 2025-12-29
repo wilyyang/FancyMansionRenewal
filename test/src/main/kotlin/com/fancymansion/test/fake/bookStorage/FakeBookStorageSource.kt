@@ -234,4 +234,12 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
     override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean {
+        return true
+    }
+
+    override suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean {
+        return true
+    }
 }
