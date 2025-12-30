@@ -266,7 +266,14 @@ class EditorTabViewModel @Inject constructor(
     }
 
     private fun handleDeleteSelectedBooks() = launchWithLoading {
-        // TODO 08.04 Holder Delete Selected
+        allBookStates
+            .filter { it.selected.value }
+            .forEach {
+                useCaseBookList.deleteUserEditBook(userId, it.bookInfo.bookId)
+            }
+        loadBookStateList()
+        sortBookList(listTarget, uiState.value.bookSortOrder)
+        pagedBookList(listTarget, 0)
     }
 
     /**

@@ -32,19 +32,15 @@ class UseCaseBookList @Inject constructor(
                 episodeRef.mode,
                 episodeRef.bookId,
                 bookInfo
-            )
-            bookLocalRepository.makeEpisodeInfo(episodeRef, episodeInfo)
-            bookLocalRepository.makeLogic(episodeRef, logic)
-
-            // TODO Main Tab Editor 08.04
-
-            false
+            ) && bookLocalRepository.makeEpisodeInfo(
+                episodeRef,
+                episodeInfo
+            ) && bookLocalRepository.makeLogic(episodeRef, logic)
         }
 
-    suspend fun deleteUserEditBook(userId: String, bookId : String): Boolean =
+    suspend fun deleteUserEditBook(userId: String, bookId : String) =
         withContext(dispatcher) {
-            // TODO Main Tab Editor 08.04
-            false
+            bookLocalRepository.deleteBookDir(userId, ReadMode.EDIT, bookId)
         }
 
     suspend fun getUserEditBookInfoList(userId: String): List<Pair<BookInfoModel, EpisodeInfoModel>> =

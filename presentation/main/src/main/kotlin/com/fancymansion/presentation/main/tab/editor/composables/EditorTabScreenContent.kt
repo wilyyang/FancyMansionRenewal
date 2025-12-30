@@ -67,7 +67,7 @@ fun EditorTabScreenContent(
                 }
 
                 else -> {
-                    painterResource(id = R.drawable.holder_book_image_sample)
+                    painterResource(id = R.drawable.holder_book_image_no_available)
                 }
             }
         }

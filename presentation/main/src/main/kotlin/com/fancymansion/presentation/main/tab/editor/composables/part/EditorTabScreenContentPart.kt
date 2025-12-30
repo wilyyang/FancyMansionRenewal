@@ -96,6 +96,14 @@ fun EditorTabHeader(
                 )
 
                 Text(
+                    modifier = Modifier.padding(end = 12.dp).clickSingle {
+                        onEventSent(EditorTabContract.Event.BookHolderDeleteBook)
+                    },
+                    text = "삭제",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
+                )
+
+                Text(
                     modifier = Modifier.clickSingle {
                         onEventSent(EditorTabContract.Event.BookListExitEditMode)
                     },
