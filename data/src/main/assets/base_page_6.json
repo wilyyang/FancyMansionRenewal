@@ -3,7 +3,7 @@
   "sources": [
     {
       "type": "image",
-      "imageName": "6_page_img_1.png"
+      "imageName": "page.6.image.1.png"
     },
     {
       "type": "text",
@@ -11,7 +11,7 @@
     },
     {
       "type": "image",
-      "imageName": "6_page_img_2.png"
+      "imageName": "page.6.image.2.png"
     },
     {
       "type": "text",
@@ -19,7 +19,7 @@
     },
     {
       "type": "image",
-      "imageName": "6_page_img_3.png"
+      "imageName": "page.6.image.3.png"
     },
     {
       "type": "text",
@@ -27,7 +27,7 @@
     },
     {
       "type": "image",
-      "imageName": "6_page_img_4.png"
+      "imageName": "page.6.image.4.png"
     }
   ],
   "title": "존의 위치를 아냐고?"

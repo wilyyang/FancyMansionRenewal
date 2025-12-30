@@ -7,6 +7,7 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getCoverFileName
 import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.pageStartWith
 import com.fancymansion.core.common.const.sampleUserId
 import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
@@ -321,7 +322,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     }
 
     override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long) : List<File> {
-        return root.mediaFile(episodeRef).listFiles()?.asList()?.filter { it.name.startsWith("$pageId") }?:listOf()
+        return root.mediaFile(episodeRef).listFiles()?.asList()?.filter { it.name.startsWith("$pageStartWith$pageId") }?:listOf()
     }
 
     override suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean {

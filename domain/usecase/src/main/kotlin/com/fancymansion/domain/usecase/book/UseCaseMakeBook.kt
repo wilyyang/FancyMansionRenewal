@@ -5,7 +5,8 @@ import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.getCoverFileName
-import com.fancymansion.core.common.const.imageFileNamePrefix
+import com.fancymansion.core.common.const.getPageImageFileName
+import com.fancymansion.core.common.const.nextPageImageNumber
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
@@ -65,15 +66,13 @@ class UseCaseMakeBook @Inject constructor(
 
     suspend fun makePageImage(episodeRef: EpisodeRef, pageId: Long, uri: Uri) : String =
         withContext(dispatcher) {
-            val nextImageNumber = (bookLocalRepository.getPageImageFiles(episodeRef, pageId)
-                .maxOfOrNull {
-                    val start = it.name.lastIndexOf("_") + 1
-                    val end = it.name.lastIndexOf(".")
-                    it.name.substring(start, end).toIntOrNull() ?: 0
-                } ?: 0) + 1
+            val nextImageNumber = nextPageImageNumber(
+                bookLocalRepository.getPageImageFiles(episodeRef, pageId),
+                pageId
+            )
 
             val fileExtension = context.getFileExtension(uri)?:""
-            val nextImageName = "${pageId}$imageFileNamePrefix$nextImageNumber.$fileExtension"
+            val nextImageName = "${getPageImageFileName(pageId, nextImageNumber)}.$fileExtension"
 
             makePageImage(episodeRef, nextImageName, uri)
             nextImageName
