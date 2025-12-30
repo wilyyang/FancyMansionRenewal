@@ -2,6 +2,7 @@ package com.fancymansion.data.datasource.appStorage.book
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.pageStartWith
 import java.io.File
 
 class BookPath {
@@ -15,7 +16,7 @@ class BookPath {
         private const val EPISODE_INFO_JSON = "episode.info.json"
         private const val LOGIC_JSON = "logic.json"
 
-        private fun pageJson(pageId: Long) = "$pageId.json"
+        private fun pageJson(pageId: Long) = "$pageStartWith$pageId.json"
 
         fun booksPath() = BOOKS
         fun userPath(userId: String) = booksPath().joinPath(userId)
