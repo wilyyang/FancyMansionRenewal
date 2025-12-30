@@ -5,6 +5,31 @@ import java.io.File
 const val testUserId = "tester"
 const val sampleUserId = "sample"
 fun getBookId(userId: String, mode: ReadMode, number: Int) = "${userId}_${mode.name}_${number}"
+fun nextBookNumber(
+    bookIds: List<String>,
+    userId: String,
+    mode: ReadMode
+): Int {
+    val regex = Regex(
+        """^${Regex.escape(userId)}_${mode.name}_(\d+)$"""
+    )
+
+    val usedNumbers = bookIds
+        .mapNotNull { id ->
+            regex.matchEntire(id)
+                ?.groupValues
+                ?.get(1)
+                ?.toIntOrNull()
+        }
+        .toSet()
+
+    var next = 0
+    while (next in usedNumbers) {
+        next++
+    }
+    return next
+}
+
 fun getEpisodeId(userId: String, mode: ReadMode, number: Int) = "${userId}_${mode.name}_${number}.0"
 fun getEpisodeId(bookId: String) = "${bookId}.0"
 

@@ -10,6 +10,7 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
+import com.fancymansion.core.common.const.nextBookNumber
 import com.fancymansion.core.common.const.sampleEpisodeRef
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -45,6 +46,13 @@ class EditorTabViewModel @Inject constructor(
     private val searchResultBookStates: MutableList<EditBookState> = mutableListOf()
 
     private var listTarget : ListTarget = ListTarget.ALL
+
+    // 임시 정보
+    private val editorInfo = EditorModel(
+        editorId = "editor",
+        editorName = "에디터",
+        editorEmail = "editor@example.com"
+    )
 
     init {
         initializeState()
@@ -223,48 +231,16 @@ class EditorTabViewModel @Inject constructor(
         }
     }
 
-    private fun handleAddBook() = launchWithLoading(endLoadState = null){
-        if(allBookStates.size <= EDIT_BOOKS_LIMIT){
-            val currentTime = System.currentTimeMillis()
-            val newNumber = 32//BookIDManager.generateId(originBookInfoList.map { it.bookId })
-            val bookId = getBookId(userId, ReadMode.EDIT, newNumber)
-            val episodeId = getEpisodeId(userId, ReadMode.EDIT, newNumber)
+    private fun handleAddBook() = launchWithLoading(endLoadState = null) {
+        if (allBookStates.size < EDIT_BOOKS_LIMIT) {
+            val newNumber = nextBookNumber(originBookInfoList.map { it.bookId }, userId, mode)
             val episodeRef = EpisodeRef(
                 userId = userId,
                 mode = mode,
-                bookId = bookId,
-                episodeId = episodeId
+                bookId = getBookId(userId, mode, newNumber),
+                episodeId = getEpisodeId(userId, mode, newNumber)
             )
-            val bookInfo = BookInfoModel(
-                id = bookId,
-                introduce = IntroduceModel(
-                    title = "새로운 작품 $newNumber",
-                    coverList = listOf(),
-                    keywordList = listOf(),
-                    description = ""
-                ),
-                editor = EditorModel(
-                    editorId = "editor",
-                    editorName = "테스터",
-                    editorEmail = "tester@example.com"
-                )
-            )
-
-            val episodeInfo = EpisodeInfoModel(
-                bookId = bookId,
-                createTime = currentTime,
-                editTime = currentTime,
-                id = episodeRef.episodeId,
-                readMode = ReadMode.EDIT,
-                title = "",
-                pageCount = 0,
-                version = 0
-            )
-
-            val logic = LogicModel(
-                id = 0,
-                logics = listOf()
-            )
+            val (bookInfo, episodeInfo, logic) = makeNewBookInfo(episodeRef, newNumber, editorInfo)
 
             useCaseBookList.addUserEditBook(
                 episodeRef = episodeRef,
@@ -276,7 +252,7 @@ class EditorTabViewModel @Inject constructor(
             sortBookList(listTarget, uiState.value.bookSortOrder)
             pagedBookList(listTarget, 0)
             setLoadStateIdle()
-        }else{
+        } else {
             setLoadState(
                 loadState = LoadState.AlarmDialog(
                     title = "알림",
@@ -408,5 +384,40 @@ class EditorTabViewModel @Inject constructor(
             .forEach {
                 it.selected.value = false
             }
+    }
+
+    private fun makeNewBookInfo(
+        episodeRef: EpisodeRef,
+        newNumber: Int,
+        editor: EditorModel
+    ): Triple<BookInfoModel, EpisodeInfoModel, LogicModel> {
+        val currentTime = System.currentTimeMillis()
+        val bookInfo = BookInfoModel(
+            id = episodeRef.bookId,
+            introduce = IntroduceModel(
+                title = "새로운 작품 $newNumber",
+                coverList = listOf(),
+                keywordList = listOf(),
+                description = ""
+            ),
+            editor = editor
+        )
+
+        val episodeInfo = EpisodeInfoModel(
+            bookId = episodeRef.bookId,
+            createTime = currentTime,
+            editTime = currentTime,
+            id = episodeRef.episodeId,
+            readMode = episodeRef.mode,
+            title = "",
+            pageCount = 0,
+            version = 0
+        )
+
+        val logic = LogicModel(
+            id = 0,
+            logics = listOf()
+        )
+        return Triple(bookInfo, episodeInfo, logic)
     }
 }
