@@ -23,6 +23,7 @@ import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.paged
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -255,10 +256,10 @@ class EditorTabViewModel @Inject constructor(
         } else {
             setLoadState(
                 loadState = LoadState.AlarmDialog(
-                    title = "알림",
-                    message = "편집 작품의 개수를 초과했습니다. \n작품 한도는 ${EDIT_BOOKS_LIMIT}개 입니다. \n작품을 삭제해주세요.",
+                    title = useCaseGetResource.string(com.fancymansion.core.common.R.string.alarm),
+                    message = useCaseGetResource.string(R.string.edit_book_message_book_limit_exceeded, EDIT_BOOKS_LIMIT),
                     dismissText = null,
-                    confirmText = "확인",
+                    confirmText = useCaseGetResource.string(com.fancymansion.core.common.R.string.confirm),
                     onConfirm = ::setLoadStateIdle
                 )
             )
@@ -402,7 +403,7 @@ class EditorTabViewModel @Inject constructor(
         val bookInfo = BookInfoModel(
             id = episodeRef.bookId,
             introduce = IntroduceModel(
-                title = "새로운 작품 $newNumber",
+                title = useCaseGetResource.string(R.string.edit_book_new_book_title, newNumber),
                 coverList = listOf(),
                 keywordList = listOf(),
                 description = ""

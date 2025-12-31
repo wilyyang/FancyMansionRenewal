@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
@@ -78,34 +79,42 @@ fun EditorTabHeader(
         ) {
             if(isEditMode){
                 Text(
-                    modifier = Modifier.padding(end = 12.dp).clickSingle {
-                        onEventSent(EditorTabContract.Event.BookHolderSelectAll)
-                    },
-                    text = "전체",
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .clickSingle {
+                            onEventSent(EditorTabContract.Event.BookHolderSelectAll)
+                        },
+                    text = stringResource(id = R.string.edit_book_header_select_all),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
                 Text(
-                    modifier = Modifier.padding(end = 12.dp).clickSingle {
-                        onEventSent(EditorTabContract.Event.BookHolderDeselectAll)
-                    },
-                    text = "해제",
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .clickSingle {
+                            onEventSent(EditorTabContract.Event.BookHolderDeselectAll)
+                        },
+                    text = stringResource(id = R.string.edit_book_header_deselect_all),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
                 Text(
-                    modifier = Modifier.padding(end = 12.dp).clickSingle {
-                        onEventSent(EditorTabContract.Event.BookHolderAddBook)
-                    },
-                    text = "추가",
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .clickSingle {
+                            onEventSent(EditorTabContract.Event.BookHolderAddBook)
+                        },
+                    text = stringResource(id = R.string.edit_book_header_add),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
                 Text(
-                    modifier = Modifier.padding(end = 12.dp).clickSingle {
-                        onEventSent(EditorTabContract.Event.BookHolderDeleteBook)
-                    },
-                    text = "삭제",
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .clickSingle {
+                            onEventSent(EditorTabContract.Event.BookHolderDeleteBook)
+                        },
+                    text = stringResource(id = R.string.edit_book_header_delete),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -113,7 +122,7 @@ fun EditorTabHeader(
                     modifier = Modifier.clickSingle {
                         onEventSent(EditorTabContract.Event.BookListExitEditMode)
                     },
-                    text = "완료",
+                    text = stringResource(id = R.string.edit_book_header_mode_complete),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             } else {
@@ -121,7 +130,7 @@ fun EditorTabHeader(
                     modifier = Modifier.clickSingle {
                         onEventSent(EditorTabContract.Event.BookListEnterEditMode)
                     },
-                    text = "편집",
+                    text = stringResource(id = R.string.edit_book_header_mode_edit),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             }
@@ -157,7 +166,7 @@ fun EditBookHolder(
                     .align(Alignment.Center),
                 painter = painter,
                 contentScale = ContentScale.FillWidth,
-                contentDescription = ""
+                contentDescription = "Book Holder Thumbnail"
             )
         }
 
@@ -173,13 +182,19 @@ fun EditBookHolder(
 
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "${formatTimestampLegacy(bookState.bookInfo.editTime)} 편집됨",
+                text = stringResource(
+                    id = R.string.edit_book_holder_edit_date,
+                    formatTimestampLegacy(bookState.bookInfo.editTime)
+                ),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Text(
                 modifier = Modifier.padding(top = 5.dp),
-                text = "총 ${bookState.bookInfo.pageCount} 페이지",
+                text = stringResource(
+                    id = R.string.edit_book_holder_page_count,
+                    bookState.bookInfo.pageCount
+                ),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )

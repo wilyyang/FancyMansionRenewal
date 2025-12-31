@@ -2,12 +2,16 @@ package com.fancymansion.presentation.main.tab.editor.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -15,6 +19,7 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.window.TypePane
+import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.tab.TabBaseScreen
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import kotlinx.coroutines.flow.SharedFlow
@@ -79,5 +84,20 @@ fun EditorTabSkeletonScreen() {
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surface),
     ) {
+        FadeInOutSkeleton(
+            modifier = Modifier.height(200.dp).width(350.dp)
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        FadeInOutSkeleton(
+            modifier = Modifier.height(200.dp).width(300.dp)
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        FadeInOutSkeleton(
+            modifier = Modifier.height(200.dp).width(350.dp)
+        )
     }
 }

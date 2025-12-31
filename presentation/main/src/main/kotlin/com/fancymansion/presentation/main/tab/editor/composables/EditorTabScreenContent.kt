@@ -2,7 +2,6 @@ package com.fancymansion.presentation.main.tab.editor.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,8 +18,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight.Companion.Medium
-import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
@@ -29,7 +26,6 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
-import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.editor.composables.part.BottomBookPagination
@@ -114,14 +110,14 @@ fun EditorTabScreenContent(
                         .height(35.dp)
                         .clickSingle(
                             enabled = !uiState.isEditMode
-                        ){
+                        ) {
                             focusManager.clearFocus()
                             onEventSent(EditorTabContract.Event.SearchCancel)
                         }
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
-                        text = "취소",
+                        text = stringResource(R.string.edit_book_search_text_cancel),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -143,7 +139,7 @@ fun EditorTabScreenContent(
                             .padding(vertical = 18.dp, horizontal = 14.dp)
                     ) {
                         Text(
-                            text = "작품",
+                            text = stringResource(id = R.string.edit_book_bar_title),
                             style = MaterialTheme.typography.titleSmall
                         )
                     }
