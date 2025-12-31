@@ -32,6 +32,7 @@ import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.tab.editor.composables.part.BottomBookPagination
 import com.fancymansion.presentation.main.tab.editor.composables.part.EditBookHolder
 import com.fancymansion.presentation.main.tab.editor.composables.part.EditorTabHeader
 import com.fancymansion.presentation.main.tab.editor.composables.part.SearchTextField
@@ -182,26 +183,16 @@ fun EditorTabScreenContent(
                 }
 
                 item{
-                    Row(
+                    BottomBookPagination(
                         modifier = Modifier
                             .padding(vertical = 50.dp)
                             .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ){
-                        for(i in 0 until uiState.totalPageCount){
-                            Text(
-                                modifier = Modifier
-                                    .padding(end = if (i < uiState.totalPageCount - 1) 30.dp else 0.dp)
-                                    .clickSingle {
-                                        onEventSent(EditorTabContract.Event.BookPageNumberClicked(i))
-                                    },
-                                text = "${i + 1}",
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (i == uiState.currentPage) SemiBold else Medium),
-                                color = if (i == uiState.currentPage) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
-                            )
+                        currentPage = uiState.currentPage,
+                        totalPageCount = uiState.totalPageCount,
+                        onClickPageNumber = {
+                            onEventSent(EditorTabContract.Event.BookPageNumberClicked(it))
                         }
-                    }
+                    )
                 }
             }
         }
