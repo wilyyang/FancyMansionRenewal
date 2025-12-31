@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.compose.modifier.addFocusCleaner
+import com.fancymansion.core.presentation.compose.modifier.addFocusCleanerWhenImeVisible
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.modifier.customImePadding
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
@@ -72,7 +72,7 @@ fun EditorBookOverviewScreenContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .customImePadding()
-                        .addFocusCleaner(focusManager)
+                        .addFocusCleanerWhenImeVisible(focusManager)
                 ) {
 
                     item {

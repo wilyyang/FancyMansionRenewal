@@ -23,6 +23,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.compose.modifier.addFocusCleanerWhenImeVisible
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
@@ -125,7 +126,9 @@ fun EditorTabScreenContent(
 
             LazyColumn(
                 state = listState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addFocusCleanerWhenImeVisible(focusManager)
             ) {
                 item {
                     Row(
@@ -152,7 +155,6 @@ fun EditorTabScreenContent(
                             .padding(vertical = 18.dp, horizontal = 14.dp),
                         isEditMode = uiState.isEditMode,
                         bookSortOrder = uiState.bookSortOrder,
-                        focusManager = focusManager,
                         onEventSent = onEventSent
                     )
                 }

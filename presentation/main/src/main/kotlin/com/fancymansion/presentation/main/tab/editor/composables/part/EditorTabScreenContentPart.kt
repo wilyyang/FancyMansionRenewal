@@ -48,7 +48,6 @@ fun EditorTabHeader(
     modifier: Modifier,
     isEditMode: Boolean,
     bookSortOrder: EditBookSortOrder,
-    focusManager: FocusManager,
     onEventSent: (event: EditorTabContract.Event) -> Unit
 ) {
     val context = LocalContext.current
@@ -59,9 +58,6 @@ fun EditorTabHeader(
             modifier = Modifier.width(140.dp),
             options = EditBookSortOrder.entries.toTypedArray(),
             selectedOption = bookSortOrder,
-            onClickDropdownTitle = {
-                focusManager.clearFocus()
-            },
             getDisplayName = {
                 context.getString(it.textResId)
             },

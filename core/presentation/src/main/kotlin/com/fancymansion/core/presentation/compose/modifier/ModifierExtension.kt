@@ -4,12 +4,17 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 
 fun Modifier.scaleOnPress(
     interactionSource: InteractionSource,
@@ -35,8 +40,16 @@ fun Modifier.scaleOnPress(
  * detectTapGestures : 탭 관련 동작 감지용
  * focusManager.clearFocus() : 전달 받은 포커스매니저를 통해 포커스 해제
  */
-fun Modifier.addFocusCleaner(focusManager: FocusManager) = pointerInput(Unit) {
-    this.detectTapGestures {
-        focusManager.clearFocus()
+@Composable
+fun Modifier.addFocusCleanerWhenImeVisible(focusManager: FocusManager): Modifier {
+    val density = LocalDensity.current
+    val isImeVisible = WindowInsets.ime.getBottom(density) > 0
+    val fm by rememberUpdatedState(focusManager)
+
+    return if (!isImeVisible) this
+    else pointerInput(isImeVisible) {
+        detectTapGestures {
+            fm.clearFocus()
+        }
     }
 }
