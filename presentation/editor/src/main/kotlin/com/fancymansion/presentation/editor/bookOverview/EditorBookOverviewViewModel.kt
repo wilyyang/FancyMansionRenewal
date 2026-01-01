@@ -11,7 +11,6 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
-import com.fancymansion.core.presentation.base.screen.EditorBookOverviewResult
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
