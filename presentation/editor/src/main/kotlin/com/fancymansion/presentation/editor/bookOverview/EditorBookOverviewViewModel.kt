@@ -202,6 +202,15 @@ class EditorBookOverviewViewModel @Inject constructor(
                     }
                 }
             }
+            is CommonEvent.CloseEvent -> {
+                if(uiState.value.isInitSuccess){
+                    checkBookInfoEdited {
+                        super.handleCommonEvents(CommonEvent.CloseEvent)
+                    }
+                }else{
+                    super.handleCommonEvents(CommonEvent.CloseEvent)
+                }
+            }
             else -> super.handleCommonEvents(event)
         }
     }
@@ -213,6 +222,11 @@ class EditorBookOverviewViewModel @Inject constructor(
                 keywordStates.add(createKeywordState(it, false))
             }
             loadBookInfoFromFile()
+            setState {
+                copy(
+                    isInitSuccess = bookInfo.id.isNotBlank()
+                )
+            }
         }
     }
 

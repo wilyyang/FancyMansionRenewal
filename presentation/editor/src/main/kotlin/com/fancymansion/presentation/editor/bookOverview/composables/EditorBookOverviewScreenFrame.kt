@@ -130,7 +130,7 @@ fun EditorBookOverviewScreenFrame(
                 },
                 title = stringResource(id = R.string.topbar_editor_title_overview),
                 subTitle = stringResource(id = R.string.topbar_editor_sub_title),
-                sideRightText = stringResource(id = R.string.topbar_editor_side_save),
+                sideRightText = if(uiState.isInitSuccess) stringResource(id = R.string.topbar_editor_side_save) else null,
                 onClickRightIcon = {
                     focusManager.clearFocus()
                     onEventSent(EditorBookOverviewContract.Event.OverviewInfoSaveToFile)

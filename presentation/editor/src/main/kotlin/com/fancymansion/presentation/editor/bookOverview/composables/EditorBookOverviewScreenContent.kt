@@ -41,150 +41,148 @@ fun EditorBookOverviewScreenContent(
     onOpenEditKeywords: () -> Unit,
     focusManager : FocusManager
 ) {
-    uiState.bookInfo?.let { bookInfo ->
-        if (bookInfo.id.isBlank() || bookInfo.editor.editorId.isBlank()) {
-            Box(
-                modifier = modifier
-                    .background(color = MaterialTheme.colorScheme.surface)
-                    .fillMaxSize(), contentAlignment = Alignment.Center
+    if (!uiState.isInitSuccess) {
+        Box(
+            modifier = modifier
+                .background(color = MaterialTheme.colorScheme.surface)
+                .fillMaxSize(), contentAlignment = Alignment.Center
+        ) {
+
+            NoDataScreen(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                option1Title = StringValue.StringResource(resId = com.fancymansion.core.presentation.R.string.button_back),
+                onClickOption1 = {
+                    onCommonEventSent(CommonEvent.CloseEvent)
+                }
+            )
+        }
+    } else {
+
+        val commonPartModifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.surface)
+            .padding(horizontal = Paddings.Basic.horizontal)
+
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surface)){
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .customImePadding()
+                    .addFocusCleanerWhenImeVisible(focusManager)
             ) {
 
-                NoDataScreen(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    option1Title = StringValue.StringResource(resId = com.fancymansion.core.presentation.R.string.button_back),
-                    onClickOption1 = {
-                        onCommonEventSent(CommonEvent.CloseEvent)
-                    }
-                )
-            }
-        } else {
-
-            val commonPartModifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.surface)
-                .padding(horizontal = Paddings.Basic.horizontal)
-
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface)){
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .customImePadding()
-                        .addFocusCleanerWhenImeVisible(focusManager)
-                ) {
-
-                    item {
-                        EditOverviewCoverImage(
-                            modifier = commonPartModifier,
-                            imagePickType = uiState.imagePickType,
-                            onClickGalleryCoverPick = {
-                                focusManager.clearFocus()
-                                onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
-                            },
-                            onClickCoverImageReset = {
-                                focusManager.clearFocus()
-                                onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
-                            }
-                        )
-                    }
-
-                    item {
-                        EditOverviewTitle(
-                            modifier = commonPartModifier,
-                            title = uiState.bookInfo.introduce.title,
-                            updateBookInfoTitle = {
-                                onEventSent(EditorBookOverviewContract.Event.EditBookInfoTitle(title = it))
-                            }
-                        )
-                    }
-
-                    item{
-                        EditOverviewKeyword(
-                            modifier = commonPartModifier,
-                            keywordStates = keywordStates,
-                            onOpenEditKeywords = {
-                                focusManager.clearFocus()
-                                onOpenEditKeywords()
-                            }
-                        )
-                    }
-
-                    item{
-                        EditOverviewPageList(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = MaterialTheme.colorScheme.surface),
-                            pageBriefList = uiState.pageBriefList,
-                            onPageListMoreClicked = {
-                                focusManager.clearFocus()
-                                onEventSent(EditorBookOverviewContract.Event.EditorPageListClicked)
-                            },
-                            onPageListEditModeClicked = {
-                                focusManager.clearFocus()
-                                onEventSent(EditorBookOverviewContract.Event.EditorPageListEditModeClicked)
-                            },
-                            onPageContentButtonClicked = {
-                                focusManager.clearFocus()
-                                onEventSent(
-                                    EditorBookOverviewContract.Event.EditorPageContentButtonClicked(
-                                        it
-                                    )
-                                )
-                            }
-                        )
-                    }
-
-                    item{
-                        EditOverviewDescription(
-                            modifier = commonPartModifier,
-                            description = uiState.bookInfo.introduce.description,
-                            updateBookInfoDescription = {
-                                onEventSent(EditorBookOverviewContract.Event.EditBookInfoDescription(description = it))
-                            }
-                        )
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(80.dp))
-                    }
+                item {
+                    EditOverviewCoverImage(
+                        modifier = commonPartModifier,
+                        imagePickType = uiState.imagePickType,
+                        onClickGalleryCoverPick = {
+                            focusManager.clearFocus()
+                            onEventSent(EditorBookOverviewContract.Event.GalleryBookCoverPickerRequest)
+                        },
+                        onClickCoverImageReset = {
+                            focusManager.clearFocus()
+                            onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
+                        }
+                    )
                 }
 
+                item {
+                    EditOverviewTitle(
+                        modifier = commonPartModifier,
+                        title = uiState.bookInfo.introduce.title,
+                        updateBookInfoTitle = {
+                            onEventSent(EditorBookOverviewContract.Event.EditBookInfoTitle(title = it))
+                        }
+                    )
+                }
+
+                item{
+                    EditOverviewKeyword(
+                        modifier = commonPartModifier,
+                        keywordStates = keywordStates,
+                        onOpenEditKeywords = {
+                            focusManager.clearFocus()
+                            onOpenEditKeywords()
+                        }
+                    )
+                }
+
+                item{
+                    EditOverviewPageList(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = MaterialTheme.colorScheme.surface),
+                        pageBriefList = uiState.pageBriefList,
+                        onPageListMoreClicked = {
+                            focusManager.clearFocus()
+                            onEventSent(EditorBookOverviewContract.Event.EditorPageListClicked)
+                        },
+                        onPageListEditModeClicked = {
+                            focusManager.clearFocus()
+                            onEventSent(EditorBookOverviewContract.Event.EditorPageListEditModeClicked)
+                        },
+                        onPageContentButtonClicked = {
+                            focusManager.clearFocus()
+                            onEventSent(
+                                EditorBookOverviewContract.Event.EditorPageContentButtonClicked(
+                                    it
+                                )
+                            )
+                        }
+                    )
+                }
+
+                item{
+                    EditOverviewDescription(
+                        modifier = commonPartModifier,
+                        description = uiState.bookInfo.introduce.description,
+                        updateBookInfoDescription = {
+                            onEventSent(EditorBookOverviewContract.Event.EditBookInfoDescription(description = it))
+                        }
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .borderLine(
+                        density = LocalDensity.current,
+                        color = MaterialTheme.colorScheme.outline,
+                        top = 1.dp
+                    )
+            ) {
 
                 Box(
                     modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .borderLine(
-                            density = LocalDensity.current,
-                            color = MaterialTheme.colorScheme.outline,
-                            top = 1.dp
+                        .padding(vertical = 11.dp, horizontal = 14.dp)
+                        .fillMaxSize()
+                        .clip(
+                            shape = MaterialTheme.shapes.small
                         )
+                        .background(color = MaterialTheme.colorScheme.primary)
+                        .clickSingle {
+                            focusManager.clearFocus()
+                            onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
+                        }
                 ) {
-
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 11.dp, horizontal = 14.dp)
-                            .fillMaxSize()
-                            .clip(
-                                shape = MaterialTheme.shapes.small
-                            )
-                            .background(color = MaterialTheme.colorScheme.primary)
-                            .clickSingle {
-                                focusManager.clearFocus()
-                                onEventSent(EditorBookOverviewContract.Event.BookOverviewButtonClicked)
-                            }
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = stringResource(id = R.string.edit_overview_button_overview_preview),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = stringResource(id = R.string.edit_overview_button_overview_preview),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
         }

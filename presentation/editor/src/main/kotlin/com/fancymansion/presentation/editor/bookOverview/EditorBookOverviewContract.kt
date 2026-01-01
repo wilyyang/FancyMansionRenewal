@@ -10,6 +10,8 @@ import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EditorModel
+import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.KeywordModel
 
 data class PageBrief(val id : Long, val title : String, val type: PageType, val selectorCount : Int)
@@ -24,7 +26,12 @@ class EditorBookOverviewContract {
     }
 
     data class State(
-        val bookInfo : BookInfoModel? = null,
+        val isInitSuccess : Boolean = false,
+        val bookInfo : BookInfoModel = BookInfoModel(
+            id = "",
+            editor = EditorModel(),
+            introduce = IntroduceModel()
+        ),
         val pageBriefList : List<PageBrief> = emptyList(),
         val imagePickType : ImagePickType = ImagePickType.Empty
     ) : ViewState
