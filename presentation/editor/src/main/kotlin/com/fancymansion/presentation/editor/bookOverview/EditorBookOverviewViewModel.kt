@@ -11,6 +11,7 @@ import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.core.presentation.base.screen.EditorBookOverviewResult
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
@@ -61,7 +62,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             EditorBookOverviewContract.Event.OverviewInfoSaveToFile -> {
                 launchWithLoading(endLoadState = null) {
                     val isComplete: Boolean =
-                        uiState.value.bookInfo?.let { book ->
+                        uiState.value.bookInfo.let { book ->
                             val newKeywordList =
                                 keywordStates.filter { it.selected.value }.map { it.keyword }
                             updateBookInfoAndReload(
@@ -87,7 +88,7 @@ class EditorBookOverviewViewModel @Inject constructor(
              * Edit BookInfo
              */
             is EditorBookOverviewContract.Event.EditBookInfoTitle -> {
-                uiState.value.bookInfo?.let { book ->
+                uiState.value.bookInfo.let { book ->
                     setState {
                         copy(
                             bookInfo = book.copy(
@@ -101,7 +102,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             is EditorBookOverviewContract.Event.EditBookInfoDescription -> {
-                uiState.value.bookInfo?.let { book ->
+                uiState.value.bookInfo.let { book ->
                     setState {
                         copy(
                             bookInfo = book.copy(
@@ -130,7 +131,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageContentScreen(
                             episodeRef = episodeRef,
-                            bookTitle = uiState.value.bookInfo!!.introduce.title,
+                            bookTitle = uiState.value.bookInfo.introduce.title,
                             pageId = event.pageId
                         )
                     }
@@ -143,7 +144,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen(
                             episodeRef = episodeRef,
-                            bookTitle = uiState.value.bookInfo!!.introduce.title,
+                            bookTitle = uiState.value.bookInfo.introduce.title,
                             isEditMode = false
                         )
                     }
@@ -156,7 +157,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                     setEffect {
                         EditorBookOverviewContract.Effect.Navigation.NavigateEditorPageListScreen(
                             episodeRef = episodeRef,
-                            bookTitle = uiState.value.bookInfo!!.introduce.title,
+                            bookTitle = uiState.value.bookInfo.introduce.title,
                             isEditMode = true
                         )
                     }
@@ -204,8 +205,16 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
             is CommonEvent.CloseEvent -> {
                 if(uiState.value.isInitSuccess){
-                    checkBookInfoEdited {
-                        super.handleCommonEvents(CommonEvent.CloseEvent)
+                    checkBookInfoEdited { isSaved ->
+                        if(isSaved){
+                            setEffect {
+                                EditorBookOverviewContract.Effect.Navigation.NavigateBackWithResult(
+                                    EditorBookOverviewResult(isEditSaved = isSaved)
+                                )
+                            }
+                        }else{
+                            super.handleCommonEvents(CommonEvent.CloseEvent)
+                        }
                     }
                 }else{
                     super.handleCommonEvents(CommonEvent.CloseEvent)
@@ -329,11 +338,11 @@ class EditorBookOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun checkBookInfoEdited(onCheckComplete: () -> Unit) {
+    private fun checkBookInfoEdited(onCheckComplete: (Boolean) -> Unit) {
         val newKeywordList = keywordStates.filter { it.selected.value }.map { it.keyword }
         if (savedBookInfo != uiState.value.bookInfo
             || savedPickType != uiState.value.imagePickType
-            || newKeywordList != uiState.value.bookInfo!!.introduce.keywordList
+            || newKeywordList != uiState.value.bookInfo.introduce.keywordList
         ) {
             setLoadState(
                 loadState = LoadState.AlarmDialog(
@@ -344,12 +353,12 @@ class EditorBookOverviewViewModel @Inject constructor(
                         //수정 중인 정보 파일 저장
                         launchWithLoading {
                             updateBookInfoAndReload(
-                                uiState.value.bookInfo!!,
+                                uiState.value.bookInfo,
                                 uiState.value.imagePickType,
                                 newKeywordList
                             )
                             setLoadStateIdle()
-                            onCheckComplete()
+                            onCheckComplete(true)
                         }
                     },
                     dismissText = StringValue.StringResource(com.fancymansion.core.common.R.string.cancel),
@@ -358,13 +367,13 @@ class EditorBookOverviewViewModel @Inject constructor(
                         launchWithLoading {
                             loadBookInfoFromFile()
                             setLoadStateIdle()
-                            onCheckComplete()
+                            onCheckComplete(false)
                         }
                     }
                 )
             )
         } else {
-            onCheckComplete()
+            onCheckComplete(false)
         }
     }
 }
