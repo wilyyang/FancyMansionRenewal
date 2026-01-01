@@ -205,16 +205,8 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
             is CommonEvent.CloseEvent -> {
                 if(uiState.value.isInitSuccess){
-                    checkBookInfoEdited { isSaved ->
-                        if(isSaved){
-                            setEffect {
-                                EditorBookOverviewContract.Effect.Navigation.NavigateBackWithResult(
-                                    EditorBookOverviewResult(isEditSaved = isSaved)
-                                )
-                            }
-                        }else{
-                            super.handleCommonEvents(CommonEvent.CloseEvent)
-                        }
+                    checkBookInfoEdited {
+                        super.handleCommonEvents(CommonEvent.CloseEvent)
                     }
                 }else{
                     super.handleCommonEvents(CommonEvent.CloseEvent)
@@ -338,7 +330,7 @@ class EditorBookOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun checkBookInfoEdited(onCheckComplete: (Boolean) -> Unit) {
+    private fun checkBookInfoEdited(onCheckComplete: () -> Unit) {
         val newKeywordList = keywordStates.filter { it.selected.value }.map { it.keyword }
         if (savedBookInfo != uiState.value.bookInfo
             || savedPickType != uiState.value.imagePickType
@@ -358,7 +350,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                                 newKeywordList
                             )
                             setLoadStateIdle()
-                            onCheckComplete(true)
+                            onCheckComplete()
                         }
                     },
                     dismissText = StringValue.StringResource(com.fancymansion.core.common.R.string.cancel),
@@ -367,13 +359,13 @@ class EditorBookOverviewViewModel @Inject constructor(
                         launchWithLoading {
                             loadBookInfoFromFile()
                             setLoadStateIdle()
-                            onCheckComplete(false)
+                            onCheckComplete()
                         }
                     }
                 )
             )
         } else {
-            onCheckComplete(false)
+            onCheckComplete()
         }
     }
 }

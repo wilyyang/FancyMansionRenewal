@@ -9,7 +9,6 @@ import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
-import com.fancymansion.core.presentation.base.screen.EditorBookOverviewResult
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.IntroduceModel
@@ -70,7 +69,6 @@ class EditorBookOverviewContract {
          */
         data object GalleryBookCoverPickerEffect : Effect()
         sealed class Navigation : Effect(){
-            data class NavigateBackWithResult(val result: EditorBookOverviewResult) : Navigation()
 
             data class NavigateEditorPageContentScreen(val episodeRef: EpisodeRef, val bookTitle: String, val pageId: Long) : Navigation()
             data class NavigateEditorPageListScreen(val episodeRef: EpisodeRef, val bookTitle: String, val isEditMode : Boolean) : Navigation()

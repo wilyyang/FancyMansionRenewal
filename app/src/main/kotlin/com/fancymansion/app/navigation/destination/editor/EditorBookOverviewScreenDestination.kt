@@ -54,11 +54,6 @@ fun EditorBookOverviewScreenDestination(
 
 fun handleNavigationRequest(effect: EditorBookOverviewContract.Effect, navController: NavController) {
     when (effect) {
-        is EditorBookOverviewContract.Effect.Navigation.NavigateBackWithResult -> {
-            // 임시 코드
-            navController.popBackStack()
-        }
-
         is EditorBookOverviewContract.Effect.Navigation.NavigateOverviewScreen -> {
             navController.navigateOverviewScreen(effect.episodeRef)
         }
