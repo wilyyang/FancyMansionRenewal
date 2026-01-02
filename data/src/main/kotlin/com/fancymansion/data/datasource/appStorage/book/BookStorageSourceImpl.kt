@@ -18,7 +18,9 @@ import com.fancymansion.data.datasource.appStorage.book.model.KeywordData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
 import com.fancymansion.data.datasource.appStorage.book.model.SourceData
+import com.fancymansion.data.datasource.appStorage.book.model.asData
 import com.fancymansion.data.datasource.appStorage.book.sample.SAMPLE_IMAGE_LIST
+import com.fancymansion.domain.model.book.KeywordModel
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
@@ -349,26 +351,52 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             "달려라, 토끼!", "섬광 속의 너", "조용한 혁명", "그림자 속에서", "하루의 끝"
         )
         val keywords = listOf(
-            "판타지",
-            "로맨스",
-            "스릴러",
-            "미스터리",
-            "성장",
-            "감성",
-            "드라마",
-            "모험",
-            "일상",
-            "SF",
-            "역사",
-            "동화",
-            "공포",
-            "학습",
-            "힐링",
-            "숲",
-            "바다",
-            "토론",
-            "종교"
-        )
+            KeywordModel(id = 1001, category = "장르", name = "판타지"),
+            KeywordModel(id = 1002, category = "장르", name = "로맨스"),
+            KeywordModel(id = 1003, category = "장르", name = "모험"),
+            KeywordModel(id = 1004, category = "장르", name = "드라마"),
+            KeywordModel(id = 1005, category = "장르", name = "스릴러"),
+            KeywordModel(id = 1006, category = "장르", name = "공포"),
+            KeywordModel(id = 1007, category = "장르", name = "SF"),
+            KeywordModel(id = 1008, category = "장르", name = "미스터리"),
+            KeywordModel(id = 1009, category = "장르", name = "코미디"),
+            KeywordModel(id = 1010, category = "장르", name = "역사"),
+
+            KeywordModel(id = 2001, category = "주제", name = "우정"),
+            KeywordModel(id = 2002, category = "주제", name = "자기 발견"),
+            KeywordModel(id = 2003, category = "주제", name = "용기"),
+            KeywordModel(id = 2004, category = "주제", name = "생물 다양성"),
+            KeywordModel(id = 2005, category = "주제", name = "성장 이야기"),
+            KeywordModel(id = 2006, category = "주제", name = "상상력"),
+            KeywordModel(id = 2007, category = "주제", name = "공동체"),
+            KeywordModel(id = 2008, category = "주제", name = "도전"),
+            KeywordModel(id = 2009, category = "주제", name = "희생"),
+            KeywordModel(id = 2010, category = "주제", name = "사랑"),
+            KeywordModel(id = 2011, category = "주제", name = "배신"),
+            KeywordModel(id = 2012, category = "주제", name = "복수"),
+            KeywordModel(id = 2013, category = "주제", name = "자유"),
+            KeywordModel(id = 2014, category = "주제", name = "권력"),
+            KeywordModel(id = 2015, category = "주제", name = "희망"),
+            KeywordModel(id = 2016, category = "주제", name = "절망"),
+
+            KeywordModel(id = 3001, category = "스타일", name = "리얼리즘"),
+            KeywordModel(id = 3002, category = "스타일", name = "서정적"),
+            KeywordModel(id = 3003, category = "스타일", name = "풍자적"),
+            KeywordModel(id = 3004, category = "스타일", name = "몽환적"),
+            KeywordModel(id = 3005, category = "스타일", name = "역설적"),
+            KeywordModel(id = 3006, category = "스타일", name = "비극적"),
+            KeywordModel(id = 3007, category = "스타일", name = "희극적"),
+            KeywordModel(id = 3008, category = "스타일", name = "서사적"),
+
+            KeywordModel(id = 4001, category = "배경", name = "중세"),
+            KeywordModel(id = 4002, category = "배경", name = "현대"),
+            KeywordModel(id = 4003, category = "배경", name = "근미래"),
+            KeywordModel(id = 4004, category = "배경", name = "고대"),
+            KeywordModel(id = 4005, category = "배경", name = "외계"),
+            KeywordModel(id = 4006, category = "배경", name = "가상세계"),
+            KeywordModel(id = 4007, category = "배경", name = "디스토피아"),
+            KeywordModel(id = 4008, category = "배경", name = "유토피아")
+        ).map { it.asData() }
 
         for (i in 0 until 30) {
             val bookId = getBookId(sampleUserId, ReadMode.EDIT, i)
@@ -390,19 +418,14 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             val coverResId = context.resources.getIdentifier(resourceFileName.substringBeforeLast("."), "drawable", context.packageName)
             makeCoverImageFromResource(userId, ReadMode.EDIT, bookId, coverFileName, coverResId)
 
+
             val bookInfo = BookInfoData(
                 id = bookId,
                 introduce = IntroduceData(
                     title = titles[i % titles.size],
                     coverList = listOf(coverFileName),
-                    keywordList = List((1..6).random()) {
-                        KeywordData(
-                            id = (1000 + i * 10 + it).toLong(),
-                            category = "장르",
-                            name = keywords.random()
-                        )
-                    },
-                    description = "${titles[i % titles.size]}는 ${keywords.random()}와 ${keywords.random()}이 어우러진 이야기입니다."
+                    keywordList = keywords.shuffled().take((1..minOf(6, keywords.size)).random()).sortedBy { it.id },
+                    description = "테스터 $i 가 만든 ${titles[i % titles.size]} 책입니다."
                 ),
                 editor = EditorData(
                     editorId = "editor_$i",
@@ -418,17 +441,17 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
 
             val episodeInfo = EpisodeInfoData(
                 bookId = bookId,
-                createTime = System.currentTimeMillis(),
+                createTime = editTime,
                 editTime = editTime,
                 id = episodeId,
                 readMode = ReadMode.EDIT,
-                title = "제 1화",
-                pageCount = (10..40).random(),
+                title = "",
+                pageCount = 0,
                 version = 0
             )
 
             val logic = LogicData(
-                id = i.toLong(),
+                id = 1,
                 logics = listOf()
             )
 
