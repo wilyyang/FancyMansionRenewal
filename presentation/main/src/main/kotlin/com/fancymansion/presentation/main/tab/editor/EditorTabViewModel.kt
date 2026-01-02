@@ -39,6 +39,7 @@ class EditorTabViewModel @Inject constructor(
 ) : BaseViewModel<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>() {
 
     private var isUpdateResume = false
+    private var lastOpenedBookId: String? = null
     private var userId: String = savedStateHandle.get<String>(NAME_USER_ID) ?: sampleEpisodeRef.userId
     private val mode: ReadMode = ReadMode.EDIT
     private lateinit var originBookInfoList: List<EditBookWrapper>
@@ -117,7 +118,6 @@ class EditorTabViewModel @Inject constructor(
 
     private fun handleOnResume() {
         if (isUpdateResume) {
-            // TODO 08.08 Scroll Position
             isUpdateResume = false
             launchWithLoading {
                 loadBookStateList()
@@ -128,7 +128,12 @@ class EditorTabViewModel @Inject constructor(
                 }
 
                 sortBookList(listTarget, uiState.value.bookSortOrder)
-                pagedBookList(listTarget, uiState.value.currentPage)
+
+                val updatePage = lastOpenedBookId?.let { id ->
+                    lastOpenedBookId = null
+                    getPageWithBookId(id)
+                } ?: uiState.value.currentPage
+                pagedBookList(listTarget, updatePage)
             }
         }
     }
@@ -142,6 +147,7 @@ class EditorTabViewModel @Inject constructor(
 
     private fun navigateEditBookScreen(bookId: String) {
         isUpdateResume = true
+        lastOpenedBookId = bookId
         setEffect {
             EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen(episodeRef = EpisodeRef(
                 userId = userId,
@@ -427,5 +433,15 @@ class EditorTabViewModel @Inject constructor(
             logics = listOf()
         )
         return Triple(bookInfo, episodeInfo, logic)
+    }
+
+    private fun getPageWithBookId(bookId: String):Int {
+        val target = when(listTarget){
+            ListTarget.ALL -> allBookStates
+            ListTarget.SEARCH -> searchResultBookStates
+        }
+        val bookIndex = target.indexOfFirst { it.bookInfo.bookId == bookId }
+        val currentPage = bookIndex / BOOKS_PER_PAGE
+        return currentPage
     }
 }
