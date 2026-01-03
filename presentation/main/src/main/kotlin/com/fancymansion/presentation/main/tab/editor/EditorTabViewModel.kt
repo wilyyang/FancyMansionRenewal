@@ -437,10 +437,10 @@ class EditorTabViewModel @Inject constructor(
         )
 
         val logic = LogicModel(
-            id = 0,
+            id = NEW_BOOK_DRAFT_INITIAL_LOGIC_ID,
             logics = listOf(
                 PageLogicModel(
-                    1,
+                    NEW_BOOK_DRAFT_START_PAGE_ID,
                     PageType.START,
                     useCaseGetResource.string(R.string.edit_book_new_book_start_page_title)
                 )
@@ -448,7 +448,7 @@ class EditorTabViewModel @Inject constructor(
         )
 
         val startPage = PageModel(
-            1,
+            NEW_BOOK_DRAFT_START_PAGE_ID,
             useCaseGetResource.string(R.string.edit_book_new_book_start_page_title),
             listOf()
         )

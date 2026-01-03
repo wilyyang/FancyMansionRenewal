@@ -47,8 +47,8 @@ fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper(thumbnail: ImagePickType) : 
     )
 }
 
-private const val NEW_BOOK_DRAFT_INITIAL_LOGIC_ID = 0
-private const val NEW_BOOK_DRAFT_START_PAGE_ID = 1
+const val NEW_BOOK_DRAFT_INITIAL_LOGIC_ID = 0L
+const val NEW_BOOK_DRAFT_START_PAGE_ID = 1L
 data class NewBookDraft(
     val bookInfo:BookInfoModel,
     val episodeInfo: EpisodeInfoModel,
