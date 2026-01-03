@@ -247,20 +247,14 @@ class EditorBookOverviewViewModel @Inject constructor(
         pickType: ImagePickType,
         newKeywordList: List<KeywordModel>
     ): Boolean {
-        return updateBookInfoDetail(book, newKeywordList) && updateBookCoverImage(book, pickType)
-    }
-
-    private suspend fun updateBookInfoDetail(
-        book: BookInfoModel,
-        newKeywordList: List<KeywordModel>
-    ): Boolean {
-        return useCaseMakeBook.makeBookInfo(
-            episodeRef, book.copy(
-                introduce = book.introduce.copy(
-                    keywordList = newKeywordList
-                )
+        val bookWithUpdatedKeywords = book.copy(
+            introduce = book.introduce.copy(
+                keywordList = newKeywordList
             )
         )
+        return useCaseMakeBook.makeBookInfo(
+            episodeRef, bookWithUpdatedKeywords
+        ) && updateBookCoverImage(bookWithUpdatedKeywords, pickType)
     }
 
     private suspend fun updateBookCoverImage(
