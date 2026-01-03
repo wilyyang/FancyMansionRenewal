@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
@@ -294,7 +295,7 @@ fun BottomBookPagination(
 
         Row(
             modifier = Modifier
-                .width(180.dp)
+                .width(200.dp)
                 .fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -302,11 +303,13 @@ fun BottomBookPagination(
             for (page in windowStart until windowEndExclusive) {
                 Text(
                     modifier = Modifier
-                        .padding(end = if (page < windowEndExclusive - 1) 30.dp else 0.dp)
+                        .padding(end = if (page < windowEndExclusive - 1) 25.dp else 0.dp)
+                        .width(20.dp)
                         .clickSingle(
                             enabled = totalPageCount > 0
                         ) { onClickPageNumber(page) },
                     text = "${page + 1}",
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = if (page == currentPage) FontWeight.SemiBold else FontWeight.Medium
                     ),

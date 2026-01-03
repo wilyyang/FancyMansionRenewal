@@ -9,6 +9,7 @@ import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -21,7 +22,8 @@ class UseCaseBookList @Inject constructor(
         episodeRef: EpisodeRef,
         bookInfo: BookInfoModel,
         episodeInfo: EpisodeInfoModel,
-        logic: LogicModel
+        logic: LogicModel,
+        startPage: PageModel
     ): Boolean =
         withContext(dispatcher) {
             bookLocalRepository.makeBookDir(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
@@ -35,7 +37,9 @@ class UseCaseBookList @Inject constructor(
             ) && bookLocalRepository.makeEpisodeInfo(
                 episodeRef,
                 episodeInfo
-            ) && bookLocalRepository.makeLogic(episodeRef, logic)
+            ) && bookLocalRepository.makeLogic(
+                episodeRef, logic
+            ) && bookLocalRepository.makePage(episodeRef, startPage.id, startPage)
         }
 
     suspend fun deleteUserEditBook(userId: String, bookId : String) =

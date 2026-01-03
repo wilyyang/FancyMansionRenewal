@@ -3,10 +3,9 @@ package com.fancymansion.presentation.main.tab.editor
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
-import com.fancymansion.core.common.const.BOOKS_PER_PAGE
-import com.fancymansion.core.common.const.EDIT_BOOKS_LIMIT
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PageType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
@@ -20,10 +19,14 @@ import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageLogicModel
+import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.common.BOOKS_PER_PAGE
+import com.fancymansion.presentation.main.common.EDIT_BOOKS_LIMIT
 import com.fancymansion.presentation.main.common.paged
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +89,7 @@ class EditorTabViewModel @Inject constructor(
             BookListExitEditMode -> handleExitEditMode()
 
             BookHolderSelectAll -> selectVisibleHolders()
-            BookHolderDeselectAll -> deselectVisibleHolders()
+            BookHolderDeselectAll -> deselectAllHolders()
 
             BookHolderAddBook -> handleAddBook()
             BookHolderDeleteBook -> handleDeleteSelectedBooks()
@@ -125,6 +128,15 @@ class EditorTabViewModel @Inject constructor(
                 when(listTarget){
                     ListTarget.ALL -> searchBookListClear()
                     ListTarget.SEARCH -> searchBookList(uiState.value.searchText)
+                }
+
+                // 이전에 검색 목록인 경우, 제목 변경으로 요소를 찾을 수 없으면 검색 취소
+                if (listTarget == ListTarget.SEARCH) {
+                    lastOpenedBookId?.let { bookId ->
+                        if (!containsBookId(listTarget, bookId)) {
+                            exitSearchMode()
+                        }
+                    }
                 }
 
                 sortBookList(listTarget, uiState.value.bookSortOrder)
@@ -176,16 +188,9 @@ class EditorTabViewModel @Inject constructor(
     }
 
     private fun handleSearchCancel() = launchWithLoading{
-        listTarget = ListTarget.ALL
-        searchBookListClear()
+        exitSearchMode()
         sortBookList(listTarget, uiState.value.bookSortOrder)
         pagedBookList(listTarget, 0)
-
-        setState {
-            copy(
-                searchText = ""
-            )
-        }
     }
     private fun handleBookSortOrder(sortOrder: EditBookSortOrder) = launchWithLoading {
         when(listTarget){
@@ -240,6 +245,10 @@ class EditorTabViewModel @Inject constructor(
 
     private fun handleAddBook() = launchWithLoading(endLoadState = null) {
         if (allBookStates.size < EDIT_BOOKS_LIMIT) {
+
+            // 선택된 책 ID 저장
+            val selectedIdSet = allBookStates.filter { it.selected.value }.map { it.bookInfo.bookId }.toSet()
+
             val newNumber = nextBookNumber(originBookInfoList.map { it.bookId }, userId, mode)
             val episodeRef = EpisodeRef(
                 userId = userId,
@@ -247,17 +256,24 @@ class EditorTabViewModel @Inject constructor(
                 bookId = getBookId(userId, mode, newNumber),
                 episodeId = getEpisodeId(userId, mode, newNumber)
             )
-            val (bookInfo, episodeInfo, logic) = makeNewBookInfo(episodeRef, newNumber, editorInfo)
+            val (bookInfo, episodeInfo, logic, startPage) = createNewBookDraft(episodeRef, newNumber, editorInfo)
 
             useCaseBookList.addUserEditBook(
                 episodeRef = episodeRef,
                 bookInfo = bookInfo,
                 episodeInfo = episodeInfo,
-                logic = logic
+                logic = logic,
+                startPage = startPage
             )
             loadBookStateList()
             sortBookList(listTarget, uiState.value.bookSortOrder)
             pagedBookList(listTarget, 0)
+
+            // 선택된 책 ID 복원
+            allBookStates.forEach { state ->
+                state.selected.value = state.bookInfo.bookId in selectedIdSet
+            }
+
             setLoadStateIdle()
         } else {
             setLoadState(
@@ -388,23 +404,15 @@ class EditorTabViewModel @Inject constructor(
             }
     }
 
-    private fun deselectVisibleHolders() = launchWithLoading {
-        val visibleIds = uiState.value.visibleBookList
-            .map { it.bookInfo.bookId }
-            .toSet()
-
-        allBookStates
-            .filter { it.bookInfo.bookId in visibleIds }
-            .forEach {
-                it.selected.value = false
-            }
+    private fun deselectAllHolders() = launchWithLoading {
+        allBookStates.forEach { it.selected.value = false }
     }
 
-    private fun makeNewBookInfo(
+    private fun createNewBookDraft(
         episodeRef: EpisodeRef,
         newNumber: Int,
         editor: EditorModel
-    ): Triple<BookInfoModel, EpisodeInfoModel, LogicModel> {
+    ): NewBookDraft {
         val currentTime = System.currentTimeMillis()
         val bookInfo = BookInfoModel(
             id = episodeRef.bookId,
@@ -424,15 +432,27 @@ class EditorTabViewModel @Inject constructor(
             id = episodeRef.episodeId,
             readMode = episodeRef.mode,
             title = "",
-            pageCount = 0,
+            pageCount = 1,
             version = 0
         )
 
         val logic = LogicModel(
             id = 0,
-            logics = listOf()
+            logics = listOf(
+                PageLogicModel(
+                    1,
+                    PageType.START,
+                    useCaseGetResource.string(R.string.edit_book_new_book_start_page_title)
+                )
+            )
         )
-        return Triple(bookInfo, episodeInfo, logic)
+
+        val startPage = PageModel(
+            1,
+            useCaseGetResource.string(R.string.edit_book_new_book_start_page_title),
+            listOf()
+        )
+        return NewBookDraft(bookInfo, episodeInfo, logic, startPage)
     }
 
     private fun getPageWithBookId(bookId: String):Int {
@@ -443,5 +463,20 @@ class EditorTabViewModel @Inject constructor(
         val bookIndex = target.indexOfFirst { it.bookInfo.bookId == bookId }
         val currentPage = bookIndex / BOOKS_PER_PAGE
         return currentPage
+    }
+
+    private fun containsBookId(target: ListTarget, bookId: String): Boolean = when (target) {
+        ListTarget.ALL -> allBookStates
+        ListTarget.SEARCH -> searchResultBookStates
+    }.any { it.bookInfo.bookId == bookId }
+
+    private fun exitSearchMode(){
+        listTarget = ListTarget.ALL
+        searchBookListClear()
+        setState {
+            copy(
+                searchText = ""
+            )
+        }
     }
 }

@@ -166,6 +166,3 @@ enum class LogicalOp(
 
 const val PAGE_TITLE_ELLIPSIS_LENGTH = 12
 const val SELECTOR_TEXT_ELLIPSIS_LENGTH = 12
-
-const val BOOKS_PER_PAGE = 10
-const val EDIT_BOOKS_LIMIT = BOOKS_PER_PAGE * 5

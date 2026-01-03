@@ -9,6 +9,8 @@ import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
+import com.fancymansion.domain.model.book.LogicModel
+import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.presentation.main.R
 
 enum class ListTarget{
@@ -44,6 +46,15 @@ fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper(thumbnail: ImagePickType) : 
         keywords = bookInfo.introduce.keywordList
     )
 }
+
+private const val NEW_BOOK_DRAFT_INITIAL_LOGIC_ID = 0
+private const val NEW_BOOK_DRAFT_START_PAGE_ID = 1
+data class NewBookDraft(
+    val bookInfo:BookInfoModel,
+    val episodeInfo: EpisodeInfoModel,
+    val logic: LogicModel,
+    val startPage: PageModel
+)
 
 class EditorTabContract {
     companion object {
