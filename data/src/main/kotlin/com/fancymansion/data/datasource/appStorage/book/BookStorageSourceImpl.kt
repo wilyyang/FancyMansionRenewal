@@ -305,7 +305,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         /**
          * Make Edit Book Samples
          */
-        makeEditBookInfoSampleList(episodeRef.userId)
+//        makeEditBookInfoSampleList(episodeRef.userId)
 
         // make sample file
         return makeBookInfo(

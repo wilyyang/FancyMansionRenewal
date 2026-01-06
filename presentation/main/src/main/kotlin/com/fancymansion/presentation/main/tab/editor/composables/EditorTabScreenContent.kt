@@ -53,7 +53,7 @@ fun EditorTabScreenContent(
 
             NoDataScreen(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                option1Title = StringValue.StringResource(resId = com.fancymansion.core.presentation.R.string.button_back),
+                option1Title = StringValue.StringResource(resId = com.fancymansion.core.presentation.R.string.button_exit),
                 onClickOption1 = {
                     onCommonEventSent(CommonEvent.CloseEvent)
                 }

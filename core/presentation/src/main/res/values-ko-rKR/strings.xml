@@ -6,6 +6,7 @@
     <string name="button_cancel">취소</string>
     <string name="button_retry">재시도</string>
     <string name="button_back">뒤로가기</string>
+    <string name="button_exit">앱 종료</string>
 
     <string name="button_text_more">더보기</string>
 </resources>
