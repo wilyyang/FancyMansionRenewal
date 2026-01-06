@@ -398,7 +398,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             KeywordModel(id = 4008, category = "배경", name = "유토피아")
         ).map { it.asData() }
 
-        for (i in 0 until 30) {
+        for (i in 1 until 31) {
             val bookId = getBookId(sampleUserId, ReadMode.EDIT, i)
             val episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, i)
 

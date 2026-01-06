@@ -60,6 +60,6 @@ fun nextPageImageNumber(images: List<File>, pageNumber: Long): Int {
 val sampleEpisodeRef = EpisodeRef(
     userId = sampleUserId,
     mode = ReadMode.EDIT,
-    bookId = getBookId(sampleUserId, ReadMode.EDIT, 31),
-    episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, 31)
+    bookId = getBookId(sampleUserId, ReadMode.EDIT, 0),
+    episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, 0)
 )
