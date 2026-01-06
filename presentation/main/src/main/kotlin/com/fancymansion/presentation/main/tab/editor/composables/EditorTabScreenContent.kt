@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
@@ -27,6 +28,7 @@ import com.fancymansion.core.presentation.compose.modifier.addFocusCleanerWhenIm
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.editor.composables.part.BottomBookPagination
@@ -86,11 +88,12 @@ fun EditorTabScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 14.dp),
+                    .padding(start = 15.5.dp, end = 13.5.dp)
+                    .padding(vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SearchTextField(
-                    modifier = Modifier.fillMaxWidth(0.85f),
+                    modifier = Modifier.fillMaxWidth(0.875f),
                     value = uiState.searchText,
                     maxLine = 1,
                     hint = stringResource(R.string.edit_book_search_text_hint),
@@ -106,7 +109,7 @@ fun EditorTabScreenContent(
 
                 Box(
                     modifier = Modifier
-                        .padding(start = 5.dp)
+                        .padding(start = 10.5.dp)
                         .fillMaxWidth(1f)
                         .height(35.dp)
                         .clickSingle(
@@ -117,9 +120,14 @@ fun EditorTabScreenContent(
                         }
                 ) {
                     Text(
-                        modifier = Modifier.align(Alignment.Center),
+                        modifier = Modifier.align(Alignment.Center).padding(bottom = 3.5.dp),
                         text = stringResource(R.string.edit_book_search_text_cancel),
-                        style = MaterialTheme.typography.bodyMedium
+                        color = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.6f
+                        ),
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Medium
+                        )
                     )
                 }
             }
@@ -139,11 +147,12 @@ fun EditorTabScreenContent(
                                 color = MaterialTheme.colorScheme.outline,
                                 bottom = 1.dp
                             )
-                            .padding(vertical = 18.dp, horizontal = 14.dp)
+                            .padding(top = 13.dp, bottom = 8.dp)
+                            .padding(horizontal = 15.dp)
                     ) {
                         Text(
                             text = stringResource(id = R.string.edit_book_bar_title),
-                            style = MaterialTheme.typography.titleSmall
+                            style = MaterialTheme.typography.titleLarge
                         )
                     }
                 }
@@ -183,7 +192,7 @@ fun EditorTabScreenContent(
                 item{
                     BottomBookPagination(
                         modifier = Modifier
-                            .padding(vertical = 50.dp)
+                            .padding(top = 40.dp, bottom = 50.dp)
                             .fillMaxWidth(),
                         currentPage = uiState.currentPage,
                         totalPageCount = uiState.totalPageCount,

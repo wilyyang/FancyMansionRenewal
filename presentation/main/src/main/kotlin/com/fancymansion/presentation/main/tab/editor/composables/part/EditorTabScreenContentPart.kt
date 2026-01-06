@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -69,9 +70,7 @@ fun EditorTabHeader(
         }
 
         Row(
-            modifier = Modifier
-                .padding(end = 4.dp)
-                .align(Alignment.CenterEnd),
+            modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if(isEditMode){
@@ -146,7 +145,8 @@ fun EditBookHolder(
 
     Row(
         modifier = modifier
-            .padding(vertical = 18.dp, horizontal = 14.dp)
+            .padding(start = 15.5.dp, end = 18.dp)
+            .padding(vertical = 18.dp)
             .clickSingle {
                 onClickHolder(bookState.bookInfo.bookId)
             },
@@ -154,8 +154,9 @@ fun EditBookHolder(
     ){
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.25f)
-                .heightIn(max = 200.dp)
+                .width(70.dp)
+                .height(120.dp)
+                .clip(shape = MaterialTheme.shapes.extraSmall)
         ) {
             Image(
                 modifier = Modifier
@@ -170,40 +171,41 @@ fun EditBookHolder(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 10.dp)
+                .padding(start = 16.dp)
         ) {
             Text(
                 text = bookState.bookInfo.title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )
 
             Text(
-                modifier = Modifier.padding(top = 5.dp),
+                modifier = Modifier.padding(top = 4.dp),
                 text = stringResource(
                     id = R.string.edit_book_holder_edit_date,
                     formatTimestampLegacy(bookState.bookInfo.editTime)
                 ),
-                style = MaterialTheme.typography.bodyLarge
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Text(
-                modifier = Modifier.padding(top = 5.dp),
+                modifier = Modifier.padding(top = 3.5.dp),
                 text = stringResource(
                     id = R.string.edit_book_holder_page_count,
                     bookState.bookInfo.pageCount
                 ),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
             )
 
             FlowRow(
-                modifier = Modifier.padding(top = 5.dp)
+                modifier = Modifier.padding(top = 5.5.dp)
             ) {
                 bookState.bookInfo.keywords.take(6).forEach { keyword ->
                     Text(
                         modifier = Modifier
                             .padding(end = 2.dp)
-                            .padding(bottom = 2.dp)
+                            .padding(bottom = 2.5.dp)
                             .clip(shape = MaterialTheme.shapes.extraSmall)
                             .padding(0.5.dp)
                             .border(
@@ -287,7 +289,8 @@ fun BottomBookPagination(
                     color = prevColor,
                     shape = CircleShape
                 )
-                .padding(5.dp),
+                .padding(5.dp)
+                .size(24.dp),
             painter = painterResource(R.drawable.ic_list_left),
             contentDescription = "Previous window",
             tint = prevColor
@@ -295,7 +298,7 @@ fun BottomBookPagination(
 
         Row(
             modifier = Modifier
-                .width(200.dp)
+                .width(180.dp)
                 .fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -303,14 +306,14 @@ fun BottomBookPagination(
             for (page in windowStart until windowEndExclusive) {
                 Text(
                     modifier = Modifier
-                        .padding(end = if (page < windowEndExclusive - 1) 25.dp else 0.dp)
+                        .padding(end = if (page < windowEndExclusive - 1) 20.dp else 0.dp)
                         .width(20.dp)
                         .clickSingle(
                             enabled = totalPageCount > 0
                         ) { onClickPageNumber(page) },
                     text = "${page + 1}",
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = if (page == currentPage) FontWeight.SemiBold else FontWeight.Medium
                     ),
                     color = if (page == currentPage) MaterialTheme.colorScheme.onSurface else onSurfaceDimmed
@@ -328,7 +331,8 @@ fun BottomBookPagination(
                     color = nextColor,
                     shape = CircleShape
                 )
-                .padding(5.dp),
+                .padding(5.dp)
+                .size(24.dp),
             painter = painterResource(R.drawable.ic_list_right),
             contentDescription = "Next window",
             tint = nextColor

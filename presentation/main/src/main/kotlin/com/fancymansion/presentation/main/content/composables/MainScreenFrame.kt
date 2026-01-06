@@ -47,8 +47,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
-val TAB_BAR_HEIGHT = 58.dp
-val TAB_BUTTON_SIZE = 58.dp
+val TAB_BAR_HEIGHT = 57.dp
+val TAB_BUTTON_SIZE = 57.dp
 
 @Composable
 fun MainScreenFrame(
@@ -203,12 +203,12 @@ fun TabButton(
     isFocus: Boolean
 ){
     Box(
-        modifier = modifier.padding(top = 6.dp, bottom = 8.dp)
+        modifier = modifier.padding(top = 5.5.dp, bottom = 7.5.dp)
     ){
         Image(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .height(30.dp),
+                .height(28.dp),
             painter =
                 if (isFocus) painterResource(id = tabInfo.iconFillResId)
                 else painterResource(id = tabInfo.iconResId),
