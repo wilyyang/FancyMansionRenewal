@@ -21,6 +21,8 @@ import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.usecase.app.UseCaseCompleteOnboarding
+import com.fancymansion.domain.usecase.app.UseCaseIsFirstLaunch
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
@@ -38,6 +40,8 @@ class EditorTabViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseBookList: UseCaseBookList,
+    private val useCaseIsFirstLaunch: UseCaseIsFirstLaunch,
+    private val useCaseCompleteOnboarding: UseCaseCompleteOnboarding,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>() {
 
@@ -105,7 +109,11 @@ class EditorTabViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
-            useCaseBookList.makeSampleEpisode()
+            val isFirst = useCaseIsFirstLaunch()
+            if (isFirst) {
+                useCaseBookList.makeSampleEpisode()
+                useCaseCompleteOnboarding()
+            }
 
             loadBookStateList()
 

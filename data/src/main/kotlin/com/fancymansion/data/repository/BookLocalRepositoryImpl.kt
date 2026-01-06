@@ -20,9 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class BookLocalRepositoryImpl @Inject constructor(
     private val bookStorageSource: BookStorageSource,
     private val bookDatabaseDao: BookDatabaseDao

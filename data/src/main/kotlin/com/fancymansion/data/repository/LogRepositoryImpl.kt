@@ -6,9 +6,7 @@ import com.fancymansion.data.datasource.database.log.model.asModel
 import com.fancymansion.domain.interfaceRepository.LogRepository
 import com.fancymansion.domain.model.log.LogModel
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class LogRepositoryImpl @Inject constructor(
     private val logDatabaseDao: LogDatabaseDao
 ) : LogRepository {
