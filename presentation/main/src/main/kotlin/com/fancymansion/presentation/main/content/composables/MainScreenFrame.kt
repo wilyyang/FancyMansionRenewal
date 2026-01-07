@@ -105,54 +105,22 @@ fun MainScreenFrame(
                 // TODO : Tab Test
                 MainScreenTab.Home -> {
                     Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colorScheme.tertiary)){
+                        .fillMaxSize()){
                         Text(
-                            modifier = Modifier.align(Alignment.TopStart),
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            text = "위 시작"
-                        )
-                        Text(
-                            modifier = Modifier.align(Alignment.TopEnd),
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            text = "위 끝"
-                        )
-                        Text(
-                            modifier = Modifier.align(Alignment.BottomStart),
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            text = "아래 시작"
-                        )
-                        Text(
-                            modifier = Modifier.align(Alignment.BottomEnd),
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            text = "아래 끝"
+                            modifier = Modifier.align(Alignment.Center),
+                            text = "홈 화면",
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                 }
-                // TODO : Tab Test
+
                 MainScreenTab.MyInfo -> {
                     Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colorScheme.tertiaryContainer)){
+                        .fillMaxSize()){
                         Text(
-                            modifier = Modifier.align(Alignment.TopStart),
-                            color = MaterialTheme.colorScheme.tertiary,
-                            text = "위 시작"
-                        )
-                        Text(
-                            modifier = Modifier.align(Alignment.TopEnd),
-                            color = MaterialTheme.colorScheme.tertiary,
-                            text = "위 끝"
-                        )
-                        Text(
-                            modifier = Modifier.align(Alignment.BottomStart),
-                            color = MaterialTheme.colorScheme.tertiary,
-                            text = "아래 시작"
-                        )
-                        Text(
-                            modifier = Modifier.align(Alignment.BottomEnd),
-                            color = MaterialTheme.colorScheme.tertiary,
-                            text = "아래 끝"
+                            modifier = Modifier.align(Alignment.Center),
+                            text = "나의 정보 화면",
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                 }
