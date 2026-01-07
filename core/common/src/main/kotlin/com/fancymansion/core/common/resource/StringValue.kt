@@ -14,7 +14,7 @@ sealed class StringValue {
     }
 
     data class StringResource(
-        @StringRes val resId: Int,
+        @param:StringRes val resId: Int,
         val args: List<Any> = emptyList()
     ) : StringValue()
 

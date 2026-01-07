@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UseCaseIsFirstLaunch @Inject constructor(
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val appRepository: AppRepository
 ) {
     suspend operator fun invoke(): Boolean =
@@ -17,7 +17,7 @@ class UseCaseIsFirstLaunch @Inject constructor(
 }
 
 class UseCaseCompleteOnboarding @Inject constructor(
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val appRepository: AppRepository
 ) {
     suspend operator fun invoke() =
