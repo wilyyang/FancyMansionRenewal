@@ -20,7 +20,6 @@ import com.fancymansion.domain.model.book.SelectorModel
 import com.fancymansion.domain.model.book.SourceModel
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
-import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.book.UseCasePageSetting
 import com.fancymansion.presentation.viewer.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -313,14 +312,14 @@ class ViewerContentViewModel @Inject constructor(
         )
     }
 
-    override fun showErrorResult(
+    override fun showExceptionResult(
         throwable: Throwable,
         defaultConfirm: () -> Unit,
         defaultDismiss: () -> Unit
     ) {
         when(throwable){
             is LoadPageException -> setLoadState(LoadState.ErrorDialog(message = throwable.message, dismissText = null))
-            else -> super.showErrorResult(throwable, defaultConfirm, defaultDismiss)
+            else -> super.showExceptionResult(throwable, defaultConfirm, defaultDismiss)
         }
     }
 }

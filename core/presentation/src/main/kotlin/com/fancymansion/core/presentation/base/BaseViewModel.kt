@@ -155,7 +155,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
 
     private val rootContext: CoroutineContext
         get() = viewModelScope.coroutineContext + CoroutineExceptionHandler { _, throwable ->
-            sendError(throwable)
+            handleException(throwable)
         }
 
     protected val scope = CoroutineScope(rootContext)
@@ -318,7 +318,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
                 }
             }
             is CommonEvent.RequestInternetExceptionResultEvent -> {
-                sendError(event.throwable)
+                handleException(event.throwable)
             }
 
             else -> {}
@@ -329,7 +329,6 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
      * 작업 처리를 위한 블록
      * - launchWithInit : 시작할 때 Init, 끝나면 Idle 상태
      * - launchWithLoading : 시작할 때 Loading, 끝나면 Idle 상태
-     * - launchWithException : Loading 상태는 없지만 Exception 처리하기 위한 블록
      */
     fun launchWithInit(
         context : CoroutineContext = Dispatchers.IO,
@@ -338,29 +337,14 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         endLoadState: LoadState? = LoadState.Idle,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
-        return scope.launch(context, start) {
-            withContext(Dispatchers.Main) {
-                _loadState.value = LoadState.Init
-                withContext(context = context) {
-                    withTimeout(delayTime) {
-                        block.invoke(this)
-                    }
-                }
-                endLoadState?.let {
-                    _loadState.value = endLoadState
-                }
-            }
-        }.apply {
-            invokeOnCompletion { cause : Throwable? ->
-                cause?.also { cancelException ->
-                    if(cancelException.cause != null){
-                        sendError(cancelException.cause!!)
-                    }else{
-                        sendError(cancelException)
-                    }
-                }
-            }
-        }
+        return launchWithException(
+            context = context,
+            start = start,
+            delayTime = delayTime,
+            startLoadState = LoadState.Init,
+            endLoadState = endLoadState,
+            block = block
+        )
     }
 
     fun launchWithLoading(
@@ -370,15 +354,37 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         endLoadState: LoadState? = LoadState.Idle,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
+        return launchWithException(
+            context = context,
+            start = start,
+            delayTime = delayTime,
+            startLoadState = LoadState.Loading(),
+            endLoadState = endLoadState,
+            block = block
+        )
+    }
+
+    fun launchWithException(
+        context : CoroutineContext = Dispatchers.IO,
+        start : CoroutineStart = CoroutineStart.DEFAULT,
+        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
+        startLoadState: LoadState? = null,
+        endLoadState: LoadState? = null,
+        block : suspend CoroutineScope.() -> Unit
+    ) : Job {
         return scope.launch(context, start) {
-            withContext(Dispatchers.Main) {
-                _loadState.value = LoadState.Loading()
-                withContext(context = context) {
-                    withTimeout(delayTime) {
-                        block.invoke(this)
-                    }
+            startLoadState?.let {
+                withContext(Dispatchers.Main) {
+                    _loadState.value = startLoadState
                 }
-                endLoadState?.let {
+            }
+            withContext(context = context) {
+                withTimeout(delayTime) {
+                    block.invoke(this)
+                }
+            }
+            endLoadState?.let {
+                withContext(Dispatchers.Main) {
                     _loadState.value = endLoadState
                 }
             }
@@ -386,34 +392,9 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
             invokeOnCompletion { cause : Throwable? ->
                 cause?.also { cancelException ->
                     if(cancelException.cause != null){
-                        sendError(cancelException.cause!!)
+                        handleException(cancelException.cause!!)
                     }else{
-                        sendError(cancelException)
-                    }
-                }
-            }
-        }
-    }
-
-    fun launchWithException(
-        context : CoroutineContext = Dispatchers.IO,
-        start : CoroutineStart = CoroutineStart.DEFAULT,
-        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
-        block : suspend CoroutineScope.() -> Unit
-    ) : Job {
-        return scope.launch(context, start) {
-            withContext(context = context) {
-                withTimeout(delayTime) {
-                    block.invoke(this)
-                }
-            }
-        }.apply {
-            invokeOnCompletion { cause : Throwable? ->
-                cause?.also { cancelException ->
-                    if(cancelException.cause != null){
-                        sendError(cancelException.cause!!)
-                    }else{
-                        sendError(cancelException)
+                        handleException(cancelException)
                     }
                 }
             }
@@ -423,18 +404,18 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     /**
      * 에러 처리
      */
-    protected fun sendError(throwable: Throwable) {
+    protected fun handleException(throwable: Throwable) {
         if(throwable is RequestInternetCheckException){
             setCommonEffect {
                 CommonEffect.RequestInternetCheckExceptionEffect(throwable)
             }
         }else {
             ThrowableManager.handleError(throwable)
-            showErrorResult(throwable)
+            showExceptionResult(throwable)
         }
     }
 
-    protected open fun showErrorResult(
+    protected open fun showExceptionResult(
         throwable: Throwable,
         defaultConfirm : ()-> Unit = { setCommonEvent (CommonEvent.CloseEvent)  },
         defaultDismiss : ()-> Unit = ::setLoadStateIdle
@@ -478,14 +459,15 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
             /**
              * 부모 Exception (가장 하단에 위치함)
              */
-            is CancellationException -> LoadState.ErrorDialog(
+            is TimeoutCancellationException -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
                 errorMessage = StringValue.StringWrapper(
-                    throwable.message ?: "Unknown CancellationException"
+                    throwable.message ?: "TimeoutCancellationException"
                 ),
                 dismissText = null,
                 onConfirm = defaultConfirm
             )
+            is CancellationException -> LoadState.Idle
 
             else -> LoadState.ErrorDialog(
                 message = StringValue.StringResource(R.string.dialog_error_back),
