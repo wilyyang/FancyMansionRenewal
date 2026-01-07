@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.main.tab.editor.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -120,7 +122,9 @@ fun EditorTabScreenContent(
                         }
                 ) {
                     Text(
-                        modifier = Modifier.align(Alignment.Center).padding(bottom = 3.5.dp),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(bottom = 3.5.dp),
                         text = stringResource(R.string.edit_book_search_text_cancel),
                         color = MaterialTheme.colorScheme.onSurface.copy(
                             alpha = 0.6f
@@ -168,24 +172,55 @@ fun EditorTabScreenContent(
                     )
                 }
 
-                itemsIndexed (uiState.visibleBookList){ idx, data ->
-                    EditBookHolder(
-                        bookState = data,
-                        painter = painterList[idx],
-                        isEditMode = uiState.isEditMode,
-                        onClickHolder = {
-                            onEventSent(EditorTabContract.Event.BookHolderClicked(it))
-                        }
-                    )
-
-                    if (idx < uiState.visibleBookList.size - 1) {
-                        HorizontalDivider(
+                if(uiState.visibleBookList.isEmpty()) {
+                    item {
+                        Column(
                             modifier = Modifier
-                                .padding(horizontal = 14.dp)
-                                .height(0.3.dp)
-                                .fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.outline
+                                .fillMaxWidth()
+                                .padding(vertical = 25.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                modifier = Modifier.fillMaxWidth(0.5f),
+                                painter = painterResource(id = R.drawable.img_book_list_empty),
+                                contentScale = ContentScale.FillWidth,
+                                contentDescription = null
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(top = 12.dp),
+                                text = stringResource(id = R.string.edit_book_list_empty_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = stringResource(id = R.string.edit_book_list_empty_sub_title),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.Medium
+                                )
+                            )
+                        }
+                    }
+                }else{
+                    itemsIndexed (uiState.visibleBookList){ idx, data ->
+                        EditBookHolder(
+                            bookState = data,
+                            painter = painterList[idx],
+                            isEditMode = uiState.isEditMode,
+                            onClickHolder = {
+                                onEventSent(EditorTabContract.Event.BookHolderClicked(it))
+                            }
                         )
+
+                        if (idx < uiState.visibleBookList.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .padding(horizontal = 14.dp)
+                                    .height(0.3.dp)
+                                    .fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
                     }
                 }
 

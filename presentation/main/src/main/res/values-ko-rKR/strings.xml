@@ -22,6 +22,9 @@
     <string name="edit_book_holder_edit_date">%1$s 편집됨</string>
     <string name="edit_book_holder_page_count">총 %1$d 페이지</string>
 
+    <string name="edit_book_list_empty_title">작품이 없습니다.</string>
+    <string name="edit_book_list_empty_sub_title">새로운 작품을 만들어 보세요.</string>
+
     <string name="edit_book_new_book_start_page_title">시작 페이지</string>
 
     <string name="edit_book_message_book_limit_exceeded">편집 작품의 개수를 초과했습니다.\n작품 한도는 %1$d개 입니다.\n작품을 삭제해주세요.</string>
