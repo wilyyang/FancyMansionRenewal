@@ -2,8 +2,13 @@ plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.org.jetbrains.kotlin.compose)
+    alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
-    kotlin("kapt")
+}
+
+ksp {
+    arg("room.incremental", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 android {
@@ -24,15 +29,6 @@ android {
         }
     }
 
-    defaultConfig {
-        kapt {
-            arguments {
-                arg("room.incremental", "true")
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
-    }
-
     buildFeatures {
         compose = true
     }
@@ -41,7 +37,7 @@ android {
 dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.android.testing)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     implementation(platform(libs.bom.compose))
     implementation(libs.bundles.compose)
@@ -49,7 +45,7 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.bundles.network)
     implementation(libs.bundles.room)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     implementation(libs.kotlinx.coroutines.test)
 

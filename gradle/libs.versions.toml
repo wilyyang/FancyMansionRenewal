@@ -7,6 +7,7 @@ targetSdk = "36"
 # plugin version
 agp = "8.13.2"
 kotlin = "2.2.21"
+ksp = "2.3.4"
 hilt = "2.57.2"
 gms = "4.4.4"
 firebaseCrashlytics = "3.0.2"
@@ -40,6 +41,7 @@ com-android-application = { id = "com.android.application", version.ref = "agp" 
 com-android-library = { id = "com.android.library", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 org-jetbrains-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 com-google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "gms" }
 com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }

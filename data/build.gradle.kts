@@ -1,8 +1,13 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
-    kotlin("kapt")
+}
+
+ksp {
+    arg("room.incremental", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 android {
@@ -22,27 +27,18 @@ android {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
         }
     }
-    
-    defaultConfig {
-        kapt {
-            arguments {
-                arg("room.incremental", "true")
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
-    }
 
     testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 dependencies {
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.datastore)
     implementation(libs.bundles.network)
     implementation(libs.bundles.room)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     implementation(project(":core:common"))
     implementation(project(":domain:model"))
@@ -51,7 +47,7 @@ dependencies {
 
     /** test **/
     testImplementation(libs.hilt.android.testing)
-    kaptTest(libs.hilt.android.compiler)
+    kspTest(libs.hilt.android.compiler)
     testImplementation(libs.bundles.test.base)
 
     testImplementation(project(":test"))

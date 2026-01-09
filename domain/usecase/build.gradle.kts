@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
-    kotlin("kapt")
 }
 
 android {
@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     
     implementation(project(":core:common"))
     implementation(project(":domain:model"))
@@ -39,7 +39,7 @@ dependencies {
 
     /** test **/
     testImplementation(libs.hilt.android.testing)
-    kaptTest(libs.hilt.android.compiler)
+    kspTest(libs.hilt.android.compiler)
     testImplementation(libs.bundles.test.base)
 
     testImplementation(project(":test"))

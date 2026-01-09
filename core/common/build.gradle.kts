@@ -2,8 +2,7 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-
-    kotlin("kapt")
+    alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
@@ -29,6 +28,6 @@ android {
 dependencies {
     implementation(libs.gson)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(kotlin("reflect"))
 }
