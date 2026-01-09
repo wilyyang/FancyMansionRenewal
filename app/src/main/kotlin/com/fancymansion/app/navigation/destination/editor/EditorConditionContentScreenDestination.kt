@@ -2,7 +2,7 @@ package com.fancymansion.app.navigation.destination.editor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -48,8 +48,4 @@ fun EditorConditionContentScreenDestination(
     )
 }
 
-fun handleNavigationRequest(effect: EditorConditionContentContract.Effect, navController: NavController) {
-    when (effect) {
-        else -> {}
-    }
-}
+fun handleNavigationRequest(effect: EditorConditionContentContract.Effect, navController: NavController) {}
