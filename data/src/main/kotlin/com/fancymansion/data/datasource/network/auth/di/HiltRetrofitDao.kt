@@ -22,7 +22,7 @@ object HiltRetrofitDao {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .callFactory(okHttpCallFactory)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(AuthRetrofitDao::class.java)
 }

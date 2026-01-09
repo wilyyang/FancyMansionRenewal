@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 
 class UseCaseBookLogic @Inject constructor(
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
     suspend fun resetEpisodeData(episodeRef: EpisodeRef) =

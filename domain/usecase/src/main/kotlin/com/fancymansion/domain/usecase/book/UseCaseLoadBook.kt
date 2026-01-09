@@ -18,7 +18,7 @@ import java.io.File
 import javax.inject.Inject
 
 class UseCaseLoadBook @Inject constructor(
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
     suspend fun loadBookInfo(episodeRef: EpisodeRef): BookInfoModel =

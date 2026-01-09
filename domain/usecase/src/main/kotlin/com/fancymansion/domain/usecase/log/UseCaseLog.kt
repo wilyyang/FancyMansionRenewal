@@ -13,7 +13,7 @@ import java.io.FileWriter
 import javax.inject.Inject
 
 class UseCaseMakeFileFromLog @Inject constructor(
-    @ApplicationContext private val context : Context,
+    @param:ApplicationContext private val context : Context,
     private val logRepository: LogRepository
 ) {
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
@@ -42,7 +42,7 @@ class UseCaseMakeFileFromLog @Inject constructor(
 }
 
 class UseCaseInsertLog @Inject constructor(
-    @DispatcherIO private val dispatcher : CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher : CoroutineDispatcher,
     private val logRepository: LogRepository
 ) {
     suspend operator fun invoke(tag: String, type : Int, message: String) = withContext(dispatcher) {
@@ -52,7 +52,7 @@ class UseCaseInsertLog @Inject constructor(
 
 
 class UseCaseDeleteOldLog @Inject constructor(
-    @DispatcherIO private val dispatcher : CoroutineDispatcher,
+    @param:DispatcherIO private val dispatcher : CoroutineDispatcher,
     private val logRepository: LogRepository
 ) {
     suspend operator fun invoke() = withContext(dispatcher) {

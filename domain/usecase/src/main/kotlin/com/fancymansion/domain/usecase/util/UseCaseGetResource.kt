@@ -5,7 +5,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class UseCaseGetResource @Inject constructor(
-    @ApplicationContext private val context : Context
+    @param:ApplicationContext private val context : Context
 ) {
     fun string(id: Int) = context.getString(id)
     fun string(id: Int, vararg formatArgs: Any) = context.getString(id, *formatArgs)

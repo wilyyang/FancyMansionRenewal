@@ -24,8 +24,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UseCaseMakeBook @Inject constructor(
-    @ApplicationContext private val context : Context,
-    @DispatcherIO private val dispatcher: CoroutineDispatcher,
+    @param:ApplicationContext private val context : Context,
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookLocalRepository: BookLocalRepository
 ) {
     suspend fun makeBookInfo(episodeRef: EpisodeRef, bookInfo : BookInfoModel) =
