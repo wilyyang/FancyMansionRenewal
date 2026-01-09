@@ -39,8 +39,8 @@ android {
 
     defaultConfig {
         applicationId = "com.fancymansion.app"
-        versionCode = 114
-        versionName = "1.0.0"
+        versionCode = 115
+        versionName = "1.0.1"
         setProperty("archivesBaseName", "FancyMansion_${versionName}_$code")
         vectorDrawables.useSupportLibrary = true
     }
