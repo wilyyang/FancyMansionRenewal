@@ -7,36 +7,33 @@ targetSdk = "36"
 # plugin version
 agp = "8.13.2"
 kotlin = "2.2.21"
-coreKtx = "1.13.1"
 hilt = "2.57.2"
-gms = "4.4.2"
+gms = "4.4.4"
 firebaseCrashlytics = "3.0.2"
 
 # library version
-gson = "2.10.1"
-lifecycle = "2.8.7"
+gson = "2.13.2"
 firebaseBom = "33.4.0"
 firebaseMessaging = "24.0.2"
 
-composeBom = "2025.06.01"
-composeActivity = "1.10.1"
-compseDrawpainter = "0.32.0"
-material = "1.3.1"
-navigation = "2.8.9"
-navigationHilt = "1.2.0"
-exoplayer = "1.5.1"
-coil = "2.2.2"
+composeBom = "2025.12.01"
+composeActivity = "1.12.2"
+compseDrawpainter = "0.37.3"
+material = "1.4.0"
+navigation = "2.9.6"
+navigationHilt = "1.3.0"
+coil = "2.7.0"
 
-datastore = "1.1.3"
-retrofit = "2.9.0"
-okhttp3 = "4.9.0"
+datastore = "1.2.0"
+retrofit = "3.0.0"
+okhttp3 = "5.3.2"
 room = "2.8.4"
 
 # test library version
-compatResources = "1.7.0"
-testKotlinXCoroutine = "1.7.3"
-testRobolectric = "4.10.3"
-testTruth = "1.1.5"
+compatResources = "1.7.1"
+testKotlinXCoroutine = "1.10.2"
+testRobolectric = "4.16"
+testTruth = "1.4.5"
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -49,9 +46,7 @@ com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", vers
 
 [libraries]
 # core
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 bom-firebase = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
@@ -79,9 +74,6 @@ material3 = { group = "androidx.compose.material3", name = "material3", version.
 material3-window = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "material" }
 navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 navigationHilt = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "navigationHilt" }
-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "exoplayer" }
-exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "exoplayer" }
-exoplayer-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "exoplayer" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
@@ -102,7 +94,6 @@ truth = { group = "com.google.truth", name = "truth", version.ref = "testTruth" 
 
 [bundles]
 compose = ["compose-ui", "compose-ui-tooling", "compose-ui-util", "compose-foundation", "compose-activity", "compose-drawablepainter"]
-exoplayer = ["exoplayer", "exoplayer-dash", "exoplayer-ui"]
 firebase = ["firebase-auth", "firebase-analytics", "firebase-crashlytics", "firebase-messaging"]
 coil = ["coil-compose", "coil-gif"]
 material = ["material3", "material3-window"]
