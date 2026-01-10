@@ -79,6 +79,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:presentation"))
     implementation(project(":domain:usecase"))
+    implementation(project(":presentation:launch"))
     implementation(project(":presentation:main"))
     implementation(project(":presentation:viewer"))
     implementation(project(":presentation:bookOverview"))

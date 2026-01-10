@@ -19,6 +19,7 @@ import com.fancymansion.app.navigation.destination.editor.EditorPageListScreenDe
 import com.fancymansion.app.navigation.destination.editor.EditorRouteContentScreenDestination
 import com.fancymansion.app.navigation.destination.editor.EditorSelectorContentScreenDestination
 import com.fancymansion.app.navigation.destination.editor.EditorSelectorListScreenDestination
+import com.fancymansion.app.navigation.destination.launch.LaunchScreenDestination
 import com.fancymansion.app.navigation.destination.main.MainScreenDestination
 import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
 import com.fancymansion.core.common.const.ArgName
@@ -34,6 +35,7 @@ import com.fancymansion.presentation.editor.pageList.EditorPageListContract
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
 import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
 import com.fancymansion.presentation.editor.selectorList.EditorSelectorListContract
+import com.fancymansion.presentation.launch.launch.LaunchContract
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
 
@@ -56,8 +58,15 @@ fun AppNavigation(typePane : TypePane) {
 
     NavHost(
         navController = navController,
-        startDestination = MainContract.NAME
+        startDestination = LaunchContract.NAME
     ) {
+        leftScreenTransition(
+            route = LaunchContract.NAME,
+            navController = navController
+        ) {
+            LaunchScreenDestination(navController = navController, typePane = typePane)
+        }
+
         leftScreenTransition(
             route = MainContract.NAME,
             navController = navController
