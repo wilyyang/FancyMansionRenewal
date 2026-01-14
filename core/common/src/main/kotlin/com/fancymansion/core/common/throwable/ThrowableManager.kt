@@ -1,9 +1,6 @@
 package com.fancymansion.core.common.throwable
 
-import android.util.Log
 import com.fancymansion.core.common.log.Logger
-import com.fancymansion.core.common.throwable.exception.ApiCallException
-import com.fancymansion.core.common.throwable.exception.ScreenDataInitFailException
 import java.lang.Exception
 
 const val EVENT_MESSAGE_TAG = "event_message"
@@ -24,19 +21,9 @@ object ThrowableManager {
 
     private fun logException(throwable: Throwable) {
         Logger.e(message = throwable.stackTraceToString(), tag = Logger.BASIC_TAG_NAME)
-        if (throwable is ApiCallException) {
-            Logger.print(
-                message = "Exception UseCase name : ${throwable.result.id}",
-                tag = Logger.BASIC_TAG_NAME,
-                type = Log.ERROR
-            )
-        }
     }
 
     private fun handleSpecificException(throwable: Throwable, reportInfo: HashMap<String, String>?) {
-        if (throwable is ScreenDataInitFailException) {
-            exceptionReporter?.logEventWithParams(tag = EVENT_EXCEPTION_TAG, exception = throwable, map = reportInfo ?: emptyMap())
-        }
     }
 
     fun sendMessageToReporter(message : String, tag : String = EVENT_MESSAGE_TAG){

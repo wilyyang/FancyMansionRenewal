@@ -6,21 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fancymansion.core.common.R
-import com.fancymansion.core.common.const.DEFAULT_PROCESSING_DELAY_TIME
 import com.fancymansion.core.common.const.NetworkState
 import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.resource.StringValue
-import com.fancymansion.core.common.throwable.exception.ApiNetworkException
-import com.fancymansion.core.common.throwable.exception.ApiResultStatusException
-import com.fancymansion.core.common.throwable.exception.ApiUnknownException
 import com.fancymansion.core.common.throwable.exception.InternetDisconnectException
 import com.fancymansion.core.common.throwable.exception.RequestInternetCheckException
-import com.fancymansion.core.common.throwable.exception.ScreenDataInitFailException
 import com.fancymansion.core.common.throwable.ThrowableManager
-import com.fancymansion.core.common.throwable.exception.WebViewException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
@@ -153,12 +148,7 @@ sealed class CommonEffect : ViewSideEffect {
 
 abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : ViewSideEffect> : ViewModel() {
 
-    private val rootContext: CoroutineContext
-        get() = viewModelScope.coroutineContext + CoroutineExceptionHandler { _, throwable ->
-            handleException(throwable)
-        }
-
-    protected val scope = CoroutineScope(rootContext)
+    protected val scope = viewModelScope
 
     /**
      * BaseViewModel을 상속하는 ViewModel은
@@ -179,15 +169,19 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
      */
     private val _uiState : MutableState<UiState> = mutableStateOf(initialState)
     private val _loadState : MutableState<LoadState> = mutableStateOf(LoadState.Init)
-    private val _event : MutableSharedFlow<Event> = MutableSharedFlow()
-    private val _effect : Channel<Effect> = Channel()
+    private val _event : MutableSharedFlow<Event> = MutableSharedFlow(extraBufferCapacity = 1)
+    private val _effect : Channel<Effect> = Channel(Channel.BUFFERED)
 
-    private val _commonEvent : MutableSharedFlow<CommonEvent> = MutableSharedFlow()
-    private val _commonEffect : Channel<CommonEffect> = Channel()
+    private val _commonEvent : MutableSharedFlow<CommonEvent> = MutableSharedFlow(extraBufferCapacity = 1)
+    private val _commonEffect : Channel<CommonEffect> = Channel(Channel.BUFFERED)
 
     val uiState : State<UiState> = _uiState
     val loadState : State<LoadState> = _loadState
-    val effect = _effect.receiveAsFlow().shareIn(scope = scope, started = WhileSubscribed())
+    val effect = _effect.receiveAsFlow().shareIn(
+        scope = scope,
+        started = SharingStarted.Eagerly,
+        replay = 0
+    )
 
     val commonEffect = _commonEffect.receiveAsFlow()
 
@@ -333,14 +327,14 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     fun launchWithInit(
         context : CoroutineContext = Dispatchers.IO,
         start : CoroutineStart = CoroutineStart.DEFAULT,
-        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
+        timeoutMs : Long? = null,
         endLoadState: LoadState? = LoadState.Idle,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
         return launchWithException(
             context = context,
             start = start,
-            delayTime = delayTime,
+            timeoutMs = timeoutMs,
             startLoadState = LoadState.Init,
             endLoadState = endLoadState,
             block = block
@@ -350,14 +344,14 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     fun launchWithLoading(
         context : CoroutineContext = Dispatchers.IO,
         start : CoroutineStart = CoroutineStart.DEFAULT,
-        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
+        timeoutMs : Long? = null,
         endLoadState: LoadState? = LoadState.Idle,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
         return launchWithException(
             context = context,
             start = start,
-            delayTime = delayTime,
+            timeoutMs = timeoutMs,
             startLoadState = LoadState.Loading(),
             endLoadState = endLoadState,
             block = block
@@ -367,35 +361,42 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     fun launchWithException(
         context : CoroutineContext = Dispatchers.IO,
         start : CoroutineStart = CoroutineStart.DEFAULT,
-        delayTime : Long = DEFAULT_PROCESSING_DELAY_TIME,
+        timeoutMs : Long? = null,
         startLoadState: LoadState? = null,
         endLoadState: LoadState? = null,
         block : suspend CoroutineScope.() -> Unit
     ) : Job {
-        return scope.launch(context, start) {
+        return scope.launch(
+            context + CoroutineExceptionHandler { _, t ->
+                if (t is TimeoutCancellationException) return@CoroutineExceptionHandler
+                handleException(t)
+            },
+            start
+        ) {
             startLoadState?.let {
                 withContext(Dispatchers.Main) {
                     _loadState.value = startLoadState
                 }
             }
-            withContext(context = context) {
-                withTimeout(delayTime) {
-                    block.invoke(this)
-                }
-            }
-            endLoadState?.let {
-                withContext(Dispatchers.Main) {
-                    _loadState.value = endLoadState
+
+            var success = false
+            try {
+                if (timeoutMs != null) withTimeout(timeoutMs) { block() } else block()
+                success = true
+            } finally {
+                if (success) {
+                    endLoadState?.let {
+                        withContext(Dispatchers.Main) {
+                            _loadState.value = endLoadState
+                        }
+                    }
                 }
             }
         }.apply {
-            invokeOnCompletion { cause : Throwable? ->
-                cause?.also { cancelException ->
-                    if(cancelException.cause != null){
-                        handleException(cancelException.cause!!)
-                    }else{
-                        handleException(cancelException)
-                    }
+            invokeOnCompletion { cause ->
+                when (cause) {
+                    is TimeoutCancellationException -> handleException(cause)
+                    else-> Unit
                 }
             }
         }
@@ -420,63 +421,34 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
         defaultConfirm : ()-> Unit = { setCommonEvent (CommonEvent.CloseEvent)  },
         defaultDismiss : ()-> Unit = ::setLoadStateIdle
     ){
-        _loadState.value = when(throwable){
-            /**
-             * CommonException
-             */
-            is ScreenDataInitFailException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(throwable.message),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
+        scope.launch(Dispatchers.Main.immediate) {
+            _loadState.value = when(throwable){
+                is InternetDisconnectException -> LoadState.ErrorDialog(
+                    message = StringValue.StringResource(R.string.dialog_network_error),
+                    dismissText = null,
+                    onConfirm = defaultConfirm
+                )
 
-            is WebViewException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(
-                    throwable.result.message ?: "WebViewException"
-                ),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
+                is TimeoutCancellationException -> LoadState.ErrorDialog(
+                    message = StringValue.StringResource(R.string.dialog_error_back),
+                    errorMessage = StringValue.StringWrapper(
+                        throwable.message ?: "TimeoutCancellationException"
+                    ),
+                    dismissText = null,
+                    onConfirm = defaultConfirm
+                )
 
-            /**
-             * NetworkException
-             */
-            is ApiNetworkException, is ApiResultStatusException, is ApiUnknownException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = throwable.message?.let { StringValue.StringWrapper(it) },
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
+                is CancellationException -> LoadState.Idle
 
-            is InternetDisconnectException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_network_error),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
-
-            /**
-             * 부모 Exception (가장 하단에 위치함)
-             */
-            is TimeoutCancellationException -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(
-                    throwable.message ?: "TimeoutCancellationException"
-                ),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
-            is CancellationException -> LoadState.Idle
-
-            else -> LoadState.ErrorDialog(
-                message = StringValue.StringResource(R.string.dialog_error_back),
-                errorMessage = StringValue.StringWrapper(
-                    throwable.message ?: throwable::class.java.simpleName
-                ),
-                dismissText = null,
-                onConfirm = defaultConfirm
-            )
+                else -> LoadState.ErrorDialog(
+                    message = StringValue.StringResource(R.string.dialog_error_back),
+                    errorMessage = StringValue.StringWrapper(
+                        throwable.message ?: throwable::class.java.simpleName
+                    ),
+                    dismissText = null,
+                    onConfirm = defaultConfirm
+                )
+            }
         }
     }
 }

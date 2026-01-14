@@ -18,8 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.fancymansion.core.common.const.NetworkState
-import com.fancymansion.core.common.throwable.exception.ApiUnknownException
 import com.fancymansion.core.common.throwable.exception.InternetDisconnectException
+import com.fancymansion.core.common.throwable.exception.NetworkUnknownException
 import com.fancymansion.core.presentation.base.COMMON_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.CommonEffect
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -154,7 +154,7 @@ fun HandleCommonEffect(
                     onCommonEventSent(
                         CommonEvent.RequestInternetExceptionResultEvent(
                             throwable =
-                            if (isConnect) ApiUnknownException(result = effect.throwable.result)
+                            if (isConnect) NetworkUnknownException(effect.throwable.result)
                             else InternetDisconnectException(result = effect.throwable.result)
                         )
                     )
