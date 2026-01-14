@@ -24,16 +24,25 @@ class LaunchViewModel @Inject constructor(
 
     override fun setInitialState() = LaunchContract.State()
 
-    override fun handleEvents(event: LaunchContract.Event) {}
+    override fun handleEvents(event: LaunchContract.Event) {
+        when(event){
+            LaunchContract.Event.OnClickGoogleLogin -> {
+                setEffect {
+                    LaunchContract.Effect.Navigation.GoogleLoginLauncherCall
+                }
+            }
+            LaunchContract.Event.GoogleLoginLauncherCancel -> {}
+            is LaunchContract.Event.GoogleLoginLauncherFail -> {}
+            is LaunchContract.Event.GoogleLoginLauncherSuccess -> {
+                setEffect {
+                    LaunchContract.Effect.Navigation.NavigateMain
+                }
+            }
+        }
+    }
 
     private fun initializeState() {
         launchWithInit {
-            val isFirst = useCaseIsFirstLaunch()
-            if (isFirst) {
-                useCaseBookList.makeSampleEpisode()
-                useCaseCompleteOnboarding()
-            }
-
             setState {
                 copy(
                     isInitSuccess = true

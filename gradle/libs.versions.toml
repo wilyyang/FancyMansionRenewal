@@ -16,6 +16,7 @@ firebaseCrashlytics = "3.0.2"
 gson = "2.13.2"
 firebaseBom = "33.4.0"
 firebaseMessaging = "24.0.2"
+playServicesAuth = "21.3.0"
 
 composeBom = "2025.12.01"
 composeActivity = "1.12.2"
@@ -50,10 +51,13 @@ com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", vers
 # core
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 bom-firebase = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-auth-playservices = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 firebase-messaging= { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessaging" }
+
+# firebase service
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 
 # hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -96,7 +100,8 @@ truth = { group = "com.google.truth", name = "truth", version.ref = "testTruth" 
 
 [bundles]
 compose = ["compose-ui", "compose-ui-tooling", "compose-ui-util", "compose-foundation", "compose-activity", "compose-drawablepainter"]
-firebase = ["firebase-auth", "firebase-analytics", "firebase-crashlytics", "firebase-messaging"]
+firebase-core = ["firebase-analytics", "firebase-crashlytics", "firebase-messaging"]
+firebase-service = ["firebase-auth"]
 coil = ["coil-compose", "coil-gif"]
 material = ["material3", "material3-window"]
 navigation = ["navigation", "navigationHilt"]

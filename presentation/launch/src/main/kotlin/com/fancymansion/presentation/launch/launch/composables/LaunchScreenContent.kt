@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.presentation.launch.launch.LaunchContract
 
 @Composable
@@ -34,7 +35,9 @@ fun LaunchScreenContent(
         } else {
 
             Text(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier.align(Alignment.Center).clickSingle{
+                    onEventSent(LaunchContract.Event.OnClickGoogleLogin)
+                },
                 text = "Launch 화면",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleLarge

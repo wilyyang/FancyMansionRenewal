@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "847271683213",
     "project_id": "fancymansionrenewal",
-    "storage_bucket": "fancymansionrenewal.appspot.com"
+    "storage_bucket": "fancymansionrenewal.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,20 @@
           "package_name": "com.fancymansion.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "847271683213-2l3v2392mkp35jp4b6o6qb7tvt7has1j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fancymansion.app",
+            "certificate_hash": "8c3764e129f801ced82febed026d0513693ab519"
+          }
+        },
+        {
+          "client_id": "847271683213-afq06p90okgbtbp7n7artj2mjo4bmo4b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBsSOmiHQ9kPI0GgihqigOS5Dc2DGGtMNA"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "847271683213-afq06p90okgbtbp7n7artj2mjo4bmo4b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

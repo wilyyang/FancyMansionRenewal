@@ -13,9 +13,18 @@ class LaunchContract  {
         val isInitSuccess : Boolean = false
     ) : ViewState
 
-    sealed class Event : ViewEvent
+    sealed class Event : ViewEvent {
+        data object OnClickGoogleLogin : Event()
+
+        data object GoogleLoginLauncherCancel : Event()
+        data class GoogleLoginLauncherFail(val t: Throwable) : Event()
+        data class GoogleLoginLauncherSuccess(val idToken: String) : Event()
+    }
 
     sealed class Effect : ViewSideEffect {
-        sealed class Navigation : Effect()
+        sealed class Navigation : Effect(){
+            data object GoogleLoginLauncherCall : Navigation()
+            data object NavigateMain : Navigation()
+        }
     }
 }
