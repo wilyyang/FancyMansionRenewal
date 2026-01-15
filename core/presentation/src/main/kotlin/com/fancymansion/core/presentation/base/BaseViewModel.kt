@@ -441,7 +441,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
                 )
 
                 is CancellationException ->  {
-                    if (_loadState.value is LoadState.Loading || _loadState.value is LoadState.Init) {
+                    if (_loadState.value is LoadState.Loading) {
                         LoadState.Idle
                     } else {
                         _loadState.value
