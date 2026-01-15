@@ -368,7 +368,7 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
     ) : Job {
         return scope.launch(
             context + CoroutineExceptionHandler { _, t ->
-                if (t is TimeoutCancellationException) return@CoroutineExceptionHandler
+                if (t is CancellationException) return@CoroutineExceptionHandler
                 handleException(t)
             },
             start
@@ -394,9 +394,11 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
             }
         }.apply {
             invokeOnCompletion { cause ->
-                when (cause) {
-                    is TimeoutCancellationException -> handleException(cause)
-                    else-> Unit
+                cause?.let {
+                    when (cause) {
+                        is TimeoutCancellationException -> handleException(cause)
+                        is CancellationException -> showExceptionResult(cause)
+                    }
                 }
             }
         }
@@ -438,7 +440,13 @@ abstract class BaseViewModel<UiState : ViewState, Event : ViewEvent, Effect : Vi
                     onConfirm = defaultConfirm
                 )
 
-                is CancellationException -> LoadState.Idle
+                is CancellationException ->  {
+                    if (_loadState.value is LoadState.Loading || _loadState.value is LoadState.Init) {
+                        LoadState.Idle
+                    } else {
+                        _loadState.value
+                    }
+                }
 
                 else -> LoadState.ErrorDialog(
                     message = StringValue.StringResource(R.string.dialog_error_back),
