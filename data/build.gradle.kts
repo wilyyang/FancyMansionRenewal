@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
+    implementation(platform(libs.bom.firebase))
+    implementation(libs.bundles.firebase.service)
+
     implementation(project(":core:common"))
     implementation(project(":domain:model"))
     implementation(project(":domain:interfaceRepository"))
