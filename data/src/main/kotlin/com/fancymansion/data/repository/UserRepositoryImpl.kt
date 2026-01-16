@@ -1,5 +1,7 @@
 package com.fancymansion.data.repository
 
+import com.fancymansion.data.datasource.database.user.dao.UserDatabaseDao
+import com.fancymansion.data.datasource.database.user.model.asLocalData
 import com.fancymansion.data.datasource.firebase.auth.UserAuthentication
 import com.fancymansion.data.datasource.firebase.auth.model.asData
 import com.fancymansion.data.datasource.firebase.auth.model.asModel
@@ -13,7 +15,8 @@ import kotlin.String
 
 class UserRepositoryImpl @Inject constructor(
     private val userAuthentication: UserAuthentication,
-    private val userFirestoreDatabase: UserFirestoreDatabase
+    private val userFirestoreDatabase: UserFirestoreDatabase,
+    private val userDatabaseDao: UserDatabaseDao
 ) : UserRepository {
 
     override suspend fun signInWithGoogle(idToken: String): UserInitModel {
@@ -25,6 +28,6 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun upsertUserInfoLocal(userInfo: UserInfoModel) {
-        // TODO
+        userDatabaseDao.replaceUserInfo(userInfo.asLocalData())
     }
 }
