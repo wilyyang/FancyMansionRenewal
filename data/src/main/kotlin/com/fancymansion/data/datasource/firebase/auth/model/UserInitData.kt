@@ -13,3 +13,9 @@ fun UserInitData.asModel() = UserInitModel(
     email = email,
     initialNickname = initialNickname
 )
+
+fun UserInitModel.asData() = UserInitData(
+    uid = uid,
+    email = email,
+    initialNickname = initialNickname
+)

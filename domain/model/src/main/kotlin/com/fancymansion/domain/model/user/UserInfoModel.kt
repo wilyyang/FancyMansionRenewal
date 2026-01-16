@@ -1,7 +1,7 @@
 package com.fancymansion.domain.model.user
 
 data class UserInfoModel(
-    val uid: String,
+    val userId: String,
     val email: String,
     val nickname: String,
     val createdAt: Long,

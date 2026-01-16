@@ -1,7 +1,10 @@
 package com.fancymansion.data.repository
 
 import com.fancymansion.data.datasource.firebase.auth.UserAuthentication
+import com.fancymansion.data.datasource.firebase.auth.model.asData
 import com.fancymansion.data.datasource.firebase.auth.model.asModel
+import com.fancymansion.data.datasource.firebase.database.user.UserFirestoreDatabase
+import com.fancymansion.data.datasource.firebase.database.user.model.asModel
 import com.fancymansion.domain.interfaceRepository.UserRepository
 import com.fancymansion.domain.model.user.UserInfoModel
 import com.fancymansion.domain.model.user.UserInitModel
@@ -9,7 +12,8 @@ import javax.inject.Inject
 import kotlin.String
 
 class UserRepositoryImpl @Inject constructor(
-    private val userAuthentication: UserAuthentication
+    private val userAuthentication: UserAuthentication,
+    private val userFirestoreDatabase: UserFirestoreDatabase
 ) : UserRepository {
 
     override suspend fun signInWithGoogle(idToken: String): UserInitModel {
@@ -17,15 +21,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getOrCreateUserInfoTx(userInit: UserInitModel): UserInfoModel {
-        // TODO
-        return UserInfoModel(
-            uid = userInit.uid,
-            email = userInit.email,
-            nickname = userInit.initialNickname,
-            createdAt = 0L,
-            updatedAt = 0L,
-            hasCompletedOnboarding = false
-        )
+        return userFirestoreDatabase.getOrCreateUserInfoTx(userInit.asData()).asModel()
     }
 
     override suspend fun upsertUserInfoLocal(userInfo: UserInfoModel) {
