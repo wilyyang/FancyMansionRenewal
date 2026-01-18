@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.user.UseCaseGoogleLogin
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
@@ -46,6 +47,11 @@ class LaunchViewModel @Inject constructor(
                                 mode = ReadMode.EDIT,
                                 bookId = getBookId(userInfo.userId, ReadMode.EDIT, 0),
                                 episodeId = getEpisodeId(userInfo.userId, ReadMode.EDIT, 0)
+                            ),
+                            editorModel = EditorModel(
+                                editorId = userInfo.userId,
+                                editorName = userInfo.nickname,
+                                editorEmail = userInfo.email
                             )
                         )
                     }

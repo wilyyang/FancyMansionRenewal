@@ -5,6 +5,7 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
@@ -94,7 +95,7 @@ interface BookLocalRepository {
 
     suspend fun bookLogicFileExists(episodeRef: EpisodeRef) : Boolean
 
-    suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean
+    suspend fun makeSampleEpisode(episodeRef: EpisodeRef, editorModel: EditorModel): Boolean
 
     suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File>
     suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean

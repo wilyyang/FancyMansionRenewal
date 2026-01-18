@@ -4,6 +4,7 @@ import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
@@ -105,7 +106,7 @@ interface BookStorageSource {
 
     suspend fun bookLogicFileExists(episodeRef: EpisodeRef) : Boolean
 
-    suspend fun makeSampleEpisode(episodeRef: EpisodeRef) : Boolean
+    suspend fun makeSampleEpisode(episodeRef: EpisodeRef, editorData: EditorData) : Boolean
 
     suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File>
 

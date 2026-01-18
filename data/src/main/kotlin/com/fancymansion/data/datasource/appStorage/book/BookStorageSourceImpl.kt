@@ -246,7 +246,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         episodeRef: EpisodeRef
     ) : Boolean = root.logicFile(episodeRef).exists()
 
-    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
+    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef, editorData: EditorData): Boolean {
         if(root.mediaFile(episodeRef).exists()){
             return true
         }
@@ -282,11 +282,24 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         val bookInfo: BookInfoData = gson.fromJson(
             context.assets.open("base_book_info.json").bufferedReader().use { it.readText() },
             BookInfoData::class.java
-        )
+        ).let { sample ->
+            val coverUpdateIntroduce = sample.introduce.copy(
+                coverList = listOf(getCoverFileName(episodeRef.bookId, 0, "png"))
+            )
+
+            sample.copy(
+                id = episodeRef.bookId,
+                editor = editorData,
+                introduce = coverUpdateIntroduce
+            )
+        }
 
         val episodeInfo: EpisodeInfoData = gson.fromJson(
             context.assets.open("base_episode_info.json").bufferedReader().use { it.readText() },
             EpisodeInfoData::class.java
+        ).copy(
+            id = episodeRef.episodeId,
+            bookId = episodeRef.bookId
         )
 
         val logic: LogicData = gson.fromJson(

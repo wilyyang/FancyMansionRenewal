@@ -12,6 +12,7 @@ import com.fancymansion.data.datasource.database.book.model.asModel
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
@@ -212,8 +213,8 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.bookLogicFileExists(episodeRef)
     }
 
-    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
-        return bookStorageSource.makeSampleEpisode(episodeRef)
+    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef, editorModel: EditorModel): Boolean {
+        return bookStorageSource.makeSampleEpisode(episodeRef, editorModel.asData())
     }
 
     override suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File> {

@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
@@ -68,8 +69,8 @@ class UseCaseBookList @Inject constructor(
             result
         }
 
-    suspend fun makeSampleEpisode(episodeRef: EpisodeRef) =
+    suspend fun makeSampleEpisode(episodeRef: EpisodeRef, editorModel: EditorModel) =
         withContext(dispatcher) {
-            bookLocalRepository.makeSampleEpisode(episodeRef)
+            bookLocalRepository.makeSampleEpisode(episodeRef, editorModel)
         }
 }
