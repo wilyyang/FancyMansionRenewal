@@ -74,6 +74,17 @@ fun EditorBookOverviewScreenContent(
                     .addFocusCleanerWhenImeVisible(focusManager)
             ) {
 
+                // 임시 코드
+                item {
+                    Text(
+                        modifier = Modifier.clickSingle {
+                            onEventSent(EditorBookOverviewContract.Event.UploadBookFile)
+
+                        },
+                        text = "업로드 (임시)"
+                    )
+                }
+
                 item {
                     EditOverviewCoverImage(
                         modifier = commonPartModifier,

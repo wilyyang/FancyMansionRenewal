@@ -3,10 +3,12 @@ package com.fancymansion.di.injectRepository
 import com.fancymansion.data.repository.BookLocalRepositoryImpl
 import com.fancymansion.data.repository.LogRepositoryImpl
 import com.fancymansion.data.repository.AppRepositoryImpl
+import com.fancymansion.data.repository.PublishBookRepositoryImpl
 import com.fancymansion.data.repository.UserRepositoryImpl
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.interfaceRepository.LogRepository
 import com.fancymansion.domain.interfaceRepository.AppRepository
+import com.fancymansion.domain.interfaceRepository.PublishBookRepository
 import com.fancymansion.domain.interfaceRepository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -33,4 +35,8 @@ interface HiltRepository {
     @Binds
     @Singleton
     fun bindUserRepository(repository : UserRepositoryImpl) : UserRepository
+
+    @Binds
+    @Singleton
+    fun bindPublishBookRepository(repository : PublishBookRepositoryImpl) : PublishBookRepository
 }

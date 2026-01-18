@@ -17,6 +17,7 @@ import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.domain.usecase.publishBook.UseCaseUploadBook
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -27,6 +28,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
+    private val useCaseUploadBook: UseCaseUploadBook,
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
     private var isUpdateResume : Boolean = false
@@ -82,6 +84,8 @@ class EditorBookOverviewViewModel @Inject constructor(
                     )
                 }
             }
+
+            EditorBookOverviewContract.Event.UploadBookFile -> handleUploadBookFile()
 
             /**
              * Edit BookInfo
@@ -227,6 +231,12 @@ class EditorBookOverviewViewModel @Inject constructor(
                     isInitSuccess = bookInfo.id.isNotBlank()
                 )
             }
+        }
+    }
+
+    private fun handleUploadBookFile(){
+        launchWithLoading {
+            val result = useCaseUploadBook(episodeRef = episodeRef, bookInfo = uiState.value.bookInfo)
         }
     }
 

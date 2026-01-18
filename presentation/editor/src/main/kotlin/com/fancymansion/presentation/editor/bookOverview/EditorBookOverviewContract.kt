@@ -39,6 +39,7 @@ class EditorBookOverviewContract {
     sealed class Event : ViewEvent {
         data object BookOverviewButtonClicked : Event()
         data object OverviewInfoSaveToFile : Event()
+        data object UploadBookFile : Event()
 
         /**
          * Edit BookInfo
