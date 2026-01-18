@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.fancymansion.data.datasource.database.user.model.UserInfoLocalData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDatabaseDao {
@@ -23,4 +24,7 @@ interface UserDatabaseDao {
 
     @Query("SELECT * FROM UserInfoLocalData LIMIT 1")
     suspend fun getUserInfoData(): UserInfoLocalData?
+
+    @Query("SELECT * FROM UserInfoLocalData LIMIT 1")
+    fun observeUserInfoData(): Flow<UserInfoLocalData?>
 }

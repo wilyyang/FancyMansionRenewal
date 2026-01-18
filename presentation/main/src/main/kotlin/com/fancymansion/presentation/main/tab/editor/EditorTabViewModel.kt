@@ -2,7 +2,6 @@ package com.fancymansion.presentation.main.tab.editor
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
-import com.fancymansion.core.common.const.ArgName.NAME_USER_ID
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
@@ -10,7 +9,6 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.const.nextBookNumber
-import com.fancymansion.core.common.const.sampleEpisodeRef
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -21,10 +19,9 @@ import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
-import com.fancymansion.domain.usecase.app.UseCaseCompleteOnboarding
-import com.fancymansion.domain.usecase.app.UseCaseIsFirstLaunch
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
+import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.BOOKS_PER_PAGE
@@ -40,14 +37,13 @@ class EditorTabViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseBookList: UseCaseBookList,
-    private val useCaseIsFirstLaunch: UseCaseIsFirstLaunch,
-    private val useCaseCompleteOnboarding: UseCaseCompleteOnboarding,
+    private val useCaseGetUserInfoLocal: UseCaseGetUserInfoLocal,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>() {
 
     private var isUpdateResume = false
     private var lastOpenedBookId: String? = null
-    private var userId: String = savedStateHandle.get<String>(NAME_USER_ID) ?: sampleEpisodeRef.userId
+    private lateinit var userId: String
     private val mode: ReadMode = ReadMode.EDIT
     private lateinit var originBookInfoList: List<EditBookWrapper>
 
@@ -56,12 +52,7 @@ class EditorTabViewModel @Inject constructor(
 
     private var listTarget : ListTarget = ListTarget.ALL
 
-    // 임시 정보
-    private val editorInfo = EditorModel(
-        editorId = "editor",
-        editorName = "에디터",
-        editorEmail = "editor@example.com"
-    )
+    private lateinit var editorInfo: EditorModel
 
     init {
         initializeState()
@@ -109,11 +100,13 @@ class EditorTabViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
-            val isFirst = useCaseIsFirstLaunch()
-            if (isFirst) {
-                useCaseBookList.makeSampleEpisode()
-                useCaseCompleteOnboarding()
-            }
+            val userInfo = useCaseGetUserInfoLocal() ?: error("UserInfo is null")
+            userId = userInfo.userId
+            editorInfo = EditorModel(
+                editorId = userInfo.userId,
+                editorName = userInfo.nickname,
+                editorEmail = userInfo.email
+            )
 
             loadBookStateList()
 

@@ -136,7 +136,7 @@ class TestViewerContentViewModel {
             }
         }
 
-        useCaseBookList.makeSampleEpisode()
+        useCaseBookList.makeSampleEpisode(testRef)
         targetLogic = useCaseLoadBook.loadLogic(testRef)
         setupViewModel()
 

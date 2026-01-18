@@ -1,9 +1,11 @@
 package com.fancymansion.presentation.launch.launch
 
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.getBookId
+import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
-import com.fancymansion.domain.usecase.app.UseCaseCompleteOnboarding
-import com.fancymansion.domain.usecase.app.UseCaseIsFirstLaunch
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.user.UseCaseGoogleLogin
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
@@ -13,9 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LaunchViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val useCaseIsFirstLaunch: UseCaseIsFirstLaunch,
     private val useCaseBookList: UseCaseBookList,
-    private val useCaseCompleteOnboarding: UseCaseCompleteOnboarding,
     private val useCaseGoogleLogin: UseCaseGoogleLogin,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<LaunchContract.State, LaunchContract.Event, LaunchContract.Effect>() {
@@ -37,7 +37,22 @@ class LaunchViewModel @Inject constructor(
             is LaunchContract.Event.GoogleLoginLauncherFail -> {}
             is LaunchContract.Event.GoogleLoginLauncherSuccess -> {
                 launchWithLoading {
-                    useCaseGoogleLogin(event.idToken)
+                    val userInfo = useCaseGoogleLogin(event.idToken)
+
+                    if (!userInfo.hasCompletedOnboarding) {
+                        useCaseBookList.makeSampleEpisode(
+                            episodeRef = EpisodeRef(
+                                userId = userInfo.userId,
+                                mode = ReadMode.EDIT,
+                                bookId = getBookId(userInfo.userId, ReadMode.EDIT, 0),
+                                episodeId = getEpisodeId(userInfo.userId, ReadMode.EDIT, 0)
+                            )
+                        )
+                    }
+
+                    setEffect {
+                        LaunchContract.Effect.Navigation.NavigateMain
+                    }
                 }
             }
         }

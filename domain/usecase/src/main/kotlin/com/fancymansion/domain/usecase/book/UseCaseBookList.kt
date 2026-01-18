@@ -3,7 +3,6 @@ package com.fancymansion.domain.usecase.book
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getEpisodeId
-import com.fancymansion.core.common.const.sampleEpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
@@ -69,7 +68,7 @@ class UseCaseBookList @Inject constructor(
             result
         }
 
-    suspend fun makeSampleEpisode(episodeRef: EpisodeRef = sampleEpisodeRef) =
+    suspend fun makeSampleEpisode(episodeRef: EpisodeRef) =
         withContext(dispatcher) {
             bookLocalRepository.makeSampleEpisode(episodeRef)
         }
