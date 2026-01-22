@@ -13,11 +13,10 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
-import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
-import com.fancymansion.domain.usecase.publishBook.UseCaseUploadBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseUploadBook
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -236,7 +235,14 @@ class EditorBookOverviewViewModel @Inject constructor(
 
     private fun handleUploadBookFile(){
         launchWithLoading {
-            val result = useCaseUploadBook(episodeRef = episodeRef, bookInfo = uiState.value.bookInfo)
+            // 임시 코드
+            val newKeywordList = keywordStates.filter { it.selected.value }.map { it.keyword }
+            updateBookInfoAndReload(
+                uiState.value.bookInfo,
+                uiState.value.imagePickType,
+                newKeywordList
+            )
+            useCaseUploadBook(episodeRef = episodeRef, bookInfo = uiState.value.bookInfo)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.fancymansion.domain.usecase.publishBook
+package com.fancymansion.domain.usecase.remoteBook
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.di.DispatcherIO
