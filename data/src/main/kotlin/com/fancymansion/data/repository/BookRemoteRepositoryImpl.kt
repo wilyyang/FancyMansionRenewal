@@ -2,13 +2,13 @@ package com.fancymansion.data.repository
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
-import com.fancymansion.domain.interfaceRepository.PublishBookRepository
+import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import javax.inject.Inject
 
-class PublishBookRepositoryImpl @Inject constructor(
+class BookRemoteRepositoryImpl @Inject constructor(
     private val bookStorageSource: BookStorageSource
-) : PublishBookRepository {
+) : BookRemoteRepository {
     override suspend fun createBookInfo(
         episodeRef: EpisodeRef,
         bookInfo: BookInfoModel
