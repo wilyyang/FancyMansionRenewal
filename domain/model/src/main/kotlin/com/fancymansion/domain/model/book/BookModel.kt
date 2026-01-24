@@ -29,5 +29,6 @@ data class EpisodeInfoModel(
     val version: Long = 0L,
     val createTime: Long = System.currentTimeMillis(),
     val editTime: Long = System.currentTimeMillis(),
+    val updateTime: Long = 0L,
     val readMode: ReadMode = ReadMode.EDIT
 )

@@ -1,0 +1,49 @@
+package com.fancymansion.data.datasource.firebase.database.book.model
+
+import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.domain.model.book.EpisodeInfoModel
+
+data class EpisodeInfoData(
+    val episodeId: String,
+    val bookId: String,
+    val title: String,
+    val pageCount: Int,
+    val version: Long,
+    val createTime: Long,
+    val editTime: Long,
+    val updateTime: Long
+) {
+    companion object Fields {
+        const val EPISODE_ID = "episodeId"
+        const val BOOK_ID = "bookId"
+        const val TITLE = "title"
+        const val PAGE_COUNT = "pageCount"
+        const val VERSION = "version"
+        const val CREATE_TIME = "createTime"
+        const val EDIT_TIME = "editTime"
+        const val UPDATE_TIME = "updateTime"
+    }
+}
+
+fun EpisodeInfoModel.asData(): EpisodeInfoData = EpisodeInfoData(
+    episodeId = id,
+    bookId = bookId,
+    title = title,
+    pageCount = pageCount,
+    version = version,
+    createTime = createTime,
+    editTime = editTime,
+    updateTime = updateTime
+)
+
+fun EpisodeInfoData.asModel(readMode: ReadMode): EpisodeInfoModel = EpisodeInfoModel(
+    id = episodeId,
+    bookId = bookId,
+    title = title,
+    pageCount = pageCount,
+    version = version,
+    createTime = createTime,
+    editTime = editTime,
+    updateTime = updateTime,
+    readMode = readMode
+)

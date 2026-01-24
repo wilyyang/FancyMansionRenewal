@@ -7,6 +7,7 @@ import com.fancymansion.core.common.throwable.exception.LoadPageException
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.ConditionModel
+import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
@@ -24,6 +25,11 @@ class UseCaseLoadBook @Inject constructor(
     suspend fun loadBookInfo(episodeRef: EpisodeRef): BookInfoModel =
         withContext(dispatcher) {
             bookLocalRepository.loadBookInfo(userId = episodeRef.userId, mode = episodeRef.mode, bookId = episodeRef.bookId)
+        }
+
+    suspend fun loadEpisodeInfo(episodeRef: EpisodeRef): EpisodeInfoModel =
+        withContext(dispatcher) {
+            bookLocalRepository.loadEpisodeInfo(episodeRef = episodeRef)
         }
 
     suspend fun loadLogic(episodeRef: EpisodeRef): LogicModel =

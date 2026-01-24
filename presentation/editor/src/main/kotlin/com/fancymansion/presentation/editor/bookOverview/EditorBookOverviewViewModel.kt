@@ -242,7 +242,10 @@ class EditorBookOverviewViewModel @Inject constructor(
                 uiState.value.imagePickType,
                 newKeywordList
             )
-            useCaseUploadBook(episodeRef = episodeRef, bookInfo = uiState.value.bookInfo)
+            val episodeInfo = useCaseLoadBook.loadEpisodeInfo(episodeRef).copy(
+                updateTime = System.currentTimeMillis()
+            )
+            useCaseUploadBook(episodeRef = episodeRef, bookInfo = uiState.value.bookInfo, episodeInfo = episodeInfo)
         }
     }
 
