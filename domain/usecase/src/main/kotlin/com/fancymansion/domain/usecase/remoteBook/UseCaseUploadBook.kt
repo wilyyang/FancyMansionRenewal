@@ -20,17 +20,19 @@ class UseCaseUploadBook @Inject constructor(
         episodeInfo: EpisodeInfoModel
     ) =
         withContext(dispatcher) {
-            bookRemoteRepository.createBookInfo(
-                episodeRef,
-                bookInfo,
-                episodeInfo
+            val publishedId = bookRemoteRepository.createBookInfo(
+                episodeRef = episodeRef,
+                bookInfo = bookInfo,
+                episodeInfo = episodeInfo
             )
             bookRemoteRepository.uploadBookArchive(
-                episodeRef
+                episodeRef = episodeRef,
+                publishedId = publishedId
             )
             bookRemoteRepository.uploadBookCoverImage(
-                episodeRef,
-                bookInfo.introduce.coverList.first()
+                episodeRef = episodeRef,
+                publishedId = publishedId,
+                coverFileName = bookInfo.introduce.coverList.first()
             )
         }
 }

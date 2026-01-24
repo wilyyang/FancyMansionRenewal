@@ -14,11 +14,13 @@ class BookFirestoreDatabaseImpl(
     private val firestore: FirebaseFirestore
 ) : BookFirestoreDatabase {
 
-    override suspend fun saveBook(book: BookInfoData) {
-        val ref = firestore.collection(BOOKS).document(book.bookId)
+    override suspend fun saveBook(book: BookInfoData): String {
+        val publishedId = firestore.collection(BOOKS).document().id
+        val ref = firestore.collection(BOOKS).document(publishedId)
 
         val data = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
+            BookInfoData.PUBLISHED_ID to publishedId,
             BookInfoData.INTRODUCE to mapOf(
                 IntroduceData.TITLE to book.introduce.title,
                 IntroduceData.COVER_LIST to book.introduce.coverList,
@@ -33,11 +35,12 @@ class BookFirestoreDatabaseImpl(
         )
 
         ref.set(data, SetOptions.merge()).await()
+        return publishedId
     }
 
-    override suspend fun saveEpisode(bookId: String, episode: EpisodeInfoData) {
+    override suspend fun saveEpisode(publishedId: String, episode: EpisodeInfoData) {
         val ref = firestore.collection(BOOKS)
-            .document(bookId)
+            .document(publishedId)
             .collection(EPISODES)
             .document(episode.episodeId)
 

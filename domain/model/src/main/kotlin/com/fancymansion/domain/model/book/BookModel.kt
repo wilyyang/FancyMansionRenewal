@@ -4,6 +4,7 @@ import com.fancymansion.core.common.const.ReadMode
 
 data class BookInfoModel(
     val id: String,
+    val publishedId: String? = null,
     val introduce: IntroduceModel,
     val editor: EditorModel
 )

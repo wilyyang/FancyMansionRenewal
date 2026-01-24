@@ -6,8 +6,11 @@ import com.fancymansion.data.datasource.firebase.database.book.BookFirestoreData
 import com.fancymansion.data.datasource.firebase.database.book.BookFirestoreDatabaseImpl
 import com.fancymansion.data.datasource.firebase.database.user.UserFirestoreDatabase
 import com.fancymansion.data.datasource.firebase.database.user.UserFirestoreDatabaseImpl
+import com.fancymansion.data.datasource.firebase.storage.book.BookFirebaseStorage
+import com.fancymansion.data.datasource.firebase.storage.book.BookFirebaseStorageImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,4 +35,9 @@ class HiltFirebaseDatasource {
     @Singleton
     fun provideBookFirestoreDatabase(): BookFirestoreDatabase =
         BookFirestoreDatabaseImpl(FirebaseFirestore.getInstance())
+
+    @Provides
+    @Singleton
+    fun provideBookFirebaseStorage(): BookFirebaseStorage =
+        BookFirebaseStorageImpl(FirebaseStorage.getInstance())
 }
