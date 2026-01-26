@@ -9,4 +9,5 @@ object FirestoreCollections {
 object StorageCollections {
     const val BOOKS = "books"
     const val COVERS = "covers"
+    const val EPISODES = "episodes"
 }

@@ -24,10 +24,13 @@ import com.fancymansion.domain.model.book.KeywordModel
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
     private val root : File = context.getExternalFilesDir(null)!!
@@ -352,6 +355,48 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             pageCount = pageCount
         )
         return makeEpisodeInfo(episodeRef, newEpisode)
+    }
+
+    override suspend fun compressEpisodeDirAndGetFile(
+        episodeRef: EpisodeRef,
+        publishedId: String
+    ): File {
+
+        val sourceDir = root.bookFile(
+            episodeRef.userId,
+            episodeRef.mode,
+            episodeRef.bookId
+        )
+
+        require(sourceDir.exists() && sourceDir.isDirectory) {
+            "Source directory does not exist: ${sourceDir.absolutePath}"
+        }
+
+        val zipFileName = buildString {
+            append(publishedId)
+            append("_")
+            append(System.currentTimeMillis())
+            append(".zip")
+        }
+
+        val zipFile = File(context.cacheDir, zipFileName)
+
+        ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
+            sourceDir.walkTopDown()
+                .filter { it.isFile }
+                .forEach { file ->
+                    val entryName = file.relativeTo(sourceDir).path
+                    val entry = ZipEntry(entryName)
+
+                    zos.putNextEntry(entry)
+                    file.inputStream().use { input ->
+                        input.copyTo(zos)
+                    }
+                    zos.closeEntry()
+                }
+        }
+
+        return zipFile
     }
 
     private suspend fun makeEditBookInfoSampleList(userId: String) {
