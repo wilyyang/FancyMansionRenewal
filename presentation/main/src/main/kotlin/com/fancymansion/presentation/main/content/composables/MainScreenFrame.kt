@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,10 +42,12 @@ import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
+import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreenFrame
+import com.fancymansion.presentation.main.tab.editor.composables.part.EditBookHolder
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -85,6 +90,9 @@ fun MainScreenFrame(
         }?.collect()
     }
 
+    val listStateHome = rememberLazyListState()
+    val listStateStudy = rememberLazyListState()
+
     // TODO 07.14 탭 적용
     Column(modifier = Modifier
         .fillMaxSize()
@@ -104,13 +112,50 @@ fun MainScreenFrame(
 
                 // TODO : Tab Test
                 MainScreenTab.Home -> {
-                    Box(modifier = Modifier
+                    Column (modifier = Modifier
                         .fillMaxSize()){
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = "홈 화면",
-                            style = MaterialTheme.typography.titleSmall
-                        )
+
+                        LazyColumn(
+                            state = listStateHome,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ){
+
+                            itemsIndexed (uiState.homeBookList) { idx, data ->
+                                EditBookHolder(
+                                    bookState = data,
+                                    painter = painterResource(id = R.drawable.holder_book_image_no_available),
+                                    isEditMode = false,
+                                    onClickHolder = {
+                                        // TODO
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                MainScreenTab.Study -> {
+                    Column (modifier = Modifier
+                        .fillMaxSize()){
+
+                        LazyColumn(
+                            state = listStateHome,
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ){
+
+                            itemsIndexed (uiState.studyBookList) { idx, data ->
+                                EditBookHolder(
+                                    bookState = data,
+                                    painter = painterResource(id = R.drawable.holder_book_image_no_available),
+                                    isEditMode = false,
+                                    onClickHolder = {
+                                        // TODO
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
 

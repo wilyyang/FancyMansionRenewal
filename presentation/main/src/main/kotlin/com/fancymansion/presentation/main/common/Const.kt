@@ -11,5 +11,6 @@ enum class MainScreenTab(val tabName: String, val titleResId: Int, val iconResId
 
     // TODO : Tab Test
     Home("main_tab_home", R.string.main_tab_title_home, R.drawable.ic_main_tab_home, R.drawable.ic_main_tab_home_fill),
+    Study("main_tab_study", R.string.main_tab_title_study, R.drawable.ic_main_tab_study, R.drawable.ic_main_tab_study_fill),
     MyInfo("main_tab_my_info", R.string.main_tab_title_my_info, R.drawable.ic_main_tab_my_info, R.drawable.ic_main_tab_my_info_fill)
 }

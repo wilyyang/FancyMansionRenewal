@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="main_tab_title_home">홈</string>
+    <string name="main_tab_title_study">서재</string>
     <string name="main_tab_title_editor">에디터</string>
     <string name="main_tab_title_my_info">MY</string>
 
