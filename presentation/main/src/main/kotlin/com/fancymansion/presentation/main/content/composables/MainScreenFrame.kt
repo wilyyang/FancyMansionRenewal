@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -113,7 +115,11 @@ fun MainScreenFrame(
                 // TODO : Tab Test
                 MainScreenTab.Home -> {
                     Column (modifier = Modifier
-                        .fillMaxSize()){
+                        .fillMaxSize().padding(top = 50.dp)){
+
+                        Text(modifier = Modifier.padding(start = 15.dp), text = "홈 화면", style = MaterialTheme.typography.titleLarge)
+
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         LazyColumn(
                             state = listStateHome,
@@ -130,6 +136,16 @@ fun MainScreenFrame(
                                         // TODO
                                     }
                                 )
+
+                                if (idx < uiState.homeBookList.size - 1) {
+                                    HorizontalDivider(
+                                        modifier = Modifier
+                                            .padding(horizontal = 14.dp)
+                                            .height(0.3.dp)
+                                            .fillMaxWidth(),
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                }
                             }
                         }
                     }
@@ -137,7 +153,11 @@ fun MainScreenFrame(
 
                 MainScreenTab.Study -> {
                     Column (modifier = Modifier
-                        .fillMaxSize()){
+                        .fillMaxSize().padding(top = 50.dp)){
+
+                        Text(modifier = Modifier.padding(start = 15.dp), text = "서재 화면", style = MaterialTheme.typography.titleLarge)
+
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         LazyColumn(
                             state = listStateHome,
@@ -154,6 +174,16 @@ fun MainScreenFrame(
                                         // TODO
                                     }
                                 )
+
+                                if (idx < uiState.studyBookList.size - 1) {
+                                    HorizontalDivider(
+                                        modifier = Modifier
+                                            .padding(horizontal = 14.dp)
+                                            .height(0.3.dp)
+                                            .fillMaxWidth(),
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                }
                             }
                         }
                     }

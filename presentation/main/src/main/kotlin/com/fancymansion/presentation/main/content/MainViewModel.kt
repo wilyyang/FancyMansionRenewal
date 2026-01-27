@@ -1,14 +1,20 @@
 package com.fancymansion.presentation.main.content
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.domain.usecase.remoteBook.UseCaseGetHomeBookList
+import com.fancymansion.presentation.main.tab.editor.EditBookState
+import com.fancymansion.presentation.main.tab.editor.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val useCaseGetHomeBookList: UseCaseGetHomeBookList
 ) : BaseViewModel<MainContract.State, MainContract.Event, MainContract.Effect>() {
 
     private var isUpdateResume = false
@@ -36,8 +42,15 @@ class MainViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
+            val homeBookList = useCaseGetHomeBookList().map {
+                EditBookState(
+                    (it.book to it.episode).toWrapper(ImagePickType.Empty),
+                    mutableStateOf(false)
+                )
+            }
             setState {
                 copy(
+                    homeBookList = homeBookList,
                     isInitSuccess = true
                 )
             }

@@ -5,10 +5,12 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.firebase.database.book.BookFirestoreDatabase
 import com.fancymansion.data.datasource.firebase.database.book.model.asData
+import com.fancymansion.data.datasource.firebase.database.book.model.asModel
 import com.fancymansion.data.datasource.firebase.storage.book.BookFirebaseStorage
 import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
+import com.fancymansion.domain.model.book.HomeBookItemModel
 import javax.inject.Inject
 
 class BookRemoteRepositoryImpl @Inject constructor(
@@ -59,5 +61,9 @@ class BookRemoteRepositoryImpl @Inject constructor(
             coverFile = coverFile,
             fileName = coverFileName
         )
+    }
+
+    override suspend fun getHomeBookItems(): List<HomeBookItemModel> {
+        return bookFirestoreDatabase.loadBookList().map { it.asModel() }
     }
 }
