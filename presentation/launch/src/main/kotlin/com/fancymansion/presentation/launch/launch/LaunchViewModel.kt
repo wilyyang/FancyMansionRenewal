@@ -45,8 +45,8 @@ class LaunchViewModel @Inject constructor(
                             episodeRef = EpisodeRef(
                                 userId = userInfo.userId,
                                 mode = ReadMode.EDIT,
-                                bookId = getBookId(userInfo.userId, ReadMode.EDIT, 0),
-                                episodeId = getEpisodeId(userInfo.userId, ReadMode.EDIT, 0)
+                                bookId = getBookId(userInfo.userId, 0),
+                                episodeId = getEpisodeId(userInfo.userId, 0)
                             ),
                             editorModel = EditorModel(
                                 editorId = userInfo.userId,

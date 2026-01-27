@@ -13,6 +13,7 @@ import com.fancymansion.data.datasource.appStorage.book.model.asModel
 import com.fancymansion.data.datasource.database.book.di.HiltBookDatabaseHelper
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ActionIdModel
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.google.common.truth.Truth
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -44,14 +45,14 @@ class TestBookLocalRepository {
     private val testRef = EpisodeRef(
         userId = testUserId,
         mode = ReadMode.READ,
-        bookId = getBookId(testUserId, ReadMode.READ, 0),
-        episodeId = getEpisodeId(testUserId, ReadMode.READ, 0)
+        bookId = getBookId(testUserId, 0),
+        episodeId = getEpisodeId(testUserId, 0)
     )
 
     @Before
     fun setUp() = runTest {
         hiltRule.inject()
-        repository.makeSampleEpisode(testRef)
+        repository.makeSampleEpisode(testRef, EditorModel())
     }
 
     @Test

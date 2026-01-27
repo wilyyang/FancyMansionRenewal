@@ -457,8 +457,8 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         ).map { it.asData() }
 
         for (i in 1 until 31) {
-            val bookId = getBookId(sampleUserId, ReadMode.EDIT, i)
-            val episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, i)
+            val bookId = getBookId(sampleUserId, i)
+            val episodeId = getEpisodeId(sampleUserId, i)
 
             val episodeRef = EpisodeRef(
                 userId = userId,

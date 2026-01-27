@@ -7,6 +7,7 @@ import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.const.testUserId
 import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.di.injectRepository.HiltRepository
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.PageSettingModel
 import com.google.common.truth.Truth
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -48,15 +49,15 @@ class TestBookUseCase {
     private val testRef = EpisodeRef(
         userId = testUserId,
         mode = ReadMode.READ,
-        bookId = getBookId(testUserId, ReadMode.READ, 0),
-        episodeId = getEpisodeId(testUserId, ReadMode.READ, 0)
+        bookId = getBookId(testUserId, 0),
+        episodeId = getEpisodeId(testUserId, 0)
     )
 
 
     @Before
     fun setUp() = runTest {
         hiltRule.inject()
-        useCaseBookList.makeSampleEpisode(testRef)
+        useCaseBookList.makeSampleEpisode(testRef, EditorModel())
     }
 
     @Test

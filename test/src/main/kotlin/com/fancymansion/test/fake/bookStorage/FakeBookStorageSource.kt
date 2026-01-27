@@ -9,6 +9,7 @@ import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.coverFile
 import com.fancymansion.data.datasource.appStorage.book.episodeThumbnailFile
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
@@ -168,7 +169,7 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
 
     override suspend fun bookLogicFileExists(episodeRef: EpisodeRef) : Boolean { return true }
 
-    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef): Boolean {
+    override suspend fun makeSampleEpisode(episodeRef: EpisodeRef, editorModel: EditorData): Boolean {
         val gson = GsonBuilder()
             .registerTypeAdapter(SourceData::class.java, JsonSerializer<SourceData> { src, _, context -> src?.toJson(context!!) })
             .registerTypeAdapter(SourceData::class.java, JsonDeserializer { json, _, context -> SourceData.fromJson(json!!, context!!) })
@@ -241,5 +242,12 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
 
     override suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean {
         return true
+    }
+
+    override suspend fun compressEpisodeDirAndGetFile(
+        episodeRef: EpisodeRef,
+        publishedId: String
+    ): File {
+        return File("")
     }
 }

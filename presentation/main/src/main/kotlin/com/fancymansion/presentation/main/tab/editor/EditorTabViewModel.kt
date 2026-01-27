@@ -250,12 +250,12 @@ class EditorTabViewModel @Inject constructor(
             // 선택된 책 ID 저장
             val selectedIdSet = allBookStates.filter { it.selected.value }.map { it.bookInfo.bookId }.toSet()
 
-            val newNumber = nextBookNumber(originBookInfoList.map { it.bookId }, userId, mode)
+            val newNumber = nextBookNumber(originBookInfoList.map { it.bookId }, userId)
             val episodeRef = EpisodeRef(
                 userId = userId,
                 mode = mode,
-                bookId = getBookId(userId, mode, newNumber),
-                episodeId = getEpisodeId(userId, mode, newNumber)
+                bookId = getBookId(userId, newNumber),
+                episodeId = getEpisodeId(userId, newNumber)
             )
             val (bookInfo, episodeInfo, logic, startPage) = createNewBookDraft(episodeRef, newNumber, editorInfo)
 

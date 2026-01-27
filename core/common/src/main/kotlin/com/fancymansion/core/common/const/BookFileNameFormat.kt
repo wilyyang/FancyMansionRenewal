@@ -4,14 +4,13 @@ import java.io.File
 
 const val testUserId = "tester"
 const val sampleUserId = "sample"
-fun getBookId(userId: String, mode: ReadMode, number: Int) = "${userId}_${mode.name}_${number}"
+fun getBookId(userId: String, number: Int) = "${userId}_${number}"
 fun nextBookNumber(
     bookIds: List<String>,
-    userId: String,
-    mode: ReadMode
+    userId: String
 ): Int {
     val regex = Regex(
-        """^${Regex.escape(userId)}_${mode.name}_(\d+)$"""
+        """^${Regex.escape(userId)}_(\d+)$"""
     )
 
     val usedNumbers = bookIds
@@ -30,7 +29,7 @@ fun nextBookNumber(
     return next
 }
 
-fun getEpisodeId(userId: String, mode: ReadMode, number: Int) = "${userId}_${mode.name}_${number}.0"
+fun getEpisodeId(userId: String, number: Int) = "${userId}_${number}.0"
 fun getEpisodeId(bookId: String) = "${bookId}.0"
 
 fun getCoverFileName(id: String, number: Int, fileExtension: String) = "${id}.cover.${number}.$fileExtension"

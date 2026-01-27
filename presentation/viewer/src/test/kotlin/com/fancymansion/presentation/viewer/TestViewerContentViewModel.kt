@@ -29,6 +29,7 @@ import com.fancymansion.core.common.di.HiltCommon
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.di.injectRepository.HiltRepository
+import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseBookLogic
@@ -93,8 +94,8 @@ class TestViewerContentViewModel {
     private val testRef = EpisodeRef(
         userId = sampleUserId,
         mode = ReadMode.EDIT,
-        bookId = getBookId(sampleUserId, ReadMode.EDIT, 0),
-        episodeId = getEpisodeId(sampleUserId, ReadMode.EDIT, 0)
+        bookId = getBookId(sampleUserId, 0),
+        episodeId = getEpisodeId(sampleUserId, 0)
     )
 
     private suspend fun ComposeTestRule.waitForInitEnd() {
@@ -136,7 +137,7 @@ class TestViewerContentViewModel {
             }
         }
 
-        useCaseBookList.makeSampleEpisode(testRef)
+        useCaseBookList.makeSampleEpisode(testRef, EditorModel())
         targetLogic = useCaseLoadBook.loadLogic(testRef)
         setupViewModel()
 
