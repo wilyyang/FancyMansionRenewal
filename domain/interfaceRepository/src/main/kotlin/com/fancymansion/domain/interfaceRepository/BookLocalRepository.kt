@@ -100,6 +100,7 @@ interface BookLocalRepository {
     suspend fun getPageImageFiles(episodeRef: EpisodeRef, pageId: Long): List<File>
     suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean
     suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean
+    suspend fun migrateBookIdToPublishedId(episodeRef: EpisodeRef, publishedId: String)
 
     /**
      * ActionCount

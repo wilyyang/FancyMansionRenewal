@@ -113,4 +113,5 @@ interface BookStorageSource {
     suspend fun updateEditTime(episodeRef: EpisodeRef): Boolean
     suspend fun updatePageCount(episodeRef: EpisodeRef, pageCount: Int): Boolean
     suspend fun compressEpisodeDirAndGetFile(episodeRef: EpisodeRef, publishedId: String): File
+    suspend fun migrateBookIdToPublishedId(episodeRef: EpisodeRef, publishedId: String)
 }

@@ -20,8 +20,11 @@ class BookFirestoreDatabaseImpl(
     private val firestore: FirebaseFirestore
 ) : BookFirestoreDatabase {
 
-    override suspend fun saveBook(book: BookInfoData): String {
-        val publishedId = firestore.collection(BOOKS).document().id
+    override suspend fun getPublishedId(): String {
+        return firestore.collection(BOOKS).document().id
+    }
+
+    override suspend fun saveBook(publishedId: String, book: BookInfoData) {
         val ref = firestore.collection(BOOKS).document(publishedId)
 
         val data = hashMapOf(
@@ -41,7 +44,6 @@ class BookFirestoreDatabaseImpl(
         )
 
         ref.set(data, SetOptions.merge()).await()
-        return publishedId
     }
 
     override suspend fun saveEpisode(publishedId: String, episode: EpisodeInfoData) {

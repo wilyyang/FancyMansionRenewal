@@ -19,17 +19,20 @@ class BookRemoteRepositoryImpl @Inject constructor(
     private val bookFirebaseStorage: BookFirebaseStorage
 ) : BookRemoteRepository {
 
-    override suspend fun createBookInfo(
-        episodeRef: EpisodeRef,
-        bookInfo: BookInfoModel,
-        episodeInfo: EpisodeInfoModel
-    ): String {
-        val publishedId = bookFirestoreDatabase.saveBook(bookInfo.asData())
-        bookFirestoreDatabase.saveEpisode(publishedId, episodeInfo.asData())
-        return publishedId
+    override suspend fun getPublishedId(): String {
+        return bookFirestoreDatabase.getPublishedId()
     }
 
-    override suspend fun uploadBookArchive(episodeRef: EpisodeRef, publishedId: String) {
+    override suspend fun createBookInfo(
+        publishedId: String,
+        bookInfo: BookInfoModel,
+        episodeInfo: EpisodeInfoModel
+    ) {
+        bookFirestoreDatabase.saveBook(publishedId, bookInfo.asData())
+        bookFirestoreDatabase.saveEpisode(publishedId, episodeInfo.asData())
+    }
+
+    override suspend fun uploadBookArchive(publishedId: String, episodeRef: EpisodeRef) {
         val zipFile = bookStorageSource.compressEpisodeDirAndGetFile(episodeRef, publishedId)
 
         try {
@@ -45,8 +48,8 @@ class BookRemoteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun uploadBookCoverImage(
-        episodeRef: EpisodeRef,
         publishedId: String,
+        episodeRef: EpisodeRef,
         coverFileName: String
     ) {
         val coverFile = bookStorageSource.loadCoverImage(

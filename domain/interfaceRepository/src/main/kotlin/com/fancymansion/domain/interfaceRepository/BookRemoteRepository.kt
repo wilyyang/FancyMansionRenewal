@@ -7,8 +7,9 @@ import com.fancymansion.domain.model.book.HomeBookItemModel
 
 
 interface BookRemoteRepository {
-    suspend fun createBookInfo(episodeRef: EpisodeRef, bookInfo: BookInfoModel, episodeInfo: EpisodeInfoModel): String
-    suspend fun uploadBookArchive(episodeRef: EpisodeRef, publishedId: String)
-    suspend fun uploadBookCoverImage(episodeRef: EpisodeRef, publishedId: String, coverFileName: String)
+    suspend fun getPublishedId(): String
+    suspend fun createBookInfo(publishedId: String, bookInfo: BookInfoModel, episodeInfo: EpisodeInfoModel)
+    suspend fun uploadBookArchive(publishedId: String, episodeRef: EpisodeRef)
+    suspend fun uploadBookCoverImage(publishedId: String, episodeRef: EpisodeRef, coverFileName: String)
     suspend fun getHomeBookItems(): List<HomeBookItemModel>
 }

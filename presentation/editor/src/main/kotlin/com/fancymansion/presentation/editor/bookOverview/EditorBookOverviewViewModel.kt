@@ -7,6 +7,7 @@ import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -242,10 +243,13 @@ class EditorBookOverviewViewModel @Inject constructor(
                 uiState.value.imagePickType,
                 newKeywordList
             )
-            val episodeInfo = useCaseLoadBook.loadEpisodeInfo(episodeRef).copy(
-                updateTime = System.currentTimeMillis()
-            )
-            useCaseUploadBook(episodeRef = episodeRef, bookInfo = uiState.value.bookInfo, episodeInfo = episodeInfo)
+            val publisedId = useCaseUploadBook(episodeRef = episodeRef)
+            episodeRef = episodeRef.copy(bookId = publisedId, episodeId = getEpisodeId(publisedId))
+
+            useCaseGetTotalKeyword().forEach {
+                keywordStates.add(createKeywordState(it, false))
+            }
+            loadBookInfoFromFile()
         }
     }
 

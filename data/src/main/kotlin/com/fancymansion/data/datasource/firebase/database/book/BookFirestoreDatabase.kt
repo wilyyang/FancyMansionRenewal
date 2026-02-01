@@ -5,7 +5,8 @@ import com.fancymansion.data.datasource.firebase.database.book.model.EpisodeInfo
 import com.fancymansion.data.datasource.firebase.database.book.model.HomeBookItemData
 
 interface BookFirestoreDatabase {
-    suspend fun saveBook(book: BookInfoData): String
+    suspend fun getPublishedId(): String
+    suspend fun saveBook(publishedId: String, book: BookInfoData)
     suspend fun saveEpisode(publishedId: String, episode: EpisodeInfoData)
     suspend fun loadBookList(): List<HomeBookItemData>
 }

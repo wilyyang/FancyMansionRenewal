@@ -399,6 +399,42 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         return zipFile
     }
 
+    override suspend fun migrateBookIdToPublishedId(
+        episodeRef: EpisodeRef,
+        publishedId: String
+    ) {
+        // Book Info Update
+        val bookInfo = loadBookInfo(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
+        val newCoverList = bookInfo.introduce.coverList.mapIndexedNotNull { index, oldCoverFileName ->
+            renameCoverImage(
+                episodeRef = episodeRef,
+                index = index,
+                oldCoverFileName = oldCoverFileName,
+                publishedId = publishedId
+            )
+        }
+
+        val newBookInfo = bookInfo.copy(
+            id = publishedId,
+            introduce = bookInfo.introduce.copy(
+                coverList = newCoverList
+            )
+        )
+        makeBookInfo(episodeRef.userId, episodeRef.mode, episodeRef.bookId, newBookInfo)
+
+        // EpisodeInfo Update
+        val episodeInfo = loadEpisodeInfo(episodeRef)
+        val newEpisodeInfo = episodeInfo.copy(
+            id = getEpisodeId(publishedId),
+            bookId = publishedId
+        )
+        makeEpisodeInfo(episodeRef, newEpisodeInfo)
+
+        // Rename Directory
+        root.episodeFile(episodeRef).rename(getEpisodeId(publishedId))
+        root.bookFile(episodeRef.userId, episodeRef.mode, episodeRef.bookId).rename(publishedId)
+    }
+
     private suspend fun makeEditBookInfoSampleList(userId: String) {
         val titles = listOf(
             "사랑의 법칙", "시간의 파편", "유령 도시의 연대기", "끝나지 않는 이야기", "비밀의 정원 이야기",
@@ -517,5 +553,39 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             makeEpisodeInfo(episodeRef, episodeInfo)
             makeLogic(episodeRef, logic)
         }
+    }
+
+    private suspend fun renameCoverImage(
+        episodeRef: EpisodeRef,
+        index: Int,
+        oldCoverFileName: String,
+        publishedId: String
+    ): String? {
+        val oldFile = loadCoverImage(
+            userId = episodeRef.userId,
+            mode = episodeRef.mode,
+            bookId = episodeRef.bookId,
+            imageName = oldCoverFileName
+        )
+
+        if (!oldFile.exists()) {
+            return null
+        }
+
+        val extension = oldCoverFileName.substringAfterLast('.', missingDelimiterValue = "")
+        val newFileName =
+            getCoverFileName(id = publishedId, number = index, fileExtension = extension)
+
+        oldFile.rename(newFileName)
+        return newFileName
+    }
+
+    fun File.rename(newName: String): File {
+        require(exists()) { "Old file does not exist: ${absolutePath}" }
+        require(newName.isNotBlank()) { "newName is blank" }
+
+        val newFile = File(parentFile, newName)
+        renameTo(newFile)
+        return newFile
     }
 }

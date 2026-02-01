@@ -229,6 +229,13 @@ class BookLocalRepositoryImpl @Inject constructor(
         return bookStorageSource.updatePageCount(episodeRef, pageCount)
     }
 
+    override suspend fun migrateBookIdToPublishedId(
+        episodeRef: EpisodeRef,
+        publishedId: String
+    ) {
+        bookStorageSource.migrateBookIdToPublishedId(episodeRef, publishedId)
+    }
+
     /**
      * ActionCount
      */
