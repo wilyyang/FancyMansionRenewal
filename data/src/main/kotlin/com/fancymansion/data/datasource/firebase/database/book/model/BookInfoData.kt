@@ -2,6 +2,7 @@ package com.fancymansion.data.datasource.firebase.database.book.model
 
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
+import com.fancymansion.domain.model.homeBook.BookHomeModel
 
 data class BookInfoData(
     val bookId: String,
@@ -24,9 +25,9 @@ fun BookInfoModel.asData() = BookInfoData(
     editor = editor.asData()
 )
 
-fun BookInfoData.asModel(keywordMap: Map<Long, KeywordModel>) = BookInfoModel(
+fun BookInfoData.asHomeModel(keywordMap: Map<Long, KeywordModel>) = BookHomeModel(
     id = bookId,
     publishedId = publishedId,
-    introduce = introduce.asModel(keywordMap),
-    editor = editor.asModel()
+    introduce = introduce.asHomeModel(keywordMap),
+    editor = editor.asHomeModel()
 )

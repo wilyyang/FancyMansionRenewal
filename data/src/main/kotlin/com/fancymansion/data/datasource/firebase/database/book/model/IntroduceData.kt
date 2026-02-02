@@ -2,6 +2,7 @@ package com.fancymansion.data.datasource.firebase.database.book.model
 
 import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.KeywordModel
+import com.fancymansion.domain.model.homeBook.IntroduceHomeModel
 
 data class IntroduceData(
     val title: String,
@@ -24,7 +25,7 @@ fun IntroduceModel.asData(): IntroduceData = IntroduceData(
     description = description
 )
 
-fun IntroduceData.asModel(keywordMap: Map<Long, KeywordModel>): IntroduceModel = IntroduceModel(
+fun IntroduceData.asHomeModel(keywordMap: Map<Long, KeywordModel>): IntroduceHomeModel = IntroduceHomeModel(
     title = title,
     coverList = coverList,
     keywordList = keywordIds.mapNotNull { keywordMap[it] },

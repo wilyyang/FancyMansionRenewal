@@ -1,6 +1,7 @@
 package com.fancymansion.data.datasource.firebase.database.book.model
 
 import com.fancymansion.domain.model.book.EditorModel
+import com.fancymansion.domain.model.homeBook.EditorHomeModel
 
 data class EditorData(
     val editorId: String,
@@ -20,7 +21,7 @@ fun EditorModel.asData(): EditorData = EditorData(
     editorEmail = editorEmail
 )
 
-fun EditorData.asModel(): EditorModel = EditorModel(
+fun EditorData.asHomeModel(): EditorHomeModel = EditorHomeModel(
     editorId = editorId,
     editorName = editorName,
     editorEmail = editorEmail

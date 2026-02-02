@@ -2,6 +2,7 @@ package com.fancymansion.data.datasource.firebase.database.book.model
 
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.book.EpisodeInfoModel
+import com.fancymansion.domain.model.homeBook.EpisodeHomeModel
 
 data class EpisodeInfoData(
     val episodeId: String,
@@ -36,7 +37,7 @@ fun EpisodeInfoModel.asData(): EpisodeInfoData = EpisodeInfoData(
     updateTime = updateTime
 )
 
-fun EpisodeInfoData.asModel(readMode: ReadMode): EpisodeInfoModel = EpisodeInfoModel(
+fun EpisodeInfoData.asHomeModel(readMode: ReadMode): EpisodeHomeModel = EpisodeHomeModel(
     id = episodeId,
     bookId = bookId,
     title = title,

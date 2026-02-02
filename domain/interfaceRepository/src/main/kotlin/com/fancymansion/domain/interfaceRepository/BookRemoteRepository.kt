@@ -3,8 +3,7 @@ package com.fancymansion.domain.interfaceRepository
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
-import com.fancymansion.domain.model.book.HomeBookItemModel
-
+import com.fancymansion.domain.model.homeBook.HomeBookItemModel
 
 interface BookRemoteRepository {
     suspend fun getPublishedId(): String

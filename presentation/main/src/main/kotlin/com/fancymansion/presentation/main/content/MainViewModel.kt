@@ -7,7 +7,6 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetHomeBookList
 import com.fancymansion.presentation.main.tab.editor.EditBookState
-import com.fancymansion.presentation.main.tab.editor.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -44,7 +43,7 @@ class MainViewModel @Inject constructor(
         launchWithInit {
             val homeBookList = useCaseGetHomeBookList().map {
                 EditBookState(
-                    (it.book to it.episode).toWrapper(ImagePickType.Empty),
+                    it.toWrapper(ImagePickType.Empty),
                     mutableStateOf(false)
                 )
             }
