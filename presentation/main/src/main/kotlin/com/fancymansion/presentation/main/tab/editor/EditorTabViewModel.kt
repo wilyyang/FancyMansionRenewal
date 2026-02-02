@@ -304,7 +304,7 @@ class EditorTabViewModel @Inject constructor(
      * [3] 처리 함수
      */
     private suspend fun loadBookStateList() {
-        originBookInfoList = useCaseBookList.getUserEditBookInfoList(userId = userId).map {
+        originBookInfoList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.EDIT).map {
             val bookInfo = it.first
             val episodeInfo = it.second
 

@@ -13,4 +13,5 @@ interface BookRemoteRepository {
     suspend fun uploadBookCoverImage(publishedId: String, episodeRef: EpisodeRef, coverFileName: String)
     suspend fun getHomeBookItems(): List<HomeBookItemModel>
     suspend fun downloadBookArchive(userId: String, publishedId: String): File
+    suspend fun getBookCoverImageUrl(publishedId: String, imageFileName: String): String
 }

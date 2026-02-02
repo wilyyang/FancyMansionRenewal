@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import coil.compose.rememberAsyncImagePainter
+import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
@@ -94,6 +96,17 @@ fun MainScreenFrame(
 
     val listStateHome = rememberLazyListState()
     val listStateStudy = rememberLazyListState()
+    val studyPainterList = uiState.studyBookList.map { data ->
+        when (data.bookInfo.thumbnail) {
+            is ImagePickType.SavedImage -> {
+                rememberAsyncImagePainter(data.bookInfo.thumbnail.file)
+            }
+
+            else -> {
+                painterResource(id = R.drawable.holder_book_image_no_available)
+            }
+        }
+    }
 
     // TODO 07.14 탭 적용
     Column(modifier = Modifier
@@ -130,7 +143,9 @@ fun MainScreenFrame(
                             itemsIndexed (uiState.homeBookList) { idx, data ->
                                 EditBookHolder(
                                     bookState = data,
-                                    painter = painterResource(id = R.drawable.holder_book_image_no_available),
+                                    painter = rememberAsyncImagePainter(
+                                        model = uiState.homeBookUrlList[idx]
+                                    ),
                                     isEditMode = false,
                                     onClickHolder = {
                                         onEventSent(MainContract.Event.HomeBookHolderClicked(it))
@@ -160,7 +175,7 @@ fun MainScreenFrame(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         LazyColumn(
-                            state = listStateHome,
+                            state = listStateStudy,
                             modifier = Modifier
                                 .fillMaxSize()
                         ){
@@ -168,10 +183,10 @@ fun MainScreenFrame(
                             itemsIndexed (uiState.studyBookList) { idx, data ->
                                 EditBookHolder(
                                     bookState = data,
-                                    painter = painterResource(id = R.drawable.holder_book_image_no_available),
+                                    painter = studyPainterList[idx],
                                     isEditMode = false,
                                     onClickHolder = {
-                                        // TODO
+                                        onEventSent(MainContract.Event.DownloadBookHolderClicked(it))
                                     }
                                 )
 

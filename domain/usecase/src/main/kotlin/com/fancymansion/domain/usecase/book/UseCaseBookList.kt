@@ -47,18 +47,18 @@ class UseCaseBookList @Inject constructor(
             bookLocalRepository.deleteBookDir(userId, ReadMode.EDIT, bookId)
         }
 
-    suspend fun getUserEditBookInfoList(userId: String): List<Pair<BookInfoModel, EpisodeInfoModel>> =
+    suspend fun getLocalBookInfoList(userId: String, readMode: ReadMode): List<Pair<BookInfoModel, EpisodeInfoModel>> =
         withContext(dispatcher) {
-            val result = bookLocalRepository.getUserBookFolderNameList(userId = userId, mode = ReadMode.EDIT).map {
+            val result = bookLocalRepository.getUserBookFolderNameList(userId = userId, mode = readMode).map {
                 val bookInfo = bookLocalRepository.loadBookInfo(
                     userId = userId,
                     bookId = it,
-                    mode = ReadMode.EDIT
+                    mode = readMode
                 )
                 val episodeInfo = bookLocalRepository.loadEpisodeInfo(
                     EpisodeRef(
                         userId,
-                        ReadMode.EDIT,
+                        readMode,
                         it,
                         getEpisodeId(it)
                     )

@@ -70,4 +70,10 @@ class BookFirebaseStorageImpl(
             if (cacheFile.exists()) cacheFile.delete()
         }
     }
+
+    override suspend fun getBookCoverImageUrl(publishedId: String, imageFileName: String): String {
+        val storagePath = "${BOOKS}/$publishedId/${COVERS}/$imageFileName"
+        val ref = storage.reference.child(storagePath)
+        return ref.downloadUrl.await().toString()
+    }
 }

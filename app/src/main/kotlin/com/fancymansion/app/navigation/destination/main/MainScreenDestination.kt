@@ -6,6 +6,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.app.navigation.navigateEditorBookOverviewScreen
+import com.fancymansion.app.navigation.navigateOverviewScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
@@ -89,6 +90,13 @@ fun handleNavigationRequest(effect: ViewSideEffect, navController: NavController
             when(effect){
                 is NavigateEditorBookOverviewScreen -> {
                     navController.navigateEditorBookOverviewScreen(effect.episodeRef)
+                }
+            }
+        }
+        is MainContract.Effect.Navigation -> {
+            when(effect){
+                is MainContract.Effect.Navigation.NavigateOverviewScreen -> {
+                    navController.navigateOverviewScreen(effect.episodeRef)
                 }
             }
         }

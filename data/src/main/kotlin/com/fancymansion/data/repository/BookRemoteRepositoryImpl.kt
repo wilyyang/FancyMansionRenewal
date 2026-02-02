@@ -79,4 +79,11 @@ class BookRemoteRepositoryImpl @Inject constructor(
         downloadedZip.delete()
         return extractedDir
     }
+
+    override suspend fun getBookCoverImageUrl(
+        publishedId: String,
+        imageFileName: String
+    ): String {
+        return bookFirebaseStorage.getBookCoverImageUrl(publishedId, imageFileName)
+    }
 }

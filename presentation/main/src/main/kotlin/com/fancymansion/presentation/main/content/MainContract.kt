@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.main.content
 
+import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
@@ -28,17 +29,21 @@ class MainContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
-        val studyBookList: List<EditBookState> = emptyList(),
         val homeBookList: List<EditBookState> = emptyList(),
+        val homeBookUrlList: List<String> = emptyList(),
+        val studyBookList: List<EditBookState> = emptyList(),
         val currentTab: MainScreenTab = MainScreenTab.Editor,
     ) : ViewState
 
     sealed class Event : ViewEvent {
         data class TabSelected(val tab: MainScreenTab) : Event()
         data class HomeBookHolderClicked(val publishedId: String) : Event()
+        data class DownloadBookHolderClicked(val bookId: String) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
-        sealed class Navigation : Effect()
+        sealed class Navigation : Effect(){
+            data class NavigateOverviewScreen(val episodeRef: EpisodeRef) : Navigation()
+        }
     }
 }

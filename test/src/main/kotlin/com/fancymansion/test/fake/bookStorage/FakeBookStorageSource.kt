@@ -255,4 +255,17 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         episodeRef: EpisodeRef,
         publishedId: String
     ) {}
+
+    override fun getCacheZipFile(userId: String, publishedId: String): File {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun unzipBookArchiveToUserDir(
+        zipFile: File,
+        userId: String,
+        mode: ReadMode,
+        publishedId: String
+    ): File {
+        TODO("Not yet implemented")
+    }
 }

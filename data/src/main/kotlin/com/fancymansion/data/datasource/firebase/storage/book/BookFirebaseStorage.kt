@@ -14,4 +14,5 @@ interface BookFirebaseStorage {
     )
 
     suspend fun downloadBookZipToCache(publishedId: String, cacheFile: File): File
+    suspend fun getBookCoverImageUrl(publishedId: String, imageFileName: String): String
 }
