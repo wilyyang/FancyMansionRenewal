@@ -4,7 +4,8 @@ import com.fancymansion.domain.model.book.KeywordModel
 
 data class BookHomeModel(
     val id: String,
-    val publishedId: String? = null,
+    val publishedId: String,
+    val publishedAt: Long,
     val introduce: IntroduceHomeModel,
     val editor: EditorHomeModel
 )

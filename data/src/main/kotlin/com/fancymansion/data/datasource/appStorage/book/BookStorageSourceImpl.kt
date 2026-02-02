@@ -538,7 +538,6 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
                 createTime = editTime,
                 editTime = editTime,
                 id = episodeId,
-                readMode = ReadMode.EDIT,
                 title = "",
                 pageCount = 0,
                 version = 0

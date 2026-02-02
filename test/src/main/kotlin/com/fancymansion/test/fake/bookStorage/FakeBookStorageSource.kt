@@ -250,4 +250,9 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
     ): File {
         return File("")
     }
+
+    override suspend fun migrateBookIdToPublishedId(
+        episodeRef: EpisodeRef,
+        publishedId: String
+    ) {}
 }

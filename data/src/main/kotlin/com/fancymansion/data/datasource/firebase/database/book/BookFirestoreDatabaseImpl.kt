@@ -8,6 +8,7 @@ import com.fancymansion.data.datasource.firebase.database.book.model.EditorData
 import com.fancymansion.data.datasource.firebase.database.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.HomeBookItemData
 import com.fancymansion.data.datasource.firebase.database.book.model.IntroduceData
+import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_AT
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -30,6 +31,7 @@ class BookFirestoreDatabaseImpl(
         val data = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
             BookInfoData.PUBLISHED_ID to publishedId,
+            BookInfoData.PUBLISHED_AT to System.currentTimeMillis(),
             BookInfoData.INTRODUCE to mapOf(
                 IntroduceData.TITLE to book.introduce.title,
                 IntroduceData.COVER_LIST to book.introduce.coverList,
@@ -60,8 +62,7 @@ class BookFirestoreDatabaseImpl(
             EpisodeInfoData.VERSION to episode.version,
 
             EpisodeInfoData.CREATE_TIME to episode.createTime,
-            EpisodeInfoData.EDIT_TIME to episode.editTime,
-            EpisodeInfoData.UPDATE_TIME to episode.updateTime,
+            EpisodeInfoData.EDIT_TIME to episode.editTime
         )
 
         ref.set(data, SetOptions.merge()).await()
@@ -80,6 +81,7 @@ class BookFirestoreDatabaseImpl(
                     val book = BookInfoData(
                         bookId = bookId,
                         publishedId = bookDoc.getString(BookInfoData.PUBLISHED_ID) ?: publishedId,
+                        publishedAt = bookDoc.getLong(BookInfoData.PUBLISHED_AT) ?: NOT_ASSIGN_PUBLISHED_AT,
                         introduce = bookDoc.parseIntroduce(),
                         editor = bookDoc.parseEditor(),
                     )
@@ -138,8 +140,7 @@ class BookFirestoreDatabaseImpl(
             version = getLong(EpisodeInfoData.VERSION) ?: 0L,
 
             createTime = getLong(EpisodeInfoData.CREATE_TIME) ?: 0L,
-            editTime = getLong(EpisodeInfoData.EDIT_TIME) ?: 0L,
-            updateTime = getLong(EpisodeInfoData.UPDATE_TIME) ?: 0L,
+            editTime = getLong(EpisodeInfoData.EDIT_TIME) ?: 0L
         )
     }
 }

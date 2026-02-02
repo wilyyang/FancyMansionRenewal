@@ -1,6 +1,5 @@
 package com.fancymansion.data.datasource.firebase.database.book.model
 
-import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
 import com.fancymansion.domain.model.book.keywordMap
 
@@ -11,5 +10,5 @@ data class HomeBookItemData(
 
 fun HomeBookItemData.asHomeModel() = HomeBookItemModel(
     book = book.asHomeModel(keywordMap),
-    episode = episode.asHomeModel(ReadMode.READ)
+    episode = episode.asHomeModel()
 )

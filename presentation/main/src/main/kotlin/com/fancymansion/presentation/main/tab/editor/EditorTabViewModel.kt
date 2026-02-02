@@ -431,7 +431,6 @@ class EditorTabViewModel @Inject constructor(
             createTime = currentTime,
             editTime = currentTime,
             id = episodeRef.episodeId,
-            readMode = episodeRef.mode,
             title = "",
             pageCount = 1,
             version = 0

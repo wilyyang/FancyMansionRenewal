@@ -1,6 +1,5 @@
 package com.fancymansion.data.datasource.appStorage.book.model
 
-import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
@@ -32,9 +31,7 @@ data class EpisodeInfoData(
     val pageCount: Int,
     val version: Long = 0L,
     val createTime: Long = System.currentTimeMillis(),
-    val editTime: Long = System.currentTimeMillis(),
-    val updateTime: Long = 0L,
-    val readMode: ReadMode = ReadMode.EDIT
+    val editTime: Long = System.currentTimeMillis()
 )
 
 fun BookInfoData.asModel() = BookInfoModel(
@@ -82,9 +79,7 @@ fun EpisodeInfoData.asModel() = EpisodeInfoModel(
     pageCount = pageCount,
     version = version,
     createTime = createTime,
-    editTime = editTime,
-    updateTime = updateTime,
-    readMode = readMode
+    editTime = editTime
 )
 
 fun EpisodeInfoModel.asData() = EpisodeInfoData(
@@ -94,7 +89,5 @@ fun EpisodeInfoModel.asData() = EpisodeInfoData(
     pageCount = pageCount,
     version = version,
     createTime = createTime,
-    editTime = editTime,
-    updateTime = updateTime,
-    readMode = readMode
+    editTime = editTime
 )

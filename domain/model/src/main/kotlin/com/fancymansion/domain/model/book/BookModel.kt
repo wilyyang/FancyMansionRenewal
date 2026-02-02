@@ -1,10 +1,7 @@
 package com.fancymansion.domain.model.book
 
-import com.fancymansion.core.common.const.ReadMode
-
 data class BookInfoModel(
     val id: String,
-    val publishedId: String? = null,
     val introduce: IntroduceModel,
     val editor: EditorModel
 )
@@ -29,7 +26,5 @@ data class EpisodeInfoModel(
     val pageCount: Int,
     val version: Long = 0L,
     val createTime: Long = System.currentTimeMillis(),
-    val editTime: Long = System.currentTimeMillis(),
-    val updateTime: Long = 0L,
-    val readMode: ReadMode = ReadMode.EDIT
+    val editTime: Long = System.currentTimeMillis()
 )
