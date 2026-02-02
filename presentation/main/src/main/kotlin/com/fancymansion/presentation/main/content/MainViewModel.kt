@@ -5,7 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetHomeBookList
+import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
 import com.fancymansion.presentation.main.tab.editor.EditBookState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,9 +15,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val useCaseGetHomeBookList: UseCaseGetHomeBookList
+    private val useCaseGetHomeBookList: UseCaseGetHomeBookList,
+    private val useCaseGetUserInfoLocal: UseCaseGetUserInfoLocal,
+    private val useCaseDownloadBook: UseCaseDownloadBook
 ) : BaseViewModel<MainContract.State, MainContract.Event, MainContract.Effect>() {
 
+    private lateinit var userId: String
     private var isUpdateResume = false
 
     init {
@@ -29,6 +34,11 @@ class MainViewModel @Inject constructor(
             is MainContract.Event.TabSelected -> {
                 setState { copy(currentTab = event.tab) }
             }
+            is MainContract.Event.HomeBookHolderClicked -> {
+                launchWithLoading {
+                    useCaseDownloadBook(userId = userId, publishedId = event.publishedId)
+                }
+            }
         }
     }
 
@@ -41,6 +51,8 @@ class MainViewModel @Inject constructor(
 
     private fun initializeState() {
         launchWithInit {
+            val userInfo = useCaseGetUserInfoLocal() ?: error("UserInfo is null")
+            userId = userInfo.userId
             val homeBookList = useCaseGetHomeBookList().map {
                 EditBookState(
                     it.toWrapper(ImagePickType.Empty),

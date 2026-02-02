@@ -12,9 +12,9 @@ import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 // 임시
 fun HomeBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     return EditBookWrapper(
-        bookId = book.id,
+        bookId = book.publishedId,
         title = book.introduce.title,
-        editTime = episode.editTime,
+        editTime = book.publishedAt,
         pageCount = episode.pageCount,
         thumbnail = thumbnail,
         keywords = book.introduce.keywordList
@@ -35,6 +35,7 @@ class MainContract {
 
     sealed class Event : ViewEvent {
         data class TabSelected(val tab: MainScreenTab) : Event()
+        data class HomeBookHolderClicked(val publishedId: String) : Event()
     }
 
     sealed class Effect : ViewSideEffect {

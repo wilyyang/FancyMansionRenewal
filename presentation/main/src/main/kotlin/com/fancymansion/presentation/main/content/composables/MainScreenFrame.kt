@@ -133,7 +133,7 @@ fun MainScreenFrame(
                                     painter = painterResource(id = R.drawable.holder_book_image_no_available),
                                     isEditMode = false,
                                     onClickHolder = {
-                                        // TODO
+                                        onEventSent(MainContract.Event.HomeBookHolderClicked(it))
                                     }
                                 )
 

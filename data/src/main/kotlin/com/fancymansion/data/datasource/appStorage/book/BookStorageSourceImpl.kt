@@ -24,12 +24,14 @@ import com.fancymansion.domain.model.book.KeywordModel
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
+import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
@@ -357,6 +359,9 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         return makeEpisodeInfo(episodeRef, newEpisode)
     }
 
+    /**
+     * Upload & Download
+     */
     override suspend fun compressEpisodeDirAndGetFile(
         episodeRef: EpisodeRef,
         publishedId: String
@@ -433,6 +438,59 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         // Rename Directory
         root.episodeFile(episodeRef).rename(getEpisodeId(publishedId))
         root.bookFile(episodeRef.userId, episodeRef.mode, episodeRef.bookId).rename(publishedId)
+    }
+
+    override fun getCacheZipFile(userId: String, publishedId: String): File {
+        return File(
+            context.cacheDir,
+            "${userId}.${publishedId}.zip"
+        )
+    }
+
+    override suspend fun unzipBookArchiveToUserDir(
+        zipFile: File,
+        userId: String,
+        mode: ReadMode,
+        publishedId: String
+    ): File {
+        // 최종 목적지
+        val targetDir = root.bookFile(userId, mode, publishedId)
+        if (targetDir.exists()) {
+            targetDir.deleteRecursively()
+        }
+
+        // 임시 디렉토리
+        val tempDir = File(targetDir.parentFile, "${publishedId}_tmp")
+        if (tempDir.exists()) {
+            tempDir.deleteRecursively()
+        }
+        tempDir.mkdirs()
+
+        // unzip
+        ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
+            var entry: ZipEntry?
+
+            while (zis.nextEntry.also { entry = it } != null) {
+                val entryFile = File(tempDir, entry!!.name)
+
+                if (entry.isDirectory) {
+                    entryFile.mkdirs()
+                } else {
+                    entryFile.parentFile?.mkdirs()
+                    FileOutputStream(entryFile).use { fos ->
+                        zis.copyTo(fos)
+                    }
+                }
+                zis.closeEntry()
+            }
+        }
+
+        if (!tempDir.renameTo(targetDir)) {
+            tempDir.deleteRecursively()
+            throw IllegalStateException("Failed to move extracted book directory to target")
+        }
+
+        return targetDir
     }
 
     private suspend fun makeEditBookInfoSampleList(userId: String) {
