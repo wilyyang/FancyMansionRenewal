@@ -29,7 +29,6 @@ data class EpisodeInfoData(
     val bookId: String,
     val title: String,
     val pageCount: Int,
-    val version: Long = 0L,
     val createTime: Long = System.currentTimeMillis(),
     val editTime: Long = System.currentTimeMillis()
 )
@@ -77,7 +76,6 @@ fun EpisodeInfoData.asModel() = EpisodeInfoModel(
     bookId = bookId,
     title = title,
     pageCount = pageCount,
-    version = version,
     createTime = createTime,
     editTime = editTime
 )
@@ -87,7 +85,6 @@ fun EpisodeInfoModel.asData() = EpisodeInfoData(
     bookId = bookId,
     title = title,
     pageCount = pageCount,
-    version = version,
     createTime = createTime,
     editTime = editTime
 )

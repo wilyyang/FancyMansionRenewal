@@ -617,8 +617,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
                 editTime = editTime,
                 id = episodeId,
                 title = "",
-                pageCount = 0,
-                version = 0
+                pageCount = 0
             )
 
             val logic = LogicData(

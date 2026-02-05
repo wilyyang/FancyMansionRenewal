@@ -442,8 +442,7 @@ class EditorTabViewModel @Inject constructor(
             editTime = currentTime,
             id = episodeRef.episodeId,
             title = "",
-            pageCount = 1,
-            version = 0
+            pageCount = 1
         )
 
         val logic = LogicModel(

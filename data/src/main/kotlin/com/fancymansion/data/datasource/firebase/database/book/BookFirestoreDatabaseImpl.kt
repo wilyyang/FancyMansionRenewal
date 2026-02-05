@@ -59,7 +59,6 @@ class BookFirestoreDatabaseImpl(
             EpisodeInfoData.BOOK_ID to episode.bookId,
             EpisodeInfoData.TITLE to episode.title,
             EpisodeInfoData.PAGE_COUNT to episode.pageCount,
-            EpisodeInfoData.VERSION to episode.version,
 
             EpisodeInfoData.CREATE_TIME to episode.createTime,
             EpisodeInfoData.EDIT_TIME to episode.editTime
@@ -137,7 +136,6 @@ class BookFirestoreDatabaseImpl(
             bookId = getString(EpisodeInfoData.BOOK_ID) ?: fallbackBookId,
             title = getString(EpisodeInfoData.TITLE) ?: "",
             pageCount = (getLong(EpisodeInfoData.PAGE_COUNT) ?: 0L).toInt(),
-            version = getLong(EpisodeInfoData.VERSION) ?: 0L,
 
             createTime = getLong(EpisodeInfoData.CREATE_TIME) ?: 0L,
             editTime = getLong(EpisodeInfoData.EDIT_TIME) ?: 0L
