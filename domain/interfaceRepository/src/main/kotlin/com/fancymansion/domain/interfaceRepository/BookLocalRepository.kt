@@ -5,6 +5,7 @@ import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -40,6 +41,8 @@ interface BookLocalRepository {
      */
     suspend fun makeBookInfo(userId: String, mode : ReadMode, bookId : String, bookInfo: BookInfoModel): Boolean
     suspend fun loadBookInfo(userId: String, mode : ReadMode, bookId : String): BookInfoModel
+    suspend fun makeMetaData(userId: String, mode: ReadMode, bookId: String, metaData: BookMetaModel): Boolean
+    suspend fun loadMetaData(userId: String, mode: ReadMode, bookId: String): BookMetaModel
     suspend fun makeEpisodeInfo(episodeRef: EpisodeRef, episodeInfo: EpisodeInfoModel): Boolean
     suspend fun loadEpisodeInfo(episodeRef: EpisodeRef): EpisodeInfoModel
 

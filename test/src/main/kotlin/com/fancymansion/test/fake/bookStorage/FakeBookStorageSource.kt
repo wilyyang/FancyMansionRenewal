@@ -9,6 +9,7 @@ import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.appStorage.book.coverFile
 import com.fancymansion.data.datasource.appStorage.book.episodeThumbnailFile
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.BookMetaData
 import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
@@ -64,6 +65,23 @@ class FakeBookStorageSource(private val context: Context) : BookStorageSource {
         mode: ReadMode,
         bookId: String
     ): BookInfoData = bookInfoMap["$userId ${mode.name} $bookId"]!!
+
+    override suspend fun makeMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        metaData: BookMetaData
+    ): Boolean {
+        return true
+    }
+
+    override suspend fun loadMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookMetaData {
+        return BookMetaData()
+    }
 
     override suspend fun makeEpisodeInfo(
         episodeRef: EpisodeRef,

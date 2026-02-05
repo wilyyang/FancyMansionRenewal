@@ -3,6 +3,7 @@ package com.fancymansion.data.datasource.appStorage.book
 import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getCoverFileName
@@ -11,6 +12,7 @@ import com.fancymansion.core.common.const.pageStartWith
 import com.fancymansion.core.common.const.sampleUserId
 import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.BookMetaData
 import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.IntroduceData
@@ -124,6 +126,19 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         mode: ReadMode,
         bookId: String
     ): BookInfoData = root.bookInfoFile(userId, mode, bookId).readJson(BookInfoData::class.java) as BookInfoData
+
+    override suspend fun makeMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        metaData: BookMetaData
+    ): Boolean = root.bookMetaDataFile(userId, mode, bookId).writeJson(metaData)
+
+    override suspend fun loadMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookMetaData = root.bookMetaDataFile(userId, mode, bookId).readJson(BookMetaData::class.java) as BookMetaData
 
     override suspend fun makeEpisodeInfo(
         episodeRef: EpisodeRef,
@@ -331,6 +346,11 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             mode = episodeRef.mode,
             bookId = episodeRef.bookId,
             bookInfo = bookInfo
+        ) && makeMetaData(
+            userId = episodeRef.userId,
+            mode = episodeRef.mode,
+            bookId = episodeRef.bookId,
+            metaData = BookMetaData()
         ) && makeEpisodeInfo(episodeRef = episodeRef, episodeInfo = episodeInfo)
           && makeLogic(episodeRef, logic)
           && pages.all { page -> makePage(episodeRef, page.id, page) }
@@ -607,6 +627,7 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
             )
 
             makeBookInfo(userId, ReadMode.EDIT, bookId, bookInfo)
+            makeMetaData(userId, ReadMode.EDIT, bookId, BookMetaData())
             makeEpisodeInfo(episodeRef, episodeInfo)
             makeLogic(episodeRef, logic)
         }

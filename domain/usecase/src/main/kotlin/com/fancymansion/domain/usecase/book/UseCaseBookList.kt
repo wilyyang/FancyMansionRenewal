@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -21,6 +22,7 @@ class UseCaseBookList @Inject constructor(
     suspend fun addUserEditBook(
         episodeRef: EpisodeRef,
         bookInfo: BookInfoModel,
+        metaData: BookMetaModel,
         episodeInfo: EpisodeInfoModel,
         logic: LogicModel,
         startPage: PageModel
@@ -34,6 +36,11 @@ class UseCaseBookList @Inject constructor(
                 episodeRef.mode,
                 episodeRef.bookId,
                 bookInfo
+            ) && bookLocalRepository.makeMetaData(
+                episodeRef.userId,
+                episodeRef.mode,
+                episodeRef.bookId,
+                metaData
             ) && bookLocalRepository.makeEpisodeInfo(
                 episodeRef,
                 episodeInfo

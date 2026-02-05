@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.PageType
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getCoverFileName
 import com.fancymansion.core.common.const.getPageImageFileName
 import com.fancymansion.core.common.const.nextPageImageNumber
@@ -11,6 +12,7 @@ import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.util.getFileExtension
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.ConditionModel.RouteConditionModel
 import com.fancymansion.domain.model.book.ConditionModel.ShowSelectorConditionModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -32,6 +34,11 @@ class UseCaseMakeBook @Inject constructor(
         withContext(dispatcher) {
             bookLocalRepository.makeBookInfo(userId = episodeRef.userId, mode = episodeRef.mode, bookId = episodeRef.bookId, bookInfo = bookInfo)
             bookLocalRepository.updateEditTime(episodeRef)
+        }
+
+    suspend fun makeMetaData(userId: String, mode: ReadMode, bookId: String, metaData: BookMetaModel) =
+        withContext(dispatcher) {
+            bookLocalRepository.makeMetaData(userId = userId, mode = mode, bookId = bookId, metaData = metaData)
         }
 
     suspend fun updatePageContent(episodeRef: EpisodeRef, pageId: Long, page: PageModel) =

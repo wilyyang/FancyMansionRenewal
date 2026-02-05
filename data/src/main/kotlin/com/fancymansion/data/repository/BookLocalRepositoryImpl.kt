@@ -12,6 +12,7 @@ import com.fancymansion.data.datasource.database.book.model.asModel
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.ActionIdModel
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -98,6 +99,23 @@ class BookLocalRepositoryImpl @Inject constructor(
         bookId: String
     ): BookInfoModel {
         return bookStorageSource.loadBookInfo(userId, mode, bookId).asModel()
+    }
+
+    override suspend fun makeMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        metaData: BookMetaModel
+    ): Boolean {
+        return bookStorageSource.makeMetaData(userId, mode, bookId, metaData.asData())
+    }
+
+    override suspend fun loadMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookMetaModel {
+        return bookStorageSource.loadMetaData(userId, mode, bookId).asModel()
     }
 
     override suspend fun makeEpisodeInfo(

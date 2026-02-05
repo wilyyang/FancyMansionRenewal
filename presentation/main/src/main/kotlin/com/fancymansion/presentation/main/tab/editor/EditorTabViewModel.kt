@@ -3,8 +3,11 @@ package com.fancymansion.presentation.main.tab.editor
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
+import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
+import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
@@ -13,6 +16,7 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.IntroduceModel
@@ -258,10 +262,16 @@ class EditorTabViewModel @Inject constructor(
                 episodeId = getEpisodeId(userId, newNumber)
             )
             val (bookInfo, episodeInfo, logic, startPage) = createNewBookDraft(episodeRef, newNumber, editorInfo)
+            val metaData = BookMetaModel(
+                status = PublishStatus.UNPUBLISHED,
+                publishedAt = INIT_PUBLISHED_AT,
+                version = INIT_VERSION
+            )
 
             useCaseBookList.addUserEditBook(
                 episodeRef = episodeRef,
                 bookInfo = bookInfo,
+                metaData = metaData,
                 episodeInfo = episodeInfo,
                 logic = logic,
                 startPage = startPage

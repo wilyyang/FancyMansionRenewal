@@ -4,6 +4,7 @@ import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
+import com.fancymansion.data.datasource.appStorage.book.model.BookMetaData
 import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
@@ -43,6 +44,19 @@ interface BookStorageSource {
         mode: ReadMode,
         bookId: String
     ): BookInfoData
+
+    suspend fun makeMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String,
+        metaData: BookMetaData
+    ): Boolean
+
+    suspend fun loadMetaData(
+        userId: String,
+        mode: ReadMode,
+        bookId: String
+    ): BookMetaData
 
     suspend fun makeEpisodeInfo(
         episodeRef: EpisodeRef,

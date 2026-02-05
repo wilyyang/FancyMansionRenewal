@@ -2,6 +2,11 @@ package com.fancymansion.core.common.const
 
 import com.fancymansion.core.common.resource.StringValue
 
+enum class PublishStatus {
+    PUBLISHED, UNPUBLISHED, WITHDRAW
+}
+const val INIT_VERSION = 0
+const val INIT_PUBLISHED_AT = 0L
 /**
  * Viewer Config
  */

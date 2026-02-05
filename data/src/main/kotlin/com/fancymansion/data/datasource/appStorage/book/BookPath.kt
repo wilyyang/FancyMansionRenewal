@@ -13,6 +13,7 @@ class BookPath {
         private const val MEDIA = "media"
         private const val PAGES = "pages"
         private const val BOOK_INFO_JSON = "book.info.json"
+        private const val BOOK_META_DATA = "metadata.json"
         private const val EPISODE_INFO_JSON = "episode.info.json"
         private const val LOGIC_JSON = "logic.json"
 
@@ -27,6 +28,7 @@ class BookPath {
         fun mediaPath(episodeRef: EpisodeRef) = contentPath(episodeRef).joinPath(MEDIA)
         fun pagesPath(episodeRef: EpisodeRef) = contentPath(episodeRef).joinPath(PAGES)
         fun bookInfoPath(userId: String, mode: ReadMode, bookId: String) = bookPath(userId, mode, bookId).joinPath(BOOK_INFO_JSON)
+        fun bookMetaDataPath(userId: String, mode: ReadMode, bookId: String) = bookPath(userId, mode, bookId).joinPath(BOOK_META_DATA)
         fun episodeInfoPath(episodeRef: EpisodeRef) = episodePath(episodeRef).joinPath(EPISODE_INFO_JSON)
         fun logicPath(episodeRef: EpisodeRef) = contentPath(episodeRef).joinPath(LOGIC_JSON)
         fun coverPath(userId: String, mode: ReadMode, bookId: String, imageName: String) = bookPath(userId, mode, bookId).joinPath(imageName)
@@ -44,6 +46,7 @@ fun File.contentFile(episodeRef: EpisodeRef) = File(this, BookPath.contentPath(e
 fun File.mediaFile(episodeRef: EpisodeRef) = File(this, BookPath.mediaPath(episodeRef))
 fun File.pagesFile(episodeRef: EpisodeRef) = File(this, BookPath.pagesPath(episodeRef))
 fun File.bookInfoFile(userId: String, mode: ReadMode, bookId: String) = File(this, BookPath.bookInfoPath(userId, mode, bookId))
+fun File.bookMetaDataFile(userId: String, mode: ReadMode, bookId: String) = File(this, BookPath.bookMetaDataPath(userId, mode, bookId))
 fun File.episodeInfoFile(episodeRef: EpisodeRef) = File(this, BookPath.episodeInfoPath(episodeRef))
 
 fun File.logicFile(episodeRef: EpisodeRef) = File(this, BookPath.logicPath(episodeRef))

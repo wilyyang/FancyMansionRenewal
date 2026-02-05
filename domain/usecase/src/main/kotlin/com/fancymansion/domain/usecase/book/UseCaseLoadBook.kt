@@ -2,10 +2,12 @@ package com.fancymansion.domain.usecase.book
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ROUTE_ID_NOT_ASSIGNED
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.core.common.throwable.exception.LoadPageException
 import com.fancymansion.domain.interfaceRepository.BookLocalRepository
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.ConditionModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.LogicModel
@@ -25,6 +27,11 @@ class UseCaseLoadBook @Inject constructor(
     suspend fun loadBookInfo(episodeRef: EpisodeRef): BookInfoModel =
         withContext(dispatcher) {
             bookLocalRepository.loadBookInfo(userId = episodeRef.userId, mode = episodeRef.mode, bookId = episodeRef.bookId)
+        }
+
+    suspend fun loadBookMetaData(userId: String, mode: ReadMode, bookId: String): BookMetaModel =
+        withContext(dispatcher) {
+            bookLocalRepository.loadMetaData(userId = userId, mode = mode, bookId = bookId)
         }
 
     suspend fun loadEpisodeInfo(episodeRef: EpisodeRef): EpisodeInfoModel =
