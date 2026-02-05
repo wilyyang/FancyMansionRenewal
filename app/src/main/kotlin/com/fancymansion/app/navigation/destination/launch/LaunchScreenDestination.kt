@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.fancymansion.app.auth.GoogleAuthHolder
 import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
@@ -40,12 +41,24 @@ fun LaunchScreenDestination(
 
     // GoogleSignInClient 생성
     val context = LocalContext.current
-    val googleSignInClient: GoogleSignInClient = remember(context) {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(com.fancymansion.app.R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        GoogleSignIn.getClient(context, gso)
+    val googleSignInClient: GoogleSignInClient = GoogleAuthHolder.get(context)
+
+    val requestGoogleIdToken = remember(googleSignInClient, onEventSent) {
+        {
+            googleSignInClient.silentSignIn()
+                .addOnSuccessListener { account ->
+                    val idToken = account.idToken
+                    if (idToken != null) {
+                        onEventSent(LaunchContract.Event.GoogleTokenAcquired(idToken))
+                    } else {
+                        onEventSent(LaunchContract.Event.GoogleLoginNeedUserAction)
+                    }
+                }
+                .addOnFailureListener {
+                    onEventSent(LaunchContract.Event.GoogleLoginNeedUserAction)
+                }
+            Unit
+        }
     }
 
     // GoogleAuthLauncher 생성
@@ -53,7 +66,7 @@ fun LaunchScreenDestination(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode != Activity.RESULT_OK) {
-            onEventSent(LaunchContract.Event.GoogleLoginLauncherCancel)
+            onEventSent(LaunchContract.Event.GoogleLoginCancel)
             return@rememberLauncherForActivityResult
         }
 
@@ -62,9 +75,9 @@ fun LaunchScreenDestination(
                 .getResult(Exception::class.java)
 
             val idToken = account.idToken ?: error("idToken is null")
-            onEventSent(LaunchContract.Event.GoogleLoginLauncherSuccess(idToken))
+            onEventSent(LaunchContract.Event.GoogleTokenAcquired(idToken))
         } catch (t: Throwable) {
-            onEventSent(LaunchContract.Event.GoogleLoginLauncherFail(t))
+            onEventSent(LaunchContract.Event.GoogleLoginFail(t))
         }
     }
 
@@ -74,7 +87,7 @@ fun LaunchScreenDestination(
 
     val onNavigationRequested : (LaunchContract.Effect.Navigation) -> Unit =  remember {
         { effect : LaunchContract.Effect.Navigation ->
-            handleNavigationRequest(effect, navController, launchGoogleLogin)
+            handleNavigationRequest(effect, navController, requestGoogleIdToken, launchGoogleLogin)
         }
     }
 
@@ -90,14 +103,20 @@ fun LaunchScreenDestination(
     )
 }
 
-fun handleNavigationRequest(effect: LaunchContract.Effect, navController: NavController, launchGoogleLogin: () -> Unit) {
-    when(effect){
-        is LaunchContract.Effect.Navigation.GoogleLoginLauncherCall -> {
-            launchGoogleLogin()
-        }
-
-        is LaunchContract.Effect.Navigation.NavigateMain -> {
-            navController.navigate(MainContract.NAME)
+fun handleNavigationRequest(
+    effect: LaunchContract.Effect,
+    navController: NavController,
+    requestGoogleIdToken: () -> Unit,
+    launchGoogleLogin: () -> Unit
+) {
+    when (effect) {
+        LaunchContract.Effect.Navigation.AttemptGoogleAutoLogin -> requestGoogleIdToken()
+        LaunchContract.Effect.Navigation.GoogleLoginLauncherCall -> launchGoogleLogin()
+        LaunchContract.Effect.Navigation.NavigateMain -> {
+            navController.navigate(MainContract.NAME) {
+                popUpTo(LaunchContract.NAME) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 }

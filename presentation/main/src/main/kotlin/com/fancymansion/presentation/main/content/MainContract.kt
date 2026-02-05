@@ -39,11 +39,16 @@ class MainContract {
         data class TabSelected(val tab: MainScreenTab) : Event()
         data class HomeBookHolderClicked(val publishedId: String) : Event()
         data class DownloadBookHolderClicked(val bookId: String) : Event()
+        data object OnClickLogout : Event()
+        data object GoogleLogoutSuccess : Event()
+        data class GoogleLogoutFail(val t: Throwable) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect(){
             data class NavigateOverviewScreen(val episodeRef: EpisodeRef) : Navigation()
+            data object RequestGoogleLogout : Navigation()
+            data object NavigateLaunchScreen : Navigation()
         }
     }
 }

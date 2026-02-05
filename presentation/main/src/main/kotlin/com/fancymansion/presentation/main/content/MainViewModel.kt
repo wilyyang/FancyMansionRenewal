@@ -8,6 +8,7 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
@@ -77,6 +78,19 @@ class MainViewModel @Inject constructor(
                     )
                 }
             }
+            MainContract.Event.OnClickLogout -> {
+                setLoadState(LoadState.Loading())
+                setEffect {
+                    MainContract.Effect.Navigation.RequestGoogleLogout
+                }
+            }
+            MainContract.Event.GoogleLogoutSuccess -> {
+                setLoadStateIdle()
+                setEffect {
+                    MainContract.Effect.Navigation.NavigateLaunchScreen
+                }
+            }
+            is MainContract.Event.GoogleLogoutFail -> {}
         }
     }
 

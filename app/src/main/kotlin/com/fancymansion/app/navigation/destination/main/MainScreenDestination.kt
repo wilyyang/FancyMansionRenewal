@@ -2,21 +2,24 @@ package com.fancymansion.app.navigation.destination.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.fancymansion.app.auth.GoogleAuthHolder
 import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.app.navigation.navigateEditorBookOverviewScreen
 import com.fancymansion.app.navigation.navigateOverviewScreen
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
 import com.fancymansion.core.presentation.base.window.TypePane
+import com.fancymansion.presentation.launch.launch.LaunchContract
 import com.fancymansion.presentation.main.content.MainViewModel
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.content.composables.MainScreenFrame
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen
 import com.fancymansion.presentation.main.tab.editor.EditorTabViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 @Composable
 fun MainScreenDestination(
@@ -35,9 +38,21 @@ fun MainScreenDestination(
             mainViewModel.setCommonEvent(event)
         }
     }
+
+    val context = LocalContext.current
+    val googleSignInClient: GoogleSignInClient = GoogleAuthHolder.get(context)
+    val googleLogout = remember(googleSignInClient, onMainEventSent) {
+        {
+            googleSignInClient.signOut()
+                .addOnSuccessListener { onMainEventSent(MainContract.Event.GoogleLogoutSuccess) }
+                .addOnFailureListener { t -> onMainEventSent(MainContract.Event.GoogleLogoutFail(t)) }
+            Unit
+        }
+    }
+
     val onMainNavigationRequested : (MainContract.Effect.Navigation) -> Unit =  remember {
         { effect : MainContract.Effect.Navigation ->
-            handleNavigationRequest(effect, navController)
+            handleMainNavigationRequest(effect, navController, googleLogout)
         }
     }
     HandleCommonEffect(navController = navController, commonEffectFlow = mainViewModel.commonEffect, onCommonEventSent = onMainCommonEventSent)
@@ -55,10 +70,8 @@ fun MainScreenDestination(
         }
     }
     val onEditorTabNavigationRequested: (EditorTabContract.Effect) -> Unit = remember {
-        { effect ->
-            if (effect is EditorTabContract.Effect.Navigation) {
-                handleNavigationRequest(effect, navController)
-            }
+        { effect : EditorTabContract.Effect ->
+            handleEditorTabNavigationRequest(effect, navController)
         }
     }
     HandleCommonEffect(navController = navController, commonEffectFlow = editorTabViewModel.commonEffect, onCommonEventSent = onEditorTabCommonEventSent)
@@ -84,22 +97,27 @@ fun MainScreenDestination(
     )
 }
 
-fun handleNavigationRequest(effect: ViewSideEffect, navController: NavController) {
-    when (effect) {
-        is EditorTabContract.Effect.Navigation -> {
-            when(effect){
-                is NavigateEditorBookOverviewScreen -> {
-                    navController.navigateEditorBookOverviewScreen(effect.episodeRef)
-                }
+fun handleMainNavigationRequest(effect: MainContract.Effect.Navigation, navController: NavController, googleLogout:() -> Unit) {
+    when(effect){
+        is MainContract.Effect.Navigation.NavigateOverviewScreen -> {
+            navController.navigateOverviewScreen(effect.episodeRef)
+        }
+        is MainContract.Effect.Navigation.RequestGoogleLogout -> {
+            googleLogout()
+        }
+        is MainContract.Effect.Navigation.NavigateLaunchScreen -> {
+            navController.navigate(LaunchContract.NAME) {
+                popUpTo(MainContract.NAME) { inclusive = true }
+                launchSingleTop = true
             }
         }
-        is MainContract.Effect.Navigation -> {
-            when(effect){
-                is MainContract.Effect.Navigation.NavigateOverviewScreen -> {
-                    navController.navigateOverviewScreen(effect.episodeRef)
-                }
-            }
+    }
+}
+
+fun handleEditorTabNavigationRequest(effect: EditorTabContract.Effect, navController: NavController) {
+    when(effect){
+        is NavigateEditorBookOverviewScreen -> {
+            navController.navigateEditorBookOverviewScreen(effect.episodeRef)
         }
-        else -> {}
     }
 }

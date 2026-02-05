@@ -44,6 +44,7 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
+import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.R
@@ -208,8 +209,10 @@ fun MainScreenFrame(
                     Box(modifier = Modifier
                         .fillMaxSize()){
                         Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = "나의 정보 화면",
+                            modifier = Modifier.align(Alignment.Center).clickSingle{
+                                onEventSent(MainContract.Event.OnClickLogout)
+                            },
+                            text = "로그아웃",
                             style = MaterialTheme.typography.titleSmall
                         )
                     }

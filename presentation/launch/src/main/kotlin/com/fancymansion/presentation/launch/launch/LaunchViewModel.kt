@@ -6,6 +6,8 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.user.UseCaseGoogleLogin
@@ -34,9 +36,7 @@ class LaunchViewModel @Inject constructor(
                     LaunchContract.Effect.Navigation.GoogleLoginLauncherCall
                 }
             }
-            LaunchContract.Event.GoogleLoginLauncherCancel -> {}
-            is LaunchContract.Event.GoogleLoginLauncherFail -> {}
-            is LaunchContract.Event.GoogleLoginLauncherSuccess -> {
+            is LaunchContract.Event.GoogleTokenAcquired -> {
                 launchWithLoading {
                     val userInfo = useCaseGoogleLogin(event.idToken)
 
@@ -61,6 +61,30 @@ class LaunchViewModel @Inject constructor(
                     }
                 }
             }
+            LaunchContract.Event.GoogleLoginNeedUserAction -> {
+                setLoadStateIdle()
+            }
+            is LaunchContract.Event.GoogleLoginFail -> {}
+            LaunchContract.Event.GoogleLoginCancel -> {}
+        }
+    }
+
+    override fun handleCommonEvents(event: CommonEvent) {
+        when(event){
+            is CommonEvent.OnResume -> {
+                if(!uiState.value.isAutoLoginChecked){
+                    setState {
+                        copy(
+                            isAutoLoginChecked = true
+                        )
+                    }
+                    setLoadState(LoadState.Loading())
+                    setEffect {
+                        LaunchContract.Effect.Navigation.AttemptGoogleAutoLogin
+                    }
+                }
+            }
+            else -> super.handleCommonEvents(event)
         }
     }
 
