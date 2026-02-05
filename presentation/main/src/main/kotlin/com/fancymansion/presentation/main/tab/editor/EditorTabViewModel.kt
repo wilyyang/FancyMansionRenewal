@@ -315,8 +315,8 @@ class EditorTabViewModel @Inject constructor(
      */
     private suspend fun loadBookStateList() {
         originBookInfoList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.EDIT).map {
-            val bookInfo = it.first
-            val episodeInfo = it.second
+            val bookInfo = it.book
+            val episodeInfo = it.episode
 
             val bookCoverFile: File? =
                 if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(

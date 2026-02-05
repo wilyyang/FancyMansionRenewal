@@ -139,8 +139,8 @@ class MainViewModel @Inject constructor(
 
     private suspend fun loadStudyBookList(){
         val studyBookList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.READ).map{
-            val bookInfo = it.first
-            val episodeInfo = it.second
+            val bookInfo = it.book
+            val episodeInfo = it.episode
 
             val bookCoverFile: File? =
                 if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(

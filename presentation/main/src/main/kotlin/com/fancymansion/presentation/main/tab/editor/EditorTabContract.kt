@@ -9,6 +9,7 @@ import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
+import com.fancymansion.domain.model.book.LocalBookItemModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.presentation.main.R
@@ -33,17 +34,14 @@ data class EditBookWrapper(
 
 data class EditBookState(val bookInfo: EditBookWrapper, val selected: MutableState<Boolean>)
 
-fun Pair<BookInfoModel, EpisodeInfoModel>.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
-    val bookInfo = first
-    val episodeInfo = second
-
+fun LocalBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     return EditBookWrapper(
-        bookId = bookInfo.id,
-        title = bookInfo.introduce.title,
-        editTime = episodeInfo.editTime,
-        pageCount = episodeInfo.pageCount,
+        bookId = book.id,
+        title = book.introduce.title,
+        editTime = episode.editTime,
+        pageCount = episode.pageCount,
         thumbnail = thumbnail,
-        keywords = bookInfo.introduce.keywordList
+        keywords = book.introduce.keywordList
     )
 }
 

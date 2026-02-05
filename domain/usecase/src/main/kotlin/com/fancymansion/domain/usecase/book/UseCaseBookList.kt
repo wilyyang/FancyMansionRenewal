@@ -9,6 +9,7 @@ import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
+import com.fancymansion.domain.model.book.LocalBookItemModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -54,10 +55,15 @@ class UseCaseBookList @Inject constructor(
             bookLocalRepository.deleteBookDir(userId, ReadMode.EDIT, bookId)
         }
 
-    suspend fun getLocalBookInfoList(userId: String, readMode: ReadMode): List<Pair<BookInfoModel, EpisodeInfoModel>> =
+    suspend fun getLocalBookInfoList(userId: String, readMode: ReadMode): List<LocalBookItemModel> =
         withContext(dispatcher) {
             val result = bookLocalRepository.getUserBookFolderNameList(userId = userId, mode = readMode).map {
                 val bookInfo = bookLocalRepository.loadBookInfo(
+                    userId = userId,
+                    bookId = it,
+                    mode = readMode
+                )
+                val metaData = bookLocalRepository.loadMetaData(
                     userId = userId,
                     bookId = it,
                     mode = readMode
@@ -71,7 +77,11 @@ class UseCaseBookList @Inject constructor(
                     )
                 )
 
-                (bookInfo to episodeInfo)
+                LocalBookItemModel(
+                    book = bookInfo,
+                    metaData = metaData,
+                    episode = episodeInfo
+                )
             }
             result
         }
