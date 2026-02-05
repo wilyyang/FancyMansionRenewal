@@ -1,8 +1,10 @@
-package com.fancymansion.data.datasource.dataStore.app.di
+package com.fancymansion.data.datasource.dataStore.di
 
 import android.content.Context
 import com.fancymansion.data.datasource.dataStore.app.AppStoreSource
 import com.fancymansion.data.datasource.dataStore.app.AppStoreSourceImpl
+import com.fancymansion.data.datasource.dataStore.user.UserStoreSource
+import com.fancymansion.data.datasource.dataStore.user.UserStoreSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +19,9 @@ object HiltAppStoreSource {
     @Singleton
     fun provideAppStoreSource(@ApplicationContext context: Context): AppStoreSource =
         AppStoreSourceImpl(context)
+
+    @Provides
+    @Singleton
+    fun provideUserStoreSource(@ApplicationContext context: Context): UserStoreSource =
+        UserStoreSourceImpl(context)
 }

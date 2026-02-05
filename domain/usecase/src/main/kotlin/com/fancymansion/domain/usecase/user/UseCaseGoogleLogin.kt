@@ -14,8 +14,10 @@ class UseCaseGoogleLogin @Inject constructor(
     suspend operator fun invoke(idToken: String): UserInfoModel =
         withContext(dispatcher) {
             val initUser = userRepository.signInWithGoogle(idToken)
-            val userInfo = userRepository.getOrCreateUserInfoTx(initUser)
-            userRepository.upsertUserInfoLocal(userInfo)
-            userInfo
+            val result = userRepository.getOrCreateUserInfoTx(initUser)
+            userRepository.upsertUserInfoLocal(result.userInfo)
+            userRepository.clearPublishedBookIds()
+            userRepository.replacePublishedBookIds(result.publishedBookIds)
+            result.userInfo
         }
 }
