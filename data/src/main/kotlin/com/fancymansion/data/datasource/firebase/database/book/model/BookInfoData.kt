@@ -9,15 +9,13 @@ const val NOT_ASSIGN_PUBLISHED_AT = 0L
 
 data class BookInfoData(
     val bookId: String,
-    val publishedId: String,
-    val publishedAt: Long,
+    val publishInfo: PublishInfoData,
     val introduce: IntroduceData,
     val editor: EditorData,
 ) {
     companion object Fields {
         const val BOOK_ID = "bookId"
-        const val PUBLISHED_ID = "publishedId"
-        const val PUBLISHED_AT = "publishedAt"
+        const val PUBLISH_INFO = "publishInfo"
         const val INTRODUCE = "introduce"
         const val EDITOR = "editor"
     }
@@ -25,16 +23,19 @@ data class BookInfoData(
 
 fun BookInfoModel.asData() = BookInfoData(
     bookId = id,
-    publishedId = NOT_ASSIGN_PUBLISHED_ID,
-    publishedAt = NOT_ASSIGN_PUBLISHED_AT,
+    publishInfo = PublishInfoData(
+        publishedId = NOT_ASSIGN_PUBLISHED_ID,
+        publishedAt = NOT_ASSIGN_PUBLISHED_AT,
+        version = 0,
+        likeCount = 0
+    ),
     introduce = introduce.asData(),
     editor = editor.asData()
 )
 
 fun BookInfoData.asHomeModel(keywordMap: Map<Long, KeywordModel>) = BookHomeModel(
     id = bookId,
-    publishedId = publishedId,
-    publishedAt = publishedAt,
+    publishInfo = publishInfo.asModel(),
     introduce = introduce.asHomeModel(keywordMap),
     editor = editor.asHomeModel()
 )

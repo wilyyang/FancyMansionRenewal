@@ -46,6 +46,7 @@ class UseCaseUploadBook @Inject constructor(
             )
             bookRemoteRepository.uploadBookArchive(
                 publishedId = publishedId,
+                version = 0,
                 episodeRef = newEpisodeRef
             )
             bookRemoteRepository.uploadBookCoverImage(

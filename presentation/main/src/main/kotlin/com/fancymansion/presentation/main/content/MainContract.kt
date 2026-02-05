@@ -13,9 +13,9 @@ import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 // 임시
 fun HomeBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     return EditBookWrapper(
-        bookId = book.publishedId,
+        bookId = book.publishInfo.publishedId,
         title = book.introduce.title,
-        editTime = book.publishedAt,
+        editTime = book.publishInfo.publishedAt,
         pageCount = episode.pageCount,
         thumbnail = thumbnail,
         keywords = book.introduce.keywordList

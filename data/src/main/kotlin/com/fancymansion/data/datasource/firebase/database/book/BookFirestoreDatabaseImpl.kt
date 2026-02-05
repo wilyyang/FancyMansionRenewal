@@ -9,6 +9,8 @@ import com.fancymansion.data.datasource.firebase.database.book.model.EpisodeInfo
 import com.fancymansion.data.datasource.firebase.database.book.model.HomeBookItemData
 import com.fancymansion.data.datasource.firebase.database.book.model.IntroduceData
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_AT
+import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_ID
+import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -30,8 +32,12 @@ class BookFirestoreDatabaseImpl(
 
         val data = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
-            BookInfoData.PUBLISHED_ID to publishedId,
-            BookInfoData.PUBLISHED_AT to System.currentTimeMillis(),
+            BookInfoData.PUBLISH_INFO to mapOf(
+                PublishInfoData.PUBLISHED_ID to publishedId,
+                PublishInfoData.PUBLISHED_AT to System.currentTimeMillis(),
+                PublishInfoData.VERSION to 0,
+                PublishInfoData.LIKE_COUNT to 0,
+            ),
             BookInfoData.INTRODUCE to mapOf(
                 IntroduceData.TITLE to book.introduce.title,
                 IntroduceData.COVER_LIST to book.introduce.coverList,
@@ -79,8 +85,7 @@ class BookFirestoreDatabaseImpl(
 
                     val book = BookInfoData(
                         bookId = bookId,
-                        publishedId = bookDoc.getString(BookInfoData.PUBLISHED_ID) ?: publishedId,
-                        publishedAt = bookDoc.getLong(BookInfoData.PUBLISHED_AT) ?: NOT_ASSIGN_PUBLISHED_AT,
+                        publishInfo = bookDoc.parsePublishInfo(),
                         introduce = bookDoc.parseIntroduce(),
                         editor = bookDoc.parseEditor(),
                     )
@@ -104,6 +109,32 @@ class BookFirestoreDatabaseImpl(
                 }
             }.awaitAll().filterNotNull()
         }
+    }
+
+    override suspend fun getPublishedBookVersion(publishedId: String): Int {
+        val snapshot = firestore
+            .collection(BOOKS)
+            .document(publishedId)
+            .get()
+            .await()
+
+        val publishInfo = snapshot.get(BookInfoData.PUBLISH_INFO) as? Map<*, *>
+            ?: error("PublishInfo not found")
+
+        return (publishInfo[PublishInfoData.VERSION] as? Number)
+            ?.toInt()
+            ?: error("Version not found")
+    }
+
+    private fun DocumentSnapshot.parsePublishInfo(): PublishInfoData {
+        val publishInfoMap = get(BookInfoData.PUBLISH_INFO) as? Map<*, *>
+
+        return PublishInfoData(
+            publishedId = publishInfoMap?.get(PublishInfoData.PUBLISHED_ID) as? String ?: NOT_ASSIGN_PUBLISHED_ID,
+            publishedAt = publishInfoMap?.get(PublishInfoData.PUBLISHED_AT) as? Long ?: NOT_ASSIGN_PUBLISHED_AT,
+            version = publishInfoMap?.get(PublishInfoData.VERSION) as? Int ?: 0,
+            likeCount = publishInfoMap?.get(PublishInfoData.LIKE_COUNT) as? Int ?: 0,
+        )
     }
 
     private fun DocumentSnapshot.parseIntroduce(): IntroduceData {

@@ -126,7 +126,7 @@ class MainViewModel @Inject constructor(
         }
 
         val homeBookUrlList = originHomeBookList.map {
-            useCaseGetBookCoverImageUrl(it.book.publishedId, it.book.introduce.coverList[0])
+            useCaseGetBookCoverImageUrl(it.book.publishInfo.publishedId, it.book.introduce.coverList[0])
         }
 
         setState {

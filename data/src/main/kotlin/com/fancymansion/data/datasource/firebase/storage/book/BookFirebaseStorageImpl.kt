@@ -16,11 +16,11 @@ class BookFirebaseStorageImpl(
     private val storage: FirebaseStorage
 ) : BookFirebaseStorage {
 
-    override suspend fun uploadEpisodeZipFile(publishedId: String, uri: Uri) {
+    override suspend fun uploadEpisodeZipFile(publishedId: String, version: Int, uri: Uri) {
         require(publishedId.isNotBlank()) { "publishedId is blank" }
         require(uri.toString().isNotBlank()) { "uri is blank" }
 
-        val storagePath = "${BOOKS}/$publishedId/${EPISODES}/${getZipFileName(0)}"
+        val storagePath = "${BOOKS}/$publishedId/${EPISODES}/${getZipFileName(version)}"
 
         val ref = storage.reference.child(storagePath)
 
@@ -48,10 +48,11 @@ class BookFirebaseStorageImpl(
 
     override suspend fun downloadBookZipToCache(
         publishedId: String,
+        version: Int,
         cacheFile: File
     ): File = suspendCancellableCoroutine { cont ->
 
-        val storagePath = "${BOOKS}/$publishedId/${EPISODES}/${getZipFileName(0)}"
+        val storagePath = "${BOOKS}/$publishedId/${EPISODES}/${getZipFileName(version)}"
         val ref = storage.reference.child(storagePath)
 
         val downloadTask = ref.getFile(cacheFile)

@@ -34,12 +34,13 @@ class BookRemoteRepositoryImpl @Inject constructor(
         bookFirestoreDatabase.saveEpisode(publishedId, episodeInfo.asData())
     }
 
-    override suspend fun uploadBookArchive(publishedId: String, episodeRef: EpisodeRef) {
+    override suspend fun uploadBookArchive(publishedId: String, version: Int, episodeRef: EpisodeRef) {
         val zipFile = bookStorageSource.compressEpisodeDirAndGetFile(episodeRef, publishedId)
 
         try {
             bookFirebaseStorage.uploadEpisodeZipFile(
                 publishedId,
+                version,
                 Uri.fromFile(zipFile)
             )
         } finally {
@@ -72,9 +73,9 @@ class BookRemoteRepositoryImpl @Inject constructor(
         return bookFirestoreDatabase.loadBookList().map { it.asHomeModel() }
     }
 
-    override suspend fun downloadBookArchive(userId: String, publishedId: String): File {
+    override suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String): File {
         val zipFile = bookStorageSource.getCacheZipFile(userId, publishedId)
-        val downloadedZip = bookFirebaseStorage.downloadBookZipToCache(publishedId, zipFile)
+        val downloadedZip = bookFirebaseStorage.downloadBookZipToCache(publishedId, version, zipFile)
         val extractedDir = bookStorageSource.unzipBookArchiveToUserDir(downloadedZip, userId, ReadMode.READ, publishedId)
         downloadedZip.delete()
         return extractedDir
@@ -85,5 +86,9 @@ class BookRemoteRepositoryImpl @Inject constructor(
         imageFileName: String
     ): String {
         return bookFirebaseStorage.getBookCoverImageUrl(publishedId, imageFileName)
+    }
+
+    override suspend fun getPublishedBookVersion(publishedId: String): Int {
+        return bookFirestoreDatabase.getPublishedBookVersion(publishedId)
     }
 }
