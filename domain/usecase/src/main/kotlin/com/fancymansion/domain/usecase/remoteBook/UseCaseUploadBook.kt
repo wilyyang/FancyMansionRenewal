@@ -39,20 +39,20 @@ class UseCaseUploadBook @Inject constructor(
             val episodeInfo = bookLocalRepository.loadEpisodeInfo(newEpisodeRef)
 
             // 4. firebase & fire storage
-            bookRemoteRepository.createBookInfo(
+            bookRemoteRepository.uploadBookCoverImage(
                 publishedId = publishedId,
-                bookInfo = bookInfo,
-                episodeInfo = episodeInfo
+                episodeRef = newEpisodeRef,
+                coverFileName = bookInfo.introduce.coverList.first()
             )
             bookRemoteRepository.uploadBookArchive(
                 publishedId = publishedId,
                 version = 0,
                 episodeRef = newEpisodeRef
             )
-            bookRemoteRepository.uploadBookCoverImage(
+            bookRemoteRepository.createBookInfo(
                 publishedId = publishedId,
-                episodeRef = newEpisodeRef,
-                coverFileName = bookInfo.introduce.coverList.first()
+                bookInfo = bookInfo,
+                episodeInfo = episodeInfo
             )
 
             // 5. return publishedId

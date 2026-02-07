@@ -2,11 +2,13 @@ package com.fancymansion.presentation.editor.bookOverview.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -76,13 +78,30 @@ fun EditorBookOverviewScreenContent(
 
                 // 임시 코드
                 item {
-                    Text(
-                        modifier = Modifier.clickSingle {
-                            onEventSent(EditorBookOverviewContract.Event.UploadBookFile)
+                    if(uiState.isPublished){
+                        Row(modifier = Modifier.fillMaxWidth()) {
 
-                        },
-                        text = "업로드 (임시)"
-                    )
+                            Text(
+                                modifier = Modifier.clickSingle {
+                                },
+                                text = "업데이트"
+                            )
+                            Spacer(modifier = Modifier.width(30.dp))
+                            Text(
+                                modifier = Modifier.clickSingle {
+                                },
+                                text = "철회"
+                            )
+                        }
+                    }else{
+                        Text(
+                            modifier = Modifier.clickSingle {
+                                onEventSent(EditorBookOverviewContract.Event.UploadBookFile)
+
+                            },
+                            text = "업로드 (임시)"
+                        )
+                    }
                 }
 
                 item {

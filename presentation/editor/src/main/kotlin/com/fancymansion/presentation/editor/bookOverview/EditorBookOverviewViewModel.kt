@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.resource.StringValue
@@ -13,11 +14,14 @@ import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseUploadBook
+import com.fancymansion.domain.usecase.user.UseCaseAddPublishedBookId
+import com.fancymansion.domain.usecase.user.UseCaseGetPublishedBookIds
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -29,7 +33,9 @@ class EditorBookOverviewViewModel @Inject constructor(
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseUploadBook: UseCaseUploadBook,
-    private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword
+    private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword,
+    private val useCaseGetPublishedBookIds: UseCaseGetPublishedBookIds,
+    private val useCaseAddPublishedBookId: UseCaseAddPublishedBookId
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
     private var isUpdateResume : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
@@ -245,6 +251,17 @@ class EditorBookOverviewViewModel @Inject constructor(
             )
             val publisedId = useCaseUploadBook(episodeRef = episodeRef)
             episodeRef = episodeRef.copy(bookId = publisedId, episodeId = getEpisodeId(publisedId))
+            useCaseMakeBook.makeMetaData(
+                userId = episodeRef.userId,
+                mode = episodeRef.mode,
+                bookId = episodeRef.bookId,
+                metaData = BookMetaModel(
+                    status = PublishStatus.PUBLISHED,
+                    publishedAt = System.currentTimeMillis(),
+                    version = 0
+                )
+            )
+            useCaseAddPublishedBookId(publisedId)
 
             useCaseGetTotalKeyword().forEach {
                 keywordStates.add(createKeywordState(it, false))
@@ -335,8 +352,10 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
         }
 
+        val publishedBookIds = useCaseGetPublishedBookIds()
         setState {
             copy(
+                isPublished = bookInfo.id in publishedBookIds,
                 bookInfo = bookInfo,
                 pageBriefList = pageBriefList,
                 imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(

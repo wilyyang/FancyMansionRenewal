@@ -27,6 +27,7 @@ class EditorBookOverviewContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
+        val isPublished : Boolean = false,
         val bookInfo : BookInfoModel = BookInfoModel(
             id = "",
             editor = EditorModel(),
