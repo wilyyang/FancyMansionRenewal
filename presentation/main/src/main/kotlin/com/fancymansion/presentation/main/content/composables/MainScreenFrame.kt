@@ -54,7 +54,6 @@ import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreenFrame
-import com.fancymansion.presentation.main.tab.editor.composables.part.EditBookHolder
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -98,8 +97,8 @@ fun MainScreenFrame(
     }
 
     val listStateHome = rememberLazyListState()
-    val listStateStudy = rememberLazyListState()
-    val studyPainterList = uiState.studyBookList.map { data ->
+    val listStateLibrary = rememberLazyListState()
+    val libraryPainterList = uiState.libraryBookList.map { data ->
         when (data.bookInfo.thumbnail) {
             is ImagePickType.SavedImage -> {
                 val file = data.bookInfo.thumbnail.file
@@ -178,7 +177,7 @@ fun MainScreenFrame(
                     }
                 }
 
-                MainScreenTab.Study -> {
+                MainScreenTab.Library -> {
                     Column (modifier = Modifier
                         .fillMaxSize()
                         .padding(top = 50.dp)){
@@ -188,22 +187,22 @@ fun MainScreenFrame(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         LazyColumn(
-                            state = listStateStudy,
+                            state = listStateLibrary,
                             modifier = Modifier
                                 .fillMaxSize()
                         ){
 
-                            itemsIndexed (uiState.studyBookList) { idx, data ->
-                                EditBookHolder(
+                            itemsIndexed (uiState.libraryBookList) { idx, data ->
+                                LibraryBookHolder(
                                     bookState = data,
-                                    painter = studyPainterList[idx],
+                                    painter = libraryPainterList[idx],
                                     isEditMode = false,
                                     onClickHolder = {
                                         onEventSent(MainContract.Event.DownloadBookHolderClicked(it))
                                     }
                                 )
 
-                                if (idx < uiState.studyBookList.size - 1) {
+                                if (idx < uiState.libraryBookList.size - 1) {
                                     HorizontalDivider(
                                         modifier = Modifier
                                             .padding(horizontal = 14.dp)

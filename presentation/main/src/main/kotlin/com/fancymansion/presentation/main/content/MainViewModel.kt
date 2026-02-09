@@ -16,8 +16,6 @@ import com.fancymansion.domain.usecase.remoteBook.UseCaseGetBookCoverImageUrl
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetHomeBookList
 import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
 import com.fancymansion.presentation.main.common.MainScreenTab
-import com.fancymansion.presentation.main.tab.editor.EditBookState
-import com.fancymansion.presentation.main.tab.editor.toWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
@@ -51,9 +49,9 @@ class MainViewModel @Inject constructor(
                             loadHomeBookList()
                         }
                     }
-                    MainScreenTab.Study -> {
+                    MainScreenTab.Library -> {
                         launchWithLoading {
-                            loadStudyBookList()
+                            loadLibraryBookList()
                         }
                     }
                     else -> {}
@@ -106,7 +104,7 @@ class MainViewModel @Inject constructor(
             val userInfo = useCaseGetUserInfoLocal() ?: error("UserInfo is null")
             userId = userInfo.userId
             loadHomeBookList()
-            loadStudyBookList()
+            loadLibraryBookList()
 
             setState {
                 copy(
@@ -136,8 +134,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadStudyBookList(){
-        val studyBookList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.READ).map{
+    private suspend fun loadLibraryBookList(){
+        val libraryBookList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.READ).map{
             val bookInfo = it.book
             val episodeInfo = it.episode
 
@@ -151,7 +149,7 @@ class MainViewModel @Inject constructor(
                 bookCoverFile
             ) else ImagePickType.Empty
 
-            EditBookState(
+            LibraryBookState(
                 it.toWrapper(savedPickType),
                 mutableStateOf(false)
             )
@@ -159,7 +157,7 @@ class MainViewModel @Inject constructor(
 
         setState {
             copy(
-                studyBookList = studyBookList
+                libraryBookList = libraryBookList
             )
         }
     }
