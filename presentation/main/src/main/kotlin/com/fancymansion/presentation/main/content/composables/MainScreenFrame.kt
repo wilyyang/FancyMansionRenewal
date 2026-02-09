@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -100,7 +102,16 @@ fun MainScreenFrame(
     val studyPainterList = uiState.studyBookList.map { data ->
         when (data.bookInfo.thumbnail) {
             is ImagePickType.SavedImage -> {
-                rememberAsyncImagePainter(data.bookInfo.thumbnail.file)
+                val file = data.bookInfo.thumbnail.file
+                val key = "${file.path}#${file.lastModified()}"
+
+                val request = ImageRequest.Builder(LocalContext.current)
+                    .data(file)
+                    .memoryCacheKey(key)
+                    .diskCacheKey(key)
+                    .build()
+
+                rememberAsyncImagePainter(model = request)
             }
 
             else -> {
@@ -129,7 +140,8 @@ fun MainScreenFrame(
                 // TODO : Tab Test
                 MainScreenTab.Home -> {
                     Column (modifier = Modifier
-                        .fillMaxSize().padding(top = 50.dp)){
+                        .fillMaxSize()
+                        .padding(top = 50.dp)){
 
                         Text(modifier = Modifier.padding(start = 15.dp), text = "홈 화면", style = MaterialTheme.typography.titleLarge)
 
@@ -169,7 +181,8 @@ fun MainScreenFrame(
 
                 MainScreenTab.Study -> {
                     Column (modifier = Modifier
-                        .fillMaxSize().padding(top = 50.dp)){
+                        .fillMaxSize()
+                        .padding(top = 50.dp)){
 
                         Text(modifier = Modifier.padding(start = 15.dp), text = "서재 화면", style = MaterialTheme.typography.titleLarge)
 
@@ -209,9 +222,11 @@ fun MainScreenFrame(
                     Box(modifier = Modifier
                         .fillMaxSize()){
                         Text(
-                            modifier = Modifier.align(Alignment.Center).clickSingle{
-                                onEventSent(MainContract.Event.OnClickLogout)
-                            },
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .clickSingle {
+                                    onEventSent(MainContract.Event.OnClickLogout)
+                                },
                             text = "로그아웃",
                             style = MaterialTheme.typography.titleSmall
                         )
