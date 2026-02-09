@@ -289,6 +289,12 @@ class EditorBookOverviewViewModel @Inject constructor(
                 )
             )
             useCaseRemovePublishedBookId(episodeRef.userId, episodeRef.bookId)
+            val publishedBookIds = useCaseGetPublishedBookIds()
+            setState {
+                copy(
+                    isPublished = bookInfo.id in publishedBookIds
+                )
+            }
         }
     }
 
