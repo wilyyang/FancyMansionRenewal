@@ -307,6 +307,13 @@ class EditorBookOverviewViewModel @Inject constructor(
 
     private fun handleUpdateBookFile() {
         launchWithLoading {
+            // 임시 코드
+            val newKeywordList = keywordStates.filter { it.selected.value }.map { it.keyword }
+            updateBookInfoAndReload(
+                uiState.value.bookInfo,
+                uiState.value.imagePickType,
+                newKeywordList
+            )
             val newVersion = useCaseUpdateBook(episodeRef)
             val metaData = useCaseLoadBook.loadBookMetaData(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
             useCaseMakeBook.makeMetaData(
