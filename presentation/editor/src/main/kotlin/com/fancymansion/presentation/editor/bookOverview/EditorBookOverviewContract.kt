@@ -42,6 +42,7 @@ class EditorBookOverviewContract {
         data object OverviewInfoSaveToFile : Event()
         data object UploadBookFile : Event()
         data object WithdrawBookFile : Event()
+        data object UpdateBookFile : Event()
 
         /**
          * Edit BookInfo

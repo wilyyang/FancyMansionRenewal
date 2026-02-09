@@ -12,6 +12,7 @@ data class BookHomeModel(
 data class PublishInfoModel(
     val publishedId: String,
     val publishedAt: Long,
+    val updatedAt: Long,
     val version: Int,
     val likeCount: Int
 )

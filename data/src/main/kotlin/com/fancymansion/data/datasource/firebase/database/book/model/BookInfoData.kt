@@ -6,6 +6,7 @@ import com.fancymansion.domain.model.homeBook.BookHomeModel
 
 const val NOT_ASSIGN_PUBLISHED_ID = "NOT_ASSIGN_PUBLISHED_ID"
 const val NOT_ASSIGN_PUBLISHED_AT = 0L
+const val NOT_ASSIGN_UPDATED_AT = 0L
 
 data class BookInfoData(
     val bookId: String,
@@ -26,6 +27,7 @@ fun BookInfoModel.asData() = BookInfoData(
     publishInfo = PublishInfoData(
         publishedId = NOT_ASSIGN_PUBLISHED_ID,
         publishedAt = NOT_ASSIGN_PUBLISHED_AT,
+        updatedAt = NOT_ASSIGN_UPDATED_AT,
         version = 0,
         likeCount = 0
     ),

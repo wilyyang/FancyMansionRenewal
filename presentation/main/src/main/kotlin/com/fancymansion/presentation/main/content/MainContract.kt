@@ -15,7 +15,7 @@ fun HomeBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     return EditBookWrapper(
         bookId = book.publishInfo.publishedId,
         title = book.introduce.title,
-        editTime = book.publishInfo.publishedAt,
+        editTime = book.publishInfo.updatedAt,
         pageCount = episode.pageCount,
         thumbnail = thumbnail,
         keywords = book.introduce.keywordList

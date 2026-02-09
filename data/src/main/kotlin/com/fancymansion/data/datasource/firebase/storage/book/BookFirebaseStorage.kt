@@ -9,6 +9,7 @@ interface BookFirebaseStorage {
         publishedId: String, version: Int, uri: Uri
     )
     suspend fun deleteBookStorageByPublishedId(publishedId: String)
+    suspend fun pruneEpisodeZipFile(publishedId: String, currentVersion: Int, keep: Int)
     suspend fun uploadBookCoverImage(
         publishedId: String, coverFile: File, fileName: String
     )

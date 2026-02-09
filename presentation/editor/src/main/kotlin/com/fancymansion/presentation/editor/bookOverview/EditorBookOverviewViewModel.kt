@@ -19,6 +19,7 @@ import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseUpdateBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseUploadBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseWithdrawBook
 import com.fancymansion.domain.usecase.user.UseCaseAddPublishedBookId
@@ -36,6 +37,7 @@ class EditorBookOverviewViewModel @Inject constructor(
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseUploadBook: UseCaseUploadBook,
     private val useCaseWithdrawBook: UseCaseWithdrawBook,
+    private val useCaseUpdateBook: UseCaseUpdateBook,
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword,
     private val useCaseGetPublishedBookIds: UseCaseGetPublishedBookIds,
     private val useCaseAddPublishedBookId: UseCaseAddPublishedBookId,
@@ -97,6 +99,7 @@ class EditorBookOverviewViewModel @Inject constructor(
 
             EditorBookOverviewContract.Event.UploadBookFile -> handleUploadBookFile()
             EditorBookOverviewContract.Event.WithdrawBookFile -> handleWithdrawBookFile()
+            EditorBookOverviewContract.Event.UpdateBookFile -> handleUpdateBookFile()
 
             /**
              * Edit BookInfo
@@ -256,13 +259,15 @@ class EditorBookOverviewViewModel @Inject constructor(
             )
             val publishedId = useCaseUploadBook(episodeRef = episodeRef)
             episodeRef = episodeRef.copy(bookId = publishedId, episodeId = getEpisodeId(publishedId))
+            val currentTime = System.currentTimeMillis()
             useCaseMakeBook.makeMetaData(
                 userId = episodeRef.userId,
                 mode = episodeRef.mode,
                 bookId = episodeRef.bookId,
                 metaData = BookMetaModel(
                     status = PublishStatus.PUBLISHED,
-                    publishedAt = System.currentTimeMillis(),
+                    publishedAt = currentTime,
+                    updatedAt = currentTime,
                     version = 0
                 )
             )
@@ -278,13 +283,15 @@ class EditorBookOverviewViewModel @Inject constructor(
     private fun handleWithdrawBookFile() {
         launchWithLoading {
             useCaseWithdrawBook(episodeRef.userId, episodeRef.bookId)
+            val currentTime = System.currentTimeMillis()
             useCaseMakeBook.makeMetaData(
                 userId = episodeRef.userId,
                 mode = episodeRef.mode,
                 bookId = episodeRef.bookId,
                 metaData = BookMetaModel(
                     status = PublishStatus.UNPUBLISHED,
-                    publishedAt = System.currentTimeMillis(),
+                    publishedAt = currentTime,
+                    updatedAt = currentTime,
                     version = 0
                 )
             )
@@ -295,6 +302,22 @@ class EditorBookOverviewViewModel @Inject constructor(
                     isPublished = bookInfo.id in publishedBookIds
                 )
             }
+        }
+    }
+
+    private fun handleUpdateBookFile() {
+        launchWithLoading {
+            val newVersion = useCaseUpdateBook(episodeRef)
+            val metaData = useCaseLoadBook.loadBookMetaData(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
+            useCaseMakeBook.makeMetaData(
+                userId = episodeRef.userId,
+                mode = episodeRef.mode,
+                bookId = episodeRef.bookId,
+                metaData = metaData.copy(
+                    updatedAt = System.currentTimeMillis(),
+                    version = newVersion
+                )
+            )
         }
     }
 

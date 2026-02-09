@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
+import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
@@ -265,6 +266,7 @@ class EditorTabViewModel @Inject constructor(
             val metaData = BookMetaModel(
                 status = PublishStatus.UNPUBLISHED,
                 publishedAt = INIT_PUBLISHED_AT,
+                updatedAt = INIT_UPDATED_AT,
                 version = INIT_VERSION
             )
 

@@ -10,6 +10,7 @@ import com.fancymansion.data.datasource.firebase.database.book.model.HomeBookIte
 import com.fancymansion.data.datasource.firebase.database.book.model.IntroduceData
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_AT
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_ID
+import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_UPDATED_AT
 import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,11 +31,13 @@ class BookFirestoreDatabaseImpl(
     override suspend fun saveBook(publishedId: String, book: BookInfoData) {
         val ref = firestore.collection(BOOKS).document(publishedId)
 
+        val currentTime = System.currentTimeMillis()
         val data = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
             BookInfoData.PUBLISH_INFO to mapOf(
                 PublishInfoData.PUBLISHED_ID to publishedId,
-                PublishInfoData.PUBLISHED_AT to System.currentTimeMillis(),
+                PublishInfoData.PUBLISHED_AT to currentTime,
+                PublishInfoData.UPDATED_AT to currentTime,
                 PublishInfoData.VERSION to 0,
                 PublishInfoData.LIKE_COUNT to 0,
             ),
@@ -54,6 +57,29 @@ class BookFirestoreDatabaseImpl(
         ref.set(data, SetOptions.merge()).await()
     }
 
+    override suspend fun updateBook(publishedId: String, book: BookInfoData, version: Int) {
+        val ref = firestore.collection(BOOKS).document(publishedId)
+        val currentTime = System.currentTimeMillis()
+
+        val updates = hashMapOf(
+            BookInfoData.BOOK_ID to book.bookId,
+
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.UPDATED_AT}" to currentTime,
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.VERSION}" to version,
+
+            "${BookInfoData.INTRODUCE}.${IntroduceData.TITLE}" to book.introduce.title,
+            "${BookInfoData.INTRODUCE}.${IntroduceData.COVER_LIST}" to book.introduce.coverList,
+            "${BookInfoData.INTRODUCE}.${IntroduceData.KEYWORD_IDS}" to book.introduce.keywordIds,
+            "${BookInfoData.INTRODUCE}.${IntroduceData.DESCRIPTION}" to book.introduce.description,
+
+            "${BookInfoData.EDITOR}.${EditorData.EDITOR_ID}" to book.editor.editorId,
+            "${BookInfoData.EDITOR}.${EditorData.EDITOR_NAME}" to book.editor.editorName,
+            "${BookInfoData.EDITOR}.${EditorData.EDITOR_EMAIL}" to book.editor.editorEmail,
+        )
+
+        ref.update(updates).await()
+    }
+
     override suspend fun saveEpisode(publishedId: String, episode: EpisodeInfoData) {
         val ref = firestore.collection(BOOKS)
             .document(publishedId)
@@ -71,6 +97,28 @@ class BookFirestoreDatabaseImpl(
         )
 
         ref.set(data, SetOptions.merge()).await()
+    }
+
+    override suspend fun updateEpisode(
+        publishedId: String,
+        episode: EpisodeInfoData
+    ) {
+        val ref = firestore.collection(BOOKS)
+            .document(publishedId)
+            .collection(EPISODES)
+            .document(episode.episodeId)
+
+        val updates = hashMapOf<String, Any>(
+            EpisodeInfoData.EPISODE_ID to episode.episodeId,
+            EpisodeInfoData.BOOK_ID to episode.bookId,
+            EpisodeInfoData.TITLE to episode.title,
+            EpisodeInfoData.PAGE_COUNT to episode.pageCount,
+
+            EpisodeInfoData.CREATE_TIME to episode.createTime,
+            EpisodeInfoData.EDIT_TIME to episode.editTime
+        )
+
+        ref.update(updates).await()
     }
 
     override suspend fun loadBookList(): List<HomeBookItemData> {
@@ -146,6 +194,7 @@ class BookFirestoreDatabaseImpl(
         return PublishInfoData(
             publishedId = publishInfoMap?.get(PublishInfoData.PUBLISHED_ID) as? String ?: NOT_ASSIGN_PUBLISHED_ID,
             publishedAt = publishInfoMap?.get(PublishInfoData.PUBLISHED_AT) as? Long ?: NOT_ASSIGN_PUBLISHED_AT,
+            updatedAt = publishInfoMap?.get(PublishInfoData.UPDATED_AT) as? Long ?: NOT_ASSIGN_UPDATED_AT,
             version = publishInfoMap?.get(PublishInfoData.VERSION) as? Int ?: 0,
             likeCount = publishInfoMap?.get(PublishInfoData.LIKE_COUNT) as? Int ?: 0,
         )

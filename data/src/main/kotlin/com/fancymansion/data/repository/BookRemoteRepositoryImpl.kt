@@ -34,6 +34,16 @@ class BookRemoteRepositoryImpl @Inject constructor(
         bookFirestoreDatabase.saveEpisode(publishedId, episodeInfo.asData())
     }
 
+    override suspend fun updateBookInfo(
+        publishedId: String,
+        bookInfo: BookInfoModel,
+        episodeInfo: EpisodeInfoModel,
+        version: Int
+    ) {
+        bookFirestoreDatabase.updateBook(publishedId, bookInfo.asData(), version)
+        bookFirestoreDatabase.updateEpisode(publishedId, episodeInfo.asData())
+    }
+
     override suspend fun uploadBookArchive(publishedId: String, version: Int, episodeRef: EpisodeRef) {
         val zipFile = bookStorageSource.compressEpisodeDirAndGetFile(episodeRef, publishedId)
 
@@ -98,5 +108,9 @@ class BookRemoteRepositoryImpl @Inject constructor(
 
     override suspend fun deleteBookStorageByPublishedId(publishedId: String) {
         bookFirebaseStorage.deleteBookStorageByPublishedId(publishedId)
+    }
+
+    override suspend fun pruneEpisodeZipFile(publishedId: String, currentVersion: Int) {
+        bookFirebaseStorage.pruneEpisodeZipFile(publishedId, currentVersion, 3)
     }
 }

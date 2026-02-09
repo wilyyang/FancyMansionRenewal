@@ -9,6 +9,7 @@ import java.io.File
 interface BookRemoteRepository {
     suspend fun getPublishedId(): String
     suspend fun createBookInfo(publishedId: String, bookInfo: BookInfoModel, episodeInfo: EpisodeInfoModel)
+    suspend fun updateBookInfo(publishedId: String, bookInfo: BookInfoModel, episodeInfo: EpisodeInfoModel, version: Int)
     suspend fun uploadBookArchive(publishedId: String, version: Int, episodeRef: EpisodeRef)
     suspend fun uploadBookCoverImage(publishedId: String, episodeRef: EpisodeRef, coverFileName: String)
     suspend fun getHomeBookItems(): List<HomeBookItemModel>
@@ -17,4 +18,5 @@ interface BookRemoteRepository {
     suspend fun getPublishedBookVersion(publishedId: String): Int
     suspend fun deleteBookWithEpisodes(publishedId: String)
     suspend fun deleteBookStorageByPublishedId(publishedId: String)
+    suspend fun pruneEpisodeZipFile(publishedId: String, currentVersion: Int)
 }

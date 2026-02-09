@@ -5,6 +5,7 @@ import com.fancymansion.data.datasource.firebase.StorageCollections.BOOKS
 import com.fancymansion.data.datasource.firebase.StorageCollections.COVERS
 import com.fancymansion.data.datasource.firebase.StorageCollections.EPISODES
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -37,6 +38,30 @@ class BookFirebaseStorageImpl(
 
         deleteAllUnder(storage.reference.child("${BOOKS}/$publishedId/${COVERS}"))
         deleteAllUnder(storage.reference.child("${BOOKS}/$publishedId/${EPISODES}"))
+    }
+
+    override suspend fun pruneEpisodeZipFile(
+        publishedId: String,
+        currentVersion: Int,
+        keep: Int
+    ) {
+        require(publishedId.isNotBlank()) { "publishedId is blank" }
+        require(currentVersion >= 0) { "currentVersion is invalid" }
+        require(keep > 0) { "keep must be > 0" }
+
+        val deleteVersion = currentVersion - keep
+        if (deleteVersion < 0) return
+
+        try {
+            storage.reference
+                .child("${BOOKS}/$publishedId/${EPISODES}/${getZipFileName(deleteVersion)}")
+                .delete()
+                .await()
+        } catch (e: StorageException) {
+            if (e.errorCode != StorageException.ERROR_OBJECT_NOT_FOUND) {
+                throw e
+            }
+        }
     }
 
     private suspend fun deleteAllUnder(ref: StorageReference) {

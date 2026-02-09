@@ -83,6 +83,7 @@ fun EditorBookOverviewScreenContent(
 
                             Text(
                                 modifier = Modifier.clickSingle {
+                                    onEventSent(EditorBookOverviewContract.Event.UpdateBookFile)
                                 },
                                 text = "업데이트"
                             )
@@ -98,7 +99,6 @@ fun EditorBookOverviewScreenContent(
                         Text(
                             modifier = Modifier.clickSingle {
                                 onEventSent(EditorBookOverviewContract.Event.UploadBookFile)
-
                             },
                             text = "업로드 (임시)"
                         )
