@@ -5,14 +5,15 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
+import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.tab.editor.EditBookState
-import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 
 // 임시
-fun HomeBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
-    return EditBookWrapper(
+data class HomeBookState(val bookInfo: HomeBookWrapper)
+fun HomeBookItemModel.toWrapper(thumbnail: ImagePickType) : HomeBookWrapper {
+    return HomeBookWrapper(
         bookId = book.publishInfo.publishedId,
         title = book.introduce.title,
         editTime = book.publishInfo.updatedAt,
@@ -21,6 +22,15 @@ fun HomeBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
         keywords = book.introduce.keywordList
     )
 }
+data class HomeBookWrapper(
+    val bookId: String,
+    val title: String,
+    val editTime: Long,
+    val pageCount: Int,
+    val thumbnail: ImagePickType,
+    val keywords: List<KeywordModel>
+)
+
 
 class MainContract {
     companion object {
@@ -29,7 +39,7 @@ class MainContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
-        val homeBookList: List<EditBookState> = emptyList(),
+        val homeBookList: List<HomeBookState> = emptyList(),
         val homeBookUrlList: List<String> = emptyList(),
         val studyBookList: List<EditBookState> = emptyList(),
         val currentTab: MainScreenTab = MainScreenTab.Editor,

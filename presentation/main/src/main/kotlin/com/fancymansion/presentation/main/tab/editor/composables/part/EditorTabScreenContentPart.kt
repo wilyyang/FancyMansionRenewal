@@ -38,6 +38,7 @@ import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.common.formatTimestampLegacy
 import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
 import com.fancymansion.presentation.main.tab.editor.EditBookState
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
@@ -338,10 +339,4 @@ fun BottomBookPagination(
             tint = nextColor
         )
     }
-}
-
-fun formatTimestampLegacy(timestamp: Long): String {
-    val date = Date(timestamp)
-    val formatter = SimpleDateFormat("yyyy.M.d", Locale.getDefault())
-    return formatter.format(date)
 }

@@ -154,12 +154,11 @@ fun MainScreenFrame(
                         ){
 
                             itemsIndexed (uiState.homeBookList) { idx, data ->
-                                EditBookHolder(
+                                HomeBookHolder(
                                     bookState = data,
                                     painter = rememberAsyncImagePainter(
                                         model = uiState.homeBookUrlList[idx]
                                     ),
-                                    isEditMode = false,
                                     onClickHolder = {
                                         onEventSent(MainContract.Event.HomeBookHolderClicked(it))
                                     }

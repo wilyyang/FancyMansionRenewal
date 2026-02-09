@@ -119,9 +119,8 @@ class MainViewModel @Inject constructor(
     private suspend fun loadHomeBookList(){
         val originHomeBookList = useCaseGetHomeBookList()
         val homeBookList = originHomeBookList.map {
-            EditBookState(
-                it.toWrapper(ImagePickType.Empty),
-                mutableStateOf(false)
+            HomeBookState(
+                it.toWrapper(ImagePickType.Empty)
             )
         }
 
