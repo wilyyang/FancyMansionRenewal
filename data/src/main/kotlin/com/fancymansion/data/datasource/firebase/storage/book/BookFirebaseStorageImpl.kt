@@ -6,6 +6,7 @@ import com.fancymansion.data.datasource.firebase.StorageCollections.COVERS
 import com.fancymansion.data.datasource.firebase.StorageCollections.EPISODES
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -29,6 +30,19 @@ class BookFirebaseStorageImpl(
             .build()
 
         ref.putFile(uri, metadata).await()
+    }
+
+    override suspend fun deleteBookStorageByPublishedId(publishedId: String) {
+        require(publishedId.isNotBlank()) { "publishedId is blank" }
+
+        deleteAllUnder(storage.reference.child("${BOOKS}/$publishedId/${COVERS}"))
+        deleteAllUnder(storage.reference.child("${BOOKS}/$publishedId/${EPISODES}"))
+    }
+
+    private suspend fun deleteAllUnder(ref: StorageReference) {
+        val result = ref.listAll().await()
+        result.items.forEach { it.delete().await() }
+        result.prefixes.forEach { deleteAllUnder(it) }
     }
 
     override suspend fun uploadBookCoverImage(

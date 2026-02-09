@@ -20,8 +20,10 @@ import com.fancymansion.domain.usecase.book.UseCaseGetTotalKeyword
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseUploadBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseWithdrawBook
 import com.fancymansion.domain.usecase.user.UseCaseAddPublishedBookId
 import com.fancymansion.domain.usecase.user.UseCaseGetPublishedBookIds
+import com.fancymansion.domain.usecase.user.UseCaseRemovePublishedBookId
 import com.fancymansion.presentation.editor.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -33,9 +35,11 @@ class EditorBookOverviewViewModel @Inject constructor(
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseUploadBook: UseCaseUploadBook,
+    private val useCaseWithdrawBook: UseCaseWithdrawBook,
     private val useCaseGetTotalKeyword: UseCaseGetTotalKeyword,
     private val useCaseGetPublishedBookIds: UseCaseGetPublishedBookIds,
-    private val useCaseAddPublishedBookId: UseCaseAddPublishedBookId
+    private val useCaseAddPublishedBookId: UseCaseAddPublishedBookId,
+    private val useCaseRemovePublishedBookId: UseCaseRemovePublishedBookId
 ) : BaseViewModel<EditorBookOverviewContract.State, EditorBookOverviewContract.Event, EditorBookOverviewContract.Effect>() {
     private var isUpdateResume : Boolean = false
     private var episodeRef: EpisodeRef = savedStateHandle.run {
@@ -92,6 +96,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             EditorBookOverviewContract.Event.UploadBookFile -> handleUploadBookFile()
+            EditorBookOverviewContract.Event.WithdrawBookFile -> handleWithdrawBookFile()
 
             /**
              * Edit BookInfo
@@ -249,8 +254,8 @@ class EditorBookOverviewViewModel @Inject constructor(
                 uiState.value.imagePickType,
                 newKeywordList
             )
-            val publisedId = useCaseUploadBook(episodeRef = episodeRef)
-            episodeRef = episodeRef.copy(bookId = publisedId, episodeId = getEpisodeId(publisedId))
+            val publishedId = useCaseUploadBook(episodeRef = episodeRef)
+            episodeRef = episodeRef.copy(bookId = publishedId, episodeId = getEpisodeId(publishedId))
             useCaseMakeBook.makeMetaData(
                 userId = episodeRef.userId,
                 mode = episodeRef.mode,
@@ -261,12 +266,29 @@ class EditorBookOverviewViewModel @Inject constructor(
                     version = 0
                 )
             )
-            useCaseAddPublishedBookId(publisedId)
+            useCaseAddPublishedBookId(episodeRef.userId, episodeRef.bookId)
 
             useCaseGetTotalKeyword().forEach {
                 keywordStates.add(createKeywordState(it, false))
             }
             loadBookInfoFromFile()
+        }
+    }
+
+    private fun handleWithdrawBookFile() {
+        launchWithLoading {
+            useCaseWithdrawBook(episodeRef.userId, episodeRef.bookId)
+            useCaseMakeBook.makeMetaData(
+                userId = episodeRef.userId,
+                mode = episodeRef.mode,
+                bookId = episodeRef.bookId,
+                metaData = BookMetaModel(
+                    status = PublishStatus.UNPUBLISHED,
+                    publishedAt = System.currentTimeMillis(),
+                    version = 0
+                )
+            )
+            useCaseRemovePublishedBookId(episodeRef.userId, episodeRef.bookId)
         }
     }
 

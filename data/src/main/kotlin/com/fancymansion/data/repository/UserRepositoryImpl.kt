@@ -33,6 +33,14 @@ class UserRepositoryImpl @Inject constructor(
         return userFirestoreDatabase.getOrCreateUserInfoTx(userInit.asData()).asModel()
     }
 
+    override suspend fun addRemotePublishedBookId(userId: String, bookId: String) {
+        userFirestoreDatabase.addPublishedBookId(userId, bookId)
+    }
+
+    override suspend fun removeRemotePublishedBookId(userId: String, bookId: String) {
+        userFirestoreDatabase.removePublishedBookId(userId, bookId)
+    }
+
     override suspend fun upsertUserInfoLocal(userInfo: UserInfoModel) {
         userDatabaseDao.replaceUserInfo(userInfo.asLocalData())
     }
@@ -45,23 +53,23 @@ class UserRepositoryImpl @Inject constructor(
         return userDatabaseDao.observeUserInfoData().map { it?.asModel() }
     }
 
-    override suspend fun getPublishedBookIds(): Set<String> {
+    override suspend fun getLocalPublishedBookIds(): Set<String> {
         return userStoreSource.getPublishedBookIds()
     }
 
-    override suspend fun replacePublishedBookIds(ids: Set<String>) {
+    override suspend fun replaceLocalPublishedBookIds(ids: Set<String>) {
         userStoreSource.replacePublishedBookIds(ids)
     }
 
-    override suspend fun addPublishedBookId(bookId: String) {
+    override suspend fun addLocalPublishedBookId(bookId: String) {
         userStoreSource.addPublishedBookId(bookId)
     }
 
-    override suspend fun removePublishedBookId(bookId: String) {
+    override suspend fun removeLocalPublishedBookId(bookId: String) {
         userStoreSource.removePublishedBookId(bookId)
     }
 
-    override suspend fun clearPublishedBookIds() {
+    override suspend fun clearLocalPublishedBookIds() {
         userStoreSource.clearPublishedBookIds()
     }
 }

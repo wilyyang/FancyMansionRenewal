@@ -3,6 +3,7 @@ package com.fancymansion.data.datasource.firebase.database.user
 import com.fancymansion.data.datasource.firebase.FirestoreCollections
 import com.fancymansion.data.datasource.firebase.auth.model.UserInitData
 import com.fancymansion.data.datasource.firebase.database.user.model.UserStoreData
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -76,5 +77,31 @@ class UserFirestoreDatabaseImpl(
                 data
             }
         }.await()
+    }
+
+    override suspend fun addPublishedBookId(
+        userId: String,
+        bookId: String
+    ) {
+        val ref = firestore.collection(FirestoreCollections.USERS).document(userId)
+
+        ref.update(
+            mapOf(
+                UserStoreData.PUBLISHED_BOOK_IDS to FieldValue.arrayUnion(bookId)
+            )
+        ).await()
+    }
+
+    override suspend fun removePublishedBookId(
+        userId: String,
+        bookId: String
+    ) {
+        val ref = firestore.collection(FirestoreCollections.USERS).document(userId)
+
+        ref.update(
+            mapOf(
+                UserStoreData.PUBLISHED_BOOK_IDS to FieldValue.arrayRemove(bookId)
+            )
+        ).await()
     }
 }

@@ -126,6 +126,20 @@ class BookFirestoreDatabaseImpl(
             ?: error("Version not found")
     }
 
+    override suspend fun deleteBookWithEpisodes(publishedId: String) {
+        val bookRef = firestore.collection(BOOKS).document(publishedId)
+        val episodesRef = bookRef.collection(EPISODES)
+
+        // 1. 모든 에피소드 삭제
+        val episodesSnapshot = episodesRef.get().await()
+        episodesSnapshot.documents.forEach { doc ->
+            doc.reference.delete().await()
+        }
+
+        // 2. 책 문서 삭제
+        bookRef.delete().await()
+    }
+
     private fun DocumentSnapshot.parsePublishInfo(): PublishInfoData {
         val publishInfoMap = get(BookInfoData.PUBLISH_INFO) as? Map<*, *>
 

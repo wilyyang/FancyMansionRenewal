@@ -89,6 +89,7 @@ fun EditorBookOverviewScreenContent(
                             Spacer(modifier = Modifier.width(30.dp))
                             Text(
                                 modifier = Modifier.clickSingle {
+                                    onEventSent(EditorBookOverviewContract.Event.WithdrawBookFile)
                                 },
                                 text = "철회"
                             )

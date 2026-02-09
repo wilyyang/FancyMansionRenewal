@@ -16,8 +16,8 @@ class UseCaseGoogleLogin @Inject constructor(
             val initUser = userRepository.signInWithGoogle(idToken)
             val result = userRepository.getOrCreateUserInfoTx(initUser)
             userRepository.upsertUserInfoLocal(result.userInfo)
-            userRepository.clearPublishedBookIds()
-            userRepository.replacePublishedBookIds(result.publishedBookIds)
+            userRepository.clearLocalPublishedBookIds()
+            userRepository.replaceLocalPublishedBookIds(result.publishedBookIds)
             result.userInfo
         }
 }

@@ -5,4 +5,6 @@ import com.fancymansion.data.datasource.firebase.database.user.model.UserStoreDa
 
 interface UserFirestoreDatabase {
     suspend fun getOrCreateUserInfoTx(userInit: UserInitData): UserStoreData
+    suspend fun addPublishedBookId(userId: String, bookId: String)
+    suspend fun removePublishedBookId(userId: String, bookId: String)
 }

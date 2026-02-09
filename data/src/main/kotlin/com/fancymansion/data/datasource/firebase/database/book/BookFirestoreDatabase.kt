@@ -10,4 +10,5 @@ interface BookFirestoreDatabase {
     suspend fun saveEpisode(publishedId: String, episode: EpisodeInfoData)
     suspend fun loadBookList(): List<HomeBookItemData>
     suspend fun getPublishedBookVersion(publishedId: String): Int
+    suspend fun deleteBookWithEpisodes(publishedId: String)
 }

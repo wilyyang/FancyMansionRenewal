@@ -15,4 +15,6 @@ interface BookRemoteRepository {
     suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String): File
     suspend fun getBookCoverImageUrl(publishedId: String, imageFileName: String): String
     suspend fun getPublishedBookVersion(publishedId: String): Int
+    suspend fun deleteBookWithEpisodes(publishedId: String)
+    suspend fun deleteBookStorageByPublishedId(publishedId: String)
 }

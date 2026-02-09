@@ -12,7 +12,7 @@ class UseCaseGetPublishedBookIds @Inject constructor(
 ) {
     suspend operator fun invoke(): Set<String> =
         withContext(dispatcher) {
-            userRepository.getPublishedBookIds()
+            userRepository.getLocalPublishedBookIds()
         }
 }
 
@@ -21,9 +21,10 @@ class UseCaseAddPublishedBookId @Inject constructor(
     @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(publishedBookId: String) =
+    suspend operator fun invoke(userId: String, publishedBookId: String) =
         withContext(dispatcher) {
-            userRepository.addPublishedBookId(publishedBookId)
+            userRepository.addRemotePublishedBookId(userId, publishedBookId)
+            userRepository.addLocalPublishedBookId(publishedBookId)
         }
 }
 
@@ -32,8 +33,9 @@ class UseCaseRemovePublishedBookId @Inject constructor(
     @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(removeTargetId: String) =
+    suspend operator fun invoke(userId: String, removeTargetId: String) =
         withContext(dispatcher) {
-            userRepository.removePublishedBookId(removeTargetId)
+            userRepository.removeRemotePublishedBookId(userId, removeTargetId)
+            userRepository.removeLocalPublishedBookId(removeTargetId)
         }
 }

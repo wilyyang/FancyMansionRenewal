@@ -91,4 +91,12 @@ class BookRemoteRepositoryImpl @Inject constructor(
     override suspend fun getPublishedBookVersion(publishedId: String): Int {
         return bookFirestoreDatabase.getPublishedBookVersion(publishedId)
     }
+
+    override suspend fun deleteBookWithEpisodes(publishedId: String) {
+        bookFirestoreDatabase.deleteBookWithEpisodes(publishedId)
+    }
+
+    override suspend fun deleteBookStorageByPublishedId(publishedId: String) {
+        bookFirebaseStorage.deleteBookStorageByPublishedId(publishedId)
+    }
 }
