@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,12 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.formatTimestampLegacy
+import com.fancymansion.presentation.main.common.formatTimestampOnlyDate
 import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
 import com.fancymansion.presentation.main.tab.editor.EditBookState
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
@@ -157,16 +161,47 @@ fun EditBookHolder(
             modifier = Modifier
                 .width(70.dp)
                 .height(120.dp)
-                .clip(shape = MaterialTheme.shapes.extraSmall)
         ) {
-            Image(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.Center),
-                painter = painter,
-                contentScale = ContentScale.FillWidth,
-                contentDescription = "Book Holder Thumbnail"
-            )
+                    .align(Alignment.Center)
+                    .clip(shape = MaterialTheme.shapes.extraSmall)
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    painter = painter,
+                    contentScale = ContentScale.FillWidth,
+                    contentDescription = "Book Holder Thumbnail"
+                )
+
+                if (bookState.bookInfo.metadata.status == PublishStatus.PUBLISHED) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    topEnd = 4.dp
+                                )
+                            )
+                            .background(color = MaterialTheme.colorScheme.tertiary)
+                            .padding(6.dp)
+                    ) {
+                        Text(
+                            text = stringResource(
+                                R.string.edit_book_holder_publish_date,
+                                formatTimestampOnlyDate(bookState.bookInfo.metadata.updatedAt)
+                            ),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                color = MaterialTheme.colorScheme.onTertiary,
+                                fontSize = 10.sp,
+                                lineHeight = 11.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+                    }
+                }
+            }
         }
 
         Column(

@@ -4,6 +4,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+fun formatTimestampOnlyDate(timestamp: Long): String {
+    val date = Date(timestamp)
+    val formatter = SimpleDateFormat("M.d", Locale.getDefault())
+    return formatter.format(date)
+}
 fun formatTimestampLegacy(timestamp: Long): String {
     val date = Date(timestamp)
     val formatter = SimpleDateFormat("yyyy.M.d", Locale.getDefault())

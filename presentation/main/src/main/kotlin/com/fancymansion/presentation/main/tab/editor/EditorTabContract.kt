@@ -7,6 +7,7 @@ import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.model.book.LocalBookItemModel
@@ -29,7 +30,8 @@ data class EditBookWrapper(
     val editTime: Long,
     val pageCount: Int,
     val thumbnail: ImagePickType,
-    val keywords: List<KeywordModel>
+    val keywords: List<KeywordModel>,
+    val metadata: BookMetaModel
 )
 
 data class EditBookState(val bookInfo: EditBookWrapper, val selected: MutableState<Boolean>)
@@ -41,7 +43,8 @@ fun LocalBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
         editTime = episode.editTime,
         pageCount = episode.pageCount,
         thumbnail = thumbnail,
-        keywords = book.introduce.keywordList
+        keywords = book.introduce.keywordList,
+        metadata = metaData
     )
 }
 

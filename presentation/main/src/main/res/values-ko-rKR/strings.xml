@@ -20,6 +20,7 @@
     <string name="edit_book_header_mode_complete">완료</string>
     <string name="edit_book_header_mode_edit">편집</string>
 
+    <string name="edit_book_holder_publish_date">%1$s 배포</string>
     <string name="edit_book_holder_edit_date">%1$s 편집됨</string>
     <string name="edit_book_holder_page_count">총 %1$d 페이지</string>
 
