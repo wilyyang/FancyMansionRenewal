@@ -75,36 +75,6 @@ fun EditorBookOverviewScreenContent(
                     .customImePadding()
                     .addFocusCleanerWhenImeVisible(focusManager)
             ) {
-
-                // 임시 코드
-                item {
-                    if(uiState.isPublished){
-                        Row(modifier = Modifier.fillMaxWidth()) {
-
-                            Text(
-                                modifier = Modifier.clickSingle {
-                                    onEventSent(EditorBookOverviewContract.Event.UpdateBookFile)
-                                },
-                                text = "업데이트"
-                            )
-                            Spacer(modifier = Modifier.width(30.dp))
-                            Text(
-                                modifier = Modifier.clickSingle {
-                                    onEventSent(EditorBookOverviewContract.Event.WithdrawBookFile)
-                                },
-                                text = "철회"
-                            )
-                        }
-                    }else{
-                        Text(
-                            modifier = Modifier.clickSingle {
-                                onEventSent(EditorBookOverviewContract.Event.UploadBookFile)
-                            },
-                            text = "업로드 (임시)"
-                        )
-                    }
-                }
-
                 item {
                     EditOverviewCoverImage(
                         modifier = commonPartModifier,
@@ -117,6 +87,17 @@ fun EditorBookOverviewScreenContent(
                             focusManager.clearFocus()
                             onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
                         }
+                    )
+                }
+
+                item {
+                    EditOverviewPublishSection(
+                        modifier = commonPartModifier,
+                        isPublished = uiState.isPublished,
+                        metadata = uiState.metadata,
+                        onClickUploadBook = { onEventSent(EditorBookOverviewContract.Event.UploadBookFile) },
+                        onClickUpdateBook = { onEventSent(EditorBookOverviewContract.Event.UpdateBookFile) },
+                        onClickWithdrawBook = { onEventSent(EditorBookOverviewContract.Event.WithdrawBookFile) }
                     )
                 }
 

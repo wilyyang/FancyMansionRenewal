@@ -5,6 +5,9 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
+import com.fancymansion.core.common.const.INIT_UPDATED_AT
+import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
@@ -250,7 +253,6 @@ class EditorBookOverviewViewModel @Inject constructor(
 
     private fun handleUploadBookFile(){
         launchWithLoading {
-            // 임시 코드
             val newKeywordList = keywordStates.filter { it.selected.value }.map { it.keyword }
             updateBookInfoAndReload(
                 uiState.value.bookInfo,
@@ -283,23 +285,24 @@ class EditorBookOverviewViewModel @Inject constructor(
     private fun handleWithdrawBookFile() {
         launchWithLoading {
             useCaseWithdrawBook(episodeRef.userId, episodeRef.bookId)
-            val currentTime = System.currentTimeMillis()
+            val newMetaData = BookMetaModel(
+                status = PublishStatus.UNPUBLISHED,
+                publishedAt = INIT_PUBLISHED_AT,
+                updatedAt = INIT_UPDATED_AT,
+                version = INIT_VERSION
+            )
             useCaseMakeBook.makeMetaData(
                 userId = episodeRef.userId,
                 mode = episodeRef.mode,
                 bookId = episodeRef.bookId,
-                metaData = BookMetaModel(
-                    status = PublishStatus.UNPUBLISHED,
-                    publishedAt = currentTime,
-                    updatedAt = currentTime,
-                    version = 0
-                )
+                metaData = newMetaData
             )
             useCaseRemovePublishedBookId(episodeRef.userId, episodeRef.bookId)
             val publishedBookIds = useCaseGetPublishedBookIds()
             setState {
                 copy(
-                    isPublished = bookInfo.id in publishedBookIds
+                    isPublished = bookInfo.id in publishedBookIds,
+                    metadata = newMetaData
                 )
             }
         }
@@ -315,16 +318,25 @@ class EditorBookOverviewViewModel @Inject constructor(
                 newKeywordList
             )
             val newVersion = useCaseUpdateBook(episodeRef)
-            val metaData = useCaseLoadBook.loadBookMetaData(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
+            val newMetaData = useCaseLoadBook.loadBookMetaData(
+                episodeRef.userId,
+                episodeRef.mode,
+                episodeRef.bookId
+            ).copy(
+                updatedAt = System.currentTimeMillis(),
+                version = newVersion
+            )
             useCaseMakeBook.makeMetaData(
                 userId = episodeRef.userId,
                 mode = episodeRef.mode,
                 bookId = episodeRef.bookId,
-                metaData = metaData.copy(
-                    updatedAt = System.currentTimeMillis(),
-                    version = newVersion
-                )
+                metaData = newMetaData
             )
+            setState {
+                copy(
+                    metadata = newMetaData
+                )
+            }
         }
     }
 
@@ -411,10 +423,12 @@ class EditorBookOverviewViewModel @Inject constructor(
         }
 
         val publishedBookIds = useCaseGetPublishedBookIds()
+        val metadata = useCaseLoadBook.loadBookMetaData(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
         setState {
             copy(
                 isPublished = bookInfo.id in publishedBookIds,
                 bookInfo = bookInfo,
+                metadata = metadata,
                 pageBriefList = pageBriefList,
                 imagePickType = if (bookCoverFile != null) ImagePickType.SavedImage(
                     bookCoverFile

@@ -4,12 +4,17 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
+import com.fancymansion.core.common.const.INIT_UPDATED_AT
+import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
+import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.KeywordModel
@@ -32,6 +37,12 @@ class EditorBookOverviewContract {
             id = "",
             editor = EditorModel(),
             introduce = IntroduceModel()
+        ),
+        val metadata : BookMetaModel = BookMetaModel(
+            status = PublishStatus.UNPUBLISHED,
+            publishedAt = INIT_PUBLISHED_AT,
+            updatedAt = INIT_UPDATED_AT,
+            version = INIT_VERSION
         ),
         val pageBriefList : List<PageBrief> = emptyList(),
         val imagePickType : ImagePickType = ImagePickType.Empty

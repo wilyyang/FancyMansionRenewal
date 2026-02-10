@@ -1,9 +1,11 @@
 package com.fancymansion.core.common.const
 
+import androidx.annotation.StringRes
 import com.fancymansion.core.common.resource.StringValue
-
-enum class PublishStatus {
-    PUBLISHED, UNPUBLISHED, WITHDRAW
+enum class PublishStatus(@param:StringRes val resId : Int) {
+    PUBLISHED(com.fancymansion.core.common.R.string.publish_status_publish),
+    UNPUBLISHED(com.fancymansion.core.common.R.string.publish_status_unpublish),
+    WITHDRAW(com.fancymansion.core.common.R.string.publish_status_withdraw)
 }
 const val INIT_VERSION = 0
 const val INIT_PUBLISHED_AT = 0L

@@ -20,6 +20,10 @@
     <string name="dialog_network_error">인터넷 연결이 원활하지 않습니다.\n잠시 후 다시 시도해 주세요.</string>
 
     <!-- Book -->
+    <string name="publish_status_publish">배포</string>
+    <string name="publish_status_unpublish">미배포</string>
+    <string name="publish_status_withdraw">철회</string>
+
     <string name="page_type_start">시작</string>
     <string name="page_type_normal">일반</string>
     <string name="page_type_ending">엔딩</string>
