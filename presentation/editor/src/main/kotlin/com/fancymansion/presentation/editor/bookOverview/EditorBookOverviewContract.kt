@@ -32,6 +32,7 @@ class EditorBookOverviewContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
+        val isPublishSectionOpen : Boolean = false,
         val isPublished : Boolean = false,
         val bookInfo : BookInfoModel = BookInfoModel(
             id = "",
@@ -51,6 +52,7 @@ class EditorBookOverviewContract {
     sealed class Event : ViewEvent {
         data object BookOverviewButtonClicked : Event()
         data object OverviewInfoSaveToFile : Event()
+        data object PublishInfoHeaderClicked : Event()
         data object UploadBookFile : Event()
         data object WithdrawBookFile : Event()
         data object UpdateBookFile : Event()

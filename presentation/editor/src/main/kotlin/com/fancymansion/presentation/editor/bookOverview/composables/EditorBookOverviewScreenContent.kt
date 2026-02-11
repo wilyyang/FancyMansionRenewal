@@ -2,14 +2,14 @@ package com.fancymansion.presentation.editor.bookOverview.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +29,16 @@ import com.fancymansion.core.presentation.compose.modifier.customImePadding
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.Paddings
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.editor.R
 import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
+import com.fancymansion.presentation.editor.bookOverview.composables.part.EditOverviewCoverImage
+import com.fancymansion.presentation.editor.bookOverview.composables.part.EditOverviewDescription
+import com.fancymansion.presentation.editor.bookOverview.composables.part.EditOverviewKeyword
+import com.fancymansion.presentation.editor.bookOverview.composables.part.EditOverviewPageList
+import com.fancymansion.presentation.editor.bookOverview.composables.part.EditOverviewPublishSection
+import com.fancymansion.presentation.editor.bookOverview.composables.part.EditOverviewTitle
 
 @Composable
 fun EditorBookOverviewScreenContent(
@@ -76,6 +83,25 @@ fun EditorBookOverviewScreenContent(
                     .addFocusCleanerWhenImeVisible(focusManager)
             ) {
                 item {
+                    Column{
+                        EditOverviewPublishSection(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background)
+                                .padding(horizontal = Paddings.Basic.horizontal),
+                            isPublishInfoExpanded = uiState.isPublishSectionOpen,
+                            isPublished = uiState.isPublished,
+                            metadata = uiState.metadata,
+                            onClickHeader = { onEventSent(EditorBookOverviewContract.Event.PublishInfoHeaderClicked) },
+                            onClickUploadBook = { onEventSent(EditorBookOverviewContract.Event.UploadBookFile) },
+                            onClickUpdateBook = { onEventSent(EditorBookOverviewContract.Event.UpdateBookFile) },
+                            onClickWithdrawBook = { onEventSent(EditorBookOverviewContract.Event.WithdrawBookFile) }
+                        )
+                        HorizontalDivider(modifier = Modifier.fillMaxWidth(), thickness = 0.3.dp, color = onSurfaceSub)
+                    }
+                }
+
+                item {
                     EditOverviewCoverImage(
                         modifier = commonPartModifier,
                         imagePickType = uiState.imagePickType,
@@ -87,17 +113,6 @@ fun EditorBookOverviewScreenContent(
                             focusManager.clearFocus()
                             onEventSent(EditorBookOverviewContract.Event.CoverImageReset)
                         }
-                    )
-                }
-
-                item {
-                    EditOverviewPublishSection(
-                        modifier = commonPartModifier,
-                        isPublished = uiState.isPublished,
-                        metadata = uiState.metadata,
-                        onClickUploadBook = { onEventSent(EditorBookOverviewContract.Event.UploadBookFile) },
-                        onClickUpdateBook = { onEventSent(EditorBookOverviewContract.Event.UpdateBookFile) },
-                        onClickWithdrawBook = { onEventSent(EditorBookOverviewContract.Event.WithdrawBookFile) }
                     )
                 }
 
@@ -152,7 +167,11 @@ fun EditorBookOverviewScreenContent(
                         modifier = commonPartModifier,
                         description = uiState.bookInfo.introduce.description,
                         updateBookInfoDescription = {
-                            onEventSent(EditorBookOverviewContract.Event.EditBookInfoDescription(description = it))
+                            onEventSent(
+                                EditorBookOverviewContract.Event.EditBookInfoDescription(
+                                    description = it
+                                )
+                            )
                         }
                     )
                 }

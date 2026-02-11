@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.editor.bookOverview.composables
+package com.fancymansion.presentation.editor.bookOverview.composables.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,21 +30,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.PublishStatus
-import com.fancymansion.core.common.util.formatTimestampDateTime
 import com.fancymansion.core.presentation.compose.component.RoundedTextField
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
-import com.fancymansion.core.presentation.compose.shape.RoundedRectangleShape
 import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
-import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.presentation.editor.R
-import com.fancymansion.presentation.editor.bookOverview.EditorBookOverviewContract
 import com.fancymansion.presentation.editor.bookOverview.KeywordState
 import com.fancymansion.presentation.editor.bookOverview.PageBrief
 import com.fancymansion.presentation.editor.common.composables.CommonEditInfoTitle
@@ -113,100 +108,6 @@ fun EditOverviewCoverImage(
 
         Spacer(modifier = Modifier.height(5.dp))
     }
-}
-
-@Composable
-fun EditOverviewPublishSection(
-    modifier: Modifier = Modifier,
-    isPublished: Boolean,
-    metadata: BookMetaModel,
-    onClickUploadBook: () -> Unit,
-    onClickUpdateBook: () -> Unit,
-    onClickWithdrawBook: () -> Unit
-) {
-    Column(modifier = modifier) {
-        CommonEditInfoTitle(
-            title = stringResource(id = R.string.edit_overview_top_label_book_publish_section)
-        )
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(R.string.edit_overview_publish_section_status_label))
-            Spacer(Modifier.width(6.dp))
-            Text(text = stringResource(metadata.status.resId))
-        }
-
-        Spacer(Modifier.height(6.dp))
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(R.string.edit_overview_publish_section_update_at_label))
-            Spacer(Modifier.width(6.dp))
-            Text(text = if(metadata.status == PublishStatus.PUBLISHED){
-                formatTimestampDateTime(metadata.updatedAt)
-            }else{
-                "-"
-            })
-        }
-
-        Spacer(Modifier.height(6.dp))
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(R.string.edit_overview_publish_section_version_label))
-            Spacer(Modifier.width(6.dp))
-            Text(text = "${if (isPublished) metadata.version else "-"}")
-        }
-
-        Spacer(Modifier.height(10.dp))
-
-        if (isPublished) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                PublishSectionButton(
-                    backgroundColor = MaterialTheme.colorScheme.secondary,
-                    textColor = MaterialTheme.colorScheme.onSecondary,
-                    buttonText = stringResource(R.string.edit_overview_button_publish_update),
-                    onClickEvent = { onClickUpdateBook() }
-                )
-
-                Spacer(modifier = Modifier.width(15.dp))
-
-                PublishSectionButton(
-                    backgroundColor = MaterialTheme.colorScheme.tertiary,
-                    textColor = MaterialTheme.colorScheme.onTertiary,
-                    buttonText = stringResource(R.string.edit_overview_button_publish_withdraw),
-                    onClickEvent = { onClickWithdrawBook() }
-                )
-            }
-        } else {
-            PublishSectionButton(
-                backgroundColor = MaterialTheme.colorScheme.primary,
-                textColor = MaterialTheme.colorScheme.onPrimary,
-                buttonText = stringResource(R.string.edit_overview_button_publish_upload),
-                onClickEvent = { onClickUploadBook() }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(itemMarginHeight))
-    }
-}
-
-@Composable
-fun PublishSectionButton(
-    backgroundColor: Color,
-    textColor: Color,
-    buttonText: String,
-    onClickEvent: () -> Unit
-) {
-    Text(
-        modifier = Modifier
-            .width(130.dp)
-            .clip(shape = RoundedRectangleShape())
-            .background(backgroundColor)
-            .padding(vertical = 12.dp)
-            .clickSingle { onClickEvent() },
-        text = buttonText,
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-        color = textColor
-    )
 }
 
 @Composable
@@ -424,7 +325,7 @@ fun PageBriefHolder(
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 

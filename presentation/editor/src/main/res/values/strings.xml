@@ -7,7 +7,8 @@
     <string name="topbar_editor_title_page_list">페이지 목록 편집</string>
 
     <string name="edit_overview_top_label_book_cover">커버 이미지</string>
-    <string name="edit_overview_top_label_book_publish_section">배포 정보</string>
+    <string name="edit_overview_top_label_book_publish_header">배포 정보</string>
+    <string name="edit_overview_top_label_book_publish_header_status">배포 상태 : %1$s</string>
     <string name="edit_overview_top_label_book_title">책 제목</string>
     <string name="edit_overview_top_label_book_introduce">작품 소개</string>
     <string name="edit_overview_top_label_book_keyword">키워드</string>
@@ -19,7 +20,8 @@
 
     <string name="edit_overview_button_publish_upload">업로드</string>
     <string name="edit_overview_button_publish_update">업데이트</string>
-    <string name="edit_overview_button_publish_withdraw">철회</string>
+    <string name="edit_overview_button_publish_withdraw">취소</string>
+    <string name="edit_overview_publish_header_guide_withdraw">배포한 책을 내리려면, 다음을 탭해주세요 :</string>
 
     <string name="edit_overview_top_edit_keyword">편집</string>
     <string name="edit_overview_top_edit_page">편집</string>

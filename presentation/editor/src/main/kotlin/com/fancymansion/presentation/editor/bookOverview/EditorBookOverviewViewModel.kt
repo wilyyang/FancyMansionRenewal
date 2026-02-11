@@ -100,6 +100,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                 }
             }
 
+            EditorBookOverviewContract.Event.PublishInfoHeaderClicked -> handleTogglePublishSection()
             EditorBookOverviewContract.Event.UploadBookFile -> handleUploadBookFile()
             EditorBookOverviewContract.Event.WithdrawBookFile -> handleWithdrawBookFile()
             EditorBookOverviewContract.Event.UpdateBookFile -> handleUpdateBookFile()
@@ -249,6 +250,10 @@ class EditorBookOverviewViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun handleTogglePublishSection() {
+        setState { copy(isPublishSectionOpen = !isPublishSectionOpen) }
     }
 
     private fun handleUploadBookFile(){
