@@ -101,9 +101,36 @@ class EditorBookOverviewViewModel @Inject constructor(
             }
 
             EditorBookOverviewContract.Event.PublishInfoHeaderClicked -> handleTogglePublishSection()
-            EditorBookOverviewContract.Event.UploadBookFile -> handleUploadBookFile()
-            EditorBookOverviewContract.Event.WithdrawBookFile -> handleWithdrawBookFile()
-            EditorBookOverviewContract.Event.UpdateBookFile -> handleUpdateBookFile()
+            EditorBookOverviewContract.Event.UploadBookFile -> {
+                setLoadState(
+                    loadState = LoadState.AlarmDialog(
+                        title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_upload),
+                        message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_upload),
+                        onConfirm = ::handleUploadBookFile,
+                        onDismiss = ::setLoadStateIdle
+                    )
+                )
+            }
+            EditorBookOverviewContract.Event.WithdrawBookFile -> {
+                setLoadState(
+                    loadState = LoadState.AlarmDialog(
+                        title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_withdraw),
+                        message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_withdraw),
+                        onConfirm = ::handleWithdrawBookFile,
+                        onDismiss = ::setLoadStateIdle
+                    )
+                )
+            }
+            EditorBookOverviewContract.Event.UpdateBookFile -> {
+                setLoadState(
+                    loadState = LoadState.AlarmDialog(
+                        title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_update),
+                        message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_update),
+                        onConfirm = ::handleUpdateBookFile,
+                        onDismiss = ::setLoadStateIdle
+                    )
+                )
+            }
 
             /**
              * Edit BookInfo
