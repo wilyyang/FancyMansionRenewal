@@ -25,10 +25,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.fancymansion.core.common.util.formatTimestampYearDate
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.common.formatTimestampLegacy
 import com.fancymansion.presentation.main.content.HomeBookState
 import com.fancymansion.presentation.main.content.LibraryBookState
 
@@ -79,7 +79,7 @@ fun HomeBookHolder(
                 modifier = Modifier.padding(top = 4.dp),
                 text = stringResource(
                     id = R.string.edit_book_holder_edit_date,
-                    formatTimestampLegacy(bookState.bookInfo.editTime)
+                    formatTimestampYearDate(bookState.bookInfo.editTime)
                 ),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 style = MaterialTheme.typography.bodyMedium
@@ -169,7 +169,7 @@ fun LibraryBookHolder(
                 modifier = Modifier.padding(top = 4.dp),
                 text = stringResource(
                     id = R.string.edit_book_holder_edit_date,
-                    formatTimestampLegacy(bookState.bookInfo.editTime)
+                    formatTimestampYearDate(bookState.bookInfo.editTime)
                 ),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 style = MaterialTheme.typography.bodyMedium
