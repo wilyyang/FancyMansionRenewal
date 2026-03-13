@@ -106,8 +106,8 @@ fun handleMainNavigationRequest(effect: MainContract.Effect.Navigation, navContr
             googleLogout()
         }
         is MainContract.Effect.Navigation.NavigateLaunchScreen -> {
-            navController.navigate(LaunchContract.NAME) {
-                popUpTo(MainContract.NAME) { inclusive = true }
+            navController.navigate("${LaunchContract.NAME}/false") {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
                 launchSingleTop = true
             }
         }

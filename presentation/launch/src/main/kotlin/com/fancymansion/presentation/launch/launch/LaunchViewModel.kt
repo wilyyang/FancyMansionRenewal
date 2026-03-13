@@ -1,17 +1,16 @@
 package com.fancymansion.presentation.launch.launch
 
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.ArgName
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.EditorModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.user.UseCaseGoogleLogin
-import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,12 +18,15 @@ import javax.inject.Inject
 class LaunchViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCaseBookList: UseCaseBookList,
-    private val useCaseGoogleLogin: UseCaseGoogleLogin,
-    private val useCaseGetResource: UseCaseGetResource
+    private val useCaseGoogleLogin: UseCaseGoogleLogin
 ) : BaseViewModel<LaunchContract.State, LaunchContract.Event, LaunchContract.Effect>() {
 
     init {
-        initializeState()
+        setState {
+            copy(
+                isAnimationStart = requireNotNull(savedStateHandle.get<Boolean>(ArgName.NAME_IS_ANIMATION_START))
+            )
+        }
     }
 
     override fun setInitialState() = LaunchContract.State()
@@ -32,12 +34,17 @@ class LaunchViewModel @Inject constructor(
     override fun handleEvents(event: LaunchContract.Event) {
         when(event){
             LaunchContract.Event.OnClickGoogleLogin -> {
+                setState {
+                    copy(
+                        isUserLoginVisible = false
+                    )
+                }
                 setEffect {
                     LaunchContract.Effect.Navigation.GoogleLoginLauncherCall
                 }
             }
             is LaunchContract.Event.GoogleTokenAcquired -> {
-                launchWithLoading {
+                launchWithException {
                     val userInfo = useCaseGoogleLogin(event.idToken)
 
                     if (!userInfo.hasCompletedOnboarding) {
@@ -61,11 +68,15 @@ class LaunchViewModel @Inject constructor(
                     }
                 }
             }
-            LaunchContract.Event.GoogleLoginNeedUserAction -> {
-                setLoadStateIdle()
+            is LaunchContract.Event.GoogleLoginFail,
+            LaunchContract.Event.GoogleLoginNeedUserAction,
+            LaunchContract.Event.GoogleLoginCancel -> {
+                setState {
+                    copy(
+                        isUserLoginVisible = true
+                    )
+                }
             }
-            is LaunchContract.Event.GoogleLoginFail -> {}
-            LaunchContract.Event.GoogleLoginCancel -> {}
         }
     }
 
@@ -75,26 +86,16 @@ class LaunchViewModel @Inject constructor(
                 if(!uiState.value.isAutoLoginChecked){
                     setState {
                         copy(
-                            isAutoLoginChecked = true
+                            isAutoLoginChecked = true,
+                            isUserLoginVisible = false
                         )
                     }
-                    setLoadState(LoadState.Loading())
                     setEffect {
                         LaunchContract.Effect.Navigation.AttemptGoogleAutoLogin
                     }
                 }
             }
             else -> super.handleCommonEvents(event)
-        }
-    }
-
-    private fun initializeState() {
-        launchWithInit {
-            setState {
-                copy(
-                    isInitSuccess = true
-                )
-            }
         }
     }
 }

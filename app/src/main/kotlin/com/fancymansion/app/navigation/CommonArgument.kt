@@ -10,6 +10,11 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.SELECTOR_ID_NOT_ASSIGNED
 
 object NavArgument{
+    val argIsAnimationStart = navArgument(ArgName.NAME_IS_ANIMATION_START){
+        type = NavType.BoolType
+        defaultValue = false
+    }
+
     val argUserId = navArgument(ArgName.NAME_USER_ID){
         type = NavType.StringType
         defaultValue = ""

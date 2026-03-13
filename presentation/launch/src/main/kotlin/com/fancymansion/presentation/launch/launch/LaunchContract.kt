@@ -10,8 +10,9 @@ class LaunchContract  {
     }
 
     data class State(
-        val isInitSuccess : Boolean = false,
-        val isAutoLoginChecked : Boolean = false
+        val isAnimationStart: Boolean = false,
+        val isAutoLoginChecked: Boolean = false,
+        val isUserLoginVisible: Boolean = false
     ) : ViewState
 
     sealed class Event : ViewEvent {

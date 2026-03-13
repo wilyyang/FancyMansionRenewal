@@ -1,6 +1,7 @@
 package com.fancymansion.core.common.const
 
 object ArgName{
+    const val NAME_IS_ANIMATION_START = "NAME_IS_ANIMATION_START"
     const val NAME_USER_ID = "NAME_USER_ID"
     const val NAME_READ_MODE = "NAME_READ_MODE"
     const val NAME_BOOK_ID = "NAME_BOOK_ID"

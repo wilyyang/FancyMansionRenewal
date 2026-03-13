@@ -58,10 +58,11 @@ fun AppNavigation(typePane : TypePane) {
 
     NavHost(
         navController = navController,
-        startDestination = LaunchContract.NAME
+        startDestination = "${LaunchContract.NAME}/true"
     ) {
         leftScreenTransition(
-            route = LaunchContract.NAME,
+            route = "${LaunchContract.NAME}/{${ArgName.NAME_IS_ANIMATION_START}}",
+            arguments = listOf(NavArgument.argIsAnimationStart),
             navController = navController
         ) {
             LaunchScreenDestination(navController = navController, typePane = typePane)

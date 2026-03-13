@@ -1,47 +1,76 @@
 package com.fancymansion.presentation.launch.launch.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.base.CommonEvent
-import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.presentation.launch.R
 import com.fancymansion.presentation.launch.launch.LaunchContract
+import com.fancymansion.presentation.launch.launch.composables.part.FooterText
+import com.fancymansion.presentation.launch.launch.composables.part.GoogleLoginButton
+import com.fancymansion.presentation.launch.launch.composables.part.logo.LaunchLogoText
 
 @Composable
 fun LaunchScreenContent(
     modifier: Modifier = Modifier,
     uiState: LaunchContract.State,
-    onEventSent: (event: LaunchContract.Event) -> Unit,
-    onCommonEventSent: (event: CommonEvent) -> Unit
+    onEventSent: (LaunchContract.Event) -> Unit,
+    onCommonEventSent: (CommonEvent) -> Unit
 ) {
+    var isLogoAnimationFinished by remember { mutableStateOf(false) }
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.primary)
+            .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
-        if (!uiState.isInitSuccess) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "초기화 중",
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge
-            )
 
-        } else {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier.height(60.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                LaunchLogoText(
+                    fullText = stringResource(R.string.launch_logo),
+                    isAnimationStart = uiState.isAnimationStart,
+                    onAnimationEnd = {
+                        isLogoAnimationFinished = true
+                    }
+                )
+            }
 
-            Text(
-                modifier = Modifier.align(Alignment.Center).clickSingle{
+            Spacer(modifier = Modifier.height(32.dp))
+            GoogleLoginButton(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .height(48.dp),
+                text = stringResource(R.string.launch_google_login),
+                enabled = uiState.isUserLoginVisible && (!uiState.isAnimationStart || isLogoAnimationFinished),
+                onClick = {
                     onEventSent(LaunchContract.Event.OnClickGoogleLogin)
-                },
-                text = "Launch 화면",
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge
+                }
             )
         }
+
+        FooterText(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            text = stringResource(R.string.launch_created_by)
+        )
     }
 }

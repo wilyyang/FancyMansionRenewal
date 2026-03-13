@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="launch_logo">sangsang</string>
+    <string name="launch_google_login">Continue with Google</string>
+    <string name="launch_created_by">Created by Crane</string>
 </resources>

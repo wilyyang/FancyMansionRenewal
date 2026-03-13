@@ -33,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState : Bundle?) {
+        setTheme(com.fancymansion.app.R.style.Theme_FancyMansion)
         super.onCreate(savedInstanceState)
 
         window.statusBarColor = Color.TRANSPARENT
