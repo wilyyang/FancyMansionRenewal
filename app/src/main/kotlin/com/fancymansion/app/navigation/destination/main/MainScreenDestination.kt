@@ -19,6 +19,8 @@ import com.fancymansion.presentation.main.content.composables.MainScreenFrame
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen
 import com.fancymansion.presentation.main.tab.editor.EditorTabViewModel
+import com.fancymansion.presentation.main.tab.library.LibraryTabContract
+import com.fancymansion.presentation.main.tab.library.LibraryTabViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 @Composable
@@ -85,6 +87,34 @@ fun MainScreenDestination(
         onNavigationRequested = onEditorTabNavigationRequested,
     )
 
+    // Tab : LibraryTabViewModel
+    val libraryTabViewModel: LibraryTabViewModel = hiltViewModel()
+    val onLibraryTabEventSent =  remember {
+        { event : LibraryTabContract.Event ->
+            libraryTabViewModel.setEvent(event)
+        }
+    }
+    val onLibraryTabCommonEventSent =  remember {
+        { event : CommonEvent ->
+            libraryTabViewModel.setCommonEvent(event)
+        }
+    }
+    val onLibraryTabNavigationRequested: (LibraryTabContract.Effect) -> Unit = remember {
+        { effect : LibraryTabContract.Effect ->
+            handleLibraryTabNavigationRequest(effect, navController)
+        }
+    }
+    HandleCommonEffect(navController = navController, commonEffectFlow = libraryTabViewModel.commonEffect, onCommonEventSent = onLibraryTabCommonEventSent)
+
+    val libraryTabComponents = TabScreenComponents(
+        uiState = libraryTabViewModel.uiState.value,
+        loadState = libraryTabViewModel.loadState.value,
+        effectFlow = libraryTabViewModel.effect,
+        onEventSent = onLibraryTabEventSent,
+        onCommonEventSent = onLibraryTabCommonEventSent,
+        onNavigationRequested = onLibraryTabNavigationRequested,
+    )
+
     // MainScreenFrame
     MainScreenFrame (
         uiState = mainViewModel.uiState.value,
@@ -93,21 +123,19 @@ fun MainScreenDestination(
         onCommonEventSent = onMainCommonEventSent,
         onEventSent = onMainEventSent,
         onNavigationRequested = onMainNavigationRequested,
-        editorTabComponents = editorTabComponents
+        editorTabComponents = editorTabComponents,
+        libraryTabComponents = libraryTabComponents
     )
 }
 
 fun handleMainNavigationRequest(effect: MainContract.Effect.Navigation, navController: NavController, googleLogout:() -> Unit) {
     when(effect){
-        is MainContract.Effect.Navigation.NavigateOverviewScreen -> {
-            navController.navigateOverviewScreen(effect.episodeRef)
-        }
         is MainContract.Effect.Navigation.RequestGoogleLogout -> {
             googleLogout()
         }
         is MainContract.Effect.Navigation.NavigateLaunchScreen -> {
             navController.navigate("${LaunchContract.NAME}/false") {
-                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }
@@ -118,6 +146,14 @@ fun handleEditorTabNavigationRequest(effect: EditorTabContract.Effect, navContro
     when(effect){
         is NavigateEditorBookOverviewScreen -> {
             navController.navigateEditorBookOverviewScreen(effect.episodeRef)
+        }
+    }
+}
+
+fun handleLibraryTabNavigationRequest(effect: LibraryTabContract.Effect, navController: NavController) {
+    when(effect){
+        is LibraryTabContract.Effect.Navigation.NavigateBookOverviewScreen -> {
+            navController.navigateOverviewScreen(effect.episodeRef)
         }
     }
 }

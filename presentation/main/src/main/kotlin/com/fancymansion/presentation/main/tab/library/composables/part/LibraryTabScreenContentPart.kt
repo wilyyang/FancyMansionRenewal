@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.main.tab.editor.composables.part
+package com.fancymansion.presentation.main.tab.library.composables.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,24 +26,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.fancymansion.core.common.const.PublishStatus
-import com.fancymansion.core.common.util.formatTimestampOnlyDate
 import com.fancymansion.core.common.util.formatTimestampYearDate
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
-import com.fancymansion.presentation.main.tab.editor.EditBookState
-import com.fancymansion.presentation.main.tab.editor.EditorTabContract
+import com.fancymansion.presentation.main.tab.library.LibraryBookSortOrder
+import com.fancymansion.presentation.main.tab.library.LibraryBookState
+import com.fancymansion.presentation.main.tab.library.LibraryTabContract
 
 @Composable
-fun EditorTabHeader(
+fun LibraryTabHeader(
     modifier: Modifier,
     isEditMode: Boolean,
-    bookSortOrder: EditBookSortOrder,
-    onEventSent: (event: EditorTabContract.Event) -> Unit
+    bookSortOrder: LibraryBookSortOrder,
+    onEventSent: (event: LibraryTabContract.Event) -> Unit
 ) {
     val context = LocalContext.current
     Box(
@@ -52,7 +48,7 @@ fun EditorTabHeader(
     ) {
         EnumDropdown(
             modifier = Modifier.width(140.dp),
-            options = EditBookSortOrder.entries.toTypedArray(),
+            options = LibraryBookSortOrder.entries.toTypedArray(),
             selectedOption = bookSortOrder,
             getDisplayName = {
                 context.getString(it.textResId)
@@ -60,7 +56,7 @@ fun EditorTabHeader(
             isEnabled = !isEditMode,
             backgroundColor = if (isEditMode) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surface
         ) {
-            onEventSent(EditorTabContract.Event.SelectBookSortOrder(it))
+            onEventSent(LibraryTabContract.Event.SelectBookSortOrder(it))
         }
 
         Row(
@@ -72,9 +68,9 @@ fun EditorTabHeader(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .clickSingle {
-                            onEventSent(EditorTabContract.Event.BookHolderSelectAll)
+                            onEventSent(LibraryTabContract.Event.BookHolderSelectAll)
                         },
-                    text = stringResource(id = R.string.edit_book_header_select_all),
+                    text = stringResource(id = R.string.library_book_header_select_all),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -82,9 +78,9 @@ fun EditorTabHeader(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .clickSingle {
-                            onEventSent(EditorTabContract.Event.BookHolderDeselectAll)
+                            onEventSent(LibraryTabContract.Event.BookHolderDeselectAll)
                         },
-                    text = stringResource(id = R.string.edit_book_header_deselect_all),
+                    text = stringResource(id = R.string.library_book_header_deselect_all),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
@@ -92,35 +88,25 @@ fun EditorTabHeader(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .clickSingle {
-                            onEventSent(EditorTabContract.Event.BookHolderAddBook)
+                            onEventSent(LibraryTabContract.Event.BookHolderDeleteBook)
                         },
-                    text = stringResource(id = R.string.edit_book_header_add),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
-                )
-
-                Text(
-                    modifier = Modifier
-                        .padding(end = 12.dp)
-                        .clickSingle {
-                            onEventSent(EditorTabContract.Event.BookHolderDeleteBook)
-                        },
-                    text = stringResource(id = R.string.edit_book_header_delete),
+                    text = stringResource(id = R.string.library_book_header_delete),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
 
                 Text(
                     modifier = Modifier.clickSingle {
-                        onEventSent(EditorTabContract.Event.BookListExitEditMode)
+                        onEventSent(LibraryTabContract.Event.BookListExitEditMode)
                     },
-                    text = stringResource(id = R.string.edit_book_header_mode_complete),
+                    text = stringResource(id = R.string.library_book_header_mode_complete),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             } else {
                 Text(
                     modifier = Modifier.clickSingle {
-                        onEventSent(EditorTabContract.Event.BookListEnterEditMode)
+                        onEventSent(LibraryTabContract.Event.BookListEnterEditMode)
                     },
-                    text = stringResource(id = R.string.edit_book_header_mode_edit),
+                    text = stringResource(id = R.string.library_book_header_mode_edit),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                 )
             }
@@ -129,11 +115,11 @@ fun EditorTabHeader(
 }
 
 @Composable
-fun EditBookHolder(
+fun LibraryBookHolder(
     modifier : Modifier = Modifier,
     painter: Painter,
     isEditMode: Boolean,
-    bookState : EditBookState,
+    bookState : LibraryBookState,
     onClickHolder : (String) -> Unit
 ){
 
@@ -163,33 +149,6 @@ fun EditBookHolder(
                     contentScale = ContentScale.FillWidth,
                     contentDescription = "Book Holder Thumbnail"
                 )
-
-                if (bookState.bookInfo.metadata.status == PublishStatus.PUBLISHED) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .clip(
-                                shape = RoundedCornerShape(
-                                    topEnd = 4.dp
-                                )
-                            )
-                            .background(color = MaterialTheme.colorScheme.tertiary)
-                            .padding(6.dp)
-                    ) {
-                        Text(
-                            text = stringResource(
-                                R.string.edit_book_holder_publish_date,
-                                formatTimestampOnlyDate(bookState.bookInfo.metadata.updatedAt)
-                            ),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = MaterialTheme.colorScheme.onTertiary,
-                                fontSize = 10.sp,
-                                lineHeight = 11.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                    }
-                }
             }
         }
 
@@ -206,8 +165,8 @@ fun EditBookHolder(
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = stringResource(
-                    id = R.string.edit_book_holder_edit_date,
-                    formatTimestampYearDate(bookState.bookInfo.editTime)
+                    id = R.string.library_book_holder_update_date,
+                    formatTimestampYearDate(bookState.bookInfo.metadata.updatedAt)
                 ),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 style = MaterialTheme.typography.bodyMedium
@@ -216,7 +175,7 @@ fun EditBookHolder(
             Text(
                 modifier = Modifier.padding(top = 3.5.dp),
                 text = stringResource(
-                    id = R.string.edit_book_holder_page_count,
+                    id = R.string.library_book_holder_page_count,
                     bookState.bookInfo.pageCount
                 ),
                 style = MaterialTheme.typography.bodySmall,

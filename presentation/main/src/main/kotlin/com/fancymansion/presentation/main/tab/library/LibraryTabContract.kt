@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.main.tab.editor
+package com.fancymansion.presentation.main.tab.library
 
 import androidx.compose.runtime.MutableState
 import com.fancymansion.core.common.const.EpisodeRef
@@ -6,37 +6,31 @@ import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
-import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.BookMetaModel
-import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.model.book.LocalBookItemModel
-import com.fancymansion.domain.model.book.LogicModel
-import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.presentation.main.R
 
-enum class EditBookSortOrder(val textResId : Int) {
-    LAST_EDITED (textResId = R.string.edit_book_sort_order_last_edited),
-    TITLE_ASCENDING (textResId = R.string.edit_book_sort_order_title_ascending)
+enum class LibraryBookSortOrder(val textResId : Int) {
+    LAST_UPDATE (textResId = R.string.library_book_sort_order_last_update),
+    TITLE_ASCENDING (textResId = R.string.library_book_sort_order_title_ascending)
 }
 
-data class EditBookWrapper(
+data class LibraryBookWrapper(
     val bookId: String,
     val title: String,
-    val editTime: Long,
     val pageCount: Int,
     val thumbnail: ImagePickType,
     val keywords: List<KeywordModel>,
     val metadata: BookMetaModel
 )
 
-data class EditBookState(val bookInfo: EditBookWrapper, val selected: MutableState<Boolean>)
+data class LibraryBookState(val bookInfo: LibraryBookWrapper, val selected: MutableState<Boolean>)
 
-fun LocalBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
-    return EditBookWrapper(
+fun LocalBookItemModel.toWrapper(thumbnail: ImagePickType) : LibraryBookWrapper {
+    return LibraryBookWrapper(
         bookId = book.id,
         title = book.introduce.title,
-        editTime = episode.editTime,
         pageCount = episode.pageCount,
         thumbnail = thumbnail,
         keywords = book.introduce.keywordList,
@@ -44,28 +38,19 @@ fun LocalBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     )
 }
 
-const val NEW_BOOK_DRAFT_INITIAL_LOGIC_ID = 0L
-const val NEW_BOOK_DRAFT_START_PAGE_ID = 1L
-data class NewBookDraft(
-    val bookInfo:BookInfoModel,
-    val episodeInfo: EpisodeInfoModel,
-    val logic: LogicModel,
-    val startPage: PageModel
-)
-
-class EditorTabContract {
+class LibraryTabContract {
     companion object {
-        const val NAME = "main_tab_editor"
+        const val NAME = "main_tab_library"
     }
 
     data class State(
         val isInitSuccess : Boolean = false,
         val isEditMode : Boolean = false,
         val searchText: String = "",
-        val bookSortOrder: EditBookSortOrder = EditBookSortOrder.LAST_EDITED,
+        val bookSortOrder: LibraryBookSortOrder = LibraryBookSortOrder.LAST_UPDATE,
         val totalPageCount: Int = 0,
         val currentPage : Int = 0,
-        val visibleBookList: List<EditBookState> = emptyList()
+        val visibleBookList: List<LibraryBookState> = emptyList()
     ) : ViewState
 
     sealed class Event : ViewEvent {
@@ -79,7 +64,7 @@ class EditorTabContract {
         data object SearchClicked : Event()
         data object SearchCancel : Event()
 
-        data class SelectBookSortOrder(val sortOrder: EditBookSortOrder) : Event()
+        data class SelectBookSortOrder(val sortOrder: LibraryBookSortOrder) : Event()
 
         // Edit Mode
         data object BookListEnterEditMode : Event()
@@ -88,13 +73,12 @@ class EditorTabContract {
         data object BookHolderSelectAll : Event()
         data object BookHolderDeselectAll : Event()
 
-        data object BookHolderAddBook : Event()
         data object BookHolderDeleteBook : Event()
     }
 
     sealed class Effect : ViewSideEffect {
         sealed class Navigation : Effect(){
-            data class NavigateEditorBookOverviewScreen(val episodeRef: EpisodeRef) : Navigation()
+            data class NavigateBookOverviewScreen(val episodeRef: EpisodeRef) : Navigation()
         }
     }
 }

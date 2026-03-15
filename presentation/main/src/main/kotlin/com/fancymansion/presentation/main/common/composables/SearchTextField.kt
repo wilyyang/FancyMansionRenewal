@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.main.tab.editor.composables.part
+package com.fancymansion.presentation.main.common.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,7 +38,6 @@ import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.core.presentation.compose.theme.onSurfaceInactive
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
-
 
 @Composable
 fun SearchTextField(

@@ -1,23 +1,21 @@
 package com.fancymansion.presentation.main.content
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
-import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
-import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
-import com.fancymansion.domain.usecase.book.UseCaseBookList
+import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
+import com.fancymansion.domain.usecase.book.UseCaseMakeBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetBookCoverImageUrl
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetHomeBookList
 import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
 import com.fancymansion.presentation.main.common.MainScreenTab
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +25,7 @@ class MainViewModel @Inject constructor(
     private val useCaseGetHomeBookList: UseCaseGetHomeBookList,
     private val useCaseGetBookCoverImageUrl: UseCaseGetBookCoverImageUrl,
     private val useCaseDownloadBook: UseCaseDownloadBook,
-    private val useCaseBookList: UseCaseBookList,
+    private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseLoadBook: UseCaseLoadBook
 ) : BaseViewModel<MainContract.State, MainContract.Event, MainContract.Effect>() {
 
@@ -49,11 +47,6 @@ class MainViewModel @Inject constructor(
                             loadHomeBookList()
                         }
                     }
-                    MainScreenTab.Library -> {
-                        launchWithLoading {
-                            loadLibraryBookList()
-                        }
-                    }
                     else -> {}
 
                 }
@@ -62,16 +55,16 @@ class MainViewModel @Inject constructor(
             is MainContract.Event.HomeBookHolderClicked -> {
                 launchWithLoading {
                     useCaseDownloadBook(userId = userId, publishedId = event.publishedId)
-                }
-            }
-            is MainContract.Event.DownloadBookHolderClicked -> {
-                setEffect {
-                    MainContract.Effect.Navigation.NavigateOverviewScreen(
-                        episodeRef = EpisodeRef(
-                            userId = userId,
-                            mode = ReadMode.READ,
-                            bookId = event.bookId,
-                            episodeId = getEpisodeId(event.bookId)
+                    val currentTime = System.currentTimeMillis()
+                    useCaseMakeBook.makeMetaData(
+                        userId = userId,
+                        mode = ReadMode.READ,
+                        bookId = event.publishedId,
+                        metaData = BookMetaModel(
+                            status = PublishStatus.PUBLISHED,
+                            publishedAt = currentTime,
+                            updatedAt = currentTime,
+                            version = 0
                         )
                     )
                 }
@@ -104,7 +97,6 @@ class MainViewModel @Inject constructor(
             val userInfo = useCaseGetUserInfoLocal() ?: error("UserInfo is null")
             userId = userInfo.userId
             loadHomeBookList()
-            loadLibraryBookList()
 
             setState {
                 copy(
@@ -133,35 +125,6 @@ class MainViewModel @Inject constructor(
             )
         }
     }
-
-    private suspend fun loadLibraryBookList(){
-        val libraryBookList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.READ).map{
-            val bookInfo = it.book
-            val episodeInfo = it.episode
-
-            val bookCoverFile: File? =
-                if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
-                    EpisodeRef(userId = userId, mode = ReadMode.READ, bookId = bookInfo.id, episodeId = episodeInfo.id),
-                    bookInfo.introduce.coverList[0]
-                ) else null
-
-            val savedPickType = if (bookCoverFile != null) ImagePickType.SavedImage(
-                bookCoverFile
-            ) else ImagePickType.Empty
-
-            LibraryBookState(
-                it.toWrapper(savedPickType),
-                mutableStateOf(false)
-            )
-        }
-
-        setState {
-            copy(
-                libraryBookList = libraryBookList
-            )
-        }
-    }
-
     // MainEvent
 
     // CommonEvent

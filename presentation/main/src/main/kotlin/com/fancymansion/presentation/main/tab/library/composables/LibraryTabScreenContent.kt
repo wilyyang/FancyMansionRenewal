@@ -1,8 +1,14 @@
-package com.fancymansion.presentation.main.tab.editor.composables
+package com.fancymansion.presentation.main.tab.library.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,19 +36,19 @@ import com.fancymansion.core.presentation.compose.modifier.addFocusCleanerWhenIm
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
-import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.tab.editor.composables.part.EditBookHolder
-import com.fancymansion.presentation.main.tab.editor.composables.part.EditorTabHeader
-import com.fancymansion.presentation.main.common.composables.SearchTextField
 import com.fancymansion.presentation.main.common.composables.BottomBookPagination
+import com.fancymansion.presentation.main.common.composables.SearchTextField
+import com.fancymansion.presentation.main.tab.library.LibraryTabContract
+import com.fancymansion.presentation.main.tab.library.composables.part.LibraryBookHolder
+import com.fancymansion.presentation.main.tab.library.composables.part.LibraryTabHeader
 import kotlinx.coroutines.launch
 
 @Composable
-fun EditorTabScreenContent(
+fun LibraryTabScreenContent(
     modifier: Modifier = Modifier,
-    uiState: EditorTabContract.State,
-    onEventSent: (event: EditorTabContract.Event) -> Unit,
+    uiState: LibraryTabContract.State,
+    onEventSent: (event: LibraryTabContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
     if (!uiState.isInitSuccess) {
@@ -97,15 +103,15 @@ fun EditorTabScreenContent(
                     modifier = Modifier.fillMaxWidth(0.875f),
                     value = uiState.searchText,
                     maxLine = 1,
-                    hint = stringResource(R.string.edit_book_search_text_hint),
+                    hint = stringResource(R.string.library_book_search_text_hint),
                     keyboardActions = KeyboardActions {
                         focusManager.clearFocus()
-                        onEventSent(EditorTabContract.Event.SearchClicked)
+                        onEventSent(LibraryTabContract.Event.SearchClicked)
                     },
                     isEnabled = !uiState.isEditMode,
                     isCancelable = true
                 ) {
-                    onEventSent(EditorTabContract.Event.SearchTextInput(searchText = it))
+                    onEventSent(LibraryTabContract.Event.SearchTextInput(searchText = it))
                 }
 
                 Box(
@@ -117,14 +123,14 @@ fun EditorTabScreenContent(
                             enabled = !uiState.isEditMode
                         ) {
                             focusManager.clearFocus()
-                            onEventSent(EditorTabContract.Event.SearchCancel)
+                            onEventSent(LibraryTabContract.Event.SearchCancel)
                         }
                 ) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(bottom = 3.5.dp),
-                        text = stringResource(R.string.edit_book_search_text_cancel),
+                        text = stringResource(R.string.library_book_search_text_cancel),
                         color = MaterialTheme.colorScheme.onSurface.copy(
                             alpha = 0.6f
                         ),
@@ -154,14 +160,14 @@ fun EditorTabScreenContent(
                             .padding(horizontal = 15.dp)
                     ) {
                         Text(
-                            text = stringResource(id = R.string.edit_book_bar_title),
+                            text = stringResource(id = R.string.library_book_bar_title),
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
                 }
 
                 item {
-                    EditorTabHeader(
+                    LibraryTabHeader(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 18.dp, horizontal = 14.dp),
@@ -188,12 +194,12 @@ fun EditorTabScreenContent(
 
                             Text(
                                 modifier = Modifier.padding(top = 12.dp),
-                                text = stringResource(id = R.string.edit_book_list_empty_title),
+                                text = stringResource(id = R.string.library_book_list_empty_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
                                 modifier = Modifier.padding(top = 8.dp),
-                                text = stringResource(id = R.string.edit_book_list_empty_sub_title),
+                                text = stringResource(id = R.string.library_book_list_empty_sub_title),
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = FontWeight.Medium
                                 )
@@ -202,12 +208,12 @@ fun EditorTabScreenContent(
                     }
                 }else{
                     itemsIndexed (uiState.visibleBookList){ idx, data ->
-                        EditBookHolder(
+                        LibraryBookHolder(
                             bookState = data,
                             painter = painterList[idx],
                             isEditMode = uiState.isEditMode,
                             onClickHolder = {
-                                onEventSent(EditorTabContract.Event.BookHolderClicked(it))
+                                onEventSent(LibraryTabContract.Event.BookHolderClicked(it))
                             }
                         )
 
@@ -231,7 +237,7 @@ fun EditorTabScreenContent(
                         currentPage = uiState.currentPage,
                         totalPageCount = uiState.totalPageCount,
                         onClickPageNumber = {
-                            onEventSent(EditorTabContract.Event.BookPageNumberClicked(it))
+                            onEventSent(LibraryTabContract.Event.BookPageNumberClicked(it))
                         }
                     )
                 }

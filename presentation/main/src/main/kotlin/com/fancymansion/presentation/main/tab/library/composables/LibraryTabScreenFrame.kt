@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.main.tab.editor.composables
+package com.fancymansion.presentation.main.tab.library.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,21 +34,21 @@ import com.fancymansion.core.presentation.compose.frame.tab.TabBaseScreen
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
-import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.common.composables.SearchTextField
+import com.fancymansion.presentation.main.tab.library.LibraryBookSortOrder
+import com.fancymansion.presentation.main.tab.library.LibraryTabContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
 @Composable
-fun EditorTabScreenFrame(
-    uiState: EditorTabContract.State,
+fun LibraryTabScreenFrame(
+    uiState: LibraryTabContract.State,
     loadState: LoadState,
-    effectFlow: SharedFlow<EditorTabContract.Effect>?,
+    effectFlow: SharedFlow<LibraryTabContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
-    onEventSent: (event: EditorTabContract.Event) -> Unit,
-    onNavigationRequested: (EditorTabContract.Effect.Navigation) -> Unit
+    onEventSent: (event: LibraryTabContract.Event) -> Unit,
+    onNavigationRequested: (LibraryTabContract.Effect.Navigation) -> Unit
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -68,7 +68,7 @@ fun EditorTabScreenFrame(
 
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
-            if(effect is EditorTabContract.Effect.Navigation){
+            if(effect is LibraryTabContract.Effect.Navigation){
                 onNavigationRequested(effect)
             }
         }?.collect()
@@ -76,14 +76,14 @@ fun EditorTabScreenFrame(
 
     TabBaseScreen(
         loadState = loadState,
-        description = EditorTabContract.NAME,
+        description = LibraryTabContract.NAME,
         statusBarColor = MaterialTheme.colorScheme.surface,
         typePane = TypePane.MOBILE,
         initContent = {
-            EditorTabSkeletonScreen()
+            LibraryTabSkeletonScreen()
         }
     ) {
-        EditorTabScreenContent(
+        LibraryTabScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onEventSent = onEventSent,
@@ -93,7 +93,7 @@ fun EditorTabScreenFrame(
 }
 
 @Composable
-fun EditorTabSkeletonScreen() {
+fun LibraryTabSkeletonScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -125,7 +125,7 @@ fun EditorTabSkeletonScreen() {
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(bottom = 3.5.dp),
-                    text = stringResource(R.string.edit_book_search_text_cancel),
+                    text = stringResource(R.string.library_book_search_text_cancel),
                     color = MaterialTheme.colorScheme.onSurface.copy(
                         alpha = 0.6f
                     ),
@@ -150,7 +150,7 @@ fun EditorTabSkeletonScreen() {
                     .padding(horizontal = 15.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.edit_book_bar_title),
+                    text = stringResource(id = R.string.library_book_bar_title),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -162,8 +162,8 @@ fun EditorTabSkeletonScreen() {
             ) {
                 EnumDropdown(
                     modifier = Modifier.width(140.dp),
-                    options = EditBookSortOrder.entries.toTypedArray(),
-                    selectedOption = EditBookSortOrder.LAST_EDITED,
+                    options = LibraryBookSortOrder.entries.toTypedArray(),
+                    selectedOption = LibraryBookSortOrder.LAST_UPDATE,
                     getDisplayName = { "" },
                     isEnabled = false,
                     backgroundColor = MaterialTheme.colorScheme.background
@@ -175,7 +175,7 @@ fun EditorTabSkeletonScreen() {
                 ) {
                     Text(
                         modifier = Modifier,
-                        text = stringResource(id = R.string.edit_book_header_mode_edit),
+                        text = stringResource(id = R.string.library_book_header_mode_edit),
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
                     )
                 }

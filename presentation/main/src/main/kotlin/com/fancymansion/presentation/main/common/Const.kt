@@ -1,6 +1,9 @@
 package com.fancymansion.presentation.main.common
 
+import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.domain.model.book.LocalBookItemModel
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 
 const val BOOKS_PER_PAGE = 10
@@ -13,4 +16,8 @@ enum class MainScreenTab(val tabName: String, val titleResId: Int, val iconResId
     Home("main_tab_home", R.string.main_tab_title_home, R.drawable.ic_main_tab_home, R.drawable.ic_main_tab_home_fill),
     Library("main_tab_library", R.string.main_tab_title_library, R.drawable.ic_main_tab_library, R.drawable.ic_main_tab_library_fill),
     MyInfo("main_tab_my_info", R.string.main_tab_title_my_info, R.drawable.ic_main_tab_my_info, R.drawable.ic_main_tab_my_info_fill)
+}
+
+enum class ListTarget{
+    ALL, SEARCH
 }

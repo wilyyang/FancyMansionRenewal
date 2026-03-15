@@ -114,7 +114,7 @@ fun handleNavigationRequest(
         LaunchContract.Effect.Navigation.GoogleLoginLauncherCall -> launchGoogleLogin()
         LaunchContract.Effect.Navigation.NavigateMain -> {
             navController.navigate(MainContract.NAME) {
-                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                popUpTo(0) { inclusive = true }
                 launchSingleTop = true
             }
         }

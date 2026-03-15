@@ -50,6 +50,11 @@ class UseCaseBookList @Inject constructor(
             ) && bookLocalRepository.makePage(episodeRef, startPage.id, startPage)
         }
 
+    suspend fun deleteUserLibraryBook(userId: String, bookId : String) =
+        withContext(dispatcher) {
+            bookLocalRepository.deleteBookDir(userId, ReadMode.READ, bookId)
+        }
+
     suspend fun deleteUserEditBook(userId: String, bookId : String) =
         withContext(dispatcher) {
             bookLocalRepository.deleteBookDir(userId, ReadMode.EDIT, bookId)

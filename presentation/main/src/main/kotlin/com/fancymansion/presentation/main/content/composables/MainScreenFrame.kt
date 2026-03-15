@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,20 +39,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.fancymansion.core.common.const.ImagePickType
+import com.fancymansion.core.common.const.DELAY_SCREEN_ANIMATION_MS
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
+import com.fancymansion.core.presentation.compose.dialog.Loading
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
-import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreenFrame
+import com.fancymansion.presentation.main.tab.library.LibraryTabContract
+import com.fancymansion.presentation.main.tab.library.composables.LibraryTabScreenFrame
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -69,7 +69,8 @@ fun MainScreenFrame(
     onCommonEventSent: (event: CommonEvent) -> Unit,
     onEventSent: (event: MainContract.Event) -> Unit,
     onNavigationRequested: (MainContract.Effect.Navigation) -> Unit,
-    editorTabComponents: TabScreenComponents<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>
+    editorTabComponents: TabScreenComponents<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>,
+    libraryTabComponents: TabScreenComponents<LibraryTabContract.State, LibraryTabContract.Event, LibraryTabContract.Effect>
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -97,27 +98,6 @@ fun MainScreenFrame(
     }
 
     val listStateHome = rememberLazyListState()
-    val listStateLibrary = rememberLazyListState()
-    val libraryPainterList = uiState.libraryBookList.map { data ->
-        when (data.bookInfo.thumbnail) {
-            is ImagePickType.SavedImage -> {
-                val file = data.bookInfo.thumbnail.file
-                val key = "${file.path}#${file.lastModified()}"
-
-                val request = ImageRequest.Builder(LocalContext.current)
-                    .data(file)
-                    .memoryCacheKey(key)
-                    .diskCacheKey(key)
-                    .build()
-
-                rememberAsyncImagePainter(model = request)
-            }
-
-            else -> {
-                painterResource(id = R.drawable.holder_book_image_no_available)
-            }
-        }
-    }
 
     // TODO 07.14 탭 적용
     Column(modifier = Modifier
@@ -178,42 +158,14 @@ fun MainScreenFrame(
                 }
 
                 MainScreenTab.Library -> {
-                    Column (modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 50.dp)){
-
-                        Text(modifier = Modifier.padding(start = 15.dp), text = "서재 화면", style = MaterialTheme.typography.titleLarge)
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        LazyColumn(
-                            state = listStateLibrary,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ){
-
-                            itemsIndexed (uiState.libraryBookList) { idx, data ->
-                                LibraryBookHolder(
-                                    bookState = data,
-                                    painter = libraryPainterList[idx],
-                                    isEditMode = false,
-                                    onClickHolder = {
-                                        onEventSent(MainContract.Event.DownloadBookHolderClicked(it))
-                                    }
-                                )
-
-                                if (idx < uiState.libraryBookList.size - 1) {
-                                    HorizontalDivider(
-                                        modifier = Modifier
-                                            .padding(horizontal = 14.dp)
-                                            .height(0.3.dp)
-                                            .fillMaxWidth(),
-                                        color = MaterialTheme.colorScheme.outline
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    LibraryTabScreenFrame(
+                        uiState = libraryTabComponents.uiState,
+                        loadState = libraryTabComponents.loadState,
+                        effectFlow = libraryTabComponents.effectFlow,
+                        onEventSent = libraryTabComponents.onEventSent,
+                        onCommonEventSent = libraryTabComponents.onCommonEventSent,
+                        onNavigationRequested = libraryTabComponents.onNavigationRequested
+                    )
                 }
 
                 MainScreenTab.MyInfo -> {
@@ -263,6 +215,13 @@ fun MainScreenFrame(
                 )
             }
         }
+    }
+
+    // 임시
+    if(loadState is LoadState.Loading){
+        Loading(
+            delayMillis = DELAY_SCREEN_ANIMATION_MS
+        )
     }
 
     BackHandler {
