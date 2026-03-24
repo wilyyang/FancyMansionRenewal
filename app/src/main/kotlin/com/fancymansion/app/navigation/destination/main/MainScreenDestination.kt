@@ -183,10 +183,10 @@ fun handleLibraryTabNavigationRequest(effect: LibraryTabContract.Effect, navCont
 
 fun handleMyTabNavigationRequest(effect: MyTabContract.Effect, navController: NavController, googleLogout:() -> Unit) {
     when(effect){
-        MyTabContract.Effect.Navigation.NavigateLaunchScreen -> {
+        MyTabContract.Effect.Navigation.RequestGoogleLogout -> {
             googleLogout()
         }
-        MyTabContract.Effect.Navigation.RequestGoogleLogout -> {
+        MyTabContract.Effect.Navigation.NavigateLaunchScreen -> {
             navController.navigate("${LaunchContract.NAME}/false") {
                 popUpTo(0) { inclusive = true }
                 launchSingleTop = true
