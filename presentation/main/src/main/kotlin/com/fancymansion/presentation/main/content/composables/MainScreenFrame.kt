@@ -45,7 +45,6 @@ import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
 import com.fancymansion.core.presentation.compose.dialog.Loading
-import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.common.MainScreenTab
@@ -54,6 +53,8 @@ import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreenFrame
 import com.fancymansion.presentation.main.tab.library.LibraryTabContract
 import com.fancymansion.presentation.main.tab.library.composables.LibraryTabScreenFrame
+import com.fancymansion.presentation.main.tab.my.MyTabContract
+import com.fancymansion.presentation.main.tab.my.composables.MyTabScreenFrame
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -70,7 +71,8 @@ fun MainScreenFrame(
     onEventSent: (event: MainContract.Event) -> Unit,
     onNavigationRequested: (MainContract.Effect.Navigation) -> Unit,
     editorTabComponents: TabScreenComponents<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>,
-    libraryTabComponents: TabScreenComponents<LibraryTabContract.State, LibraryTabContract.Event, LibraryTabContract.Effect>
+    libraryTabComponents: TabScreenComponents<LibraryTabContract.State, LibraryTabContract.Event, LibraryTabContract.Effect>,
+    myTabComponents: TabScreenComponents<MyTabContract.State, MyTabContract.Event, MyTabContract.Effect>
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -169,18 +171,14 @@ fun MainScreenFrame(
                 }
 
                 MainScreenTab.MyInfo -> {
-                    Box(modifier = Modifier
-                        .fillMaxSize()){
-                        Text(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .clickSingle {
-                                    onEventSent(MainContract.Event.OnClickLogout)
-                                },
-                            text = "로그아웃",
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                    }
+                    MyTabScreenFrame(
+                        uiState = myTabComponents.uiState,
+                        loadState = myTabComponents.loadState,
+                        effectFlow = myTabComponents.effectFlow,
+                        onEventSent = myTabComponents.onEventSent,
+                        onCommonEventSent = myTabComponents.onCommonEventSent,
+                        onNavigationRequested = myTabComponents.onNavigationRequested
+                    )
                 }
             }
         }

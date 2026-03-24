@@ -51,4 +51,7 @@
 
     <string name="library_book_list_empty_title">서재에 책이 없습니다.</string>
     <string name="library_book_list_empty_sub_title">홈에서 새로운 책을 접해보세요!</string>
+
+    <string name="my_tab_bar_title">MY</string>
+    <string name="my_button_logout">로그아웃</string>
 </resources>

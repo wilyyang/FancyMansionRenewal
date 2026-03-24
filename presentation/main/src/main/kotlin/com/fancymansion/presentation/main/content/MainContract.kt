@@ -44,15 +44,9 @@ class MainContract {
     sealed class Event : ViewEvent {
         data class TabSelected(val tab: MainScreenTab) : Event()
         data class HomeBookHolderClicked(val publishedId: String) : Event()
-        data object OnClickLogout : Event()
-        data object GoogleLogoutSuccess : Event()
-        data class GoogleLogoutFail(val t: Throwable) : Event()
     }
 
     sealed class Effect : ViewSideEffect {
-        sealed class Navigation : Effect(){
-            data object RequestGoogleLogout : Navigation()
-            data object NavigateLaunchScreen : Navigation()
-        }
+        sealed class Navigation : Effect()
     }
 }

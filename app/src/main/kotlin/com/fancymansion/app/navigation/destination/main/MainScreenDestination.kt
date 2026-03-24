@@ -21,6 +21,8 @@ import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Effect.Na
 import com.fancymansion.presentation.main.tab.editor.EditorTabViewModel
 import com.fancymansion.presentation.main.tab.library.LibraryTabContract
 import com.fancymansion.presentation.main.tab.library.LibraryTabViewModel
+import com.fancymansion.presentation.main.tab.my.MyTabContract
+import com.fancymansion.presentation.main.tab.my.MyTabViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 @Composable
@@ -41,20 +43,9 @@ fun MainScreenDestination(
         }
     }
 
-    val context = LocalContext.current
-    val googleSignInClient: GoogleSignInClient = GoogleAuthHolder.get(context)
-    val googleLogout = remember(googleSignInClient, onMainEventSent) {
-        {
-            googleSignInClient.signOut()
-                .addOnSuccessListener { onMainEventSent(MainContract.Event.GoogleLogoutSuccess) }
-                .addOnFailureListener { t -> onMainEventSent(MainContract.Event.GoogleLogoutFail(t)) }
-            Unit
-        }
-    }
-
     val onMainNavigationRequested : (MainContract.Effect.Navigation) -> Unit =  remember {
         { effect : MainContract.Effect.Navigation ->
-            handleMainNavigationRequest(effect, navController, googleLogout)
+            handleMainNavigationRequest(effect, navController)
         }
     }
     HandleCommonEffect(navController = navController, commonEffectFlow = mainViewModel.commonEffect, onCommonEventSent = onMainCommonEventSent)
@@ -115,6 +106,45 @@ fun MainScreenDestination(
         onNavigationRequested = onLibraryTabNavigationRequested,
     )
 
+    // Tab : MyTabViewModel
+    val myTabViewModel: MyTabViewModel = hiltViewModel()
+    val onMyTabEventSent =  remember {
+        { event : MyTabContract.Event ->
+            myTabViewModel.setEvent(event)
+        }
+    }
+    val onMyTabCommonEventSent =  remember {
+        { event : CommonEvent ->
+            myTabViewModel.setCommonEvent(event)
+        }
+    }
+
+    val context = LocalContext.current
+    val googleSignInClient: GoogleSignInClient = GoogleAuthHolder.get(context)
+    val googleLogout = remember(googleSignInClient, onMyTabEventSent) {
+        {
+            googleSignInClient.signOut()
+                .addOnSuccessListener { onMyTabEventSent(MyTabContract.Event.GoogleLogoutSuccess) }
+                .addOnFailureListener { t -> onMyTabEventSent(MyTabContract.Event.GoogleLogoutFail(t)) }
+            Unit
+        }
+    }
+    val onMyTabNavigationRequested: (MyTabContract.Effect) -> Unit = remember {
+        { effect : MyTabContract.Effect ->
+            handleMyTabNavigationRequest(effect, navController, googleLogout)
+        }
+    }
+    HandleCommonEffect(navController = navController, commonEffectFlow = myTabViewModel.commonEffect, onCommonEventSent = onMyTabCommonEventSent)
+
+    val myTabComponents = TabScreenComponents(
+        uiState = myTabViewModel.uiState.value,
+        loadState = myTabViewModel.loadState.value,
+        effectFlow = myTabViewModel.effect,
+        onEventSent = onMyTabEventSent,
+        onCommonEventSent = onMyTabCommonEventSent,
+        onNavigationRequested = onMyTabNavigationRequested,
+    )
+
     // MainScreenFrame
     MainScreenFrame (
         uiState = mainViewModel.uiState.value,
@@ -124,21 +154,14 @@ fun MainScreenDestination(
         onEventSent = onMainEventSent,
         onNavigationRequested = onMainNavigationRequested,
         editorTabComponents = editorTabComponents,
-        libraryTabComponents = libraryTabComponents
+        libraryTabComponents = libraryTabComponents,
+        myTabComponents = myTabComponents
     )
 }
 
-fun handleMainNavigationRequest(effect: MainContract.Effect.Navigation, navController: NavController, googleLogout:() -> Unit) {
+fun handleMainNavigationRequest(effect: MainContract.Effect.Navigation, navController: NavController) {
     when(effect){
-        is MainContract.Effect.Navigation.RequestGoogleLogout -> {
-            googleLogout()
-        }
-        is MainContract.Effect.Navigation.NavigateLaunchScreen -> {
-            navController.navigate("${LaunchContract.NAME}/false") {
-                popUpTo(0) { inclusive = true }
-                launchSingleTop = true
-            }
-        }
+        else -> {}
     }
 }
 
@@ -154,6 +177,20 @@ fun handleLibraryTabNavigationRequest(effect: LibraryTabContract.Effect, navCont
     when(effect){
         is LibraryTabContract.Effect.Navigation.NavigateBookOverviewScreen -> {
             navController.navigateOverviewScreen(effect.episodeRef)
+        }
+    }
+}
+
+fun handleMyTabNavigationRequest(effect: MyTabContract.Effect, navController: NavController, googleLogout:() -> Unit) {
+    when(effect){
+        MyTabContract.Effect.Navigation.NavigateLaunchScreen -> {
+            googleLogout()
+        }
+        MyTabContract.Effect.Navigation.RequestGoogleLogout -> {
+            navController.navigate("${LaunchContract.NAME}/false") {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
         }
     }
 }
