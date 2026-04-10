@@ -25,7 +25,7 @@ class MyTabViewModel @Inject constructor(
     override fun handleEvents(event: MyTabContract.Event) {
         when (event) {
             is MyTabContract.Event.NicknameTextInput -> handleNicknameTextInput(event.input)
-            MyTabContract.Event.UpdateNicknameClicked -> handleUpdateNicknameClicked()
+            MyTabContract.Event.OnClickEditNickname -> handleOnClickEditNickname()
             MyTabContract.Event.OnClickLogout -> handleOnClickLogout()
             MyTabContract.Event.GoogleLogoutSuccess -> handleGoogleLogoutSuccess()
             is MyTabContract.Event.GoogleLogoutFail -> handleGoogleLogoutFail(event.t)
@@ -59,7 +59,7 @@ class MyTabViewModel @Inject constructor(
         }
     }
 
-    private fun handleUpdateNicknameClicked() {
+    private fun handleOnClickEditNickname() {
         // TODO
     }
 

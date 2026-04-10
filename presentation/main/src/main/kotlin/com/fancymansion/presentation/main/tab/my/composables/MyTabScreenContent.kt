@@ -1,27 +1,31 @@
 package com.fancymansion.presentation.main.tab.my.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
-import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.core.presentation.compose.shape.borderLine
+import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.my.MyTabContract
+import com.fancymansion.presentation.main.tab.my.composables.part.UserNickname
 
 @Composable
 fun MyTabScreenContent(
@@ -30,62 +34,73 @@ fun MyTabScreenContent(
     onEventSent: (event: MyTabContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
-    if (!uiState.isInitSuccess) {
-        Box(
-            modifier = modifier
-                .background(color = MaterialTheme.colorScheme.surface)
-                .fillMaxSize(), contentAlignment = Alignment.Center
-        ) {
-
-            NoDataScreen(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                option1Title = StringValue.StringResource(resId = com.fancymansion.core.presentation.R.string.button_exit),
-                onClickOption1 = {
-                    onCommonEventSent(CommonEvent.CloseEvent)
-                }
-            )
-        }
-    } else {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.surface)
+                .borderLine(
+                    density = LocalDensity.current,
+                    color = MaterialTheme.colorScheme.outline,
+                    bottom = 1.dp
+                )
         ) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .borderLine(
-                        density = LocalDensity.current,
-                        color = MaterialTheme.colorScheme.outline,
-                        bottom = 1.dp
-                    )
                     .padding(top = 13.dp, bottom = 8.dp)
                     .padding(horizontal = 15.dp)
             ) {
                 Text(
+                    modifier = Modifier.align(Alignment.Center),
                     text = stringResource(id = R.string.my_tab_bar_title),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 18.dp, horizontal = 14.dp)
+            ) {
+                Column(
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    UserNickname(
+                        modifier = Modifier,
+                        nickname = uiState.nickname,
+                        email = uiState.email,
+                        onEditClick = {
+                            onEventSent(MyTabContract.Event.OnClickEditNickname)
+                        }
+                    )
 
-            Text(
-                text = uiState.nickname,
-                style = MaterialTheme.typography.bodyLarge
-            )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
 
-            Text(
-                text = uiState.email,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                modifier = Modifier.clickSingle{
-                    onEventSent(MyTabContract.Event.OnClickLogout)
-                },
-                text = stringResource(id = R.string.my_button_logout),
-                style = MaterialTheme.typography.bodyLarge
-            )
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .clip(shape = MaterialTheme.shapes.extraSmall)
+                        .padding(0.5.dp)
+                        .border(
+                            width = 0.5.dp,
+                            color = MaterialTheme.colorScheme.outline,
+                            shape = MaterialTheme.shapes.extraSmall
+                        )
+                        .clickSingle {
+                            onEventSent(MyTabContract.Event.OnClickLogout)
+                        }
+                        .padding(horizontal = 14.dp, vertical = 11.dp),
+                    text = stringResource(id = R.string.my_button_logout),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+                )
+            }
         }
     }
 }

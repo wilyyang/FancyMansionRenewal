@@ -54,4 +54,6 @@
 
     <string name="my_tab_bar_title">MY</string>
     <string name="my_button_logout">로그아웃</string>
+    <string name="my_user_nickname_text">%1$s님</string>
+    <string name="my_edit_nickname">닉네임 편집</string>
 </resources>

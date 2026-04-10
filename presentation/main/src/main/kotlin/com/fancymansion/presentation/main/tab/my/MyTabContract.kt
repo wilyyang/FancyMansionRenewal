@@ -19,7 +19,7 @@ class MyTabContract {
     sealed class Event : ViewEvent {
 
         data class NicknameTextInput(val input: String) : Event()
-        data object UpdateNicknameClicked : Event()
+        data object OnClickEditNickname : Event()
         data object OnClickLogout : Event()
         data object GoogleLogoutSuccess : Event()
         data class GoogleLogoutFail(val t: Throwable) : Event()
