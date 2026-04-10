@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     suspend fun signInWithGoogle(idToken: String): UserInitModel
     suspend fun getOrCreateUserInfoTx(userInit: UserInitModel): UserStoreResult
+    suspend fun updateNickname(uid: String, newNickname: String)
     suspend fun addRemotePublishedBookId(userId: String, bookId: String)
     suspend fun removeRemotePublishedBookId(userId: String, bookId: String)
     suspend fun upsertUserInfoLocal(userInfo: UserInfoModel)

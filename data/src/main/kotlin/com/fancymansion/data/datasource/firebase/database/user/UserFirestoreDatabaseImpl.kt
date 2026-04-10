@@ -1,7 +1,10 @@
 package com.fancymansion.data.datasource.firebase.database.user
 
+import com.fancymansion.data.common.NICKNAME_NOT_INIT
+import com.fancymansion.data.common.NicknameDuplicateException
 import com.fancymansion.data.datasource.firebase.FirestoreCollections
 import com.fancymansion.data.datasource.firebase.auth.model.UserInitData
+import com.fancymansion.data.datasource.firebase.database.user.model.NicknameStoreData
 import com.fancymansion.data.datasource.firebase.database.user.model.UserStoreData
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,9 +25,12 @@ class UserFirestoreDatabaseImpl(
 
             if (snapshot.exists()) {
                 val currentEmail = snapshot.getString(UserStoreData.EMAIL)
-                val currentNickname = snapshot.getString(UserStoreData.NICKNAME)
-                val currentCreatedAt = snapshot.getLong(UserStoreData.CREATED_AT)
+                val nickname = snapshot.getString(UserStoreData.NICKNAME)
+                    ?: error("User nickname not found")
+                val createdAt = snapshot.getLong(UserStoreData.CREATED_AT)
+                    ?: error("User create time not found")
                 val currentUpdatedAt = snapshot.getLong(UserStoreData.UPDATED_AT)
+                    ?: error("User update time not found")
                 val currentOnboarding = snapshot.getBoolean(UserStoreData.HAS_COMPLETED_ONBOARDING)
 
                 val updates = mutableMapOf<String, Any>()
@@ -32,11 +38,6 @@ class UserFirestoreDatabaseImpl(
                 val willUpdateEmail = currentEmail == null || currentEmail != userInit.email
                 if (willUpdateEmail) {
                     updates[UserStoreData.EMAIL] = userInit.email
-                }
-
-                val willUpdateNickname = currentNickname == null
-                if (willUpdateNickname) {
-                    updates[UserStoreData.NICKNAME] = userInit.initialNickname
                 }
 
                 val willUpdateOnboarding = currentOnboarding == null || !currentOnboarding
@@ -49,15 +50,15 @@ class UserFirestoreDatabaseImpl(
                     updates[UserStoreData.UPDATED_AT] = now
                     transaction.update(ref, updates)
                 }
-
-                val createdAt = currentCreatedAt ?: error("UserInfoData.CREATED_AT is null")
-                val updatedAt = if (didUpdate) now else (currentUpdatedAt ?: createdAt)
-                val publishedBookIds = (snapshot.get(UserStoreData.PUBLISHED_BOOK_IDS) as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+                val updatedAt = if (didUpdate) now else currentUpdatedAt
+                val publishedBookIds =
+                    (snapshot.get(UserStoreData.PUBLISHED_BOOK_IDS) as? List<*>)?.filterIsInstance<String>()
+                        ?: emptyList()
 
                 UserStoreData(
                     userId = userInit.uid,
                     email = if (willUpdateEmail) userInit.email else currentEmail,
-                    nickname = if (willUpdateNickname) userInit.initialNickname else currentNickname,
+                    nickname = nickname,
                     createdAt = createdAt,
                     updatedAt = updatedAt,
                     hasCompletedOnboarding = true,
@@ -67,7 +68,7 @@ class UserFirestoreDatabaseImpl(
                 val data = UserStoreData(
                     userId = userInit.uid,
                     email = userInit.email,
-                    nickname = userInit.initialNickname,
+                    nickname = NICKNAME_NOT_INIT,
                     createdAt = now,
                     updatedAt = now,
                     hasCompletedOnboarding = false,
@@ -76,6 +77,49 @@ class UserFirestoreDatabaseImpl(
                 transaction.set(ref, data)
                 data
             }
+        }.await()
+    }
+
+    override suspend fun updateNickname(
+        uid: String,
+        newNickname: String
+    ) {
+        firestore.runTransaction { transaction ->
+            val userRef = firestore.collection(FirestoreCollections.USERS).document(uid)
+            val newNickRef = firestore.collection(FirestoreCollections.NICKNAMES).document(newNickname)
+
+            val userSnap = transaction.get(userRef).run {
+                if (!exists()) error("User not found")
+                this
+            }
+
+            val oldNickname = userSnap.getString(UserStoreData.NICKNAME)
+                ?: error("User nickname not found")
+
+            // 같은 닉네임이면 아무것도 안 함
+            if (oldNickname == newNickname) return@runTransaction
+
+            // 새 닉네임 중복 체크
+            val newNickSnap = transaction.get(newNickRef)
+            if (newNickSnap.exists()) {
+                throw NicknameDuplicateException()
+            }
+
+            // 1. 기존 nickname 삭제 & 새 nickname 등록
+            if (oldNickname != NICKNAME_NOT_INIT) {
+                val oldNickRef = firestore.collection(FirestoreCollections.NICKNAMES).document(oldNickname)
+                transaction.delete(oldNickRef)
+            }
+            transaction.set(newNickRef, mapOf(NicknameStoreData.UID to uid))
+
+            // 2. user 업데이트
+            val now = System.currentTimeMillis()
+            transaction.update(
+                userRef, mapOf(
+                    UserStoreData.NICKNAME to newNickname,
+                    UserStoreData.UPDATED_AT to now
+                )
+            )
         }.await()
     }
 

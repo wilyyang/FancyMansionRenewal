@@ -1,5 +1,8 @@
 package com.fancymansion.data.repository
 
+import com.fancymansion.data.common.NICKNAME_NOT_INIT
+import com.fancymansion.data.common.NicknameDuplicateException
+import com.fancymansion.data.common.generateNickname
 import com.fancymansion.data.datasource.dataStore.user.UserStoreSource
 import com.fancymansion.data.datasource.database.user.dao.UserDatabaseDao
 import com.fancymansion.data.datasource.database.user.model.asLocalData
@@ -30,7 +33,28 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getOrCreateUserInfoTx(userInit: UserInitModel): UserStoreResult {
-        return userFirestoreDatabase.getOrCreateUserInfoTx(userInit.asData()).asModel()
+        val userInfo = userFirestoreDatabase.getOrCreateUserInfoTx(userInit.asData())
+
+        if (userInfo.nickname == NICKNAME_NOT_INIT) {
+            var newNickname: String
+            while (true) {
+                try {
+                    newNickname = generateNickname()
+                    userFirestoreDatabase.updateNickname(userInit.uid, newNickname)
+                    break
+                } catch (e: NicknameDuplicateException) {}
+            }
+
+            return userInfo.copy(
+                nickname = newNickname
+            ).asModel()
+        }
+
+        return userInfo.asModel()
+    }
+
+    override suspend fun updateNickname(uid: String, newNickname: String) {
+        userFirestoreDatabase.updateNickname(uid, newNickname)
     }
 
     override suspend fun addRemotePublishedBookId(userId: String, bookId: String) {
