@@ -7,6 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -16,7 +20,10 @@ import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.window.TypePane
 import com.fancymansion.core.presentation.compose.frame.tab.TabBaseScreen
+import com.fancymansion.domain.model.user.result.NicknameUpdateResult
 import com.fancymansion.presentation.main.tab.my.MyTabContract
+import com.fancymansion.presentation.main.tab.my.composables.part.EditNicknameDialog
+import com.fancymansion.presentation.main.tab.my.composables.part.toMessage
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -30,7 +37,7 @@ fun MyTabScreenFrame(
     onEventSent: (event: MyTabContract.Event) -> Unit,
     onNavigationRequested: (MyTabContract.Effect.Navigation) -> Unit
 ) {
-
+    var showEditNicknameDialog by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val lifecycle = lifecycleOwner.lifecycle
@@ -48,8 +55,17 @@ fun MyTabScreenFrame(
 
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
-            if(effect is MyTabContract.Effect.Navigation){
-                onNavigationRequested(effect)
+            when (effect) {
+                is MyTabContract.Effect.Navigation -> {
+                    onNavigationRequested(effect)
+                }
+
+                is MyTabContract.Effect.ShowEditNicknameDialog -> {
+                    showEditNicknameDialog = true
+                }
+                is MyTabContract.Effect.DismissEditNicknameDialog -> {
+                    showEditNicknameDialog = false
+                }
             }
         }?.collect()
     }
@@ -68,6 +84,25 @@ fun MyTabScreenFrame(
             uiState = uiState,
             onEventSent = onEventSent,
             onCommonEventSent = onCommonEventSent
+        )
+    }
+
+    if (showEditNicknameDialog) {
+        EditNicknameDialog(
+            text = uiState.editNickname,
+            hint = uiState.nickname,
+            warningMessage = if(uiState.nicknameUpdateResult is NicknameUpdateResult.Invalid){
+                uiState.nicknameUpdateResult.toMessage()
+            }else{
+                ""
+            },
+            textInput = {
+                onEventSent(MyTabContract.Event.NicknameTextInput(it))
+            },
+            onConfirm = {
+                onEventSent(MyTabContract.Event.OnClickUpdateNickname)
+            },
+            onDismiss = { showEditNicknameDialog = false }
         )
     }
 }

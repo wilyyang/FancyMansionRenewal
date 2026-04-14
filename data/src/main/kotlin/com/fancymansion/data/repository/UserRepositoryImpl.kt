@@ -16,6 +16,7 @@ import com.fancymansion.domain.interfaceRepository.UserRepository
 import com.fancymansion.domain.model.user.UserInfoModel
 import com.fancymansion.domain.model.user.UserInitModel
 import com.fancymansion.domain.model.user.UserStoreResult
+import com.fancymansion.domain.model.user.result.NicknameUpdateResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -53,8 +54,13 @@ class UserRepositoryImpl @Inject constructor(
         return userInfo.asModel()
     }
 
-    override suspend fun updateNickname(uid: String, newNickname: String) {
-        userFirestoreDatabase.updateNickname(uid, newNickname)
+    override suspend fun updateNickname(uid: String, newNickname: String): NicknameUpdateResult {
+        return try {
+            userFirestoreDatabase.updateNickname(uid, newNickname)
+            NicknameUpdateResult.Success
+        } catch (e: NicknameDuplicateException) {
+            NicknameUpdateResult.Invalid.Duplicate
+        }
     }
 
     override suspend fun addRemotePublishedBookId(userId: String, bookId: String) {

@@ -192,5 +192,7 @@ fun handleMyTabNavigationRequest(effect: MyTabContract.Effect, navController: Na
                 launchSingleTop = true
             }
         }
+
+        else -> {}
     }
 }
