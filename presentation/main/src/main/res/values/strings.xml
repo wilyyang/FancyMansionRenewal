@@ -59,7 +59,7 @@
     <string name="my_edit_button_update_nickname">수정</string>
 
     <string name="nickname_result_empty">닉네임을 입력해주세요.</string>
-    <string name="nickname_result_length_invalid">닉네임은 2~8글자여야 합니다.</string>
+    <string name="nickname_result_length_invalid">닉네임은 2~8 글자여야 합니다.</string>
     <string name="nickname_result_invalid_character">닉네임은 한글, 영어, 숫자만 가능합니다.</string>
     <string name="nickname_result_only_number">닉네임은 숫자만으로 만들 수 없습니다.</string>
     <string name="nickname_result_already_exists">해당 닉네임은 이미 사용중입니다.</string>
