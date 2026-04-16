@@ -95,7 +95,7 @@ class LibraryTabViewModel @Inject constructor(
             userId = userInfo.userId
 
             loadBookStateList()
-            sortBookList(ListTarget.ALL, LibraryBookSortOrder.LAST_UPDATE)
+            sortBookList(ListTarget.ALL, LibraryBookSortOrder.LAST_DOWNLOAD)
             pagedBookList(ListTarget.ALL, 0)
             setState {
                 copy(
@@ -175,7 +175,7 @@ class LibraryTabViewModel @Inject constructor(
      */
     private fun handleEnterEditMode() = launchWithLoading {
         val resetFlag =
-            listTarget != ListTarget.ALL || uiState.value.bookSortOrder != LibraryBookSortOrder.LAST_UPDATE
+            listTarget != ListTarget.ALL || uiState.value.bookSortOrder != LibraryBookSortOrder.LAST_DOWNLOAD
 
         if(listTarget == ListTarget.SEARCH){
             listTarget = ListTarget.ALL
@@ -189,7 +189,7 @@ class LibraryTabViewModel @Inject constructor(
         }
 
         if(resetFlag){
-            sortBookList(listTarget, LibraryBookSortOrder.LAST_UPDATE)
+            sortBookList(listTarget, LibraryBookSortOrder.LAST_DOWNLOAD)
             pagedBookList(listTarget, 0)
         }
 
@@ -202,7 +202,7 @@ class LibraryTabViewModel @Inject constructor(
 
     private fun handleExitEditMode() = launchWithLoading {
         loadBookStateList()
-        sortBookList(listTarget, LibraryBookSortOrder.LAST_UPDATE)
+        sortBookList(listTarget, LibraryBookSortOrder.LAST_DOWNLOAD)
         pagedBookList(listTarget, uiState.value.currentPage)
         setState {
             copy(
@@ -275,7 +275,7 @@ class LibraryTabViewModel @Inject constructor(
         }
 
         when (order) {
-            LibraryBookSortOrder.LAST_UPDATE -> target.sortByDescending { it.bookInfo.metadata.updatedAt }
+            LibraryBookSortOrder.LAST_DOWNLOAD -> target.sortByDescending { it.bookInfo.metadata.downloadAt }
             LibraryBookSortOrder.TITLE_ASCENDING -> target.sortBy { it.bookInfo.title }
         }
 

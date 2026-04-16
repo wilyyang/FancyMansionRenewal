@@ -1,6 +1,8 @@
 package com.fancymansion.presentation.main.content
 
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
+import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
@@ -53,7 +55,7 @@ class MainViewModel @Inject constructor(
             }
             is MainContract.Event.HomeBookHolderClicked -> {
                 launchWithLoading {
-                    useCaseDownloadBook(userId = userId, publishedId = event.publishedId)
+                    val downloadVersion = useCaseDownloadBook(userId = userId, publishedId = event.publishedId)
                     val currentTime = System.currentTimeMillis()
                     useCaseMakeBook.makeMetaData(
                         userId = userId,
@@ -61,9 +63,10 @@ class MainViewModel @Inject constructor(
                         bookId = event.publishedId,
                         metaData = BookMetaModel(
                             status = PublishStatus.PUBLISHED,
-                            publishedAt = currentTime,
-                            updatedAt = currentTime,
-                            version = 0
+                            publishedAt = INIT_PUBLISHED_AT,
+                            updatedAt = INIT_UPDATED_AT,
+                            downloadAt = currentTime,
+                            version = downloadVersion
                         )
                     )
                 }

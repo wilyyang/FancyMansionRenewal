@@ -10,6 +10,7 @@ enum class PublishStatus(@param:StringRes val resId : Int) {
 const val INIT_VERSION = 0
 const val INIT_PUBLISHED_AT = 0L
 const val INIT_UPDATED_AT = 0L
+const val INIT_DOWNLOAD_AT = 0L
 /**
  * Viewer Config
  */

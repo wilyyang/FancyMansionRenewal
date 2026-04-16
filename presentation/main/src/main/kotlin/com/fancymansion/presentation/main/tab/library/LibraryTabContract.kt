@@ -12,7 +12,7 @@ import com.fancymansion.domain.model.book.LocalBookItemModel
 import com.fancymansion.presentation.main.R
 
 enum class LibraryBookSortOrder(val textResId : Int) {
-    LAST_UPDATE (textResId = R.string.library_book_sort_order_last_update),
+    LAST_DOWNLOAD (textResId = R.string.library_book_sort_order_last_download),
     TITLE_ASCENDING (textResId = R.string.library_book_sort_order_title_ascending)
 }
 
@@ -47,7 +47,7 @@ class LibraryTabContract {
         val isInitSuccess : Boolean = false,
         val isEditMode : Boolean = false,
         val searchText: String = "",
-        val bookSortOrder: LibraryBookSortOrder = LibraryBookSortOrder.LAST_UPDATE,
+        val bookSortOrder: LibraryBookSortOrder = LibraryBookSortOrder.LAST_DOWNLOAD,
         val totalPageCount: Int = 0,
         val currentPage : Int = 0,
         val visibleBookList: List<LibraryBookState> = emptyList()

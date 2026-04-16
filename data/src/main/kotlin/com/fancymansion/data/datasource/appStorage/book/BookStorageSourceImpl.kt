@@ -408,7 +408,9 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
 
         ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
             sourceDir.walkTopDown()
-                .filter { it.isFile }
+                .filter { file ->
+                    file.isFile && file.name != "metadata.json"
+                }
                 .forEach { file ->
                     val entryName = file.relativeTo(sourceDir).path
                     val entry = ZipEntry(entryName)

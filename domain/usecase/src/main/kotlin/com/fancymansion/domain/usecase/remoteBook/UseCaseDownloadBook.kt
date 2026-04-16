@@ -14,5 +14,6 @@ class UseCaseDownloadBook @Inject constructor(
         withContext(dispatcher) {
             val currentVersion = bookRemoteRepository.getPublishedBookVersion(publishedId)
             bookRemoteRepository.downloadBookArchive(userId, currentVersion, publishedId)
+            currentVersion
         }
 }

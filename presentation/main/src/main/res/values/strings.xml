@@ -37,7 +37,7 @@
 
     <string name="library_book_bar_title">내 서재</string>
 
-    <string name="library_book_sort_order_last_update">최근 업데이트</string>
+    <string name="library_book_sort_order_last_download">최근 다운로드</string>
     <string name="library_book_sort_order_title_ascending">제목 오름차순</string>
 
     <string name="library_book_header_select_all">전체</string>
@@ -46,7 +46,7 @@
     <string name="library_book_header_mode_complete">완료</string>
     <string name="library_book_header_mode_edit">편집</string>
 
-    <string name="library_book_holder_update_date">%1$s 업데이트</string>
+    <string name="library_book_holder_download_date">%1$s 다운로드</string>
     <string name="library_book_holder_page_count">총 %1$d 페이지</string>
 
     <string name="library_book_list_empty_title">서재에 책이 없습니다.</string>

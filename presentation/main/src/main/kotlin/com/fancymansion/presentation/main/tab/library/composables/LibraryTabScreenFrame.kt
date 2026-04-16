@@ -163,7 +163,7 @@ fun LibraryTabSkeletonScreen() {
                 EnumDropdown(
                     modifier = Modifier.width(140.dp),
                     options = LibraryBookSortOrder.entries.toTypedArray(),
-                    selectedOption = LibraryBookSortOrder.LAST_UPDATE,
+                    selectedOption = LibraryBookSortOrder.LAST_DOWNLOAD,
                     getDisplayName = { "" },
                     isEnabled = false,
                     backgroundColor = MaterialTheme.colorScheme.background

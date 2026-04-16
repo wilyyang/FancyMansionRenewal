@@ -165,8 +165,8 @@ fun LibraryBookHolder(
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = stringResource(
-                    id = R.string.library_book_holder_update_date,
-                    formatTimestampYearDate(bookState.bookInfo.metadata.updatedAt)
+                    id = R.string.library_book_holder_download_date,
+                    formatTimestampYearDate(bookState.bookInfo.metadata.downloadAt)
                 ),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 style = MaterialTheme.typography.bodyMedium
