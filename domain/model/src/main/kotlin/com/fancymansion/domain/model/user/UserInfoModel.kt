@@ -2,7 +2,8 @@ package com.fancymansion.domain.model.user
 
 data class UserStoreResult(
     val userInfo: UserInfoModel,
-    val publishedBookIds: Set<String>
+    val publishedBookRefs: Set<BookRefModel>,
+    val collectedBookRefs: Set<BookRefModel>
 )
 data class UserInfoModel(
     val userId: String,
@@ -11,4 +12,9 @@ data class UserInfoModel(
     val createdAt: Long,
     val updatedAt: Long,
     val hasCompletedOnboarding: Boolean
+)
+
+data class BookRefModel(
+    val bookId: String,
+    val version: Int
 )

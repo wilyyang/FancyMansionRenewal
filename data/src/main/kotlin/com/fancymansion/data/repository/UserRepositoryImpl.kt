@@ -4,6 +4,8 @@ import com.fancymansion.data.common.NICKNAME_NOT_INIT
 import com.fancymansion.data.common.NicknameDuplicateException
 import com.fancymansion.data.common.generateNickname
 import com.fancymansion.data.datasource.dataStore.user.UserStoreSource
+import com.fancymansion.data.datasource.dataStore.user.model.asLocalData
+import com.fancymansion.data.datasource.dataStore.user.model.asModel
 import com.fancymansion.data.datasource.database.user.dao.UserDatabaseDao
 import com.fancymansion.data.datasource.database.user.model.asLocalData
 import com.fancymansion.data.datasource.database.user.model.asModel
@@ -11,8 +13,10 @@ import com.fancymansion.data.datasource.firebase.auth.UserAuthentication
 import com.fancymansion.data.datasource.firebase.auth.model.asData
 import com.fancymansion.data.datasource.firebase.auth.model.asModel
 import com.fancymansion.data.datasource.firebase.database.user.UserFirestoreDatabase
+import com.fancymansion.data.datasource.firebase.database.user.model.asData
 import com.fancymansion.data.datasource.firebase.database.user.model.asModel
 import com.fancymansion.domain.interfaceRepository.UserRepository
+import com.fancymansion.domain.model.user.BookRefModel
 import com.fancymansion.domain.model.user.UserInfoModel
 import com.fancymansion.domain.model.user.UserInitModel
 import com.fancymansion.domain.model.user.UserStoreResult
@@ -63,12 +67,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addRemotePublishedBookId(userId: String, bookId: String) {
-        userFirestoreDatabase.addPublishedBookId(userId, bookId)
+    override suspend fun addRemotePublishedBookRef(userId: String, bookRef: BookRefModel) {
+        userFirestoreDatabase.addPublishedBookRef(userId, bookRef.asData())
     }
 
-    override suspend fun removeRemotePublishedBookId(userId: String, bookId: String) {
-        userFirestoreDatabase.removePublishedBookId(userId, bookId)
+    override suspend fun removeRemotePublishedBookRef(userId: String, bookRef: BookRefModel) {
+        userFirestoreDatabase.removePublishedBookRef(userId, bookRef.asData())
+    }
+
+    override suspend fun updateRemotePublishedBookRef(
+        userId: String,
+        oldRef: BookRefModel,
+        newRef: BookRefModel
+    ) {
+        userFirestoreDatabase.updatePublishedBookRef(userId, oldRef.asData(), newRef.asData())
     }
 
     override suspend fun upsertUserInfoLocal(userInfo: UserInfoModel) {
@@ -83,23 +95,30 @@ class UserRepositoryImpl @Inject constructor(
         return userDatabaseDao.observeUserInfoData().map { it?.asModel() }
     }
 
-    override suspend fun getLocalPublishedBookIds(): Set<String> {
-        return userStoreSource.getPublishedBookIds()
+    override suspend fun getLocalPublishedBookRefs(): Set<BookRefModel> {
+        return userStoreSource.getPublishedBookRefs().map { it.asModel() }.toSet()
     }
 
-    override suspend fun replaceLocalPublishedBookIds(ids: Set<String>) {
-        userStoreSource.replacePublishedBookIds(ids)
+    override suspend fun replaceLocalPublishedBookRefs(bookRefs: Set<BookRefModel>) {
+        userStoreSource.replacePublishedBookRefs(bookRefs.map { it.asLocalData() }.toSet())
     }
 
-    override suspend fun addLocalPublishedBookId(bookId: String) {
-        userStoreSource.addPublishedBookId(bookId)
+    override suspend fun addLocalPublishedBookRef(bookRef: BookRefModel) {
+        userStoreSource.addPublishedBookRef(bookRef.asLocalData())
     }
 
-    override suspend fun removeLocalPublishedBookId(bookId: String) {
-        userStoreSource.removePublishedBookId(bookId)
+    override suspend fun updateLocalPublishedBookRef(
+        oldRef: BookRefModel,
+        newRef: BookRefModel
+    ) {
+        userStoreSource.updatePublishedBookRef(oldRef.asLocalData(), newRef.asLocalData())
     }
 
-    override suspend fun clearLocalPublishedBookIds() {
-        userStoreSource.clearPublishedBookIds()
+    override suspend fun removeLocalPublishedBookRef(bookRef: BookRefModel) {
+        userStoreSource.removePublishedBookRef(bookRef.asLocalData())
+    }
+
+    override suspend fun clearLocalPublishedBookRefs() {
+        userStoreSource.clearPublishedBookRefs()
     }
 }

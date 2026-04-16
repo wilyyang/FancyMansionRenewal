@@ -5,7 +5,9 @@ import com.fancymansion.data.common.NicknameDuplicateException
 import com.fancymansion.data.datasource.firebase.FirestoreCollections
 import com.fancymansion.data.datasource.firebase.auth.model.UserInitData
 import com.fancymansion.data.datasource.firebase.database.user.model.NicknameStoreData
+import com.fancymansion.data.datasource.firebase.database.user.model.BookRefData
 import com.fancymansion.data.datasource.firebase.database.user.model.UserStoreData
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -51,9 +53,8 @@ class UserFirestoreDatabaseImpl(
                     transaction.update(ref, updates)
                 }
                 val updatedAt = if (didUpdate) now else currentUpdatedAt
-                val publishedBookIds =
-                    (snapshot.get(UserStoreData.PUBLISHED_BOOK_IDS) as? List<*>)?.filterIsInstance<String>()
-                        ?: emptyList()
+                val publishedBookRefs = parseBookRefs(snapshot, UserStoreData.PUBLISHED_BOOK_REFS)
+                val collectedBookRefs = parseBookRefs(snapshot, UserStoreData.COLLECTED_BOOK_REFS)
 
                 UserStoreData(
                     userId = userInit.uid,
@@ -62,7 +63,8 @@ class UserFirestoreDatabaseImpl(
                     createdAt = createdAt,
                     updatedAt = updatedAt,
                     hasCompletedOnboarding = true,
-                    publishedBookIds = publishedBookIds
+                    publishedBookRefs = publishedBookRefs,
+                    collectedBookRefs = collectedBookRefs
                 )
             } else {
                 val data = UserStoreData(
@@ -72,7 +74,8 @@ class UserFirestoreDatabaseImpl(
                     createdAt = now,
                     updatedAt = now,
                     hasCompletedOnboarding = false,
-                    publishedBookIds = emptyList()
+                    publishedBookRefs = emptyList(),
+                    collectedBookRefs = emptyList()
                 )
                 transaction.set(ref, data)
                 data
@@ -123,29 +126,71 @@ class UserFirestoreDatabaseImpl(
         }.await()
     }
 
-    override suspend fun addPublishedBookId(
+    override suspend fun addPublishedBookRef(
         userId: String,
-        bookId: String
+        bookRef: BookRefData
     ) {
         val ref = firestore.collection(FirestoreCollections.USERS).document(userId)
-
         ref.update(
             mapOf(
-                UserStoreData.PUBLISHED_BOOK_IDS to FieldValue.arrayUnion(bookId)
+                UserStoreData.PUBLISHED_BOOK_REFS to FieldValue.arrayUnion(bookRef.toMap())
             )
         ).await()
     }
 
-    override suspend fun removePublishedBookId(
+    override suspend fun removePublishedBookRef(
         userId: String,
-        bookId: String
+        bookRef: BookRefData
     ) {
         val ref = firestore.collection(FirestoreCollections.USERS).document(userId)
 
         ref.update(
             mapOf(
-                UserStoreData.PUBLISHED_BOOK_IDS to FieldValue.arrayRemove(bookId)
+                UserStoreData.PUBLISHED_BOOK_REFS to FieldValue.arrayRemove(bookRef.toMap())
             )
         ).await()
+    }
+
+    override suspend fun updatePublishedBookRef(
+        userId: String,
+        oldRef: BookRefData,
+        newRef: BookRefData
+    ) {
+        val ref = firestore.collection(FirestoreCollections.USERS).document(userId)
+
+        firestore.runTransaction { transaction ->
+            transaction.update(
+                ref,
+                UserStoreData.PUBLISHED_BOOK_REFS,
+                FieldValue.arrayRemove(oldRef.toMap())
+            )
+
+            transaction.update(
+                ref,
+                UserStoreData.PUBLISHED_BOOK_REFS,
+                FieldValue.arrayUnion(newRef.toMap())
+            )
+        }.await()
+    }
+
+    private fun parseBookRefs(snapshot: DocumentSnapshot, field: String): List<BookRefData> {
+        return snapshot.get(field)
+            ?.let { list ->
+                (list as? List<Map<String, Any>>)?.mapNotNull { map ->
+                    val bookId = map[BookRefData.BOOK_ID] as? String
+                    val version = (map[BookRefData.VERSION] as? Long)?.toInt()
+
+                    if (bookId != null && version != null) {
+                        BookRefData(bookId, version)
+                    } else null
+                }
+            } ?: emptyList()
+    }
+
+    private fun BookRefData.toMap(): Map<String, Any> {
+        return mapOf(
+            BookRefData.BOOK_ID to bookId,
+            BookRefData.VERSION to version
+        )
     }
 }

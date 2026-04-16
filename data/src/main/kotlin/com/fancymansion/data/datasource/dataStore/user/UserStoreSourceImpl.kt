@@ -9,50 +9,86 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.fancymansion.data.datasource.dataStore.user.model.LocalBookRefData
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 
 class UserStoreSourceImpl(context : Context) : UserStoreSource{
 
     private val appContext = context.applicationContext
-
     private val dataStore: DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
             produceFile = { appContext.preferencesDataStoreFile("user_store") }
         )
 
-    private val PUBLISHED_BOOK_IDS =
-        stringSetPreferencesKey("published_book_ids")
+    private val PUBLISHED_BOOK_REFS =
+        stringSetPreferencesKey("published_book_refs")
 
-    override suspend fun getPublishedBookIds(): Set<String> {
+    private val gson = Gson()
+
+    private fun LocalBookRefData.toJson(): String {
+        return gson.toJson(this)
+    }
+
+    private fun String.toLocalBookRefData(): LocalBookRefData {
+        return gson.fromJson(this, LocalBookRefData::class.java)
+    }
+
+    override suspend fun getPublishedBookRefs(): Set<LocalBookRefData> {
         return dataStore.data
-            .first()[PUBLISHED_BOOK_IDS]
+            .first()[PUBLISHED_BOOK_REFS]
+            ?.map { it.toLocalBookRefData() }
+            ?.toSet()
             ?: emptySet()
     }
 
-    override suspend fun replacePublishedBookIds(ids: Set<String>) {
+    override suspend fun replacePublishedBookRefs(bookRefs: Set<LocalBookRefData>) {
         dataStore.edit { prefs ->
-            prefs[PUBLISHED_BOOK_IDS] = ids
+            prefs[PUBLISHED_BOOK_REFS] = bookRefs.map { it.toJson() }.toSet()
         }
     }
 
-    override suspend fun addPublishedBookId(bookId: String) {
+    override suspend fun addPublishedBookRef(bookRef: LocalBookRefData) {
         dataStore.edit { prefs ->
-            val current = prefs[PUBLISHED_BOOK_IDS] ?: emptySet()
-            prefs[PUBLISHED_BOOK_IDS] = current + bookId
+            val current = prefs[PUBLISHED_BOOK_REFS] ?: emptySet()
+            prefs[PUBLISHED_BOOK_REFS] = current + bookRef.toJson()
         }
     }
 
-    override suspend fun removePublishedBookId(bookId: String) {
+    override suspend fun updatePublishedBookRef(
+        oldRef: LocalBookRefData,
+        newRef: LocalBookRefData
+    ) {
         dataStore.edit { prefs ->
-            val current = prefs[PUBLISHED_BOOK_IDS] ?: emptySet()
-            prefs[PUBLISHED_BOOK_IDS] = current - bookId
+            val current = prefs[PUBLISHED_BOOK_REFS] ?: emptySet()
+
+            val updated = current
+                .map { it.toLocalBookRefData() }
+                .filterNot { it.bookId == oldRef.bookId }
+                .plus(newRef)
+                .map { it.toJson() }
+                .toSet()
+
+            prefs[PUBLISHED_BOOK_REFS] = updated
         }
     }
 
-    override suspend fun clearPublishedBookIds() {
+    override suspend fun removePublishedBookRef(bookRef: LocalBookRefData) {
         dataStore.edit { prefs ->
-            prefs.remove(PUBLISHED_BOOK_IDS)
+            val current = prefs[PUBLISHED_BOOK_REFS] ?: emptySet()
+
+            val updated = current.filterNot {
+                it.toLocalBookRefData().bookId == bookRef.bookId
+            }.toSet()
+
+            prefs[PUBLISHED_BOOK_REFS] = updated
+        }
+    }
+
+    override suspend fun clearPublishedBookRefs() {
+        dataStore.edit { prefs ->
+            prefs.remove(PUBLISHED_BOOK_REFS)
         }
     }
 }

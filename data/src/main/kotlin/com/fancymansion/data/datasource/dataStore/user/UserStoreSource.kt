@@ -1,9 +1,12 @@
 package com.fancymansion.data.datasource.dataStore.user
 
+import com.fancymansion.data.datasource.dataStore.user.model.LocalBookRefData
+
 interface UserStoreSource {
-    suspend fun getPublishedBookIds(): Set<String>
-    suspend fun replacePublishedBookIds(ids: Set<String>)
-    suspend fun addPublishedBookId(bookId: String)
-    suspend fun removePublishedBookId(bookId: String)
-    suspend fun clearPublishedBookIds()
+    suspend fun getPublishedBookRefs(): Set<LocalBookRefData>
+    suspend fun replacePublishedBookRefs(bookRefs: Set<LocalBookRefData>)
+    suspend fun addPublishedBookRef(bookRef: LocalBookRefData)
+    suspend fun updatePublishedBookRef(oldRef: LocalBookRefData, newRef: LocalBookRefData)
+    suspend fun removePublishedBookRef(bookRef: LocalBookRefData)
+    suspend fun clearPublishedBookRefs()
 }

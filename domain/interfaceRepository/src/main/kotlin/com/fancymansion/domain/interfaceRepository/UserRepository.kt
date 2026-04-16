@@ -1,5 +1,6 @@
 package com.fancymansion.domain.interfaceRepository
 
+import com.fancymansion.domain.model.user.BookRefModel
 import com.fancymansion.domain.model.user.UserInitModel
 import com.fancymansion.domain.model.user.UserInfoModel
 import com.fancymansion.domain.model.user.UserStoreResult
@@ -10,14 +11,16 @@ interface UserRepository {
     suspend fun signInWithGoogle(idToken: String): UserInitModel
     suspend fun getOrCreateUserInfoTx(userInit: UserInitModel): UserStoreResult
     suspend fun updateNickname(uid: String, newNickname: String): NicknameUpdateResult
-    suspend fun addRemotePublishedBookId(userId: String, bookId: String)
-    suspend fun removeRemotePublishedBookId(userId: String, bookId: String)
+    suspend fun addRemotePublishedBookRef(userId: String, bookRef: BookRefModel)
+    suspend fun removeRemotePublishedBookRef(userId: String, bookRef: BookRefModel)
+    suspend fun updateRemotePublishedBookRef(userId: String, oldRef: BookRefModel, newRef: BookRefModel)
     suspend fun upsertUserInfoLocal(userInfo: UserInfoModel)
     suspend fun getUserInfoLocal(): UserInfoModel?
     fun observeUserInfoLocal(): Flow<UserInfoModel?>
-    suspend fun getLocalPublishedBookIds(): Set<String>
-    suspend fun replaceLocalPublishedBookIds(ids: Set<String>)
-    suspend fun addLocalPublishedBookId(bookId: String)
-    suspend fun removeLocalPublishedBookId(bookId: String)
-    suspend fun clearLocalPublishedBookIds()
+    suspend fun getLocalPublishedBookRefs(): Set<BookRefModel>
+    suspend fun replaceLocalPublishedBookRefs(bookRefs: Set<BookRefModel>)
+    suspend fun addLocalPublishedBookRef(bookRef: BookRefModel)
+    suspend fun updateLocalPublishedBookRef(oldRef: BookRefModel, newRef: BookRefModel)
+    suspend fun removeLocalPublishedBookRef(bookRef: BookRefModel)
+    suspend fun clearLocalPublishedBookRefs()
 }

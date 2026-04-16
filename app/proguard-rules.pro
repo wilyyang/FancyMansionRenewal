@@ -30,3 +30,4 @@
 -keep class com.fancymansion.data.datasource.firebase.auth.model.** { *; }
 -keep class com.fancymansion.data.datasource.firebase.database.book.model.** { *; }
 -keep class com.fancymansion.data.datasource.firebase.database.user.model.** { *; }
+-keep class com.fancymansion.data.datasource.dataStore.user.model.** { *; }
