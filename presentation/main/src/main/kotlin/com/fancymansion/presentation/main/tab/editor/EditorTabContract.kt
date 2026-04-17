@@ -30,7 +30,18 @@ data class EditBookWrapper(
     val metadata: BookMetaModel
 )
 
-data class EditBookState(val bookInfo: EditBookWrapper, val selected: MutableState<Boolean>)
+enum class BookSyncState {
+    ONLY_LOCAL,     // 1. 로컬만 있음
+    LATEST,         // 2. 최신
+    NEED_UPDATE,    // 3. 업데이트 필요
+    NEED_DOWNLOAD   // 4. 다운로드 필요
+}
+
+data class EditBookState(
+    val bookInfo: EditBookWrapper,
+    val syncState: BookSyncState,
+    val selected: MutableState<Boolean>
+)
 
 fun LocalBookItemModel.toWrapper(thumbnail: ImagePickType) : EditBookWrapper {
     return EditBookWrapper(

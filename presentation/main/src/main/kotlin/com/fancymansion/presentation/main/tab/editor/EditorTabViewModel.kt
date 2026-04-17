@@ -24,8 +24,14 @@ import com.fancymansion.domain.model.book.IntroduceModel
 import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
+import com.fancymansion.domain.model.homeBook.PublishInfoModel
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
+import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseGetSelectedHomeBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseGetSelectedHomeBookList
+import com.fancymansion.domain.usecase.user.UseCaseGetPublishedBookRefs
 import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.main.R
@@ -44,6 +50,11 @@ class EditorTabViewModel @Inject constructor(
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseBookList: UseCaseBookList,
     private val useCaseGetUserInfoLocal: UseCaseGetUserInfoLocal,
+    private val useCaseGetPublishedBookRefs: UseCaseGetPublishedBookRefs,
+    private val useCaseGetSelectedHomeBook: UseCaseGetSelectedHomeBook,
+    private val useCaseGetSelectedHomeBookList: UseCaseGetSelectedHomeBookList,
+    private val useCaseDownloadBook: UseCaseDownloadBook,
+    private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>() {
 
@@ -51,8 +62,6 @@ class EditorTabViewModel @Inject constructor(
     private var lastOpenedBookId: String? = null
     private lateinit var userId: String
     private val mode: ReadMode = ReadMode.EDIT
-    private lateinit var originBookInfoList: List<EditBookWrapper>
-
     private val allBookStates: MutableList<EditBookState> = mutableListOf()
     private val searchResultBookStates: MutableList<EditBookState> = mutableListOf()
 
@@ -74,7 +83,7 @@ class EditorTabViewModel @Inject constructor(
                 if (uiState.value.isEditMode) {
                     toggleBookSelected(bookId = event.bookId)
                 } else {
-                    navigateEditBookScreen(bookId = event.bookId)
+                    handleBookHolderClicked(bookId = event.bookId)
                 }
             }
 
@@ -162,6 +171,34 @@ class EditorTabViewModel @Inject constructor(
      */
     private fun handlePageNumberClicked(page: Int) = launchWithLoading {
         pagedBookList(listTarget, page)
+    }
+
+    private fun handleBookHolderClicked(bookId: String) = launchWithException {
+        allBookStates.find { it.bookInfo.bookId == bookId }?.let { bookInfo ->
+            when (bookInfo.syncState) {
+                BookSyncState.NEED_UPDATE -> {
+                    setLoadState(loadState = LoadState.AlarmDialog(
+                        title = useCaseGetResource.string(R.string.edit_book_holder_publish_need_update),
+                        message = useCaseGetResource.string(R.string.edit_book_holder_publish_need_update_message),
+                        onConfirm = {
+                            handleDownloadEditBook(bookId)
+                        },
+                        onDismiss = ::setLoadStateIdle
+                    ))
+                }
+                BookSyncState.NEED_DOWNLOAD -> {
+                    setLoadState(loadState = LoadState.AlarmDialog(
+                        title = useCaseGetResource.string(R.string.edit_book_holder_publish_need_download),
+                        message = useCaseGetResource.string(R.string.edit_book_holder_publish_need_download_message),
+                        onConfirm = {
+                            handleDownloadEditBook(bookId)
+                        },
+                        onDismiss = ::setLoadStateIdle
+                    ))
+                }
+                else -> navigateEditBookScreen(bookId)
+            }
+        }
     }
 
     private fun navigateEditBookScreen(bookId: String) {
@@ -255,8 +292,7 @@ class EditorTabViewModel @Inject constructor(
 
             // 선택된 책 ID 저장
             val selectedIdSet = allBookStates.filter { it.selected.value }.map { it.bookInfo.bookId }.toSet()
-
-            val newNumber = nextBookNumber(originBookInfoList.map { it.bookId }, userId)
+            val newNumber = nextBookNumber(allBookStates.map { it.bookInfo.bookId }, userId)
             val episodeRef = EpisodeRef(
                 userId = userId,
                 mode = mode,
@@ -313,36 +349,100 @@ class EditorTabViewModel @Inject constructor(
         pagedBookList(listTarget, 0)
     }
 
+    private fun handleDownloadEditBook(bookId: String) = launchWithLoading {
+        downloadEditBook(useCaseGetSelectedHomeBook(bookId).book.publishInfo)
+        navigateEditBookScreen(bookId)
+    }
+
     /**
      * [3] 처리 함수
      */
     private suspend fun loadBookStateList() {
-        originBookInfoList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.EDIT).map {
-            val bookInfo = it.book
-            val episodeInfo = it.episode
+        val localList = useCaseBookList.getLocalBookInfoList(userId = userId, readMode = ReadMode.EDIT)
+        val serverMap = useCaseGetPublishedBookRefs().associateBy { it.bookId }
+        val resultList = mutableListOf<EditBookState>()
 
-            val bookCoverFile: File? =
-                if (bookInfo.introduce.coverList.isNotEmpty()) useCaseLoadBook.loadCoverImage(
-                    EpisodeRef(userId = userId, mode = ReadMode.EDIT, bookId = bookInfo.id, episodeId = episodeInfo.id),
-                    bookInfo.introduce.coverList[0]
-                ) else null
+        // 로컬에 있는 경우
+        localList.forEach { local ->
+            val bookInfo = local.book
+            val server = serverMap[bookInfo.id]
 
-            val savedPickType = if (bookCoverFile != null) ImagePickType.SavedImage(
-                bookCoverFile
-            ) else ImagePickType.Empty
+            val syncState = when {
+                server == null -> BookSyncState.ONLY_LOCAL
+                local.metaData.version == server.version -> BookSyncState.LATEST
+                else -> BookSyncState.NEED_UPDATE
+            }
 
-            it.toWrapper(savedPickType)
-        }
+            val thumbnail = if (bookInfo.introduce.coverList.isNotEmpty()) {
+                ImagePickType.SavedImage(
+                    useCaseLoadBook.loadCoverImage(
+                        EpisodeRef(
+                            userId = userId,
+                            mode = ReadMode.EDIT,
+                            bookId = bookInfo.id,
+                            episodeId = local.episode.id
+                        ),
+                        bookInfo.introduce.coverList[0]
+                    )
+                )
+            } else ImagePickType.Empty
 
-        allBookStates.clear()
-        originBookInfoList.forEach { bookInfo ->
-            allBookStates.add(
+            resultList.add(
                 EditBookState(
-                    bookInfo = bookInfo,
+                    bookInfo = local.toWrapper(thumbnail),
+                    syncState = syncState,
                     selected = mutableStateOf(false)
                 )
             )
         }
+
+        // 서버에만 있는 경우 (다운로드 필요)
+        val localIds = localList.map { it.book.id }.toSet()
+        val onlyServerIds = serverMap.keys - localIds
+        useCaseGetSelectedHomeBookList(onlyServerIds.toList()).forEach { server ->
+            val wrapper = EditBookWrapper(
+                bookId = server.book.id,
+                title = server.book.introduce.title,
+                editTime = server.episode.editTime,
+                pageCount = server.episode.pageCount,
+                thumbnail = ImagePickType.Empty,
+                keywords = server.book.introduce.keywordList,
+                metadata = BookMetaModel(
+                    status = PublishStatus.PUBLISHED,
+                    publishedAt = server.book.publishInfo.publishedAt,
+                    updatedAt = server.book.publishInfo.updatedAt,
+                    version = server.book.publishInfo.version
+                )
+            )
+
+            resultList.add(
+                EditBookState(
+                    bookInfo = wrapper,
+                    syncState = BookSyncState.NEED_DOWNLOAD,
+                    selected = mutableStateOf(false)
+                )
+            )
+        }
+
+        allBookStates.clear()
+        allBookStates.addAll(resultList)
+    }
+
+    private suspend fun downloadEditBook(publishInfo: PublishInfoModel) {
+        val mode = ReadMode.EDIT
+        useCaseDownloadBook(userId = userId, publishedId = publishInfo.publishedId, readMode = mode)
+        useCaseMakeBook.makeMetaData(
+            userId = userId,
+            mode = mode,
+            bookId = publishInfo.publishedId,
+            metaData = BookMetaModel(
+                status = PublishStatus.PUBLISHED,
+                publishedAt = publishInfo.publishedAt,
+                updatedAt = publishInfo.updatedAt,
+                downloadAt = System.currentTimeMillis(),
+                version = publishInfo.version
+            )
+        )
     }
 
     private fun searchBookList(searchText: String) {
@@ -402,7 +502,9 @@ class EditorTabViewModel @Inject constructor(
 
     private fun toggleBookSelected(bookId: String) {
         allBookStates.find { it.bookInfo.bookId == bookId }?.let {
-            it.selected.value = !it.selected.value
+            if(it.syncState != BookSyncState.NEED_DOWNLOAD){
+                it.selected.value = !it.selected.value
+            }
         }
     }
 
@@ -412,7 +514,7 @@ class EditorTabViewModel @Inject constructor(
             .toSet()
 
         allBookStates
-            .filter { it.bookInfo.bookId in visibleIds }
+            .filter { it.bookInfo.bookId in visibleIds && it.syncState != BookSyncState.NEED_DOWNLOAD }
             .forEach {
                 it.selected.value = true
             }

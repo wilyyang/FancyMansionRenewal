@@ -35,6 +35,7 @@ import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.onSurfaceSub
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.tab.editor.BookSyncState
 import com.fancymansion.presentation.main.tab.editor.EditBookSortOrder
 import com.fancymansion.presentation.main.tab.editor.EditBookState
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
@@ -164,7 +165,17 @@ fun EditBookHolder(
                     contentDescription = "Book Holder Thumbnail"
                 )
 
-                if (bookState.bookInfo.metadata.status == PublishStatus.PUBLISHED) {
+                val thumbnailLabel = when(bookState.syncState){
+                    BookSyncState.ONLY_LOCAL -> null
+                    BookSyncState.LATEST -> stringResource(
+                        R.string.edit_book_holder_publish_date,
+                        formatTimestampOnlyDate(bookState.bookInfo.metadata.updatedAt)
+                    )
+                    BookSyncState.NEED_UPDATE -> stringResource(R.string.edit_book_holder_publish_need_update)
+                    BookSyncState.NEED_DOWNLOAD -> stringResource(R.string.edit_book_holder_publish_need_download)
+                }
+
+                thumbnailLabel?.let {
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
@@ -177,10 +188,7 @@ fun EditBookHolder(
                             .padding(6.dp)
                     ) {
                         Text(
-                            text = stringResource(
-                                R.string.edit_book_holder_publish_date,
-                                formatTimestampOnlyDate(bookState.bookInfo.metadata.updatedAt)
-                            ),
+                            text = it,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 color = MaterialTheme.colorScheme.onTertiary,
                                 fontSize = 10.sp,
@@ -251,7 +259,7 @@ fun EditBookHolder(
             modifier = Modifier.width(24.dp),
             contentAlignment = Alignment.CenterEnd
         ) {
-            if (isEditMode) {
+            if (isEditMode && bookState.syncState != BookSyncState.NEED_DOWNLOAD) {
                 Box(
                     modifier = Modifier
                         .clip(shape = CircleShape)

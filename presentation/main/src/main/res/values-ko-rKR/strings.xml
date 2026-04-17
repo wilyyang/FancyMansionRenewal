@@ -21,6 +21,10 @@
     <string name="edit_book_header_mode_edit">편집</string>
 
     <string name="edit_book_holder_publish_date">%1$s 배포</string>
+    <string name="edit_book_holder_publish_need_update">업데이트 필요</string>
+    <string name="edit_book_holder_publish_need_update_message">저장된 파일이 최신 버전이 아닙니다. 최신 버전을 다운로드하시겠습니까?</string>
+    <string name="edit_book_holder_publish_need_download">다운로드 필요</string>
+    <string name="edit_book_holder_publish_need_download_message">이 책은 기기에 저장되어 있지 않습니다. 다운로드하시겠습니까?</string>
     <string name="edit_book_holder_edit_date">%1$s 편집됨</string>
     <string name="edit_book_holder_page_count">총 %1$d 페이지</string>
 

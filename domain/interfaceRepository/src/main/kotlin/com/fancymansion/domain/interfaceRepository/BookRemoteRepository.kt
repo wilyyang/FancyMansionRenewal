@@ -1,6 +1,7 @@
 package com.fancymansion.domain.interfaceRepository
 
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
@@ -13,7 +14,9 @@ interface BookRemoteRepository {
     suspend fun uploadBookArchive(publishedId: String, version: Int, episodeRef: EpisodeRef)
     suspend fun uploadBookCoverImage(publishedId: String, episodeRef: EpisodeRef, coverFileName: String)
     suspend fun getHomeBookItems(): List<HomeBookItemModel>
-    suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String): File
+    suspend fun getSelectedHomeBookItems(bookIds: List<String>): List<HomeBookItemModel>
+    suspend fun getSelectedHomeBookItem(bookId: String): HomeBookItemModel
+    suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String, readMode: ReadMode): File
     suspend fun getBookCoverImageUrl(publishedId: String, imageFileName: String): String
     suspend fun getPublishedBookVersion(publishedId: String): Int
     suspend fun deleteBookWithEpisodes(publishedId: String)

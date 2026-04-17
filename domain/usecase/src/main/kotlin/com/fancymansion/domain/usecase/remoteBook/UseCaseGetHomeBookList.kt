@@ -15,3 +15,23 @@ class UseCaseGetHomeBookList @Inject constructor(
         bookRemoteRepository.getHomeBookItems()
     }
 }
+
+class UseCaseGetSelectedHomeBookList @Inject constructor(
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
+    private val bookRemoteRepository: BookRemoteRepository
+) {
+
+    suspend operator fun invoke(bookIds: List<String>) = withContext(dispatcher) {
+        bookRemoteRepository.getSelectedHomeBookItems(bookIds)
+    }
+}
+
+class UseCaseGetSelectedHomeBook @Inject constructor(
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
+    private val bookRemoteRepository: BookRemoteRepository
+) {
+
+    suspend operator fun invoke(bookId: String) = withContext(dispatcher) {
+        bookRemoteRepository.getSelectedHomeBookItem(bookId)
+    }
+}

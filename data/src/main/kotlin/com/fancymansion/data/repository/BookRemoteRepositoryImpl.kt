@@ -83,10 +83,18 @@ class BookRemoteRepositoryImpl @Inject constructor(
         return bookFirestoreDatabase.loadBookList().map { it.asHomeModel() }
     }
 
-    override suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String): File {
+    override suspend fun getSelectedHomeBookItems(bookIds: List<String>): List<HomeBookItemModel> {
+        return bookFirestoreDatabase.loadSelectedBookList(bookIds).map { it.asHomeModel() }
+    }
+
+    override suspend fun getSelectedHomeBookItem(bookId: String): HomeBookItemModel {
+        return bookFirestoreDatabase.loadSelectedBook(bookId).asHomeModel()
+    }
+
+    override suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String, readMode: ReadMode): File {
         val zipFile = bookStorageSource.getCacheZipFile(userId, publishedId)
         val downloadedZip = bookFirebaseStorage.downloadBookZipToCache(publishedId, version, zipFile)
-        val extractedDir = bookStorageSource.unzipBookArchiveToUserDir(downloadedZip, userId, ReadMode.READ, publishedId)
+        val extractedDir = bookStorageSource.unzipBookArchiveToUserDir(downloadedZip, userId, readMode, publishedId)
         downloadedZip.delete()
         return extractedDir
     }

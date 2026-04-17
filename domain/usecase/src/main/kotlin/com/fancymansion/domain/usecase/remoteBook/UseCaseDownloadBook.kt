@@ -1,5 +1,6 @@
 package com.fancymansion.domain.usecase.remoteBook
 
+import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -10,10 +11,10 @@ class UseCaseDownloadBook @Inject constructor(
     @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
     private val bookRemoteRepository: BookRemoteRepository
 ) {
-    suspend operator fun invoke(userId: String, publishedId: String) =
+    suspend operator fun invoke(userId: String, publishedId: String, readMode: ReadMode = ReadMode.READ) =
         withContext(dispatcher) {
             val currentVersion = bookRemoteRepository.getPublishedBookVersion(publishedId)
-            bookRemoteRepository.downloadBookArchive(userId, currentVersion, publishedId)
+            bookRemoteRepository.downloadBookArchive(userId, currentVersion, publishedId, readMode)
             currentVersion
         }
 }

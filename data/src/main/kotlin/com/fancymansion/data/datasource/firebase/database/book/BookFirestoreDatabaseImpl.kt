@@ -128,9 +128,7 @@ class BookFirestoreDatabaseImpl(
         return coroutineScope {
             bookSnapshots.documents.map { bookDoc ->
                 async {
-                    val publishedId = bookDoc.id
                     val bookId = bookDoc.getString(BookInfoData.BOOK_ID) ?: return@async null
-
                     val book = BookInfoData(
                         bookId = bookId,
                         publishInfo = bookDoc.parsePublishInfo(),
@@ -138,25 +136,66 @@ class BookFirestoreDatabaseImpl(
                         editor = bookDoc.parseEditor(),
                     )
 
-                    val episodeId = getEpisodeId(bookId)
-                    val episodeDoc = firestore.collection(BOOKS)
-                        .document(publishedId)
-                        .collection(EPISODES)
-                        .document(episodeId)
-                        .get()
-                        .await()
-
-                    if (!episodeDoc.exists()) return@async null
-
-                    val episode = episodeDoc.parseEpisode(
-                        fallbackEpisodeId = episodeId,
-                        fallbackBookId = bookId
-                    )
-
+                    val episode = getEpisodeData(bookId) ?: return@async null
                     HomeBookItemData(book = book, episode = episode)
                 }
             }.awaitAll().filterNotNull()
         }
+    }
+
+    override suspend fun loadSelectedBookList(
+        bookIds: List<String>
+    ): List<HomeBookItemData> {
+
+        if (bookIds.isEmpty()) return emptyList()
+
+        return coroutineScope {
+            bookIds.map { bookId ->
+                async {
+                    try {
+                        val bookDoc = firestore
+                            .collection(BOOKS)
+                            .document(bookId)
+                            .get()
+                            .await()
+
+                        if (!bookDoc.exists()) return@async null
+
+                        val book = BookInfoData(
+                            bookId = bookId,
+                            publishInfo = bookDoc.parsePublishInfo(),
+                            introduce = bookDoc.parseIntroduce(),
+                            editor = bookDoc.parseEditor(),
+                        )
+
+                        val episode = getEpisodeData(bookId) ?: return@async null
+                        HomeBookItemData(book = book, episode = episode)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            }.awaitAll().filterNotNull()
+        }
+    }
+
+    override suspend fun loadSelectedBook(bookId: String): HomeBookItemData {
+        val bookDoc = firestore
+            .collection(BOOKS)
+            .document(bookId)
+            .get()
+            .await()
+
+        check(bookDoc.exists())
+
+        val book = BookInfoData(
+            bookId = bookId,
+            publishInfo = bookDoc.parsePublishInfo(),
+            introduce = bookDoc.parseIntroduce(),
+            editor = bookDoc.parseEditor(),
+        )
+        val episode = getEpisodeData(bookId)  ?: error("Episode not found for bookId=$bookId")
+
+        return HomeBookItemData(book = book, episode = episode)
     }
 
     override suspend fun getPublishedBookVersion(publishedId: String): Int {
@@ -233,6 +272,25 @@ class BookFirestoreDatabaseImpl(
 
             createTime = getLong(EpisodeInfoData.CREATE_TIME) ?: 0L,
             editTime = getLong(EpisodeInfoData.EDIT_TIME) ?: 0L
+        )
+    }
+
+    private suspend fun getEpisodeData(
+        bookId: String
+    ): EpisodeInfoData? {
+        val episodeId = getEpisodeId(bookId)
+        val episodeDoc = firestore.collection(BOOKS)
+            .document(bookId)
+            .collection(EPISODES)
+            .document(episodeId)
+            .get()
+            .await()
+
+        if (!episodeDoc.exists()) return null
+
+        return episodeDoc.parseEpisode(
+            fallbackEpisodeId = episodeId,
+            fallbackBookId = bookId
         )
     }
 }
