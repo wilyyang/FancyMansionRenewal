@@ -234,8 +234,8 @@ class BookFirestoreDatabaseImpl(
             publishedId = publishInfoMap?.get(PublishInfoData.PUBLISHED_ID) as? String ?: NOT_ASSIGN_PUBLISHED_ID,
             publishedAt = publishInfoMap?.get(PublishInfoData.PUBLISHED_AT) as? Long ?: NOT_ASSIGN_PUBLISHED_AT,
             updatedAt = publishInfoMap?.get(PublishInfoData.UPDATED_AT) as? Long ?: NOT_ASSIGN_UPDATED_AT,
-            version = publishInfoMap?.get(PublishInfoData.VERSION) as? Int ?: 0,
-            likeCount = publishInfoMap?.get(PublishInfoData.LIKE_COUNT) as? Int ?: 0,
+            version = (publishInfoMap?.get(PublishInfoData.VERSION) as? Long ?: 0).toInt(),
+            likeCount = (publishInfoMap?.get(PublishInfoData.LIKE_COUNT) as? Long ?: 0).toInt(),
         )
     }
 

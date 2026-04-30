@@ -3,20 +3,17 @@ package com.fancymansion.data.datasource.appStorage.book
 import android.content.Context
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
-import com.fancymansion.core.common.const.PublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getCoverFileName
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.const.pageStartWith
-import com.fancymansion.core.common.const.sampleUserId
 import com.fancymansion.data.R
 import com.fancymansion.data.datasource.appStorage.book.model.BookInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.BookMetaData
 import com.fancymansion.data.datasource.appStorage.book.model.EditorData
 import com.fancymansion.data.datasource.appStorage.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.appStorage.book.model.IntroduceData
-import com.fancymansion.data.datasource.appStorage.book.model.KeywordData
 import com.fancymansion.data.datasource.appStorage.book.model.LogicData
 import com.fancymansion.data.datasource.appStorage.book.model.PageData
 import com.fancymansion.data.datasource.appStorage.book.model.SourceData
@@ -573,8 +570,8 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         ).map { it.asData() }
 
         for (i in 1 until 31) {
-            val bookId = getBookId(sampleUserId, i)
-            val episodeId = getEpisodeId(sampleUserId, i)
+            val bookId = getBookId(userId, i)
+            val episodeId = getEpisodeId(userId, i)
 
             val episodeRef = EpisodeRef(
                 userId = userId,
