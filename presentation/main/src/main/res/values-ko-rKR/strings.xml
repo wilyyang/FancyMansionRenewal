@@ -36,6 +36,9 @@
     <string name="edit_book_message_book_limit_exceeded">편집 작품의 개수를 초과했습니다.\n작품 한도는 %1$d개 입니다.\n작품을 삭제해주세요.</string>
     <string name="edit_book_new_book_title">새로운 작품 %1$d</string>
 
+    <string name="edit_book_holder_cannot_download">다운로드 에러</string>
+    <string name="edit_book_holder_cannot_download_message">해당 북을 다운로드할 수 없습니다.</string>
+
     <string name="library_book_search_text_hint">제목 검색</string>
     <string name="library_book_search_text_cancel">취소</string>
 

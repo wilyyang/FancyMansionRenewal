@@ -10,11 +10,13 @@ import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_
 import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.asData
 import com.fancymansion.data.datasource.firebase.database.book.model.asHomeModel
+import com.fancymansion.data.datasource.firebase.database.book.model.result.toDomain
 import com.fancymansion.data.datasource.firebase.storage.book.BookFirebaseStorage
 import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
+import com.fancymansion.domain.model.homeBook.result.LoadBookResult
 import java.io.File
 import javax.inject.Inject
 
@@ -106,8 +108,8 @@ class BookRemoteRepositoryImpl @Inject constructor(
         return bookFirestoreDatabase.loadSelectedBookList(bookIds).map { it.asHomeModel() }
     }
 
-    override suspend fun getSelectedHomeBookItem(bookId: String): HomeBookItemModel {
-        return bookFirestoreDatabase.loadSelectedBook(bookId).asHomeModel()
+    override suspend fun getSelectedHomeBookItem(bookId: String): LoadBookResult {
+        return bookFirestoreDatabase.loadSelectedBook(bookId).toDomain()
     }
 
     override suspend fun downloadBookArchive(userId: String, version: Int, publishedId: String, readMode: ReadMode): File {
@@ -129,8 +131,8 @@ class BookRemoteRepositoryImpl @Inject constructor(
         return bookFirestoreDatabase.getPublishedBookVersion(publishedId)
     }
 
-    override suspend fun deleteBookWithEpisodes(publishedId: String) {
-        bookFirestoreDatabase.deleteBookWithEpisodes(publishedId)
+    override suspend fun withdrawBookWithEpisodes(publishedId: String) {
+        bookFirestoreDatabase.withdrawBookWithEpisodes(publishedId)
     }
 
     override suspend fun deleteBookStorageByPublishedId(publishedId: String) {

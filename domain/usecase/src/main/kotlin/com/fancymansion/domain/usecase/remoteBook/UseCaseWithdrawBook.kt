@@ -14,7 +14,7 @@ class UseCaseWithdrawBook @Inject constructor(
         userId: String,
         publishedId: String
     ) = withContext(dispatcher) {
-        bookRemoteRepository.deleteBookWithEpisodes(publishedId)
+        bookRemoteRepository.withdrawBookWithEpisodes(publishedId)
         bookRemoteRepository.deleteBookStorageByPublishedId(publishedId)
     }
 }

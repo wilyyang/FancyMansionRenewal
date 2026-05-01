@@ -25,6 +25,7 @@ import com.fancymansion.domain.model.book.LogicModel
 import com.fancymansion.domain.model.book.PageLogicModel
 import com.fancymansion.domain.model.book.PageModel
 import com.fancymansion.domain.model.homeBook.PublishInfoModel
+import com.fancymansion.domain.model.homeBook.result.LoadBookResult
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -348,9 +349,23 @@ class EditorTabViewModel @Inject constructor(
         pagedBookList(listTarget, 0)
     }
 
-    private fun handleDownloadEditBook(bookId: String) = launchWithLoading {
-        downloadEditBook(useCaseGetSelectedHomeBook(bookId).book.publishInfo)
-        navigateEditBookScreen(bookId)
+    private fun handleDownloadEditBook(bookId: String) = launchWithException {
+        setLoadState(LoadState.Loading())
+        when(val result = useCaseGetSelectedHomeBook(bookId)){
+            is LoadBookResult.Success -> {
+                downloadEditBook(result.model.book.publishInfo)
+                setLoadStateIdle()
+                navigateEditBookScreen(bookId)
+            }
+            else -> {
+                setLoadState(loadState = LoadState.AlarmDialog(
+                    title = useCaseGetResource.string(R.string.edit_book_holder_cannot_download),
+                    message = useCaseGetResource.string(R.string.edit_book_holder_cannot_download_message),
+                    onConfirm = ::setLoadStateIdle,
+                    onDismiss = ::setLoadStateIdle
+                ))
+            }
+        }
     }
 
     /**

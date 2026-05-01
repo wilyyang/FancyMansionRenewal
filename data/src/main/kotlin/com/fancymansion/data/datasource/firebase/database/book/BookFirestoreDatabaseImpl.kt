@@ -13,6 +13,7 @@ import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_ID
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_UPDATED_AT
 import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
+import com.fancymansion.data.datasource.firebase.database.book.model.result.LoadBookDataResult
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -122,7 +123,12 @@ class BookFirestoreDatabaseImpl(
     }
 
     override suspend fun loadBookList(): List<HomeBookItemData> {
-        val bookSnapshots = firestore.collection(BOOKS).get().await()
+        val bookSnapshots = firestore.collection(BOOKS)
+            .whereEqualTo(
+                "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.PUBLISH_STATUS}",
+                RemotePublishStatus.PUBLISHED.name
+            )
+            .get().await()
         if (bookSnapshots.isEmpty) return emptyList()
 
         return coroutineScope {
@@ -168,6 +174,10 @@ class BookFirestoreDatabaseImpl(
                             editor = bookDoc.parseEditor(),
                         )
 
+                        // 철회된 북는 가져올 수 없음
+                        if (book.publishInfo.publishStatus != RemotePublishStatus.PUBLISHED)
+                            return@async null
+
                         val episode = getEpisodeData(bookId) ?: return@async null
                         HomeBookItemData(book = book, episode = episode)
                     } catch (e: Exception) {
@@ -178,14 +188,16 @@ class BookFirestoreDatabaseImpl(
         }
     }
 
-    override suspend fun loadSelectedBook(bookId: String): HomeBookItemData {
+    override suspend fun loadSelectedBook(bookId: String): LoadBookDataResult {
         val bookDoc = firestore
             .collection(BOOKS)
             .document(bookId)
             .get()
             .await()
 
-        check(bookDoc.exists())
+        if(!bookDoc.exists()){
+            return LoadBookDataResult.NotFound
+        }
 
         val book = BookInfoData(
             bookId = bookId,
@@ -193,9 +205,14 @@ class BookFirestoreDatabaseImpl(
             introduce = bookDoc.parseIntroduce(),
             editor = bookDoc.parseEditor(),
         )
-        val episode = getEpisodeData(bookId)  ?: error("Episode not found for bookId=$bookId")
 
-        return HomeBookItemData(book = book, episode = episode)
+        if(book.publishInfo.publishStatus != RemotePublishStatus.PUBLISHED){
+            return LoadBookDataResult.Withdrawn
+        }
+
+        val episode = getEpisodeData(bookId) ?: error("Episode not found for bookId=$bookId")
+
+        return LoadBookDataResult.Success(HomeBookItemData(book = book, episode = episode))
     }
 
     override suspend fun getPublishedBookVersion(publishedId: String): Int {
@@ -213,18 +230,15 @@ class BookFirestoreDatabaseImpl(
             ?: error("Version not found")
     }
 
-    override suspend fun deleteBookWithEpisodes(publishedId: String) {
-        val bookRef = firestore.collection(BOOKS).document(publishedId)
-        val episodesRef = bookRef.collection(EPISODES)
+    override suspend fun withdrawBookWithEpisodes(publishedId: String) {
+        val ref = firestore.collection(BOOKS).document(publishedId)
+        val currentTime = System.currentTimeMillis()
 
-        // 1. 모든 에피소드 삭제
-        val episodesSnapshot = episodesRef.get().await()
-        episodesSnapshot.documents.forEach { doc ->
-            doc.reference.delete().await()
-        }
-
-        // 2. 책 문서 삭제
-        bookRef.delete().await()
+        val updates: Map<String, Any> = mapOf(
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.UPDATED_AT}" to currentTime,
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.PUBLISH_STATUS}" to RemotePublishStatus.WITHDRAWN.name
+        )
+        ref.update(updates).await()
     }
 
     private fun DocumentSnapshot.parsePublishInfo(): PublishInfoData {

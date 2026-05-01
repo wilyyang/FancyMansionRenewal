@@ -3,6 +3,7 @@ package com.fancymansion.data.datasource.firebase.database.book
 import com.fancymansion.data.datasource.firebase.database.book.model.BookInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.HomeBookItemData
+import com.fancymansion.data.datasource.firebase.database.book.model.result.LoadBookDataResult
 
 interface BookFirestoreDatabase {
     suspend fun getPublishedId(): String
@@ -12,7 +13,7 @@ interface BookFirestoreDatabase {
     suspend fun updateEpisode(publishedId: String, episode: EpisodeInfoData)
     suspend fun loadBookList(): List<HomeBookItemData>
     suspend fun loadSelectedBookList(bookIds: List<String>): List<HomeBookItemData>
-    suspend fun loadSelectedBook(bookId: String): HomeBookItemData
+    suspend fun loadSelectedBook(bookId: String): LoadBookDataResult
     suspend fun getPublishedBookVersion(publishedId: String): Int
-    suspend fun deleteBookWithEpisodes(publishedId: String)
+    suspend fun withdrawBookWithEpisodes(publishedId: String)
 }
