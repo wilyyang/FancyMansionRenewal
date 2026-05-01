@@ -8,7 +8,7 @@ import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.PublishStatus
+import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getBookId
 import com.fancymansion.core.common.const.getEpisodeId
@@ -41,7 +41,6 @@ import com.fancymansion.presentation.main.common.ListTarget
 import com.fancymansion.presentation.main.common.paged
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Event.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -301,7 +300,7 @@ class EditorTabViewModel @Inject constructor(
             )
             val (bookInfo, episodeInfo, logic, startPage) = createNewBookDraft(episodeRef, newNumber, editorInfo)
             val metaData = BookMetaModel(
-                status = PublishStatus.UNPUBLISHED,
+                status = EditorPublishStatus.UNPUBLISHED,
                 publishedAt = INIT_PUBLISHED_AT,
                 updatedAt = INIT_UPDATED_AT,
                 version = INIT_VERSION
@@ -408,7 +407,7 @@ class EditorTabViewModel @Inject constructor(
                 thumbnail = ImagePickType.Empty,
                 keywords = server.book.introduce.keywordList,
                 metadata = BookMetaModel(
-                    status = PublishStatus.PUBLISHED,
+                    status = EditorPublishStatus.PUBLISHED,
                     publishedAt = server.book.publishInfo.publishedAt,
                     updatedAt = server.book.publishInfo.updatedAt,
                     version = server.book.publishInfo.version
@@ -436,7 +435,7 @@ class EditorTabViewModel @Inject constructor(
             mode = mode,
             bookId = publishInfo.publishedId,
             metaData = BookMetaModel(
-                status = PublishStatus.PUBLISHED,
+                status = EditorPublishStatus.PUBLISHED,
                 publishedAt = publishInfo.publishedAt,
                 updatedAt = publishInfo.updatedAt,
                 downloadAt = System.currentTimeMillis(),

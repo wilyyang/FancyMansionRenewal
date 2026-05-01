@@ -1,5 +1,6 @@
 package com.fancymansion.data.datasource.firebase.database.book.model
 
+import com.fancymansion.core.common.const.RemotePublishStatus
 import com.fancymansion.domain.model.homeBook.PublishInfoModel
 
 data class PublishInfoData(
@@ -7,14 +8,14 @@ data class PublishInfoData(
     val publishedAt: Long,
     val updatedAt: Long,
     val version: Int,
-    val likeCount: Int
+    val publishStatus: RemotePublishStatus
 ) {
     companion object Fields {
         const val PUBLISHED_ID = "publishedId"
         const val PUBLISHED_AT = "publishedAt"
         const val UPDATED_AT = "updatedAt"
         const val VERSION = "version"
-        const val LIKE_COUNT = "likeCount"
+        const val PUBLISH_STATUS = "publishStatus"
     }
 }
 
@@ -23,7 +24,7 @@ fun PublishInfoModel.asData() = PublishInfoData(
     publishedAt = publishedAt,
     updatedAt = updatedAt,
     version = version,
-    likeCount = likeCount
+    publishStatus = publishStatus
 )
 
 
@@ -32,5 +33,5 @@ fun PublishInfoData.asModel() = PublishInfoModel(
     publishedAt = publishedAt,
     updatedAt = updatedAt,
     version = version,
-    likeCount = likeCount
+    publishStatus = publishStatus
 )

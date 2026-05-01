@@ -22,15 +22,9 @@ data class BookInfoData(
     }
 }
 
-fun BookInfoModel.asData() = BookInfoData(
+fun BookInfoModel.asData(publishInfo: PublishInfoData) = BookInfoData(
     bookId = id,
-    publishInfo = PublishInfoData(
-        publishedId = NOT_ASSIGN_PUBLISHED_ID,
-        publishedAt = NOT_ASSIGN_PUBLISHED_AT,
-        updatedAt = NOT_ASSIGN_UPDATED_AT,
-        version = 0,
-        likeCount = 0
-    ),
+    publishInfo = publishInfo,
     introduce = introduce.asData(),
     editor = editor.asData()
 )

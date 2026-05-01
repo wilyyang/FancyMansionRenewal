@@ -9,7 +9,7 @@ import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
 import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
-import com.fancymansion.core.common.const.PublishStatus
+import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.common.resource.StringValue
@@ -302,7 +302,7 @@ class EditorBookOverviewViewModel @Inject constructor(
                 mode = episodeRef.mode,
                 bookId = episodeRef.bookId,
                 metaData = BookMetaModel(
-                    status = PublishStatus.PUBLISHED,
+                    status = EditorPublishStatus.PUBLISHED,
                     publishedAt = currentTime,
                     updatedAt = currentTime,
                     version = INIT_VERSION
@@ -325,7 +325,7 @@ class EditorBookOverviewViewModel @Inject constructor(
             )
 
             val newMetaData = BookMetaModel(
-                status = PublishStatus.UNPUBLISHED,
+                status = EditorPublishStatus.UNPUBLISHED,
                 publishedAt = INIT_PUBLISHED_AT,
                 updatedAt = INIT_UPDATED_AT,
                 version = INIT_VERSION
@@ -339,7 +339,7 @@ class EditorBookOverviewViewModel @Inject constructor(
 
             setState {
                 copy(
-                    isPublished = newMetaData.status == PublishStatus.PUBLISHED,
+                    isPublished = newMetaData.status == EditorPublishStatus.PUBLISHED,
                     metadata = newMetaData
                 )
             }
@@ -472,7 +472,7 @@ class EditorBookOverviewViewModel @Inject constructor(
         val metadata = useCaseLoadBook.loadBookMetaData(episodeRef.userId, episodeRef.mode, episodeRef.bookId)
         setState {
             copy(
-                isPublished = metadata.status == PublishStatus.PUBLISHED,
+                isPublished = metadata.status == EditorPublishStatus.PUBLISHED,
                 bookInfo = bookInfo,
                 metadata = metadata,
                 pageBriefList = pageBriefList,

@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
 import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.ImagePickType
-import com.fancymansion.core.common.const.PublishStatus
+import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
                         mode = ReadMode.READ,
                         bookId = event.publishedId,
                         metaData = BookMetaModel(
-                            status = PublishStatus.PUBLISHED,
+                            status = EditorPublishStatus.PUBLISHED,
                             publishedAt = INIT_PUBLISHED_AT,
                             updatedAt = INIT_UPDATED_AT,
                             downloadAt = currentTime,

@@ -9,7 +9,7 @@ import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.INIT_VERSION
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.PageType
-import com.fancymansion.core.common.const.PublishStatus
+import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -40,7 +40,7 @@ class EditorBookOverviewContract {
             introduce = IntroduceModel()
         ),
         val metadata : BookMetaModel = BookMetaModel(
-            status = PublishStatus.UNPUBLISHED,
+            status = EditorPublishStatus.UNPUBLISHED,
             publishedAt = INIT_PUBLISHED_AT,
             updatedAt = INIT_UPDATED_AT,
             version = INIT_VERSION

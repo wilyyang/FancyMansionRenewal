@@ -1,5 +1,6 @@
 package com.fancymansion.domain.model.homeBook
 
+import com.fancymansion.core.common.const.RemotePublishStatus
 import com.fancymansion.domain.model.book.KeywordModel
 
 data class BookHomeModel(
@@ -14,7 +15,7 @@ data class PublishInfoModel(
     val publishedAt: Long,
     val updatedAt: Long,
     val version: Int,
-    val likeCount: Int
+    val publishStatus: RemotePublishStatus
 )
 
 data class IntroduceHomeModel(

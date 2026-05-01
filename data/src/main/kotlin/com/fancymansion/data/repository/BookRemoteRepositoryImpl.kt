@@ -3,8 +3,11 @@ package com.fancymansion.data.repository
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.RemotePublishStatus
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.firebase.database.book.BookFirestoreDatabase
+import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_AT
+import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.asData
 import com.fancymansion.data.datasource.firebase.database.book.model.asHomeModel
 import com.fancymansion.data.datasource.firebase.storage.book.BookFirebaseStorage
@@ -30,7 +33,15 @@ class BookRemoteRepositoryImpl @Inject constructor(
         bookInfo: BookInfoModel,
         episodeInfo: EpisodeInfoModel
     ) {
-        bookFirestoreDatabase.saveBook(publishedId, bookInfo.asData())
+        val currentTime = System.currentTimeMillis()
+        val publishInfo = PublishInfoData(
+            publishedId = publishedId,
+            publishedAt = currentTime,
+            updatedAt = currentTime,
+            version = 0,
+            publishStatus = RemotePublishStatus.PUBLISHED
+        )
+        bookFirestoreDatabase.saveBook(publishedId, bookInfo.asData(publishInfo))
         bookFirestoreDatabase.saveEpisode(publishedId, episodeInfo.asData())
     }
 
@@ -40,7 +51,15 @@ class BookRemoteRepositoryImpl @Inject constructor(
         episodeInfo: EpisodeInfoModel,
         version: Int
     ) {
-        bookFirestoreDatabase.updateBook(publishedId, bookInfo.asData(), version)
+        val currentTime = System.currentTimeMillis()
+        val publishInfo = PublishInfoData(
+            publishedId = publishedId,
+            publishedAt = NOT_ASSIGN_PUBLISHED_AT,
+            updatedAt = currentTime,
+            version = version,
+            publishStatus = RemotePublishStatus.PUBLISHED
+        )
+        bookFirestoreDatabase.updateBook(publishedId, bookInfo.asData(publishInfo))
         bookFirestoreDatabase.updateEpisode(publishedId, episodeInfo.asData())
     }
 

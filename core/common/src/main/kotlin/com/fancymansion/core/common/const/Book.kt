@@ -2,11 +2,27 @@ package com.fancymansion.core.common.const
 
 import androidx.annotation.StringRes
 import com.fancymansion.core.common.resource.StringValue
-enum class PublishStatus(@param:StringRes val resId : Int) {
+enum class EditorPublishStatus(@param:StringRes val resId : Int) {
     PUBLISHED(com.fancymansion.core.common.R.string.publish_status_publish),
-    UNPUBLISHED(com.fancymansion.core.common.R.string.publish_status_unpublish),
-    WITHDRAW(com.fancymansion.core.common.R.string.publish_status_withdraw)
+    UNPUBLISHED(com.fancymansion.core.common.R.string.publish_status_unpublish)
 }
+
+enum class RemotePublishStatus {
+    PUBLISHED,
+    WITHDRAWN,
+    UNKNOWN;
+
+    companion object {
+        fun from(value: String?): RemotePublishStatus {
+            return when (value) {
+                PUBLISHED.name -> PUBLISHED
+                WITHDRAWN.name -> WITHDRAWN
+                else -> UNKNOWN
+            }
+        }
+    }
+}
+
 const val INIT_VERSION = 0
 const val INIT_PUBLISHED_AT = 0L
 const val INIT_UPDATED_AT = 0L

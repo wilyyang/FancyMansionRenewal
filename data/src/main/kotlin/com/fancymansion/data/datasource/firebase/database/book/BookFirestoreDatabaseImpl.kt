@@ -1,5 +1,6 @@
 package com.fancymansion.data.datasource.firebase.database.book
 
+import com.fancymansion.core.common.const.RemotePublishStatus
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.data.datasource.firebase.FirestoreCollections.BOOKS
 import com.fancymansion.data.datasource.firebase.FirestoreCollections.EPISODES
@@ -31,15 +32,14 @@ class BookFirestoreDatabaseImpl(
     override suspend fun saveBook(publishedId: String, book: BookInfoData) {
         val ref = firestore.collection(BOOKS).document(publishedId)
 
-        val currentTime = System.currentTimeMillis()
         val data = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
             BookInfoData.PUBLISH_INFO to mapOf(
-                PublishInfoData.PUBLISHED_ID to publishedId,
-                PublishInfoData.PUBLISHED_AT to currentTime,
-                PublishInfoData.UPDATED_AT to currentTime,
-                PublishInfoData.VERSION to 0,
-                PublishInfoData.LIKE_COUNT to 0,
+                PublishInfoData.PUBLISHED_ID to book.publishInfo.publishedId,
+                PublishInfoData.PUBLISHED_AT to book.publishInfo.publishedAt,
+                PublishInfoData.UPDATED_AT to book.publishInfo.updatedAt,
+                PublishInfoData.VERSION to book.publishInfo.version,
+                PublishInfoData.PUBLISH_STATUS to book.publishInfo.publishStatus.name
             ),
             BookInfoData.INTRODUCE to mapOf(
                 IntroduceData.TITLE to book.introduce.title,
@@ -57,15 +57,15 @@ class BookFirestoreDatabaseImpl(
         ref.set(data, SetOptions.merge()).await()
     }
 
-    override suspend fun updateBook(publishedId: String, book: BookInfoData, version: Int) {
+    override suspend fun updateBook(publishedId: String, book: BookInfoData) {
         val ref = firestore.collection(BOOKS).document(publishedId)
         val currentTime = System.currentTimeMillis()
 
         val updates = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
 
-            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.UPDATED_AT}" to currentTime,
-            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.VERSION}" to version,
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.UPDATED_AT}" to book.publishInfo.updatedAt,
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.VERSION}" to book.publishInfo.version,
 
             "${BookInfoData.INTRODUCE}.${IntroduceData.TITLE}" to book.introduce.title,
             "${BookInfoData.INTRODUCE}.${IntroduceData.COVER_LIST}" to book.introduce.coverList,
@@ -235,7 +235,7 @@ class BookFirestoreDatabaseImpl(
             publishedAt = publishInfoMap?.get(PublishInfoData.PUBLISHED_AT) as? Long ?: NOT_ASSIGN_PUBLISHED_AT,
             updatedAt = publishInfoMap?.get(PublishInfoData.UPDATED_AT) as? Long ?: NOT_ASSIGN_UPDATED_AT,
             version = (publishInfoMap?.get(PublishInfoData.VERSION) as? Long ?: 0).toInt(),
-            likeCount = (publishInfoMap?.get(PublishInfoData.LIKE_COUNT) as? Long ?: 0).toInt(),
+            publishStatus = RemotePublishStatus.from(publishInfoMap?.get(PublishInfoData.PUBLISH_STATUS) as? String)
         )
     }
 

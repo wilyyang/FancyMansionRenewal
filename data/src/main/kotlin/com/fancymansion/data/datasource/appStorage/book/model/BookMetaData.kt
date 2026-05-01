@@ -4,11 +4,11 @@ import com.fancymansion.core.common.const.INIT_DOWNLOAD_AT
 import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
 import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.INIT_VERSION
-import com.fancymansion.core.common.const.PublishStatus
+import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.domain.model.book.BookMetaModel
 
 data class BookMetaData(
-    val status: PublishStatus = PublishStatus.UNPUBLISHED,
+    val status: EditorPublishStatus = EditorPublishStatus.UNPUBLISHED,
     val publishedAt: Long = INIT_PUBLISHED_AT,
     val updatedAt: Long = INIT_UPDATED_AT,
     val downloadAt: Long = INIT_DOWNLOAD_AT,
