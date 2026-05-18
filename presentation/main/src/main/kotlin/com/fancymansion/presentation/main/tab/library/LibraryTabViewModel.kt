@@ -2,16 +2,28 @@ package com.fancymansion.presentation.main.tab.library
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
+import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
+import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.ImagePickType
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.core.presentation.base.LoadState
+import com.fancymansion.domain.model.book.BookMetaModel
+import com.fancymansion.domain.model.homeBook.BookHomeModel
+import com.fancymansion.domain.model.homeBook.PublishInfoModel
+import com.fancymansion.domain.model.homeBook.result.LoadBookResult
 import com.fancymansion.domain.usecase.book.UseCaseBookList
 import com.fancymansion.domain.usecase.book.UseCaseLoadBook
+import com.fancymansion.domain.usecase.book.UseCaseMakeBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
+import com.fancymansion.domain.usecase.remoteBook.UseCaseGetSelectedHomeBook
 import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
 import com.fancymansion.domain.usecase.util.UseCaseGetResource
+import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.BOOKS_PER_PAGE
 import com.fancymansion.presentation.main.common.ListTarget
 import com.fancymansion.presentation.main.common.paged
@@ -36,6 +48,9 @@ class LibraryTabViewModel @Inject constructor(
     private val useCaseLoadBook: UseCaseLoadBook,
     private val useCaseBookList: UseCaseBookList,
     private val useCaseGetUserInfoLocal: UseCaseGetUserInfoLocal,
+    private val useCaseGetSelectedHomeBook: UseCaseGetSelectedHomeBook,
+    private val useCaseDownloadBook: UseCaseDownloadBook,
+    private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<LibraryTabContract.State, LibraryTabContract.Event, LibraryTabContract.Effect>() {
     private var isUpdateResume = false
@@ -60,7 +75,7 @@ class LibraryTabViewModel @Inject constructor(
                 if (uiState.value.isEditMode) {
                     toggleBookSelected(bookId = event.bookId)
                 } else {
-                    navigateBookOverviewScreen(bookId = event.bookId)
+                    handleBookHolderClicked(bookId = event.bookId)
                 }
             }
 
@@ -125,6 +140,45 @@ class LibraryTabViewModel @Inject constructor(
         pagedBookList(listTarget, page)
     }
 
+    private fun handleBookHolderClicked(bookId: String) = launchWithLoading(endLoadState = null) {
+        val localBookInfo = allBookStates.find { it.bookInfo.bookId == bookId }?.bookInfo
+            ?: error("Not found selected local book info. bookId=$bookId")
+
+        when(val serverBookInfo = useCaseGetSelectedHomeBook(bookId)){
+            is LoadBookResult.Success -> {
+                if(localBookInfo.metadata.version == serverBookInfo.model.book.publishInfo.version){
+                    // 최신 버전 : 읽기 전환
+                    setLoadStateIdle()
+                    navigateBookOverviewScreen(bookId)
+                }else{
+                    // 서버 버전으로 업데이트 후 읽기
+                    setLoadState(loadState = LoadState.AlarmDialog(
+                        title = useCaseGetResource.string(R.string.library_book_holder_need_update),
+                        message = useCaseGetResource.string(R.string.library_book_holder_need_update_message),
+                        onConfirm = {
+                            handleDownloadReadBook(serverBookInfo.model.book)
+                        },
+                        onDismiss = ::setLoadStateIdle
+                    ))
+                }
+            }
+            LoadBookResult.Withdrawn -> {
+                // 철회 상태 : 안내 후 읽기 전환
+                setLoadState(loadState = LoadState.AlarmDialog(
+                    title = useCaseGetResource.string(R.string.library_book_holder_withdrawn_book),
+                    message = useCaseGetResource.string(R.string.library_book_holder_withdrawn_book_message),
+                    onConfirm = {
+                        setLoadStateIdle()
+                        navigateBookOverviewScreen(bookId)
+                    },
+                    onDismiss = ::setLoadStateIdle
+                ))
+            }
+            // 서버에 책 정보 없음 : 에러
+            LoadBookResult.NotFound -> error("Selected local book should exist on server. bookId=$bookId")
+        }
+    }
+
     private fun navigateBookOverviewScreen(bookId: String) {
         isUpdateResume = true
         setEffect {
@@ -168,6 +222,11 @@ class LibraryTabViewModel @Inject constructor(
 
         sortBookList(listTarget, sortOrder)
         pagedBookList(listTarget, 0)
+    }
+
+    private fun handleDownloadReadBook(bookInfo: BookHomeModel) = launchWithLoading {
+        downloadReadBook(bookInfo.publishInfo)
+        navigateBookOverviewScreen(bookInfo.id)
     }
 
     /**
@@ -339,5 +398,22 @@ class LibraryTabViewModel @Inject constructor(
                 searchText = ""
             )
         }
+    }
+
+    private suspend fun downloadReadBook(publishInfo: PublishInfoModel) {
+        val mode = ReadMode.READ
+        useCaseDownloadBook(userId = userId, publishedId = publishInfo.publishedId, readMode = mode)
+        useCaseMakeBook.makeMetaData(
+            userId = userId,
+            mode = mode,
+            bookId = publishInfo.publishedId,
+            metaData = BookMetaModel(
+                status = EditorPublishStatus.PUBLISHED,
+                publishedAt = INIT_PUBLISHED_AT,
+                updatedAt = INIT_UPDATED_AT,
+                downloadAt = System.currentTimeMillis(),
+                version = publishInfo.version
+            )
+        )
     }
 }

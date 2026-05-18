@@ -56,6 +56,12 @@
     <string name="library_book_holder_download_date">%1$s 다운로드</string>
     <string name="library_book_holder_page_count">총 %1$d 페이지</string>
 
+    <string name="library_book_holder_withdrawn_book">배포 중단 북</string>
+    <string name="library_book_holder_withdrawn_book_message">해당 북은 배포가 중단되었습니다. 계속 읽으시겠습니까?</string>
+
+    <string name="library_book_holder_need_update">업데이트 필요</string>
+    <string name="library_book_holder_need_update_message">새 버전이 있습니다. 계속 읽으려면 업데이트가 필요합니다.</string>
+
     <string name="library_book_list_empty_title">서재에 책이 없습니다.</string>
     <string name="library_book_list_empty_sub_title">홈에서 새로운 책을 접해보세요!</string>
 
