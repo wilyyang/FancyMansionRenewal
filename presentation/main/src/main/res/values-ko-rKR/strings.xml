@@ -76,4 +76,18 @@
     <string name="nickname_result_invalid_character">닉네임은 한글, 영어, 숫자만 가능합니다.</string>
     <string name="nickname_result_only_number">닉네임은 숫자만으로 만들 수 없습니다.</string>
     <string name="nickname_result_already_exists">해당 닉네임은 이미 사용중입니다.</string>
+
+    <string name="home_book_sort_order_last_update">최근 업데이트</string>
+    <string name="home_book_sort_order_title_ascending">제목 오름차순</string>
+
+    <string name="home_book_search_text_hint">제목 검색</string>
+    <string name="home_book_search_text_cancel">취소</string>
+
+    <string name="home_book_bar_title">작품</string>
+
+    <string name="home_book_holder_update_date">%1$s 업데이트</string>
+    <string name="home_book_holder_page_count">총 %1$d 페이지</string>
+
+    <string name="home_book_list_empty_title">작품을 찾을 수 없습니다</string>
+    <string name="home_book_list_empty_sub_title">다른 검색어로 다시 시도해 보세요.</string>
 </resources>

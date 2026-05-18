@@ -19,6 +19,8 @@ import com.fancymansion.presentation.main.content.composables.MainScreenFrame
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract.Effect.Navigation.NavigateEditorBookOverviewScreen
 import com.fancymansion.presentation.main.tab.editor.EditorTabViewModel
+import com.fancymansion.presentation.main.tab.home.HomeTabContract
+import com.fancymansion.presentation.main.tab.home.HomeTabViewModel
 import com.fancymansion.presentation.main.tab.library.LibraryTabContract
 import com.fancymansion.presentation.main.tab.library.LibraryTabViewModel
 import com.fancymansion.presentation.main.tab.my.MyTabContract
@@ -76,6 +78,34 @@ fun MainScreenDestination(
         onEventSent = onEditorTabEventSent,
         onCommonEventSent = onEditorTabCommonEventSent,
         onNavigationRequested = onEditorTabNavigationRequested,
+    )
+
+    // Tab : HomeTabViewModel
+    val homeTabViewModel: HomeTabViewModel = hiltViewModel()
+    val onHomeTabEventSent =  remember {
+        { event : HomeTabContract.Event ->
+            homeTabViewModel.setEvent(event)
+        }
+    }
+    val onHomeTabCommonEventSent =  remember {
+        { event : CommonEvent ->
+            homeTabViewModel.setCommonEvent(event)
+        }
+    }
+    val onHomeTabNavigationRequested: (HomeTabContract.Effect) -> Unit = remember {
+        { effect : HomeTabContract.Effect ->
+            handleHomeTabNavigationRequest(effect, navController)
+        }
+    }
+    HandleCommonEffect(navController = navController, commonEffectFlow = homeTabViewModel.commonEffect, onCommonEventSent = onHomeTabCommonEventSent)
+
+    val homeTabComponents = TabScreenComponents(
+        uiState = homeTabViewModel.uiState.value,
+        loadState = homeTabViewModel.loadState.value,
+        effectFlow = homeTabViewModel.effect,
+        onEventSent = onHomeTabEventSent,
+        onCommonEventSent = onHomeTabCommonEventSent,
+        onNavigationRequested = onHomeTabNavigationRequested,
     )
 
     // Tab : LibraryTabViewModel
@@ -154,6 +184,7 @@ fun MainScreenDestination(
         onEventSent = onMainEventSent,
         onNavigationRequested = onMainNavigationRequested,
         editorTabComponents = editorTabComponents,
+        homeTabComponents = homeTabComponents,
         libraryTabComponents = libraryTabComponents,
         myTabComponents = myTabComponents
     )
@@ -170,6 +201,12 @@ fun handleEditorTabNavigationRequest(effect: EditorTabContract.Effect, navContro
         is NavigateEditorBookOverviewScreen -> {
             navController.navigateEditorBookOverviewScreen(effect.episodeRef)
         }
+    }
+}
+
+fun handleHomeTabNavigationRequest(effect: HomeTabContract.Effect, navController: NavController) {
+    when(effect){
+        else -> {}
     }
 }
 

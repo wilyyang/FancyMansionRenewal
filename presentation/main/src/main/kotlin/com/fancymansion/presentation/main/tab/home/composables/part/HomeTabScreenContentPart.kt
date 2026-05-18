@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.main.content.composables
+package com.fancymansion.presentation.main.tab.home.composables.part
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -17,29 +17,56 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.fancymansion.core.common.util.formatTimestampYearDate
+import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.content.HomeBookState
+import com.fancymansion.presentation.main.tab.home.HomeBookSortOrder
+import com.fancymansion.presentation.main.tab.home.HomeBookWrapper
+import com.fancymansion.presentation.main.tab.home.HomeTabContract
 
+@Composable
+fun HomeTabHeader(
+    modifier: Modifier,
+    bookSortOrder: HomeBookSortOrder,
+    onEventSent: (event: HomeTabContract.Event) -> Unit
+) {
+    val context = LocalContext.current
+    Box(
+        modifier = modifier
+    ) {
+        EnumDropdown(
+            modifier = Modifier.width(140.dp),
+            options = HomeBookSortOrder.entries.toTypedArray(),
+            selectedOption = bookSortOrder,
+            getDisplayName = {
+                context.getString(it.textResId)
+            }
+        ) {
+            onEventSent(HomeTabContract.Event.SelectBookSortOrder(it))
+        }
+    }
+}
 
 @Composable
 fun HomeBookHolder(
     modifier : Modifier = Modifier,
-    painter: Painter,
-    bookState : HomeBookState,
+    bookWrapper: HomeBookWrapper,
     onClickHolder : (String) -> Unit
 ){
+
     Row(
         modifier = modifier
             .padding(start = 15.5.dp, end = 18.dp)
             .padding(vertical = 18.dp)
             .clickSingle {
-                onClickHolder(bookState.bookInfo.bookId)
+                onClickHolder(bookWrapper.bookId)
             },
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -47,16 +74,22 @@ fun HomeBookHolder(
             modifier = Modifier
                 .width(70.dp)
                 .height(120.dp)
-                .clip(shape = MaterialTheme.shapes.extraSmall)
         ) {
-            Image(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.Center),
-                painter = painter,
-                contentScale = ContentScale.FillWidth,
-                contentDescription = "Book Holder Thumbnail"
-            )
+                    .align(Alignment.Center)
+                    .clip(shape = MaterialTheme.shapes.extraSmall)
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    painter = rememberAsyncImagePainter(
+                        model = bookWrapper.thumbnailUrl
+                    ),
+                    contentScale = ContentScale.FillWidth,
+                    contentDescription = "Book Holder Thumbnail"
+                )
+            }
         }
 
         Column(
@@ -65,22 +98,25 @@ fun HomeBookHolder(
                 .padding(start = 16.dp)
         ) {
             Text(
-                text = "[다운로드]",
-                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.tertiary
+                text = bookWrapper.title,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )
 
             Text(
-                modifier = Modifier.padding(top = 3.5.dp),
-                text = bookState.bookInfo.title,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+                modifier = Modifier.padding(top = 4.dp),
+                text = stringResource(
+                    id = R.string.home_book_holder_update_date,
+                    formatTimestampYearDate(bookWrapper.updateTime)
+                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Text(
                 modifier = Modifier.padding(top = 3.5.dp),
                 text = stringResource(
-                    id = R.string.edit_book_holder_page_count,
-                    bookState.bookInfo.pageCount
+                    id = R.string.home_book_holder_page_count,
+                    bookWrapper.pageCount
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
@@ -89,7 +125,7 @@ fun HomeBookHolder(
             FlowRow(
                 modifier = Modifier.padding(top = 5.5.dp)
             ) {
-                bookState.bookInfo.keywords.take(6).forEach { keyword ->
+                bookWrapper.keywords.take(6).forEach { keyword ->
                     Text(
                         modifier = Modifier
                             .padding(end = 2.dp)

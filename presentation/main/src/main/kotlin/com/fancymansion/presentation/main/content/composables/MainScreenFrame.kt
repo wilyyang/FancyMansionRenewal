@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,19 +33,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import coil.compose.rememberAsyncImagePainter
-import com.fancymansion.core.common.const.DELAY_SCREEN_ANIMATION_MS
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.core.presentation.base.SIDE_EFFECTS_KEY
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
-import com.fancymansion.core.presentation.compose.dialog.Loading
 import com.fancymansion.core.presentation.compose.shape.borderLine
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.common.MainScreenTab
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 import com.fancymansion.presentation.main.tab.editor.composables.EditorTabScreenFrame
+import com.fancymansion.presentation.main.tab.home.HomeTabContract
+import com.fancymansion.presentation.main.tab.home.composables.HomeTabScreenFrame
 import com.fancymansion.presentation.main.tab.library.LibraryTabContract
 import com.fancymansion.presentation.main.tab.library.composables.LibraryTabScreenFrame
 import com.fancymansion.presentation.main.tab.my.MyTabContract
@@ -71,6 +65,7 @@ fun MainScreenFrame(
     onEventSent: (event: MainContract.Event) -> Unit,
     onNavigationRequested: (MainContract.Effect.Navigation) -> Unit,
     editorTabComponents: TabScreenComponents<EditorTabContract.State, EditorTabContract.Event, EditorTabContract.Effect>,
+    homeTabComponents: TabScreenComponents<HomeTabContract.State, HomeTabContract.Event, HomeTabContract.Effect>,
     libraryTabComponents: TabScreenComponents<LibraryTabContract.State, LibraryTabContract.Event, LibraryTabContract.Effect>,
     myTabComponents: TabScreenComponents<MyTabContract.State, MyTabContract.Event, MyTabContract.Effect>
 ) {
@@ -93,18 +88,17 @@ fun MainScreenFrame(
 
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
-            if(effect is MainContract.Effect.Navigation){
+            if (effect is MainContract.Effect.Navigation) {
                 onNavigationRequested(effect)
             }
         }?.collect()
     }
 
-    val listStateHome = rememberLazyListState()
-
-    // TODO 07.14 탭 적용
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(bottom = navigationBarPaddingDp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = navigationBarPaddingDp)
+    ) {
         Box(modifier = Modifier.weight(1f)) {
             when (uiState.currentTab) {
                 MainScreenTab.Editor -> {
@@ -118,45 +112,15 @@ fun MainScreenFrame(
                     )
                 }
 
-                // TODO : Tab Test
                 MainScreenTab.Home -> {
-                    Column (modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 50.dp)){
-
-                        Text(modifier = Modifier.padding(start = 15.dp), text = "홈 화면", style = MaterialTheme.typography.titleLarge)
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        LazyColumn(
-                            state = listStateHome,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ){
-
-                            itemsIndexed (uiState.homeBookList) { idx, data ->
-                                HomeBookHolder(
-                                    bookState = data,
-                                    painter = rememberAsyncImagePainter(
-                                        model = uiState.homeBookUrlList[idx]
-                                    ),
-                                    onClickHolder = {
-                                        onEventSent(MainContract.Event.HomeBookHolderClicked(it))
-                                    }
-                                )
-
-                                if (idx < uiState.homeBookList.size - 1) {
-                                    HorizontalDivider(
-                                        modifier = Modifier
-                                            .padding(horizontal = 14.dp)
-                                            .height(0.3.dp)
-                                            .fillMaxWidth(),
-                                        color = MaterialTheme.colorScheme.outline
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    HomeTabScreenFrame(
+                        uiState = homeTabComponents.uiState,
+                        loadState = homeTabComponents.loadState,
+                        effectFlow = homeTabComponents.effectFlow,
+                        onEventSent = homeTabComponents.onEventSent,
+                        onCommonEventSent = homeTabComponents.onCommonEventSent,
+                        onNavigationRequested = homeTabComponents.onNavigationRequested
+                    )
                 }
 
                 MainScreenTab.Library -> {
@@ -198,7 +162,7 @@ fun MainScreenFrame(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            for(tab in MainScreenTab.entries){
+            for (tab in MainScreenTab.entries) {
                 TabButton(
                     modifier = Modifier
                         .size(TAB_BUTTON_SIZE)
@@ -215,13 +179,6 @@ fun MainScreenFrame(
         }
     }
 
-    // 임시
-    if(loadState is LoadState.Loading){
-        Loading(
-            delayMillis = DELAY_SCREEN_ANIMATION_MS
-        )
-    }
-
     BackHandler {
         onCommonEventSent(CommonEvent.CloseEvent)
     }
@@ -232,10 +189,10 @@ fun TabButton(
     modifier: Modifier = Modifier,
     tabInfo: MainScreenTab,
     isFocus: Boolean
-){
+) {
     Box(
         modifier = modifier.padding(top = 5.5.dp, bottom = 7.5.dp)
-    ){
+    ) {
         Image(
             modifier = Modifier
                 .align(Alignment.TopCenter)
