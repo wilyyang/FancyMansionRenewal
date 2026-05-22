@@ -2,6 +2,12 @@ package com.fancymansion.core.common.const
 
 import androidx.annotation.StringRes
 import com.fancymansion.core.common.resource.StringValue
+
+enum class RemoteBookSortOrder {
+    LAST_UPDATE,
+    TITLE_ASCENDING
+}
+
 enum class EditorPublishStatus(@param:StringRes val resId : Int) {
     PUBLISHED(com.fancymansion.core.common.R.string.publish_status_publish),
     UNPUBLISHED(com.fancymansion.core.common.R.string.publish_status_unpublish)

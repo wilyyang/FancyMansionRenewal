@@ -1,10 +1,13 @@
 package com.fancymansion.data.datasource.firebase.database.book
 
+import com.fancymansion.core.common.const.RemoteBookSortOrder
 import com.fancymansion.core.common.const.RemotePublishStatus
 import com.fancymansion.core.common.const.getEpisodeId
 import com.fancymansion.data.datasource.firebase.FirestoreCollections.BOOKS
 import com.fancymansion.data.datasource.firebase.FirestoreCollections.EPISODES
 import com.fancymansion.data.datasource.firebase.database.book.model.BookInfoData
+import com.fancymansion.data.datasource.firebase.database.book.model.BookInfoData.Fields.QueryFields.TITLE_KEY
+import com.fancymansion.data.datasource.firebase.database.book.model.BookInfoData.Fields.QueryFields.UPDATE_KEY
 import com.fancymansion.data.datasource.firebase.database.book.model.EditorData
 import com.fancymansion.data.datasource.firebase.database.book.model.EpisodeInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.HomeBookItemData
@@ -13,9 +16,12 @@ import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_ID
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_UPDATED_AT
 import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
+import com.fancymansion.data.datasource.firebase.database.book.model.result.BookQueryData
+import com.fancymansion.data.datasource.firebase.database.book.model.result.BookQueryDataResult
 import com.fancymansion.data.datasource.firebase.database.book.model.result.LoadBookDataResult
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -120,6 +126,88 @@ class BookFirestoreDatabaseImpl(
         )
 
         ref.update(updates).await()
+    }
+
+    override suspend fun loadBookListWithQuery(
+        searchText: String,
+        sortOrder: RemoteBookSortOrder,
+        cursorBookId: String?,
+        limit: Long
+    ): BookQueryDataResult {
+
+        // 배포 상태
+        val query = firestore.collection(BOOKS).whereEqualTo(
+            "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.PUBLISH_STATUS}",
+            RemotePublishStatus.PUBLISHED.name
+        ).let { base ->
+            // 검색
+            if (searchText.isNotBlank()) {
+                // 검색은 제목 정렬에서만 기능
+                if(sortOrder != RemoteBookSortOrder.TITLE_ASCENDING)
+                    return BookQueryDataResult.InvalidSearch
+
+                base.whereGreaterThanOrEqualTo(TITLE_KEY, searchText)
+                    .whereLessThanOrEqualTo(TITLE_KEY, searchText + "\uf8ff")
+            } else base
+        }.let { searched ->
+            // 정렬
+            when (sortOrder) {
+                RemoteBookSortOrder.TITLE_ASCENDING -> searched.orderBy(TITLE_KEY)
+                RemoteBookSortOrder.LAST_UPDATE -> searched.orderBy(
+                    UPDATE_KEY,
+                    Query.Direction.DESCENDING
+                )
+            }
+        }.let { sorted ->
+            // 커서
+            if (cursorBookId != null) {
+                val startSnapshot = firestore.collection(BOOKS).document(cursorBookId).get().await()
+
+                if (!startSnapshot.exists())
+                    return BookQueryDataResult.CursorNotExist
+
+                sorted.startAt(startSnapshot)
+            } else sorted
+        }.limit(limit + 1) // next id 를 가져오기 위함
+
+        // 변환 및 반환
+        val bookSnapshots = query.get().await()
+        return coroutineScope {
+            val results = bookSnapshots.documents.map { bookDoc ->
+                async {
+                    val bookId = bookDoc.getString(BookInfoData.BOOK_ID) ?: return@async null
+                    val book = BookInfoData(
+                        bookId = bookId,
+                        publishInfo = bookDoc.parsePublishInfo(),
+                        introduce = bookDoc.parseIntroduce(),
+                        editor = bookDoc.parseEditor(),
+                    )
+                    val episode = getEpisodeData(bookId) ?: return@async null
+                    HomeBookItemData(book = book, episode = episode)
+                }
+            }.awaitAll()
+
+            if (results.any { it == null }) {
+                BookQueryDataResult.NotFoundBook
+            } else {
+                val safeResults = results.filterNotNull()
+                val (bookList, nextBookId) = safeResults.let { list ->
+                    if(list.size > limit){
+                        val nextId = list.last().book.bookId
+                        Pair(list.dropLast(1), nextId)
+                    }else{
+                        Pair(list, null)
+                    }
+                }
+
+                BookQueryDataResult.Success(
+                    BookQueryData(
+                        bookList = bookList,
+                        nextBookId = nextBookId
+                    )
+                )
+            }
+        }
     }
 
     override suspend fun loadBookList(): List<HomeBookItemData> {

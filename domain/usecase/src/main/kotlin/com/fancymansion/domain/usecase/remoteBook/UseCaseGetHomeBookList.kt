@@ -1,10 +1,30 @@
 package com.fancymansion.domain.usecase.remoteBook
 
+import com.fancymansion.core.common.const.RemoteBookSortOrder
 import com.fancymansion.core.common.di.DispatcherIO
 import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+class UseCaseGetHomeBookListWithQuery @Inject constructor(
+    @param:DispatcherIO private val dispatcher: CoroutineDispatcher,
+    private val bookRemoteRepository: BookRemoteRepository
+) {
+    suspend operator fun invoke(
+        searchText: String,
+        sortOrder: RemoteBookSortOrder,
+        cursorBookId: String?,
+        limit: Int
+    ) = withContext(dispatcher) {
+        bookRemoteRepository.getHomeBookItemsWithQuery(
+            searchText = searchText,
+            sortOrder = sortOrder,
+            cursorBookId = cursorBookId,
+            limit = limit.toLong()
+        )
+    }
+}
 
 class UseCaseGetHomeBookList @Inject constructor(
     @param:DispatcherIO private val dispatcher: CoroutineDispatcher,

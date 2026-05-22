@@ -3,6 +3,7 @@ package com.fancymansion.data.repository
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.const.RemoteBookSortOrder
 import com.fancymansion.core.common.const.RemotePublishStatus
 import com.fancymansion.data.datasource.appStorage.book.BookStorageSource
 import com.fancymansion.data.datasource.firebase.database.book.BookFirestoreDatabase
@@ -16,6 +17,7 @@ import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
+import com.fancymansion.domain.model.homeBook.result.BookQueryResult
 import com.fancymansion.domain.model.homeBook.result.LoadBookResult
 import java.io.File
 import javax.inject.Inject
@@ -98,6 +100,20 @@ class BookRemoteRepositoryImpl @Inject constructor(
             coverFile = coverFile,
             fileName = coverFileName
         )
+    }
+
+    override suspend fun getHomeBookItemsWithQuery(
+        searchText: String,
+        sortOrder: RemoteBookSortOrder,
+        cursorBookId: String?,
+        limit: Long
+    ): BookQueryResult {
+        return bookFirestoreDatabase.loadBookListWithQuery(
+            searchText = searchText,
+            sortOrder = sortOrder,
+            cursorBookId = cursorBookId,
+            limit = limit
+        ).toDomain()
     }
 
     override suspend fun getHomeBookItems(): List<HomeBookItemModel> {

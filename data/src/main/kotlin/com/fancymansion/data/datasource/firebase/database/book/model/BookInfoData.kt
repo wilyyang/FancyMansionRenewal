@@ -1,5 +1,7 @@
 package com.fancymansion.data.datasource.firebase.database.book.model
 
+import com.fancymansion.data.datasource.firebase.database.book.model.IntroduceData.Fields.TITLE
+import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData.Fields.UPDATED_AT
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.model.homeBook.BookHomeModel
@@ -19,6 +21,11 @@ data class BookInfoData(
         const val PUBLISH_INFO = "publishInfo"
         const val INTRODUCE = "introduce"
         const val EDITOR = "editor"
+
+        object QueryFields {
+            const val TITLE_KEY = "$INTRODUCE.$TITLE"
+            const val UPDATE_KEY = "$PUBLISH_INFO.$UPDATED_AT"
+        }
     }
 }
 

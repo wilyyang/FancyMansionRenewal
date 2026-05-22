@@ -1,13 +1,13 @@
 package com.fancymansion.presentation.main.common
 
-import com.fancymansion.core.common.const.ImagePickType
-import com.fancymansion.domain.model.book.LocalBookItemModel
 import com.fancymansion.presentation.main.R
-import com.fancymansion.presentation.main.tab.editor.EditBookWrapper
 import com.fancymansion.presentation.main.tab.editor.EditorTabContract
 
 const val BOOKS_PER_PAGE = 10
-const val EDIT_BOOKS_LIMIT = BOOKS_PER_PAGE * 5
+const val VISIBLE_PAGE_LIMIT = 5
+
+const val QUERY_BOOKS_LIMIT = BOOKS_PER_PAGE * VISIBLE_PAGE_LIMIT
+const val EDIT_BOOKS_LIMIT = BOOKS_PER_PAGE * VISIBLE_PAGE_LIMIT
 
 enum class MainScreenTab(val tabName: String, val titleResId: Int, val iconResId: Int, val iconFillResId: Int) {
     Editor(EditorTabContract.NAME, R.string.main_tab_title_editor, R.drawable.ic_main_tab_editor, R.drawable.ic_main_tab_editor_fill),

@@ -1,5 +1,6 @@
 package com.fancymansion.presentation.main.tab.home
 
+import com.fancymansion.core.common.const.RemoteBookSortOrder
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
@@ -10,6 +11,13 @@ import com.fancymansion.presentation.main.R
 enum class HomeBookSortOrder(val textResId : Int) {
     LAST_UPDATE (textResId = R.string.home_book_sort_order_last_update),
     TITLE_ASCENDING (textResId = R.string.home_book_sort_order_title_ascending)
+}
+
+fun HomeBookSortOrder.toRemote(): RemoteBookSortOrder {
+    return when (this) {
+        HomeBookSortOrder.LAST_UPDATE -> RemoteBookSortOrder.LAST_UPDATE
+        HomeBookSortOrder.TITLE_ASCENDING -> RemoteBookSortOrder.TITLE_ASCENDING
+    }
 }
 
 data class HomeBookWrapper(
