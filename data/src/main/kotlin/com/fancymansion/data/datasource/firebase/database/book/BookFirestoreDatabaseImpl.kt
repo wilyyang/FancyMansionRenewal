@@ -16,9 +16,9 @@ import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_PUBLISHED_ID
 import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_UPDATED_AT
 import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
-import com.fancymansion.data.datasource.firebase.database.book.model.result.BookQueryData
 import com.fancymansion.data.datasource.firebase.database.book.model.result.BookQueryDataResult
 import com.fancymansion.data.datasource.firebase.database.book.model.result.LoadBookDataResult
+import com.fancymansion.data.datasource.firebase.database.book.model.result.NextBookIdDataResult
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -31,6 +31,8 @@ import kotlinx.coroutines.tasks.await
 class BookFirestoreDatabaseImpl(
     private val firestore: FirebaseFirestore
 ) : BookFirestoreDatabase {
+
+    private val REDUNDANCY_SIZE = 10
 
     override suspend fun getPublishedId(): String {
         return firestore.collection(BOOKS).document().id
@@ -132,17 +134,17 @@ class BookFirestoreDatabaseImpl(
         searchText: String,
         sortOrder: RemoteBookSortOrder,
         cursorBookId: String?,
-        limit: Long
+        limit: Int
     ): BookQueryDataResult {
-
-        // 배포 상태
+        // 1 Query
+        // 1.1 배포 상태만 필터링
         val query = firestore.collection(BOOKS).whereEqualTo(
             "${BookInfoData.PUBLISH_INFO}.${PublishInfoData.PUBLISH_STATUS}",
             RemotePublishStatus.PUBLISHED.name
         ).let { base ->
-            // 검색
+            // 1.2 검색어 필터링
             if (searchText.isNotBlank()) {
-                // 검색은 제목 정렬에서만 기능
+                // 검색어가 있는데 제목 정렬이 아닐 경우 : InvalidSearch
                 if(sortOrder != RemoteBookSortOrder.TITLE_ASCENDING)
                     return BookQueryDataResult.InvalidSearch
 
@@ -150,63 +152,61 @@ class BookFirestoreDatabaseImpl(
                     .whereLessThanOrEqualTo(TITLE_KEY, searchText + "\uf8ff")
             } else base
         }.let { searched ->
-            // 정렬
+            // 1.3 정렬
             when (sortOrder) {
                 RemoteBookSortOrder.TITLE_ASCENDING -> searched.orderBy(TITLE_KEY)
-                RemoteBookSortOrder.LAST_UPDATE -> searched.orderBy(
-                    UPDATE_KEY,
-                    Query.Direction.DESCENDING
-                )
+                RemoteBookSortOrder.LAST_UPDATE -> searched.orderBy(UPDATE_KEY, Query.Direction.DESCENDING)
             }
         }.let { sorted ->
-            // 커서
+            // 1.4 페이징 (cursorBookId 가 시작 데이터)
             if (cursorBookId != null) {
                 val startSnapshot = firestore.collection(BOOKS).document(cursorBookId).get().await()
 
-                if (!startSnapshot.exists())
-                    return BookQueryDataResult.CursorNotExist
+                // bookId를 전달받았는데 커서가 없는 경우 : CursorNotExist
+                if (!startSnapshot.exists()) return BookQueryDataResult.CursorNotExist
 
                 sorted.startAt(startSnapshot)
             } else sorted
-        }.limit(limit + 1) // next id 를 가져오기 위함
+        }.limit(limit.toLong() + REDUNDANCY_SIZE) // 1.5 요청 개수 + 여분
 
-        // 변환 및 반환
+        // 2 변환 및 반환
         val bookSnapshots = query.get().await()
         return coroutineScope {
+            // 2.1 데이터 변환
             val results = bookSnapshots.documents.map { bookDoc ->
                 async {
-                    val bookId = bookDoc.getString(BookInfoData.BOOK_ID) ?: return@async null
-                    val book = BookInfoData(
-                        bookId = bookId,
-                        publishInfo = bookDoc.parsePublishInfo(),
-                        introduce = bookDoc.parseIntroduce(),
-                        editor = bookDoc.parseEditor(),
-                    )
-                    val episode = getEpisodeData(bookId) ?: return@async null
-                    HomeBookItemData(book = book, episode = episode)
+                    bookDoc.getHomeBookItemData()
                 }
             }.awaitAll()
 
-            if (results.any { it == null }) {
+            val safeResults = results.filterNotNull()
+            if(safeResults.size >= limit){
+                // 2.2.1 개수 만족 반환
+                BookQueryDataResult.Success(safeResults.subList(0, limit))
+            }else if(safeResults.size == results.size){
+                // 2.2.2 마지막 페이지 데이터
+                BookQueryDataResult.Success(safeResults)
+            }else {
+                // 2.2.3 여분을 포함해도 null로 인한 요청 개수 미충족
                 BookQueryDataResult.NotFoundBook
-            } else {
-                val safeResults = results.filterNotNull()
-                val (bookList, nextBookId) = safeResults.let { list ->
-                    if(list.size > limit){
-                        val nextId = list.last().book.bookId
-                        Pair(list.dropLast(1), nextId)
-                    }else{
-                        Pair(list, null)
-                    }
-                }
-
-                BookQueryDataResult.Success(
-                    BookQueryData(
-                        bookList = bookList,
-                        nextBookId = nextBookId
-                    )
-                )
             }
+        }
+    }
+
+    override suspend fun getNextBookIds(
+        searchText: String,
+        sortOrder: RemoteBookSortOrder,
+        beforeBookId: String,
+        limit: Int
+    ): NextBookIdDataResult {
+        val result = loadBookListWithQuery(searchText, sortOrder, beforeBookId, limit + 1)
+        return when(result){
+            BookQueryDataResult.CursorNotExist -> NextBookIdDataResult.CursorNotExist
+            BookQueryDataResult.InvalidSearch -> NextBookIdDataResult.InvalidSearch
+            BookQueryDataResult.NotFoundBook -> NextBookIdDataResult.NotFoundBook
+            is BookQueryDataResult.Success -> NextBookIdDataResult.Success(
+                result.bookList.drop(1).map { it.book.bookId }
+            )
         }
     }
 
@@ -394,5 +394,25 @@ class BookFirestoreDatabaseImpl(
             fallbackEpisodeId = episodeId,
             fallbackBookId = bookId
         )
+    }
+
+    private suspend fun DocumentSnapshot.getHomeBookItemData(): HomeBookItemData? {
+        val bookId = getString(BookInfoData.BOOK_ID)
+        if (bookId == null) {
+            // TODO : Crashlytics 에 로그 남기기
+            return null
+        }
+        val book = BookInfoData(
+            bookId = bookId,
+            publishInfo = parsePublishInfo(),
+            introduce = parseIntroduce(),
+            editor = parseEditor(),
+        )
+        val episode = getEpisodeData(bookId)
+        if (episode == null) {
+            // TODO : Crashlytics 에 로그 남기기
+            return null
+        }
+        return HomeBookItemData(book = book, episode = episode)
     }
 }

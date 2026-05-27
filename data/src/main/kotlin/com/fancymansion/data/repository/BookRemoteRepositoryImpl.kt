@@ -2,6 +2,7 @@ package com.fancymansion.data.repository
 
 import android.net.Uri
 import com.fancymansion.core.common.const.EpisodeRef
+import com.fancymansion.core.common.const.NEXT_CURSOR_COUNT
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.RemoteBookSortOrder
 import com.fancymansion.core.common.const.RemotePublishStatus
@@ -11,12 +12,15 @@ import com.fancymansion.data.datasource.firebase.database.book.model.NOT_ASSIGN_
 import com.fancymansion.data.datasource.firebase.database.book.model.PublishInfoData
 import com.fancymansion.data.datasource.firebase.database.book.model.asData
 import com.fancymansion.data.datasource.firebase.database.book.model.asHomeModel
+import com.fancymansion.data.datasource.firebase.database.book.model.result.BookQueryDataResult
+import com.fancymansion.data.datasource.firebase.database.book.model.result.NextBookIdDataResult
 import com.fancymansion.data.datasource.firebase.database.book.model.result.toDomain
 import com.fancymansion.data.datasource.firebase.storage.book.BookFirebaseStorage
 import com.fancymansion.domain.interfaceRepository.BookRemoteRepository
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.domain.model.book.EpisodeInfoModel
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
+import com.fancymansion.domain.model.homeBook.result.BookQueryModel
 import com.fancymansion.domain.model.homeBook.result.BookQueryResult
 import com.fancymansion.domain.model.homeBook.result.LoadBookResult
 import java.io.File
@@ -105,15 +109,57 @@ class BookRemoteRepositoryImpl @Inject constructor(
     override suspend fun getHomeBookItemsWithQuery(
         searchText: String,
         sortOrder: RemoteBookSortOrder,
-        cursorBookId: String?,
-        limit: Long
+        cursorBookIds: List<String>,
+        limit: Int
     ): BookQueryResult {
-        return bookFirestoreDatabase.loadBookListWithQuery(
-            searchText = searchText,
-            sortOrder = sortOrder,
-            cursorBookId = cursorBookId,
-            limit = limit
-        ).toDomain()
+
+        var finalResult: BookQueryDataResult? = null
+
+        // 1. 북 정보 불러오기
+        val cursorCandidates = cursorBookIds.ifEmpty { listOf<String?>(null) }
+        for (cursorBookId in cursorCandidates) {
+            when (val result = bookFirestoreDatabase.loadBookListWithQuery(
+                searchText = searchText,
+                sortOrder = sortOrder,
+                cursorBookId = cursorBookId,
+                limit = limit
+            )) {
+                BookQueryDataResult.InvalidSearch -> return BookQueryResult.InvalidSearch
+                BookQueryDataResult.NotFoundBook -> return BookQueryResult.NotFoundBook
+
+                BookQueryDataResult.CursorNotExist -> continue
+                is BookQueryDataResult.Success -> {
+                    finalResult = result
+                    break
+                }
+            }
+        }
+
+        val successResult =
+            finalResult as? BookQueryDataResult.Success
+                ?: return BookQueryResult.CursorNotExist
+
+        // 2. 다음 book id 목록
+        val lastBookId = successResult.bookList.lastOrNull()?.book?.bookId
+        val nextIds = if (lastBookId != null) {
+            when (val nextResult = bookFirestoreDatabase.getNextBookIds(
+                searchText = searchText,
+                sortOrder = sortOrder,
+                beforeBookId = lastBookId,
+                limit = NEXT_CURSOR_COUNT
+            )) {
+                is NextBookIdDataResult.Success -> nextResult.nextBookIds
+                else -> return BookQueryResult.NextBookIdError
+            }
+
+        } else emptyList()
+
+        return BookQueryResult.Success(
+            model = BookQueryModel(
+                bookList = successResult.bookList.map { it.asHomeModel() },
+                nextBookIds = nextIds
+            )
+        )
     }
 
     override suspend fun getHomeBookItems(): List<HomeBookItemModel> {

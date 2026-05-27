@@ -14,14 +14,14 @@ class UseCaseGetHomeBookListWithQuery @Inject constructor(
     suspend operator fun invoke(
         searchText: String,
         sortOrder: RemoteBookSortOrder,
-        cursorBookId: String?,
+        cursorBookIds: List<String>,
         limit: Int
     ) = withContext(dispatcher) {
         bookRemoteRepository.getHomeBookItemsWithQuery(
             searchText = searchText,
             sortOrder = sortOrder,
-            cursorBookId = cursorBookId,
-            limit = limit.toLong()
+            cursorBookIds = cursorBookIds,
+            limit = limit
         )
     }
 }

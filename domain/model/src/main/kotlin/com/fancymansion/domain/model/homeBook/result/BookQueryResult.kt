@@ -4,7 +4,7 @@ import com.fancymansion.domain.model.homeBook.HomeBookItemModel
 
 data class BookQueryModel(
     val bookList: List<HomeBookItemModel>,
-    val nextBookId: String?
+    val nextBookIds: List<String>
 )
 
 sealed class BookQueryResult {
@@ -12,4 +12,5 @@ sealed class BookQueryResult {
     object InvalidSearch : BookQueryResult()
     object CursorNotExist : BookQueryResult()
     object NotFoundBook : BookQueryResult()
+    object NextBookIdError : BookQueryResult()
 }
