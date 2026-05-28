@@ -124,8 +124,8 @@ class BookRemoteRepositoryImpl @Inject constructor(
                 cursorBookId = cursorBookId,
                 limit = limit
             )) {
-                BookQueryDataResult.InvalidSearch -> return BookQueryResult.InvalidSearch
-                BookQueryDataResult.NotFoundBook -> return BookQueryResult.NotFoundBook
+                BookQueryDataResult.InvalidSearch -> return BookQueryResult.Error.InvalidSearch
+                BookQueryDataResult.NotFoundBook -> return BookQueryResult.Error.NotFoundBook
 
                 BookQueryDataResult.CursorNotExist -> continue
                 is BookQueryDataResult.Success -> {
@@ -137,7 +137,7 @@ class BookRemoteRepositoryImpl @Inject constructor(
 
         val successResult =
             finalResult as? BookQueryDataResult.Success
-                ?: return BookQueryResult.CursorNotExist
+                ?: return BookQueryResult.Error.CursorNotExist
 
         // 2. 다음 book id 목록
         val lastBookId = successResult.bookList.lastOrNull()?.book?.bookId
@@ -149,7 +149,7 @@ class BookRemoteRepositoryImpl @Inject constructor(
                 limit = NEXT_CURSOR_COUNT
             )) {
                 is NextBookIdDataResult.Success -> nextResult.nextBookIds
-                else -> return BookQueryResult.NextBookIdError
+                else -> return BookQueryResult.Error.NextBookIdError
             }
 
         } else emptyList()

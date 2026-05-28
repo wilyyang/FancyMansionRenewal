@@ -1,12 +1,14 @@
 package com.fancymansion.presentation.main.tab.home
 
 import com.fancymansion.core.common.const.RemoteBookSortOrder
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.ViewEvent
 import com.fancymansion.core.presentation.base.ViewSideEffect
 import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.KeywordModel
 import com.fancymansion.domain.model.homeBook.HomeBookItemModel
 import com.fancymansion.presentation.main.R
+import com.fancymansion.presentation.main.common.BOOKS_PER_PAGE
 
 enum class HomeBookSortOrder(val textResId : Int) {
     LAST_UPDATE (textResId = R.string.home_book_sort_order_last_update),
@@ -40,6 +42,22 @@ fun HomeBookItemModel.toWrapper(thumbnailUrl: String) : HomeBookWrapper {
     )
 }
 
+class LoadHomeBookException(
+    val title: StringValue.StringResource,
+    val text: StringValue.StringResource
+): Exception()
+
+data class PageChunkCursor(
+    val startPage: Int,
+    val bookSize: Int = 0,
+    val cursorBookIds: List<String>
+) {
+    val pageCount: Int
+        get() = if (bookSize <= 0) 0 else (bookSize - 1) / BOOKS_PER_PAGE + 1
+    val endPage: Int
+        get() = startPage + pageCount - 1
+}
+
 class HomeTabContract {
     companion object {
         const val NAME = "main_tab_home"
@@ -49,8 +67,9 @@ class HomeTabContract {
         val isInitSuccess : Boolean = false,
         val searchText: String = "",
         val bookSortOrder: HomeBookSortOrder = HomeBookSortOrder.LAST_UPDATE,
-        val totalPageCount: Int = 0,
         val currentPage : Int = 0,
+        val startPage: Int = 0,
+        val endPage: Int = 0,
         val visibleBookList: List<HomeBookWrapper> = emptyList()
     ) : ViewState
 

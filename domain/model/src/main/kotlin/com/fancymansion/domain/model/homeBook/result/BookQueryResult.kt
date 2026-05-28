@@ -9,8 +9,10 @@ data class BookQueryModel(
 
 sealed class BookQueryResult {
     data class Success(val model: BookQueryModel) : BookQueryResult()
-    object InvalidSearch : BookQueryResult()
-    object CursorNotExist : BookQueryResult()
-    object NotFoundBook : BookQueryResult()
-    object NextBookIdError : BookQueryResult()
+    sealed class Error : BookQueryResult() {
+        object InvalidSearch : Error()
+        object CursorNotExist : Error()
+        object NotFoundBook : Error()
+        object NextBookIdError : Error()
+    }
 }

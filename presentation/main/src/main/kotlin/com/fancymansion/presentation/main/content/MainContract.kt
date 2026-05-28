@@ -12,7 +12,7 @@ class MainContract {
 
     data class State(
         val isInitSuccess : Boolean = false,
-        val currentTab: MainScreenTab = MainScreenTab.Editor,
+        val currentTab: MainScreenTab = MainScreenTab.Home,
     ) : ViewState
 
     sealed class Event : ViewEvent {

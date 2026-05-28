@@ -83,11 +83,23 @@
     <string name="home_book_search_text_hint">제목 검색</string>
     <string name="home_book_search_text_cancel">취소</string>
 
-    <string name="home_book_bar_title">작품</string>
+    <string name="home_book_bar_title">홈</string>
 
     <string name="home_book_holder_update_date">%1$s 업데이트</string>
     <string name="home_book_holder_page_count">총 %1$d 페이지</string>
 
     <string name="home_book_list_empty_title">작품을 찾을 수 없습니다</string>
     <string name="home_book_list_empty_sub_title">다른 검색어로 다시 시도해 보세요.</string>
+
+    <string name="home_book_load_error_cursor_not_exist_title">목록을 불러올 수 없어요</string>
+    <string name="home_book_load_error_cursor_not_exist_message">불러오던 위치 정보를 찾을 수 없어요. 다시 시도해주세요.</string>
+
+    <string name="home_book_load_error_invalid_search_title">검색할 수 없어요</string>
+    <string name="home_book_load_error_invalid_search_message">현재 정렬 방식에서는 검색을 사용할 수 없어요. 다시 시도해주세요.</string>
+
+    <string name="home_book_load_error_not_found_book_title">책 정보를 불러올 수 없어요</string>
+    <string name="home_book_load_error_not_found_book_message">일부 책 정보를 불러오는 중 문제가 발생했어요. 다시 시도해주세요.</string>
+
+    <string name="home_book_load_error_next_book_id_title">다음 목록을 준비할 수 없어요</string>
+    <string name="home_book_load_error_next_book_id_message">다음 책 목록 정보를 불러오는 중 문제가 발생했어요. 다시 시도해주세요.</string>
 </resources>
