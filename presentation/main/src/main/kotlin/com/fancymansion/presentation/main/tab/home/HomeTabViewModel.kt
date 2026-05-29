@@ -8,7 +8,6 @@ import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.RemoteBookSortOrder
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
-import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.homeBook.result.BookQueryResult
@@ -21,7 +20,6 @@ import com.fancymansion.domain.usecase.util.UseCaseGetResource
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.common.BOOKS_PER_PAGE
 import com.fancymansion.presentation.main.common.QUERY_BOOKS_LIMIT
-import com.fancymansion.presentation.main.common.VISIBLE_PAGE_LIMIT
 import com.fancymansion.presentation.main.tab.home.HomeTabContract.Event.BookHolderClicked
 import com.fancymansion.presentation.main.tab.home.HomeTabContract.Event.BookPageNumberClicked
 import com.fancymansion.presentation.main.tab.home.HomeTabContract.Event.SearchCancel
@@ -30,7 +28,6 @@ import com.fancymansion.presentation.main.tab.home.HomeTabContract.Event.SearchT
 import com.fancymansion.presentation.main.tab.home.HomeTabContract.Event.SelectBookSortOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlin.String
 
 @HiltViewModel
 class HomeTabViewModel @Inject constructor(
@@ -42,8 +39,6 @@ class HomeTabViewModel @Inject constructor(
     private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<HomeTabContract.State, HomeTabContract.Event, HomeTabContract.Effect>() {
-
-    private var isUpdateResume = false
     private lateinit var userId: String
 
     private var currentChunkBooks = listOf<HomeBookWrapper>()
@@ -70,13 +65,6 @@ class HomeTabViewModel @Inject constructor(
         }
     }
 
-    override fun handleCommonEvents(event: CommonEvent) {
-        when (event) {
-            is CommonEvent.OnResume -> handleOnResume()
-            else -> super.handleCommonEvents(event)
-        }
-    }
-
     private fun initializeState() {
         launchWithInit {
             val userInfo = useCaseGetUserInfoLocal() ?: error("UserInfo is null")
@@ -91,111 +79,39 @@ class HomeTabViewModel @Inject constructor(
         }
     }
 
-    private fun handleOnResume() {
-        if (isUpdateResume) {
-            isUpdateResume = false
-            launchWithLoading {
-                // TODO
-            }
-        }
-    }
-
     /**
      * [1] 일반 이벤트 처리 함수
      */
     private fun handlePageNumberClicked(page: Int) = launchWithLoading {
         uiState.value.run {
-            if(page in startPage .. endPage){
-                val localPage = page - startPage
-                val startIndex = localPage * BOOKS_PER_PAGE
+            // 현재 청크 내부 이동
+            if (page in startPage..endPage) {
+                showCurrentChunkPage(page)
+                return@launchWithLoading
+            }
 
-                setState {
-                    copy(
-                        currentPage = page,
-                        visibleBookList = currentChunkBooks
-                            .drop(startIndex)
-                            .take(BOOKS_PER_PAGE)
-                    )
-                }
-            } else {
-                if (page > endPage) {
-                    // 다음 청크로 이동
-                    nextPageCursor?.let { cursor ->
-                        getHomeBookListWithQuery(
-                            searchText,
-                            bookSortOrder.toRemote(),
-                            cursor.cursorBookIds
-                        ).let { (books, nextIds) ->
-                            // 커서 업데이트
-                            prevPageCursors.add(currentPageCursor!!)
-                            currentPageCursor = PageChunkCursor(
-                                startPage = cursor.startPage,
-                                bookSize = books.size,
-                                cursorBookIds = books.take(10).map { it.bookId }
-                            )
-                            nextPageCursor = if (nextIds.isEmpty()) null else
-                                PageChunkCursor(
-                                    startPage = currentPageCursor!!.endPage + 1,
-                                    cursorBookIds = nextIds
-                                )
 
-                            // 데이터 업데이트
-                            currentChunkBooks = books
+            val isNextChunk = page > endPage
+            val cursor =
+                if (isNextChunk) nextPageCursor
+                else prevPageCursors.lastOrNull()
 
-                            val localPage = page - currentPageCursor!!.startPage
-                            val startIndex = localPage * BOOKS_PER_PAGE
-                            setState {
-                                copy(
-                                    startPage = currentPageCursor!!.startPage,
-                                    endPage = currentPageCursor!!.endPage,
-                                    currentPage = page,
-                                    visibleBookList = currentChunkBooks
-                                        .drop(startIndex)
-                                        .take(BOOKS_PER_PAGE)
-                                )
-                            }
-                        }
-                    }
+            cursor?.let {
+                val (books, nextIds) = getHomeBookListWithQuery(
+                    searchText,
+                    bookSortOrder.toRemote(),
+                    it.cursorBookIds
+                )
+                if (isNextChunk) prevPageCursors.add(currentPageCursor!!)
+                else prevPageCursors.removeLast()
 
-                } else {
-                    // 이전 청크로 이동
-                    prevPageCursors.lastOrNull()?.let { cursor ->
-                        getHomeBookListWithQuery(
-                            searchText,
-                            bookSortOrder.toRemote(),
-                            cursor.cursorBookIds
-                        ).let { (books, nextIds) ->
-                            // 커서 업데이트
-                            prevPageCursors.removeLast()
-                            currentPageCursor = PageChunkCursor(
-                                startPage = cursor.startPage,
-                                bookSize = books.size,
-                                cursorBookIds = books.take(10).map { it.bookId }
-                            )
-                            nextPageCursor = if (nextIds.isEmpty()) null else
-                                PageChunkCursor(
-                                    startPage = currentPageCursor!!.endPage + 1,
-                                    cursorBookIds = nextIds
-                                )
+                applyChunkResult(
+                    startPage = it.startPage,
+                    books = books,
+                    nextIds = nextIds
+                )
 
-                            // 데이터 업데이트
-                            currentChunkBooks = books
-
-                            val localPage = page - currentPageCursor!!.startPage
-                            val startIndex = localPage * BOOKS_PER_PAGE
-                            setState {
-                                copy(
-                                    startPage = currentPageCursor!!.startPage,
-                                    endPage = currentPageCursor!!.endPage,
-                                    currentPage = page,
-                                    visibleBookList = currentChunkBooks
-                                        .drop(startIndex)
-                                        .take(BOOKS_PER_PAGE)
-                                )
-                            }
-                        }
-                    }
-                }
+                showCurrentChunkPage(page)
             }
         }
     }
@@ -230,14 +146,14 @@ class HomeTabViewModel @Inject constructor(
         if (uiState.value.searchText.isNotBlank()) {
             val (books, nextIds) = getHomeBookListWithQuery(
                 uiState.value.searchText,
-                uiState.value.bookSortOrder.toRemote(),
+                HomeBookSortOrder.TITLE_ASCENDING.toRemote(),
                 emptyList()
             )
             applyPageResetQueryResult(
                 books = books,
                 nextIds = nextIds,
                 searchText = uiState.value.searchText,
-                sortOrder = uiState.value.bookSortOrder
+                sortOrder = HomeBookSortOrder.TITLE_ASCENDING
             )
         }
     }
@@ -323,35 +239,72 @@ class HomeTabViewModel @Inject constructor(
         }
     }
 
+    private fun applyChunkResult(
+        startPage: Int,
+        books: List<HomeBookWrapper>,
+        nextIds: List<String>
+    ) {
+        currentPageCursor = PageChunkCursor(
+            startPage = startPage,
+            bookSize = books.size,
+            cursorBookIds = books.take(10).map { it.bookId }
+        )
+
+        nextPageCursor =
+            if (nextIds.isEmpty()) {
+                null
+            } else {
+                PageChunkCursor(
+                    startPage = currentPageCursor!!.endPage + 1,
+                    cursorBookIds = nextIds
+                )
+            }
+
+        currentChunkBooks = books
+
+        setState {
+            copy(
+                startPage = currentPageCursor!!.startPage,
+                endPage = currentPageCursor!!.endPage
+            )
+        }
+    }
+
+    private fun showCurrentChunkPage(page: Int) {
+
+        val localPage = page - uiState.value.startPage
+        val startIndex = localPage * BOOKS_PER_PAGE
+
+        setState {
+            copy(
+                currentPage = page,
+                visibleBookList = currentChunkBooks
+                    .drop(startIndex)
+                    .take(BOOKS_PER_PAGE)
+            )
+        }
+    }
+
     private fun applyPageResetQueryResult(
         books: List<HomeBookWrapper>,
         nextIds: List<String>,
         searchText: String = "",
         sortOrder: HomeBookSortOrder = HomeBookSortOrder.LAST_UPDATE
     ) {
-        currentChunkBooks = books
-
         prevPageCursors.clear()
-        currentPageCursor = PageChunkCursor(
+        applyChunkResult(
             startPage = 0,
-            bookSize = books.size,
-            cursorBookIds = books.take(10).map { it.bookId }
-        )
-        nextPageCursor = if(nextIds.isEmpty()) null else PageChunkCursor(
-            startPage = VISIBLE_PAGE_LIMIT,
-            cursorBookIds = nextIds
+            books = books,
+            nextIds = nextIds
         )
 
         setState {
             copy(
                 searchText = searchText,
                 bookSortOrder = sortOrder,
-                startPage = currentPageCursor?.startPage?:0,
-                endPage = currentPageCursor?.endPage?:0,
-                currentPage = 0,
-                visibleBookList = currentChunkBooks.take(BOOKS_PER_PAGE)
             )
         }
+        showCurrentChunkPage(0)
     }
 
     override fun showExceptionResult(
