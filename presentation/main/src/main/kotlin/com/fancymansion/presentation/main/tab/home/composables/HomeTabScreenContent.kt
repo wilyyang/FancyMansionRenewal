@@ -210,7 +210,11 @@ fun HomeTabScreenContent(
                             .padding(top = 40.dp, bottom = 50.dp)
                             .fillMaxWidth(),
                         currentPage = uiState.currentPage,
-                        totalPageCount = uiState.endPage,
+                        windowStart = uiState.startPage,
+                        windowEndExclusive = (uiState.endPage + 1).takeIf { it > 0 } ?: 1,
+                        canPrev = uiState.canPrev,
+                        canNext = uiState.canNext,
+                        pageClickEnabled = (uiState.endPage + 1) > 0,
                         onClickPageNumber = {
                             onEventSent(HomeTabContract.Event.BookPageNumberClicked(it))
                         }

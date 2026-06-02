@@ -56,6 +56,9 @@ data class PageChunkCursor(
         get() = if (bookSize <= 0) 0 else (bookSize - 1) / BOOKS_PER_PAGE + 1
     val endPage: Int
         get() = startPage + pageCount - 1
+
+    override fun toString() =
+        "Chunk[$startPage~$endPage] ($bookSize books / $pageCount pages) cursorIds=${cursorBookIds.size}"
 }
 
 class HomeTabContract {
@@ -70,6 +73,9 @@ class HomeTabContract {
         val currentPage : Int = 0,
         val startPage: Int = 0,
         val endPage: Int = 0,
+        val pageCount: Int = 0,
+        val canPrev: Boolean = false,
+        val canNext: Boolean = false,
         val visibleBookList: List<HomeBookWrapper> = emptyList()
     ) : ViewState
 

@@ -22,8 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.presentation.main.R
-
-private const val VISIBLE_PAGE_COUNT = 5
+import com.fancymansion.presentation.main.common.VISIBLE_PAGE_LIMIT
 
 @Composable
 fun BottomBookPagination(
@@ -32,17 +31,43 @@ fun BottomBookPagination(
     totalPageCount: Int,
     onClickPageNumber: (Int) -> Unit
 ) {
-    val windowStart = (currentPage / VISIBLE_PAGE_COUNT) * VISIBLE_PAGE_COUNT
+    val windowStart = (currentPage / VISIBLE_PAGE_LIMIT) * VISIBLE_PAGE_LIMIT
     val windowEndExclusive =
         if (totalPageCount > 0)
-            minOf(windowStart + VISIBLE_PAGE_COUNT, totalPageCount)
+            minOf(windowStart + VISIBLE_PAGE_LIMIT, totalPageCount)
         else 1
 
     val prevPage = windowStart - 1
-    val nextPage = windowStart + VISIBLE_PAGE_COUNT
+    val nextPage = windowStart + VISIBLE_PAGE_LIMIT
 
     val canPrev = totalPageCount > 0 && prevPage >= 0
     val canNext = totalPageCount > 0 && nextPage < totalPageCount
+
+    BottomBookPagination(
+        modifier = modifier,
+        currentPage = currentPage,
+        windowStart = windowStart,
+        windowEndExclusive = windowEndExclusive,
+        canPrev = canPrev,
+        canNext = canNext,
+        pageClickEnabled = totalPageCount > 0,
+        onClickPageNumber = onClickPageNumber
+    )
+}
+
+@Composable
+fun BottomBookPagination(
+    modifier: Modifier = Modifier,
+    currentPage: Int,
+    windowStart: Int,
+    windowEndExclusive: Int,
+    canPrev: Boolean,
+    canNext: Boolean,
+    pageClickEnabled: Boolean,
+    onClickPageNumber: (Int) -> Unit
+) {
+    val prevPage = windowStart - 1
+    val nextPage = windowStart + VISIBLE_PAGE_LIMIT
 
     val prevColor = MaterialTheme.colorScheme.onSurface.copy(alpha = if (canPrev) 1f else 0.3f)
     val nextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = if (canNext) 1f else 0.3f)
@@ -82,7 +107,7 @@ fun BottomBookPagination(
                         .padding(end = if (page < windowEndExclusive - 1) 20.dp else 0.dp)
                         .width(20.dp)
                         .clickSingle(
-                            enabled = totalPageCount > 0
+                            enabled = pageClickEnabled
                         ) { onClickPageNumber(page) },
                     text = "${page + 1}",
                     textAlign = TextAlign.Center,

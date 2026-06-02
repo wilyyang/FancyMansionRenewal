@@ -6,6 +6,7 @@ import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
 import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.RemoteBookSortOrder
+import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
@@ -265,7 +266,10 @@ class HomeTabViewModel @Inject constructor(
         setState {
             copy(
                 startPage = currentPageCursor!!.startPage,
-                endPage = currentPageCursor!!.endPage
+                endPage = currentPageCursor!!.endPage,
+                pageCount = currentPageCursor!!.pageCount,
+                canPrev = prevPageCursors.isNotEmpty(),
+                canNext = nextPageCursor != null
             )
         }
     }
