@@ -398,7 +398,7 @@ class BookFirestoreDatabaseImpl(
 
     private suspend fun DocumentSnapshot.getHomeBookItemData(): HomeBookItemData? {
         val bookId = getString(BookInfoData.BOOK_ID)
-        if (bookId == null) {
+        if (bookId.isNullOrBlank()) {
             // TODO : Crashlytics 에 로그 남기기
             return null
         }
