@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home
+package com.fancymansion.presentation.bookOverview.overview
 
 import com.fancymansion.core.common.const.EpisodeRef
 import com.fancymansion.core.presentation.base.ViewEvent
@@ -7,9 +7,9 @@ import com.fancymansion.core.presentation.base.ViewState
 import com.fancymansion.domain.model.book.BookInfoModel
 import java.io.File
 
-class OverviewHomeContract {
+class BookOverviewContract {
     companion object {
-        const val NAME = "overview_home"
+        const val NAME = "book_overview"
     }
 
     data class State(

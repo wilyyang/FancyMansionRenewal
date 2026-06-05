@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home.composables.panel.detail
+package com.fancymansion.presentation.bookOverview.overview.composables.panel.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +22,7 @@ import com.fancymansion.core.presentation.compose.theme.onSurfaceInactive
 import com.fancymansion.core.presentation.compose.theme.typography.TypeStyles
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
-import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
+import com.fancymansion.presentation.bookOverview.overview.composables.OverviewPanelState
 import kotlinx.coroutines.launch
 
 @Composable

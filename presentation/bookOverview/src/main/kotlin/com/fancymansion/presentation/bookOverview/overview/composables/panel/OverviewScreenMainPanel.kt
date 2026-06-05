@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home.composables.panel
+package com.fancymansion.presentation.bookOverview.overview.composables.panel
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,13 +41,13 @@ import com.fancymansion.core.presentation.compose.theme.Paddings
 import com.fancymansion.core.presentation.compose.theme.typography.TypeStyles
 import com.fancymansion.domain.model.book.BookInfoModel
 import com.fancymansion.presentation.bookOverview.R
-import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import com.fancymansion.presentation.bookOverview.home.composables.detailPanelCornerHeight
-import com.fancymansion.presentation.bookOverview.home.composables.detailPanelShape
+import com.fancymansion.presentation.bookOverview.overview.BookOverviewContract
+import com.fancymansion.presentation.bookOverview.overview.composables.detailPanelCornerHeight
+import com.fancymansion.presentation.bookOverview.overview.composables.detailPanelShape
 import java.io.File
 
 @Composable
-fun OverviewHomeTopBar(
+fun BookOverviewTopBar(
     modifier: Modifier = Modifier,
     statusBarPaddingDp : Float,
     bookInfo: BookInfoModel,
@@ -99,7 +99,7 @@ fun OverviewHomeTopBar(
 }
 
 @Composable
-fun OverviewScreenHomePanel(
+fun OverviewScreenMainPanel(
     modifier: Modifier,
     bookInfo: BookInfoModel,
     bookCoverHeightDp : Float,
@@ -107,7 +107,7 @@ fun OverviewScreenHomePanel(
     coverImageFile: File?,
     showDetailPanel: () -> Unit,
     onClickBack: () -> Unit,
-    onEventSent: (event: OverviewHomeContract.Event) -> Unit
+    onEventSent: (event: BookOverviewContract.Event) -> Unit
 ) {
     val density = LocalDensity.current
     val listState = rememberLazyListState()
@@ -281,7 +281,7 @@ fun OverviewScreenHomePanel(
                                 color = Color.Black
                             )
                             .padding(vertical = 12.dp)
-                            .clickSingle { onEventSent(OverviewHomeContract.Event.ReadBookButtonClicked) },
+                            .clickSingle { onEventSent(BookOverviewContract.Event.ReadBookButtonClicked) },
                         text = stringResource(id = R.string.button_overview_read_book),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
@@ -317,7 +317,7 @@ fun OverviewScreenHomePanel(
             }
         }
 
-        OverviewHomeTopBar(
+        BookOverviewTopBar(
             statusBarPaddingDp = statusBarPaddingDp,
             bookInfo = bookInfo,
             surfaceColor = topBarSurfaceColor,

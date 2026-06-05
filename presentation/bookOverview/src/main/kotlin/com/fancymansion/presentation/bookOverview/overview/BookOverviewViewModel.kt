@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home
+package com.fancymansion.presentation.bookOverview.overview
 
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.common.const.ArgName
@@ -10,10 +10,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OverviewHomeViewModel @Inject constructor(
+class BookOverviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val useCaseLoadBook: UseCaseLoadBook
-) : BaseViewModel<OverviewHomeContract.State, OverviewHomeContract.Event, OverviewHomeContract.Effect>() {
+) : BaseViewModel<BookOverviewContract.State, BookOverviewContract.Event, BookOverviewContract.Effect>() {
 
     private var episodeRef : EpisodeRef = savedStateHandle.run {
         EpisodeRef(
@@ -24,13 +24,13 @@ class OverviewHomeViewModel @Inject constructor(
         )
     }
 
-    override fun setInitialState() = OverviewHomeContract.State()
+    override fun setInitialState() = BookOverviewContract.State()
 
-    override fun handleEvents(event: OverviewHomeContract.Event) {
+    override fun handleEvents(event: BookOverviewContract.Event) {
         when (event) {
-            OverviewHomeContract.Event.ReadBookButtonClicked -> {
+            BookOverviewContract.Event.ReadBookButtonClicked -> {
                 setEffect {
-                    OverviewHomeContract.Effect.Navigation.NavigateViewerContentScreen(
+                    BookOverviewContract.Effect.Navigation.NavigateViewerContentScreen(
                         episodeRef = episodeRef,
                         bookTitle = uiState.value.bookInfo!!.introduce.title,
                         episodeTitle = ""
@@ -38,9 +38,9 @@ class OverviewHomeViewModel @Inject constructor(
                 }
             }
 
-            OverviewHomeContract.Event.ReviewMoreButtonClicked -> {
+            BookOverviewContract.Event.ReviewMoreButtonClicked -> {
                 setEffect {
-                    OverviewHomeContract.Effect.Navigation.NavigateReviewListScreen(
+                    BookOverviewContract.Effect.Navigation.NavigateReviewListScreen(
                         userId = episodeRef.userId,
                         bookId = episodeRef.bookId
                     )

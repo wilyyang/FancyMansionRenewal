@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home.composables
+package com.fancymansion.presentation.bookOverview.overview.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -25,9 +25,9 @@ import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
 import com.fancymansion.core.presentation.compose.screen.NoDataScreen
 import com.fancymansion.presentation.bookOverview.R
-import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import com.fancymansion.presentation.bookOverview.home.composables.panel.detail.OverviewScreenDetailPanel
-import com.fancymansion.presentation.bookOverview.home.composables.panel.OverviewScreenHomePanel
+import com.fancymansion.presentation.bookOverview.overview.BookOverviewContract
+import com.fancymansion.presentation.bookOverview.overview.composables.panel.detail.OverviewScreenDetailPanel
+import com.fancymansion.presentation.bookOverview.overview.composables.panel.OverviewScreenMainPanel
 
 enum class OverviewPanelState {
     Home,
@@ -35,13 +35,13 @@ enum class OverviewPanelState {
 }
 
 @Composable
-fun OverviewHomeScreenContent(
+fun BookOverviewScreenContent(
     modifier: Modifier = Modifier,
-    uiState: OverviewHomeContract.State,
+    uiState: BookOverviewContract.State,
     statusBarPaddingDp : Float,
     bookCoverHeightDp : Float,
     bookBottomInfoHeightDp : Float,
-    onEventSent: (event: OverviewHomeContract.Event) -> Unit,
+    onEventSent: (event: BookOverviewContract.Event) -> Unit,
     onCommonEventSent: (event: CommonEvent) -> Unit
 ) {
     uiState.bookInfo?.let { bookInfo ->
@@ -71,7 +71,7 @@ fun OverviewHomeScreenContent(
 
             Box(modifier = modifier) {
                 // 홈 화면
-                OverviewScreenHomePanel(
+                OverviewScreenMainPanel(
                     modifier = Modifier.align(Alignment.TopCenter),
                     bookInfo = uiState.bookInfo,
                     statusBarPaddingDp = statusBarPaddingDp,

@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home.composables
+package com.fancymansion.presentation.bookOverview.overview.composables
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.os.BuildCompat
 import com.fancymansion.core.common.const.MOBILE_PREVIEW_SPEC
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.LoadState
@@ -38,7 +37,7 @@ import com.fancymansion.core.presentation.compose.component.FadeInOutSkeleton
 import com.fancymansion.core.presentation.compose.frame.BaseScreen
 import com.fancymansion.core.presentation.compose.theme.FancyMansionTheme
 import com.fancymansion.core.presentation.compose.theme.Paddings
-import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
+import com.fancymansion.presentation.bookOverview.overview.BookOverviewContract
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -47,17 +46,17 @@ const val detailPanelCornerHeight = 12
 val detailPanelShape = RoundedCornerShape(topStart = detailPanelCornerHeight.dp, topEnd = detailPanelCornerHeight.dp)
 
 @Composable
-fun OverviewHomeScreenFrame(
-    uiState: OverviewHomeContract.State,
+fun BookOverviewScreenFrame(
+    uiState: BookOverviewContract.State,
     loadState: LoadState,
-    effectFlow: SharedFlow<OverviewHomeContract.Effect>?,
+    effectFlow: SharedFlow<BookOverviewContract.Effect>?,
     onCommonEventSent: (event: CommonEvent) -> Unit,
-    onEventSent: (event: OverviewHomeContract.Event) -> Unit,
-    onNavigationRequested: (OverviewHomeContract.Effect.Navigation) -> Unit
+    onEventSent: (event: BookOverviewContract.Event) -> Unit,
+    onNavigationRequested: (BookOverviewContract.Effect.Navigation) -> Unit
 ) {
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
-            if(effect is OverviewHomeContract.Effect.Navigation){
+            if(effect is BookOverviewContract.Effect.Navigation){
                 onNavigationRequested(effect)
             }
         }?.collect()
@@ -88,12 +87,12 @@ fun OverviewHomeScreenFrame(
 
     BaseScreen(
         loadState = loadState,
-        description = OverviewHomeContract.NAME,
+        description = BookOverviewContract.NAME,
         statusBarColor = Color.Transparent,
         typePane = TypePane.MOBILE,
         initContent = {
 
-            OverviewHomeSkeletonScreen(
+            BookOverviewSkeletonScreen(
                 modifier = Modifier.fillMaxSize(),
                 statusBarPaddingDp = statusBarPaddingDp.value,
                 bookCoverHeightDp = bookCoverHeightDp
@@ -101,7 +100,7 @@ fun OverviewHomeScreenFrame(
         },
         isOverlayTopBar = true
     ) {
-        OverviewHomeScreenContent(
+        BookOverviewScreenContent(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             statusBarPaddingDp = statusBarPaddingDp.value,
@@ -118,7 +117,7 @@ fun OverviewHomeScreenFrame(
 }
 
 @Composable
-fun OverviewHomeSkeletonScreen(
+fun BookOverviewSkeletonScreen(
     modifier: Modifier = Modifier,
     statusBarPaddingDp : Float,
     bookCoverHeightDp : Float
@@ -158,11 +157,11 @@ fun OverviewHomeSkeletonScreen(
 
 @Preview(device = MOBILE_PREVIEW_SPEC)
 @Composable
-fun OverviewHomeScreenFramePreview(
+fun BookOverviewScreenFramePreview(
 ) {
     FancyMansionTheme {
-        OverviewHomeScreenFrame(
-            uiState = OverviewHomeContract.State(),
+        BookOverviewScreenFrame(
+            uiState = BookOverviewContract.State(),
             loadState = LoadState.Idle,
             effectFlow = null,
             onCommonEventSent = {},

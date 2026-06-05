@@ -1,4 +1,4 @@
-package com.fancymansion.presentation.bookOverview.home.composables.panel.detail
+package com.fancymansion.presentation.bookOverview.overview.composables.panel.detail
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,15 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.fancymansion.core.presentation.compose.theme.onSurfaceDimmed
 import com.fancymansion.domain.model.book.BookInfoModel
-import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import com.fancymansion.presentation.bookOverview.home.composables.OverviewPanelState
-import com.fancymansion.presentation.bookOverview.home.composables.detailPanelShape
+import com.fancymansion.presentation.bookOverview.overview.BookOverviewContract
+import com.fancymansion.presentation.bookOverview.overview.composables.OverviewPanelState
+import com.fancymansion.presentation.bookOverview.overview.composables.detailPanelShape
 
 enum class DetailPanelState {
     COLLAPSED,
@@ -48,7 +45,7 @@ fun OverviewScreenDetailPanel(
     collapsedHeightDp: Float,
     expandedHeightDp: Float,
     onHideDetailPanel: () -> Unit,
-    onEventSent: (event: OverviewHomeContract.Event) -> Unit
+    onEventSent: (event: BookOverviewContract.Event) -> Unit
 ) {
     val density = LocalDensity.current.density
 

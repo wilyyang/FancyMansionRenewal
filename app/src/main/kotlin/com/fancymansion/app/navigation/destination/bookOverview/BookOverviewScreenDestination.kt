@@ -8,19 +8,19 @@ import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.app.navigation.navigateViewerContentScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.window.TypePane
-import com.fancymansion.presentation.bookOverview.home.OverviewHomeContract
-import com.fancymansion.presentation.bookOverview.home.OverviewHomeViewModel
-import com.fancymansion.presentation.bookOverview.home.composables.OverviewHomeScreenFrame
+import com.fancymansion.presentation.bookOverview.overview.BookOverviewContract
+import com.fancymansion.presentation.bookOverview.overview.BookOverviewViewModel
+import com.fancymansion.presentation.bookOverview.overview.composables.BookOverviewScreenFrame
 
 @Composable
-fun OverviewHomeScreenDestination(
+fun BookOverviewScreenDestination(
     navController: NavController,
     typePane : TypePane
 ) {
-    val viewModel: OverviewHomeViewModel = hiltViewModel()
+    val viewModel: BookOverviewViewModel = hiltViewModel()
 
     val onEventSent =  remember {
-        { event : OverviewHomeContract.Event ->
+        { event : BookOverviewContract.Event ->
             viewModel.setEvent(event)
         }
     }
@@ -31,15 +31,15 @@ fun OverviewHomeScreenDestination(
         }
     }
 
-    val onNavigationRequested : (OverviewHomeContract.Effect.Navigation) -> Unit =  remember {
-        { effect : OverviewHomeContract.Effect.Navigation ->
+    val onNavigationRequested : (BookOverviewContract.Effect.Navigation) -> Unit =  remember {
+        { effect : BookOverviewContract.Effect.Navigation ->
             handleNavigationRequest(effect, navController)
         }
     }
 
     HandleCommonEffect(navController = navController, commonEffectFlow = viewModel.commonEffect, onCommonEventSent = onCommonEventSent)
 
-    OverviewHomeScreenFrame(
+    BookOverviewScreenFrame(
         uiState = viewModel.uiState.value,
         loadState = viewModel.loadState.value,
         effectFlow = viewModel.effect,
@@ -49,11 +49,11 @@ fun OverviewHomeScreenDestination(
     )
 }
 
-fun handleNavigationRequest(effect: OverviewHomeContract.Effect, navController: NavController) {
+fun handleNavigationRequest(effect: BookOverviewContract.Effect, navController: NavController) {
     when (effect) {
-        is OverviewHomeContract.Effect.Navigation.NavigateViewerContentScreen -> {
+        is BookOverviewContract.Effect.Navigation.NavigateViewerContentScreen -> {
             navController.navigateViewerContentScreen(effect.episodeRef, effect.bookTitle, effect.episodeTitle)
         }
-        is OverviewHomeContract.Effect.Navigation.NavigateReviewListScreen -> {}
+        is BookOverviewContract.Effect.Navigation.NavigateReviewListScreen -> {}
     }
 }
