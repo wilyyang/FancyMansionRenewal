@@ -1,19 +1,11 @@
 package com.fancymansion.presentation.main.tab.home
 
 import androidx.lifecycle.SavedStateHandle
-import com.fancymansion.core.common.const.EditorPublishStatus
-import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
-import com.fancymansion.core.common.const.INIT_UPDATED_AT
-import com.fancymansion.core.common.const.ReadMode
 import com.fancymansion.core.common.const.RemoteBookSortOrder
-import com.fancymansion.core.common.log.Logger
 import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.LoadState
-import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.homeBook.result.BookQueryResult
-import com.fancymansion.domain.usecase.book.UseCaseMakeBook
-import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetBookCoverImageUrl
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetHomeBookListWithQuery
 import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
@@ -34,10 +26,8 @@ import javax.inject.Inject
 class HomeTabViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val useCaseGetUserInfoLocal: UseCaseGetUserInfoLocal,
-    private val useCaseDownloadBook: UseCaseDownloadBook,
     private val useCaseGetHomeBookListWithQuery: UseCaseGetHomeBookListWithQuery,
     private val useCaseGetBookCoverImageUrl: UseCaseGetBookCoverImageUrl,
-    private val useCaseMakeBook: UseCaseMakeBook,
     private val useCaseGetResource: UseCaseGetResource
 ) : BaseViewModel<HomeTabContract.State, HomeTabContract.Event, HomeTabContract.Effect>() {
     private lateinit var userId: String
@@ -56,7 +46,7 @@ class HomeTabViewModel @Inject constructor(
     override fun handleEvents(event: HomeTabContract.Event) {
         when (event) {
             is BookPageNumberClicked -> handlePageNumberClicked(page = event.pageNumber)
-            is BookHolderClicked -> handleBookHolderClicked(publishedId = event.bookId)
+            is BookHolderClicked -> handleBookHolderClicked(publishedId = event.publishedId)
 
             is SearchTextInput -> handleUpdateSearchText(searchText = event.searchText)
             SearchClicked -> handleSearch()
@@ -117,22 +107,8 @@ class HomeTabViewModel @Inject constructor(
         }
     }
 
-    private fun handleBookHolderClicked(publishedId: String) = launchWithLoading {
-        // [임시] 해당 홀더 북 다운로드하도록 구현
-        val mode = ReadMode.READ
-        val downloadVersion = useCaseDownloadBook(userId = userId, publishedId = publishedId, readMode = mode)
-        useCaseMakeBook.makeMetaData(
-            userId = userId,
-            mode = mode,
-            bookId = publishedId,
-            metaData = BookMetaModel(
-                status = EditorPublishStatus.PUBLISHED,
-                publishedAt = INIT_PUBLISHED_AT,
-                updatedAt = INIT_UPDATED_AT,
-                downloadAt = System.currentTimeMillis(),
-                version = downloadVersion
-            )
-        )
+    private fun handleBookHolderClicked(publishedId: String) {
+        setEffect { HomeTabContract.Effect.Navigation.NavigateHomeBookOverviewScreen(publishedId) }
     }
 
     private fun handleUpdateSearchText(searchText: String) {

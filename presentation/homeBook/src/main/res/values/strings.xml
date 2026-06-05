@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_no_book_info_title">책 정보가 없습니다.</string>
+    <string name="screen_no_book_info_detail">책 정보가 없어 표시할 내용이 없습니다.\n이전 화면으로 돌아가려면\n 뒤로가기 버튼을 눌러주세요.</string>
+
+    <string name="button_overview_download_book">다운로드</string>
+    <string name="title_book_introduce">작품 소개</string>
+    <string name="title_book_review">리뷰</string>
+
+    <string name="tab_title_book_introduce">작품 소개</string>
+    <string name="tab_title_book_info">작품 정보</string>
+
+    <string name="introduce_tab_title_keyword">키워드</string>
+    <string name="introduce_tab_title_introduce">작품 소개</string>
+
+    <string name="info_tab_title_detail">상세 정보</string>
+    <string name="info_tab_title_detail_editor_name">편집자</string>
+</resources>

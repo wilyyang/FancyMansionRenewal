@@ -19,6 +19,7 @@ import com.fancymansion.app.navigation.destination.editor.EditorPageListScreenDe
 import com.fancymansion.app.navigation.destination.editor.EditorRouteContentScreenDestination
 import com.fancymansion.app.navigation.destination.editor.EditorSelectorContentScreenDestination
 import com.fancymansion.app.navigation.destination.editor.EditorSelectorListScreenDestination
+import com.fancymansion.app.navigation.destination.homeBook.HomeBookOverviewScreenDestination
 import com.fancymansion.app.navigation.destination.launch.LaunchScreenDestination
 import com.fancymansion.app.navigation.destination.main.MainScreenDestination
 import com.fancymansion.app.navigation.destination.viewer.ViewerContentScreenDestination
@@ -35,6 +36,7 @@ import com.fancymansion.presentation.editor.pageList.EditorPageListContract
 import com.fancymansion.presentation.editor.routeContent.EditorRouteContentContract
 import com.fancymansion.presentation.editor.selectorContent.EditorSelectorContentContract
 import com.fancymansion.presentation.editor.selectorList.EditorSelectorListContract
+import com.fancymansion.presentation.homeBook.overview.HomeBookOverviewContract
 import com.fancymansion.presentation.launch.launch.LaunchContract
 import com.fancymansion.presentation.main.content.MainContract
 import com.fancymansion.presentation.viewer.content.ViewerContentContract
@@ -73,6 +75,14 @@ fun AppNavigation(typePane : TypePane) {
             navController = navController
         ) {
             MainScreenDestination(navController = navController, typePane = typePane)
+        }
+
+        leftScreenTransition(
+            route = "${HomeBookOverviewContract.NAME}/{${ArgName.NAME_BOOK_ID}}",
+            arguments = listOf(NavArgument.argBookId),
+            navController = navController
+        ) {
+            HomeBookOverviewScreenDestination(navController = navController, typePane = typePane)
         }
 
         leftScreenTransition(
@@ -167,6 +177,10 @@ fun NavController.logNavigationChanges() {
         val args = arguments?.keySet()?.filter { it.startsWith("NAME") }?.joinToString { "$it= ${arguments[it]}" } ?: "empty"
         Logger.print("<Navigate> $route : $args", tag = Logger.BASIC_TAG_NAME)
     }
+}
+
+fun NavController.navigateHomeBookOverviewScreen(bookId: String) {
+    navigate(route = "${HomeBookOverviewContract.NAME}/$bookId")
 }
 
 fun NavController.navigateOverviewScreen(episodeRef: EpisodeRef) {

@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import com.fancymansion.app.auth.GoogleAuthHolder
 import com.fancymansion.app.navigation.HandleCommonEffect
 import com.fancymansion.app.navigation.navigateEditorBookOverviewScreen
+import com.fancymansion.app.navigation.navigateHomeBookOverviewScreen
 import com.fancymansion.app.navigation.navigateOverviewScreen
 import com.fancymansion.core.presentation.base.CommonEvent
 import com.fancymansion.core.presentation.base.tab.TabScreenComponents
@@ -206,6 +207,9 @@ fun handleEditorTabNavigationRequest(effect: EditorTabContract.Effect, navContro
 
 fun handleHomeTabNavigationRequest(effect: HomeTabContract.Effect, navController: NavController) {
     when(effect){
+        is HomeTabContract.Effect.Navigation.NavigateHomeBookOverviewScreen -> {
+            navController.navigateHomeBookOverviewScreen(effect.bookId)
+        }
         else -> {}
     }
 }

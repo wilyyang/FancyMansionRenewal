@@ -81,7 +81,7 @@ class HomeTabContract {
 
     sealed class Event : ViewEvent {
         data class BookPageNumberClicked(val pageNumber : Int) : Event()
-        data class BookHolderClicked(val bookId : String) : Event()
+        data class BookHolderClicked(val publishedId : String) : Event()
 
         data class SearchTextInput(val searchText : String) : Event()
         data object SearchClicked : Event()
@@ -91,6 +91,8 @@ class HomeTabContract {
     }
 
     sealed class Effect : ViewSideEffect {
-        sealed class Navigation : Effect()
+        sealed class Navigation : Effect(){
+            data class NavigateHomeBookOverviewScreen(val bookId: String) : Navigation()
+        }
     }
 }
