@@ -20,6 +20,7 @@ class MainContract {
     }
 
     sealed class Effect : ViewSideEffect {
+        data object UpdateHomeTab : Effect()
         sealed class Navigation : Effect()
     }
 }

@@ -3,6 +3,7 @@ package com.fancymansion.presentation.main.content
 import androidx.lifecycle.SavedStateHandle
 import com.fancymansion.core.presentation.base.BaseViewModel
 import com.fancymansion.core.presentation.base.CommonEvent
+import com.fancymansion.presentation.main.common.MainScreenTab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,6 +22,13 @@ class MainViewModel @Inject constructor(
     override fun handleEvents(event: MainContract.Event) {
         when(event) {
             is MainContract.Event.TabSelected -> {
+                if (uiState.value.currentTab == MainScreenTab.Editor &&
+                    event.tab == MainScreenTab.Home
+                ) {
+                    setEffect {
+                        MainContract.Effect.UpdateHomeTab
+                    }
+                }
                 setState { copy(currentTab = event.tab) }
             }
         }

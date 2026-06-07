@@ -80,6 +80,7 @@ class HomeTabContract {
     ) : ViewState
 
     sealed class Event : ViewEvent {
+        data object UpdateHomeTabEvent : Event()
         data class BookPageNumberClicked(val pageNumber : Int) : Event()
         data class BookHolderClicked(val publishedId : String) : Event()
 

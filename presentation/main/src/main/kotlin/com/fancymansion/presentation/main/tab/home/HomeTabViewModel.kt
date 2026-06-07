@@ -45,6 +45,11 @@ class HomeTabViewModel @Inject constructor(
 
     override fun handleEvents(event: HomeTabContract.Event) {
         when (event) {
+            HomeTabContract.Event.UpdateHomeTabEvent -> {
+                launchWithLoading {
+                    initHomeBookList()
+                }
+            }
             is BookPageNumberClicked -> handlePageNumberClicked(page = event.pageNumber)
             is BookHolderClicked -> handleBookHolderClicked(publishedId = event.publishedId)
 
@@ -94,7 +99,7 @@ class HomeTabViewModel @Inject constructor(
                     it.cursorBookIds
                 )
                 if (isNextChunk) prevPageCursors.add(currentPageCursor!!)
-                else prevPageCursors.removeLast()
+                else prevPageCursors.takeIf { it.isNotEmpty() }?.removeAt(prevPageCursors.lastIndex)
 
                 applyChunkResult(
                     startPage = it.startPage,

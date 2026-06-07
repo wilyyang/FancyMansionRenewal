@@ -171,7 +171,7 @@ fun OverviewScreenMainPanel(
                         .background(color = MaterialTheme.colorScheme.background)){
 
                     Image(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxSize(),
                         painter = rememberAsyncImagePainter(
                             model = coverUrl
                         ),

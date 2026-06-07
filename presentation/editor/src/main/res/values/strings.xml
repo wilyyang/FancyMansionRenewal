@@ -31,6 +31,9 @@
     <string name="edit_overview_publish_dialog_message_update">기존 북 파일을 업데이트하시겠습니까?</string>
     <string name="edit_overview_publish_dialog_message_withdraw">배포를 취소하시겠습니까? 취소하면 복구할 수 없습니다.</string>
 
+    <string name="edit_overview_publish_dialog_title_image_empty">커버 이미지 필요</string>
+    <string name="edit_overview_publish_dialog_message_image_empty">출판하려면 커버 이미지를 설정해야 합니다.</string>
+
     <string name="edit_overview_top_edit_keyword">편집</string>
     <string name="edit_overview_top_edit_page">편집</string>
 

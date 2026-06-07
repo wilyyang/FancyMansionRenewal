@@ -103,14 +103,25 @@ class EditorBookOverviewViewModel @Inject constructor(
 
             EditorBookOverviewContract.Event.PublishInfoHeaderClicked -> handleTogglePublishSection()
             EditorBookOverviewContract.Event.UploadBookFile -> {
-                setLoadState(
-                    loadState = LoadState.AlarmDialog(
-                        title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_upload),
-                        message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_upload),
-                        onConfirm = ::handleUploadBookFile,
-                        onDismiss = ::setLoadStateIdle
+                if (uiState.value.imagePickType is ImagePickType.Empty) {
+                    setLoadState(
+                        loadState = LoadState.AlarmDialog(
+                            title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_image_empty),
+                            message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_image_empty),
+                            dismissText = null,
+                            onConfirm = ::setLoadStateIdle
+                        )
                     )
-                )
+                } else {
+                    setLoadState(
+                        loadState = LoadState.AlarmDialog(
+                            title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_upload),
+                            message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_upload),
+                            onConfirm = ::handleUploadBookFile,
+                            onDismiss = ::setLoadStateIdle
+                        )
+                    )
+                }
             }
             EditorBookOverviewContract.Event.WithdrawBookFile -> {
                 setLoadState(
@@ -123,14 +134,25 @@ class EditorBookOverviewViewModel @Inject constructor(
                 )
             }
             EditorBookOverviewContract.Event.UpdateBookFile -> {
-                setLoadState(
-                    loadState = LoadState.AlarmDialog(
-                        title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_update),
-                        message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_update),
-                        onConfirm = ::handleUpdateBookFile,
-                        onDismiss = ::setLoadStateIdle
+                if (uiState.value.imagePickType is ImagePickType.Empty) {
+                    setLoadState(
+                        loadState = LoadState.AlarmDialog(
+                            title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_image_empty),
+                            message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_image_empty),
+                            dismissText = null,
+                            onConfirm = ::setLoadStateIdle
+                        )
                     )
-                )
+                } else {
+                    setLoadState(
+                        loadState = LoadState.AlarmDialog(
+                            title = StringValue.StringResource(R.string.edit_overview_publish_dialog_title_update),
+                            message = StringValue.StringResource(R.string.edit_overview_publish_dialog_message_update),
+                            onConfirm = ::handleUpdateBookFile,
+                            onDismiss = ::setLoadStateIdle
+                        )
+                    )
+                }
             }
 
             /**

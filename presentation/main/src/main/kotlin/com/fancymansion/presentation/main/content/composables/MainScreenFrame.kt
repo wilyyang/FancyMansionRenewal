@@ -88,8 +88,11 @@ fun MainScreenFrame(
 
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         effectFlow?.onEach { effect ->
-            if (effect is MainContract.Effect.Navigation) {
-                onNavigationRequested(effect)
+            when (effect) {
+                MainContract.Effect.UpdateHomeTab ->
+                    homeTabComponents.onEventSent(HomeTabContract.Event.UpdateHomeTabEvent)
+
+                is MainContract.Effect.Navigation -> onNavigationRequested(effect)
             }
         }?.collect()
     }
