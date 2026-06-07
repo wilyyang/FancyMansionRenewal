@@ -15,4 +15,7 @@
 
     <string name="info_tab_title_detail">상세 정보</string>
     <string name="info_tab_title_detail_editor_name">편집자</string>
+
+    <string name="dialog_download_complete_title">다운로드 완료</string>
+    <string name="dialog_download_complete_message">도서 다운로드가 완료되었습니다. 서재에서 다운로드한 도서를 확인해보세요.</string>
 </resources>

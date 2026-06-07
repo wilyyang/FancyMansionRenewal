@@ -6,7 +6,9 @@ import com.fancymansion.core.common.const.EditorPublishStatus
 import com.fancymansion.core.common.const.INIT_PUBLISHED_AT
 import com.fancymansion.core.common.const.INIT_UPDATED_AT
 import com.fancymansion.core.common.const.ReadMode
+import com.fancymansion.core.common.resource.StringValue
 import com.fancymansion.core.presentation.base.BaseViewModel
+import com.fancymansion.core.presentation.base.LoadState
 import com.fancymansion.domain.model.book.BookMetaModel
 import com.fancymansion.domain.model.homeBook.result.LoadBookResult
 import com.fancymansion.domain.usecase.book.UseCaseMakeBook
@@ -14,6 +16,7 @@ import com.fancymansion.domain.usecase.remoteBook.UseCaseDownloadBook
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetBookCoverImageUrl
 import com.fancymansion.domain.usecase.remoteBook.UseCaseGetSelectedHomeBook
 import com.fancymansion.domain.usecase.user.UseCaseGetUserInfoLocal
+import com.fancymansion.presentation.homeBook.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -69,7 +72,14 @@ class HomeBookOverviewViewModel @Inject constructor(
         }
     }
 
-    private fun handleDownloadClicked(publishedId: String) = launchWithLoading {
+    private fun handleDownloadClicked(publishedId: String) = launchWithLoading(
+        endLoadState = LoadState.AlarmDialog(
+            title = StringValue.StringResource(R.string.dialog_download_complete_title),
+            message = StringValue.StringResource(R.string.dialog_download_complete_message),
+            dismissText = null,
+            onConfirm = ::setLoadStateIdle
+        )
+    ) {
         val mode = ReadMode.READ
         val downloadVersion = useCaseDownloadBook(userId = userId, publishedId = publishedId, readMode = mode)
         useCaseMakeBook.makeMetaData(
