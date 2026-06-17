@@ -193,6 +193,8 @@ class BookStorageSourceImpl(private val context : Context) : BookStorageSource {
         uri: Uri
     ): Boolean {
         return try {
+            root.mediaFile(episodeRef).mkdirs()
+
             val targetFile = root.pageImageFile(episodeRef, imageName)
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 FileOutputStream(targetFile).use { outputStream ->
