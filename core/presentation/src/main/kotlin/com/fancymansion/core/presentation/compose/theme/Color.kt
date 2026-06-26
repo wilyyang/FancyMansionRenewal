@@ -31,6 +31,8 @@ object ColorSet {
 
     val red_dc3232 = Color(0xff_dc3232)
 
+    val yellow_ffa000 = Color(0xff_ffa000)
+
     /**
      * loading
      */

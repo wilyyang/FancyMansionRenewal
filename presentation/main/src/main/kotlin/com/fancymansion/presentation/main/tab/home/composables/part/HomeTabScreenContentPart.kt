@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,6 +29,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.fancymansion.core.common.util.formatTimestampYearDate
 import com.fancymansion.core.presentation.compose.component.EnumDropdown
 import com.fancymansion.core.presentation.compose.modifier.clickSingle
+import com.fancymansion.core.presentation.compose.theme.ColorSet
 import com.fancymansion.presentation.main.R
 import com.fancymansion.presentation.main.tab.home.HomeBookSortOrder
 import com.fancymansion.presentation.main.tab.home.HomeBookWrapper
@@ -121,6 +125,38 @@ fun HomeBookHolder(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
             )
+
+            Row(
+                modifier = Modifier.padding(top = 3.5.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val rating = bookWrapper.averageRating.coerceIn(0f, 5f)
+                val starSize = MaterialTheme.typography.bodySmall.lineHeight.value.dp
+
+                repeat(5) { index ->
+                    val starResId = when {
+                        rating >= index + 1f -> R.drawable.ic_average_star_full
+                        rating >= index + 0.5f -> R.drawable.ic_average_star_half
+                        else -> R.drawable.ic_average_star_empty
+                    }
+
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 1.dp)
+                            .size(starSize),
+                        painter = painterResource(id = starResId),
+                        contentDescription = null,
+                        tint = ColorSet.yellow_ffa000
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.padding(start = 3.dp),
+                    text = "%.1f (%d)".format(rating, bookWrapper.reviewCount),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
 
             FlowRow(
                 modifier = Modifier.padding(top = 5.5.dp)

@@ -28,7 +28,9 @@ data class HomeBookWrapper(
     val updateTime: Long,
     val thumbnailUrl: String,
     val pageCount: Int,
-    val keywords: List<KeywordModel>
+    val keywords: List<KeywordModel>,
+    val averageRating: Float,
+    val reviewCount: Int
 )
 
 fun HomeBookItemModel.toWrapper(thumbnailUrl: String) : HomeBookWrapper {
@@ -38,7 +40,9 @@ fun HomeBookItemModel.toWrapper(thumbnailUrl: String) : HomeBookWrapper {
         updateTime = book.publishInfo.updatedAt,
         thumbnailUrl = thumbnailUrl,
         pageCount = episode.pageCount,
-        keywords = book.introduce.keywordList
+        keywords = book.introduce.keywordList,
+        averageRating = book.averageRating,
+        reviewCount = book.reviewCount
     )
 }
 

@@ -15,12 +15,16 @@ data class BookInfoData(
     val publishInfo: PublishInfoData,
     val introduce: IntroduceData,
     val editor: EditorData,
+    val averageRating: Float,
+    val reviewCount: Int
 ) {
     companion object Fields {
         const val BOOK_ID = "bookId"
         const val PUBLISH_INFO = "publishInfo"
         const val INTRODUCE = "introduce"
         const val EDITOR = "editor"
+        const val AVERAGE_RATING = "averageRating"
+        const val REVIEW_COUNT = "reviewCount"
 
         object QueryFields {
             const val TITLE_KEY = "$INTRODUCE.$TITLE"
@@ -33,12 +37,16 @@ fun BookInfoModel.asData(publishInfo: PublishInfoData) = BookInfoData(
     bookId = id,
     publishInfo = publishInfo,
     introduce = introduce.asData(),
-    editor = editor.asData()
+    editor = editor.asData(),
+    averageRating = 0f,
+    reviewCount = 0
 )
 
 fun BookInfoData.asHomeModel(keywordMap: Map<Long, KeywordModel>) = BookHomeModel(
     id = bookId,
     publishInfo = publishInfo.asModel(),
     introduce = introduce.asHomeModel(keywordMap),
-    editor = editor.asHomeModel()
+    editor = editor.asHomeModel(),
+    averageRating = averageRating,
+    reviewCount = reviewCount
 )

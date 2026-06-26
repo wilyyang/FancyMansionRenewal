@@ -43,6 +43,8 @@ class BookFirestoreDatabaseImpl(
 
         val data = hashMapOf(
             BookInfoData.BOOK_ID to book.bookId,
+            BookInfoData.AVERAGE_RATING to 0f,
+            BookInfoData.REVIEW_COUNT to 0,
             BookInfoData.PUBLISH_INFO to mapOf(
                 PublishInfoData.PUBLISHED_ID to book.publishInfo.publishedId,
                 PublishInfoData.PUBLISHED_AT to book.publishInfo.publishedAt,
@@ -228,6 +230,8 @@ class BookFirestoreDatabaseImpl(
                         publishInfo = bookDoc.parsePublishInfo(),
                         introduce = bookDoc.parseIntroduce(),
                         editor = bookDoc.parseEditor(),
+                        averageRating = bookDoc.parseAverageRating(),
+                        reviewCount = bookDoc.parseReviewCount()
                     )
 
                     val episode = getEpisodeData(bookId) ?: return@async null
@@ -260,6 +264,8 @@ class BookFirestoreDatabaseImpl(
                             publishInfo = bookDoc.parsePublishInfo(),
                             introduce = bookDoc.parseIntroduce(),
                             editor = bookDoc.parseEditor(),
+                            averageRating = bookDoc.parseAverageRating(),
+                            reviewCount = bookDoc.parseReviewCount()
                         )
 
                         // 철회된 북는 가져올 수 없음
@@ -292,6 +298,8 @@ class BookFirestoreDatabaseImpl(
             publishInfo = bookDoc.parsePublishInfo(),
             introduce = bookDoc.parseIntroduce(),
             editor = bookDoc.parseEditor(),
+            averageRating = bookDoc.parseAverageRating(),
+            reviewCount = bookDoc.parseReviewCount()
         )
 
         if(book.publishInfo.publishStatus != RemotePublishStatus.PUBLISHED){
@@ -362,6 +370,14 @@ class BookFirestoreDatabaseImpl(
         )
     }
 
+    private fun DocumentSnapshot.parseAverageRating(): Float {
+        return (get(BookInfoData.AVERAGE_RATING) as? Number)?.toFloat() ?: 0f
+    }
+
+    private fun DocumentSnapshot.parseReviewCount(): Int {
+        return (get(BookInfoData.REVIEW_COUNT) as? Number)?.toInt() ?: 0
+    }
+
     private fun DocumentSnapshot.parseEpisode(
         fallbackEpisodeId: String = id,
         fallbackBookId: String = ""
@@ -407,6 +423,8 @@ class BookFirestoreDatabaseImpl(
             publishInfo = parsePublishInfo(),
             introduce = parseIntroduce(),
             editor = parseEditor(),
+            averageRating = parseAverageRating(),
+            reviewCount = parseReviewCount()
         )
         val episode = getEpisodeData(bookId)
         if (episode == null) {

@@ -7,7 +7,9 @@ data class BookHomeModel(
     val id: String,
     val publishInfo: PublishInfoModel,
     val introduce: IntroduceHomeModel,
-    val editor: EditorHomeModel
+    val editor: EditorHomeModel,
+    val averageRating: Float,
+    val reviewCount: Int
 )
 
 data class PublishInfoModel(
